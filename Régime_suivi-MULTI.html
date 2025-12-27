@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Montre : calories & macros (offline)</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:980px;margin:0 auto;padding:1rem;line-height:1.35}
+    h1{font-size:1.25rem;margin:.2rem 0 .8rem}
+    .card{border:1px solid #ddd;border-radius:10px;background:#fafafa;padding:1rem;margin:.7rem 0}
+    .grid{display:grid;grid-template-columns:1fr;gap:.7rem}
+    @media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+    label{display:block;font-size:.9rem;margin:.2rem 0}
+    input,select,button,textarea{width:100%;box-sizing:border-box;padding:.45rem;border:1px solid #ccc;border-radius:8px;font-size:.95rem;background:#fff}
+    button{border:1px solid #333;background:#efefef;cursor:pointer}
+    button:hover{background:#e2e2e2}
+    .row{display:flex;gap:.6rem;flex-wrap:wrap}
+    .row > div{flex:1;min-width:180px}
+    .muted{color:#666;font-size:.85rem}
+    .results{background:#fff;border:1px solid #ddd;border-radius:10px;padding:1rem}
+    table{width:100%;border-collapse:collapse;margin-top:.5rem;background:#fff}
+    th,td{border:1px solid #e5e5e5;padding:.5rem;text-align:center}
+    th{background:#f3f3f3}
+    .kpi{display:flex;gap:.6rem;flex-wrap:wrap;margin:.6rem 0}
+    .kpi div{background:#f7f7f7;border:1px solid #e8e8e8;border-radius:10px;padding:.55rem .7rem}
+    .kpi b{display:block}
+    .ok{background:#e6fff0}
+    .warn{background:#fff4d6}
+    .bad{background:#ffe7e7}
+    .btn-danger{border-color:#a00}
+    .btn-danger:hover{background:#ffdede}
+    textarea{min-height:110px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+    .btn-mini{padding:.25rem .45rem;border-radius:8px;min-width:auto;width:auto}
+    .td-left{text-align:left}
+    .info-dot{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  border-radius:999px;
+  border:1px solid #999;
+  font-size:13px;
+  line-height:1;
+  margin-left:.35rem;
+  color:#333;
+  background:#fff;
+  cursor:help;
+  user-select:none;
+}
+
+/* Mini-modale */
+.modal{ display:none; }
+.modal.is-open{ display:block; }
+
+.modal__backdrop{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:9998;
+}
+
+.modal__panel{
+  position:fixed;
+  left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:min(520px, 92vw);
+  max-height: 78vh;
+  overflow:auto;
+
+  background:#fff;
+  border-radius:16px;
+  border:1px solid #e6e6e6;
+  z-index:9999;
+  box-shadow:0 16px 60px rgba(0,0,0,.35);
+}
+
+.modal__head{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.6rem;
+  padding:.8rem .9rem;
+  border-bottom:1px solid #eee;
+}
+
+.modal__title{ font-weight:700; }
+.modal__close{
+  width:auto; min-width:auto;
+  padding:.35rem .55rem;
+  border-radius:10px;
+}
+
+.modal__body{
+  padding:.85rem .9rem;
+  white-space:pre-wrap;
+  line-height:1.35;
+  font-size:.95rem;
+}
+
+.modal__foot{
+  padding:.75rem .9rem;
+  border-top:1px solid #eee;
+  display:flex; justify-content:flex-end;
+}
+
+/* Tooltip CSS-only (hover + focus) */
+.tip{ position:relative; }
+
+.tip::after{
+  content: attr(data-tip);
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom: calc(100% + 10px);
+
+  width: min(320px, 86vw);
+  white-space: pre-wrap;
+
+  background:#111;
+  color:#fff;
+  border-radius:10px;
+  padding:.65rem .75rem;
+  font-size:.9rem;
+  line-height:1.25;
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:9999;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.tip::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom: calc(100% + 4px);
+
+  border:6px solid transparent;
+  border-top-color:#111;
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:9999;
+}
+
+.tip:hover::after,
+.tip:hover::before,
+.tip:focus::after,
+.tip:focus::before,
+.tip:focus-visible::after,
+.tip:focus-visible::before{
+  opacity:1;
+  visibility:visible;
+}
+
+/* Sur mobile : plus bas + plus large pour lisibilité */
+@media (max-width: 520px){
+  .tip::after{
+    bottom: calc(100% + 12px);
+    width: min(360px, 92vw);
+    font-size: .95rem;
+  }
+}
+
+    /* =======================
+       Affichage conditionnel (3 modes)
+       ======================= */
+
+    /* Par défaut on cache les niveaux avancés */
+    [data-um="sport"], [data-um="expert"]{ display:none; }
+
+    /* SPORTIF : on montre sport */
+    body[data-usemode="sport"] [data-um="sport"]{ display:block; }
+
+    /* EXPERT : expert + sport */
+    body[data-usemode="expert"] [data-um="sport"],
+    body[data-usemode="expert"] [data-um="expert"]{ display:block; }
+
+    /* ✅ UI overflow-x */
+    .table-wrap{
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      width:100%;
+      border-radius:10px;
+    }
+
+    /* ✅ mini badge pour le régime */
+    .pill{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.2rem .55rem;border:1px solid #ddd;border-radius:999px;background:#fff;
+      font-size:.85rem;color:#333;
+    }
+    .pill b{font-weight:600}
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>Montre — calories & macros (offline)</h1>
+  <p class="muted">
+    Entrées = tes chiffres. Sorties = calculs. Pas de base externe. Pas de compte.
+    (Note : ça ne remplace pas un avis médical.)
+  </p>
+
+  <!-- Positionnement / cadre d’utilisation -->
+  <div class="card" id="positioningCard">
+    <h2 style="margin:.1rem 0 .4rem;font-size:1.05rem">Ce que fait (et ne fait pas) cette page</h2>
+
+    <p class="muted" style="margin:.3rem 0 .6rem">
+      Outil <b>offline</b> pour transformer ta dépense (montre) + tes choix (objectif / macros) en cibles du jour.
+      <b>Ce n’est pas un avis médical</b> et <b>la montre reste une estimation</b>.
+    </p>
+
+    <div class="row">
+      <div>
+        <label>Mode d’usage (affichage)</label>
+        <select id="useMode">
+          <option value="simple" selected>Simple</option>
+          <option value="sport">Sportif</option>
+          <option value="expert">Expert</option>
+        </select>
+
+        <div class="muted" style="margin-top:.25rem">
+          Change l’affichage et le niveau de détails, sans toucher aux calculs.
+        </div>
+      </div>
+
+      <div>
+        <label>Rappel rapide</label>
+        <div class="muted" id="positioningText" style="margin-top:.15rem">
+          Version simple : vise la cohérence sur 7 jours, pas la perfection au jour le jour.
+        </div>
+      </div>
+    </div>
+
+    <details id="limitsDetails" style="margin-top:.6rem">
+      <summary class="muted" style="cursor:pointer">Limites & responsabilités (à lire une fois)</summary>
+      <ul class="muted" style="margin:.5rem 0 0; padding-left:1.1rem">
+        <li>Les calories “montre” sont une <b>estimation</b> : vise la <b>tendance</b>, pas l’exactitude.</li>
+        <li>Si pathologie / traitement / TCA / grossesse : fais valider par un pro de santé.</li>
+        <li>Fatigue anormale / perf en baisse / sommeil perturbé : revois déficit / charge / récup.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- Multi-profils : visible en Simple/Sportif/Expert -->
+  <div class="card">
+    <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Profil utilisateur (multi-profils)</h2>
+    <div class="row">
+      <div>
+        <label>Profil actif</label>
+        <select id="profileSelect"></select>
+      </div>
+      <div>
+        <label>Nouveau profil (nom/identifiant)</label>
+        <input id="profileName" type="text" placeholder="ex: Christophe…" />
+      </div>
+      <div style="align-self:flex-end">
+        <button id="btnCreateProfile" type="button">Créer / activer</button>
+      </div>
+      <div style="align-self:flex-end">
+        <button id="btnDeleteProfile" class="btn-danger" type="button">Supprimer profil</button>
+      </div>
+    </div>
+    <p class="muted">
+      Chaque profil a son journal (jours + repas + poids/mesures) séparé dans le navigateur.
+    </p>
+  </div>
+  <!-- ✅ Compte & synchronisation (cloud) -->
+  <div class="card" id="cloudCard">
+    <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Compte & synchronisation (cloud)</h2>
+
+    <div class="row">
+      <div style="min-width:240px;flex:2">
+        <label>Email (pour activer la synchro)</label>
+        <input id="cloudEmail" type="email" placeholder="ex: toi@email.com" />
+        <div class="muted" style="margin-top:.25rem">
+          Optionnel. Sans email : fonctionnement local uniquement (comme aujourd’hui).
+        </div>
+      </div>
+
+      <div style="align-self:flex-end">
+        <button id="btnCloudLogin" type="button">Recevoir un lien</button>
+      </div>
+
+      <div style="align-self:flex-end">
+        <button id="btnCloudLogout" type="button">Se déconnecter</button>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:.3rem">
+      <div style="align-self:flex-end">
+        <button id="btnCloudPull" type="button">Récupérer du cloud (Pull)</button>
+      </div>
+      <div style="align-self:flex-end">
+        <button id="btnCloudPush" type="button">Envoyer au cloud (Push)</button>
+      </div>
+      <div style="align-self:flex-end">
+        <button id="btnCloudSync" type="button">Synchroniser (Pull → Merge → Push)</button>
+      </div>
+    </div>
+
+    <p class="muted" id="cloudStatus" style="margin-top:.45rem">
+      Statut : local uniquement.
+    </p>
+
+    <details style="margin-top:.4rem">
+      <summary class="muted" style="cursor:pointer">Comment ça marche</summary>
+      <div class="muted" style="margin-top:.4rem">
+        Pull = récupère la sauvegarde du cloud.<br/>
+        Push = envoie ta sauvegarde locale au cloud.<br/>
+        Synchroniser = Pull, fusion intelligente, puis Push.
+      </div>
+    </details>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Profil (pour mémoire / cohérence)</h2>
+      <div class="row">
+        <div>
+          <label>Sexe</label>
+          <select id="sex">
+            <option value="M" selected>Homme</option>
+            <option value="F">Femme</option>
+          </select>
+        </div>
+        <div>
+          <label>Âge (ans)</label>
+          <input id="age" type="number" min="0" step="1" value="48" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Taille (cm)</label>
+          <input id="height" type="number" min="0" step="1" value="182" />
+        </div>
+        <div>
+          <label>Poids profil (kg)</label>
+          <input id="weight" type="number" min="0" step="0.1" value="84" />
+        </div>
+      </div>
+      <p class="muted">
+        Le poids “profil” sert de référence. Le poids “mesuré” (journal) sert au suivi.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Dépense du jour (Montre)</h2>
+
+      <div class="row">
+        <div>
+          <label>Profil de montre (repère initial)</label>
+          <select id="watchBrand">
+            <option value="custom" selected>Personnalisé</option>
+            <option value="apple">Apple</option>
+            <option value="garmin">Garmin</option>
+            <option value="polar">Polar</option>
+            <option value="coros">COROS</option>
+            <option value="samsung">Samsung</option>
+            <option value="suunto">Suunto</option>
+            <option value="huawei">Huawei</option>
+            <option value="amazfit">Amazfit</option>
+            <option value="fitbit">Fitbit / Google</option>
+          </select>
+<div class="muted" style="margin-top:.25rem">
+  La marque sert de <b>repère initial</b> (valeur par défaut). Ça ne “calibre” pas ta dépense : ça règle juste une marge d’erreur de départ.
+</div>
+        </div>
+
+        <!-- ✅ Sportif+Expert : afficher "référence preset (info)" ; ✅ Simple : caché -->
+        <div data-um="sport">
+  <label>Référence preset (info)</label>
+
+  <div style="margin-top:.25rem">
+    <span
+  id="watchProfileInfo"
+  class="info-dot tip"
+  tabindex="0"
+  role="button"
+  aria-label="Infos profil de montre"
+  data-tip="Choisis une montre pour voir les notes."
+>ℹ️</span>
+  </div>
+</div>
+</div>
+
+      <div class="row">
+        <div>
+          <label>Dépense Montre du jour (kcal)</label>
+          <input id="montre" type="number" min="0" step="1" placeholder="ex: 3300" value="3300" />
+        </div>
+
+        <!-- ✅ Sportif+Expert : afficher "marge d'erreur Montre (%)" ; ✅ Simple : caché -->
+        <div data-um="sport">
+          <label>Marge d’erreur Montre (%)</label>
+          <input id="errPct" type="number" min="0" step="1" value="10" />
+          <p class="muted" style="margin:.15rem 0 0">
+         Ordre de grandeur, pas une valeur exacte. </p>
+        </div>
+      </div>
+
+      <!-- ✅ Prudence : Expert uniquement (Simple/Sportif le cachent) -->
+      <div class="row" data-um="expert">
+        <div>
+          <label>Mode de prudence</label>
+          <select id="errMode">
+            <option value="none">Ignorer l’erreur</option>
+            <option value="conservative" selected>Conservateur (Montre - erreur)</option>
+            <option value="optimistic">Optimiste (Montre + erreur)</option>
+          </select>
+        </div>
+        <div class="muted" style="align-self:flex-end">
+          L’objectif (%) est dans “Paramètres macros”, pas ici.
+        </div>
+      </div>
+
+      <p class="muted" style="margin:.2rem 0 0">
+        = dépense de la montre connectée, corrigée selon la marge d’erreur choisie
+      </p>
+
+      <div class="row" style="margin-top:.35rem">
+        <div style="align-self:flex-end">
+          <button id="calcSpendBtn" type="button">Recalculer dépense (met à jour les résultats)</button>
+        </div>
+      </div>
+
+      <p class="muted" id="watchNote" data-um="sport">
+        Note : la montre ne “mesure” pas les calories, elle les estime (profil + FC/mouvement).
+        La marge d’erreur (%) est un ordre de grandeur utile, pas une vérité.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Paramètres macros</h2>
+
+    <div class="row">
+      <div>
+        <label>Type de régime (preset)</label>
+        <select id="dietMode">
+          <option value="cut_standard" selected>Standard (sportif)</option>
+          <option value="cut_aggressive">Agressif (court terme)</option>
+          <option value="recomp">Recomposition (léger déficit)</option>
+          <option value="maintain">Maintien / équilibre</option>
+          <option value="endurance">Performance endurance (déficit minime)</option>
+          <option value="custom">Personnalisé (manuel)</option>
+        </select>
+      </div>
+
+      <div>
+        <label>
+          Objectif (%)
+          <span
+            class="info-dot"
+            title="Multiplicateur appliqué sur la “Dépense corrigée”.&#10;&#10;Formule : cible kcal = dépense corrigée × (objectif/100).&#10;&#10;Repères :&#10;• Standard : 85% (~ -15%)&#10;• Agressif : 75% (~ -25%)&#10;• Recomp : 92% (~ -8%)&#10;• Maintien : 100%&#10;• Endurance : 95% (~ -5%)"
+          >?</span>
+        </label>
+        <input id="goalPct" type="number" min="60" max="130" step="1" value="85" />
+        <div class="muted" style="margin-top:.25rem">
+          100% = maintien. &lt;100% = déficit. &gt;100% = surplus. (Appliqué sur “Dépense corrigée”.)
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Protéines (g/kg de poids)</label>
+        <input id="protPerKg" type="number" min="0" step="0.1" value="2.0" />
+      </div>
+      <div>
+        <label>Lipides (g/kg de poids)</label>
+        <input id="fatPerKg" type="number" min="0" step="0.1" value="0.9" />
+      </div>
+      <div>
+        <label>
+          Glucides : calcul auto
+          <span
+            class="info-dot"
+            title="C (g) = (kcal cible - (P×4 + L×9)) / 4.&#10;Si négatif : affichage clampé à 0 + warning."
+          >?</span>
+        </label>
+        <input id="carbAutoHint" disabled value="= calories restantes (clamp si négatif)" />
+      </div>
+    </div>
+
+    <p class="muted" id="dietNote" style="margin-top:.2rem">
+      Presets = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”.
+    </p>
+
+    <div class="row">
+      <div>
+        <label>Déjà consommé aujourd’hui (kcal) — total repas</label>
+        <input id="eatenKcal" type="number" value="0" readonly />
+      </div>
+      <div>
+        <label>Déjà consommé : protéines (g) — total repas</label>
+        <input id="eatenP" type="number" value="0" readonly />
+      </div>
+      <div>
+        <label>Déjà consommé : glucides (g) — total repas</label>
+        <input id="eatenC" type="number" value="0" readonly />
+      </div>
+      <div>
+        <label>Déjà consommé : lipides (g) — total repas</label>
+        <input id="eatenF" type="number" value="0" readonly />
+      </div>
+    </div>
+
+    <div class="card" style="background:#fff;border-color:#e5e5e5;margin:.6rem 0;padding:.8rem">
+      <h3 style="margin:.1rem 0 .6rem;font-size:1rem">Repas du jour (historique + total auto)</h3>
+
+      <div class="row">
+        <div style="min-width:220px;flex:2">
+          <label>Nom du repas</label>
+          <input id="mealName" type="text" placeholder="ex: Petit-déj, Pancakes, Collation, Dîner…" />
+        </div>
+        <div><label>kcal</label><input id="mealK" type="number" min="0" step="1" value="0" /></div>
+        <div><label>P (g)</label><input id="mealP" type="number" min="0" step="0.1" value="0" /></div>
+        <div><label>G (g)</label><input id="mealC" type="number" min="0" step="0.1" value="0" /></div>
+        <div><label>L (g)</label><input id="mealF" type="number" min="0" step="0.1" value="0" /></div>
+      </div>
+
+      <!-- /100g : Expert uniquement (pour rester “clean” en Simple/Sportif) -->
+      <div class="row" style="margin-top:.4rem" data-um="expert">
+        <div style="min-width:220px;flex:2">
+          <label>kcal / 100 g (option rapide)</label>
+          <input id="qKcal100" type="number" min="0" step="1" placeholder="ex: 420" />
+        </div>
+        <div>
+          <label>Poids (g)</label>
+          <input id="qWeight" type="number" min="0" step="1" placeholder="ex: 35" />
+        </div>
+        <div>
+          <label>P / 100 g</label>
+          <input id="qP100" type="number" min="0" step="0.1" placeholder="optionnel" />
+        </div>
+        <div>
+          <label>G / 100 g</label>
+          <input id="qC100" type="number" min="0" step="0.1" placeholder="optionnel" />
+        </div>
+        <div>
+          <label>L / 100 g</label>
+          <input id="qF100" type="number" min="0" step="0.1" placeholder="optionnel" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:.3rem" data-um="expert">
+        <div style="align-self:flex-end">
+          <button id="btnApplyPer100" type="button">Remplir à partir de /100 g</button>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top:.2rem" data-um="expert">
+        Exemple : barre 35 g à 420 kcal/100 g → entre 420 et 35, clique sur “Remplir”, puis “Ajouter ce repas”.
+      </p>
+
+      <div class="row">
+        <div style="align-self:flex-end">
+          <button id="btnAddMeal" type="button">Ajouter ce repas (nouvelle ligne)</button>
+        </div>
+        <div style="align-self:flex-end">
+          <button id="btnClearMeals" class="btn-danger" type="button">Vider les repas du jour</button>
+        </div>
+      </div>
+
+      <div id="mealsTableWrap"></div>
+      <p class="muted" style="margin-top:.5rem">Tu peux éditer directement une cellule : le total se met à jour automatiquement.</p>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Date (journal)</label>
+        <input id="dayDate" type="date" />
+      </div>
+      <div style="align-self:flex-end">
+        <button id="calcBtn" type="button">Calculer</button>
+      </div>
+    </div>
+
+    <p class="muted">Astuce : change la date pour enregistrer / recharger un autre jour.</p>
+  </div>
+
+  <div class="results" id="out" style="display:none;">
+    <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Résultats</h2>
+    <div class="kpi" id="kpis"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th><th>kcal</th><th>Protéines (g)</th><th>Glucides (g)</th><th>Lipides (g)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>Objectif du jour</th><td id="tK"></td><td id="tP"></td><td id="tC"></td><td id="tF"></td></tr>
+          <tr><th>Déjà consommé</th><td id="eK"></td><td id="eP2"></td><td id="eC2"></td><td id="eF2"></td></tr>
+          <tr><th>Reste à consommer</th><td id="rK"></td><td id="rP"></td><td id="rC"></td><td id="rF"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="muted" id="notes"></p>
+  </div>
+
+  <!-- ✅ Suivi poids & compo : Sportif + Expert (Simple le cache) -->
+  <div class="card" data-um="sport">
+    <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Suivi poids & composition (informatif)</h2>
+
+    <div class="row">
+      <div>
+        <label>Poids (mesure standardisée) — pour la date sélectionnée</label>
+        <input id="morningWeight" type="number" min="0" step="0.1" placeholder="ex: 83.6" />
+      </div>
+      <div>
+        <label>Moyenne 7 jours (auto)</label>
+        <input id="avg7Weight" disabled value="-" />
+      </div>
+      <div>
+        <label>Variation hebdo (auto)</label>
+        <input id="wkVarPct" disabled value="-" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Masse grasse (%)</label>
+        <input id="fatPct" type="number" min="0" step="0.1" placeholder="ex: 18.5" />
+      </div>
+      <div>
+        <label>Masse musculaire (%)</label>
+        <input id="musclePct" type="number" min="0" step="0.1" placeholder="ex: 42.0" />
+      </div>
+      <div>
+        <label>Masse osseuse (kg)</label>
+        <input id="boneKg" type="number" min="0" step="0.1" placeholder="ex: 3.2" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>IMC (auto)</label>
+        <input id="bmiVal" disabled value="-" />
+      </div>
+      <div>
+        <label>Catégorie IMC (auto)</label>
+        <input id="bmiCat" disabled value="-" />
+      </div>
+      <div>
+        <label>Poids utilisé pour IMC</label>
+        <input id="bmiWeightUsed" disabled value="-" />
+      </div>
+    </div>
+
+    <!-- ✅ Tendance 7 jours : Expert uniquement -->
+    <div class="card" data-um="expert" style="background:#fff;border-color:#e5e5e5;margin:.6rem 0;padding:.8rem">
+      <h3 style="margin:.1rem 0 .6rem;font-size:1rem">Tendance 7 jours (Expert)</h3>
+
+      <div class="row">
+        <div>
+          <label>Moyenne dépense corrigée (kcal/j)</label>
+          <input id="avg7SpendKcal" disabled value="-" />
+        </div>
+        <div>
+          <label>Moyenne consommé (kcal/j)</label>
+          <input id="avg7EatKcal" disabled value="-" />
+        </div>
+        <div>
+          <label>Déficit estimé (kcal/j)</label>
+          <input id="avg7DefKcal" disabled value="-" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Projection hebdo (kg/sem) — ordre de grandeur</label>
+          <input id="projWkKg" disabled value="-" />
+        </div>
+        <div>
+          <label>Poids réel vs théorique (7j vs 7j préc.)</label>
+          <input id="deltaRealVsTheo" disabled value="-" />
+        </div>
+        <div>
+          <label>Qualité des données (7j)</label>
+          <input id="dataQuality7" disabled value="-" />
+        </div>
+      </div>
+
+      <p class="muted" id="trend7Note" style="margin-top:.4rem">-</p>
+    </div>
+
+    <p class="muted">
+      IMC = poids / taille². Poids utilisé = poids mesuré si encodé, sinon poids “profil”.
+    </p>
+  </div>
+
+  <!-- ✅ Historique : visible en Simple/Sportif/Expert -->
+  <div class="card">
+    <h2 style="margin:.1rem 0 .6rem;font-size:1.05rem">Historique des journées (local)</h2>
+
+    <div class="row">
+      <div><label>Choisir une journée enregistrée</label><select id="daySelect"></select></div>
+      <div style="align-self:flex-end"><button id="btnLoadDay" type="button">Charger</button></div>
+      <div style="align-self:flex-end"><button id="btnDeleteDay" class="btn-danger" type="button">Supprimer journée</button></div>
+    </div>
+
+    <!-- Actions avancées : Expert uniquement -->
+    <div class="row" data-um="expert">
+      <div style="align-self:flex-end"><button id="btnExportDays" type="button">Exporter JSON</button></div>
+      <div style="align-self:flex-end"><button id="btnImportDays" type="button">Importer JSON</button></div>
+      <div style="align-self:flex-end"><button id="btnClearDays" class="btn-danger" type="button">Tout effacer (profil)</button></div>
+    </div>
+
+    <textarea id="daysJsonBox" data-um="expert" placeholder="Export/Import JSON (journal)…"></textarea>
+    <div id="daysHistory" class="muted" style="margin-top:.6rem"></div>
+  </div>
+
+  <style>
+    details summary::-webkit-details-marker{display:none}
+    details summary:before{content:"▸ "; display:inline-block; margin-right:.2rem}
+    details[open] summary:before{content:"▾ "}
+  </style>
+
+<div id="watchInfoModal" class="modal" aria-hidden="true">
+  <div class="modal__backdrop" data-close="1"></div>
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="watchInfoTitle">
+    <div class="modal__head">
+      <div id="watchInfoTitle" class="modal__title">Profil de montre</div>
+      <button id="watchInfoClose" class="modal__close" type="button" aria-label="Fermer">✕</button>
+    </div>
+    <div id="watchInfoBody" class="modal__body"></div>
+    <div class="modal__foot">
+      <button id="watchInfoOk" type="button">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const toNum = (v) => {
+    const s = String(v ?? "").replace(",", ".").trim();
+    const n = parseFloat(s);
+    return Number.isFinite(n) ? n : 0;
+  };
+  const round = (v, d=1) => {
+    const f = Math.pow(10, d);
+    return Math.round((v + Number.EPSILON) * f) / f;
+  };
+  const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+  /* =========================
+     ✅ Supabase (à renseigner)
+     ========================= */
+  const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_VvPPkGiqqRBj1QSsdVboGg_uHzO06-o";
+
+ let supa = null;
+if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+  supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+  function mifflinStJeor(sex, weightKg, heightCm, ageY) {
+    if (sex === "M") return 10*weightKg + 6.25*heightCm - 5*ageY + 5;
+    return 10*weightKg + 6.25*heightCm - 5*ageY - 161;
+  }
+
+/* =========================
+   ✅ Magic link callback handler (OBLIGATOIRE)
+   ========================= */
+async function handleMagicLinkCallback() {
+  if (!supa) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const token_hash = params.get("token_hash");
+  const type = params.get("type") || "email";
+
+  if (!token_hash) return; // rien à faire
+
+  setCloudStatus("Validation du lien en cours...");
+
+  const { error } = await supa.auth.verifyOtp({ token_hash, type });
+  if (error) {
+    setCloudStatus("Lien invalide/expiré : " + error.message);
+    return;
+  }
+
+  // Nettoie l’URL (enlève token_hash/type)
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  const { data } = await supa.auth.getSession();
+  const email = data?.session?.user?.email || "utilisateur";
+  setCloudStatus("connecté : " + email);
+}
+
+  function bmiCategory(bmi) {
+    if (!Number.isFinite(bmi) || bmi <= 0) return "-";
+    if (bmi < 18.5) return "Insuffisance pondérale";
+    if (bmi < 25)   return "Corpulence normale";
+    if (bmi < 30)   return "Surpoids";
+    return "Obésité";
+  }
+
+/**
+ * WATCH_ESTIMATION_PROFILES
+ * ------------------------
+ * Heuristique UX basée sur la littérature scientifique récente (2022–2025).
+ *
+ * Ce bloc ne constitue PAS une calibration scientifique des montres.
+ * Les valeurs proposées servent uniquement de REPÈRE INITIAL pour :
+ * - matérialiser l’incertitude de l’estimation calorique,
+ * - initialiser une marge d’erreur par défaut,
+ * - encourager une calibration personnelle via la tendance 7 jours.
+ *
+ * Consensus scientifique documenté :
+ * - l’estimation de la dépense énergétique par montre connectée est
+ *   fortement variable,
+ * - dépendante du type d’activité, de l’intensité et du protocole,
+ * - non fiable comme valeur absolue journalière.
+ *
+ * Aucune valeur ci-dessous ne doit être interprétée comme une "vérité par marque".
+ * Les différences entre profils reflètent uniquement des tendances générales
+ * observées dans la littérature, utilisées à des fins pédagogiques et UX.
+ *
+ * Sources primaires et secondaires vérifiables (voir liens ci-dessous).
+ */
+
+/**
+ * SOURCES (vérifiables)
+ * --------------------
+ * [S1] Empirical Health (2025)
+ *      "How Accurate Is Apple Watch for Calories Burned?"
+ *      https://www.empirical.health/metrics/activity/
+ *      → Montre une forte dispersion de l’erreur selon l’activité.
+ *
+ * [S2] Shcherbina et al., Frontiers in Physiology (2022)
+ *      "Accuracy of Energy Expenditure Estimation by Wearable Devices"
+ *      https://www.frontiersin.org/articles/10.3389/fphys.2022.804104/full
+ *      → Étude primaire outdoor, erreurs variables selon modèle et activité.
+ *
+ * [S3] Europe PMC / PubMed Central (accès miroir)
+ *      https://europepmc.org/article/PMC/PMC9402442
+ *
+ * [S4] SAS Institute Blog (2025)
+ *      "Can You Trust Your Smartwatch? A Deep Dive into Calorie Burn Estimates"
+ *      https://blogs.sas.com/content/efs/2025/06/25/can-you-trust-your-smartwatch-a-deep-dive-into-calorie-burn-estimates/
+ *      → Revue large (36 devices), erreur moyenne souvent >30%.
+ *
+ * [S5] Nextpit (2024)
+ *      "Smartwatches and fitness trackers: how accurate are calorie estimates?"
+ *      https://www.nextpit.com/news/smartwatches-fitness-trackers-low-sleep-calorie-data-accuracy
+ *      → Article de synthèse vulgarisée confirmant l’imprécision globale.
+ *
+ * [S6] DC Rainmaker (2025)
+ *      https://www.dcrainmaker.com/2025/03/watch-overload-what-were-testing.html
+ *      → Tests terrain indépendants, recommandation d’usage relatif.
+ *
+ * [S7] Nakan.ch (2024–2025)
+ *      https://www.nakan.ch/wp/2024/11/13/montre-cardio-gps-de-sport-le-guide-ultime-2025/
+ *      → Analyse des algorithmes (Firstbeat, etc.), pas de calibration universelle.
+ */
+
+  const WATCH_ESTIMATION_PROFILES = {
+  custom: {
+    label: "Personnalisé",
+    defaultErrPct: 20,
+    defaultMode: "conservative",
+    confidence: "variable",
+    role: "aucune hypothèse",
+    notes: "Aucune hypothèse implicite. L’erreur est définie par l’utilisateur."
+  },
+
+  apple: {
+    label: "Apple Watch",
+    defaultErrPct: 25,
+    defaultMode: "conservative",
+    confidence: "modérée",
+    role: "profil statistique",
+    notes: "Profil d’estimation initial basé sur la littérature. Forte variabilité selon l’activité."
+  },
+
+  garmin: {
+    label: "Garmin",
+    defaultErrPct: 20,
+    defaultMode: "optimistic",
+    confidence: "modérée",
+    role: "profil statistique",
+    notes: "Profil d’estimation initial. Variabilité importante selon contexte et profil."
+  },
+
+  polar: {
+    label: "Polar",
+    defaultErrPct: 20,
+    defaultMode: "optimistic",
+    confidence: "modérée",
+    role: "profil statistique",
+    notes: "Profil d’estimation initial. L’énergie reste une estimation bruitée."
+  },
+
+  coros: {
+    label: "COROS",
+    defaultErrPct: 25,
+    defaultMode: "optimistic",
+    confidence: "limitée",
+    role: "profil terrain",
+    notes: "Peu de validations indépendantes sur l’énergie. Valeur prudente comme point de départ."
+  },
+
+  samsung: {
+    label: "Samsung",
+    defaultErrPct: 30,
+    defaultMode: "conservative",
+    confidence: "faible",
+    role: "profil grand public",
+    notes: "Valeur conservatrice par manque de données indépendantes robustes."
+  },
+
+  suunto: {
+    label: "Suunto",
+    defaultErrPct: 25,
+    defaultMode: "optimistic",
+    confidence: "limitée",
+    role: "profil terrain",
+    notes: "Variabilité élevée selon l’activité. Pas de calibration universelle démontrée."
+  },
+
+  huawei: {
+    label: "Huawei",
+    defaultErrPct: 30,
+    defaultMode: "conservative",
+    confidence: "faible",
+    role: "profil grand public",
+    notes: "Peu de données scientifiques indépendantes sur l’estimation calorique."
+  },
+
+  amazfit: {
+    label: "Amazfit",
+    defaultErrPct: 30,
+    defaultMode: "conservative",
+    confidence: "faible",
+    role: "profil grand public",
+    notes: "Estimation calorique indicative uniquement."
+  },
+
+  fitbit: {
+    label: "Fitbit / Google",
+    defaultErrPct: 25,
+    defaultMode: "conservative",
+    confidence: "modérée",
+    role: "profil statistique",
+    notes: "Variabilité importante selon activité et population. Utile pour tendances."
+  }
+};
+
+  function applyBrandPreset(brandKey, force = false) {
+  const p = WATCH_ESTIMATION_PROFILES[brandKey] || WATCH_ESTIMATION_PROFILES.custom;
+
+  const infoEl = document.getElementById("watchProfileInfo");
+
+  if (infoEl) {
+  const lines = [
+    `Profil : ${p.role || "repère initial"}`,
+    `Niveau de confiance : ${p.confidence || "variable"}`,
+    "",
+    p.notes || "Aucune information complémentaire."
+  ];
+  infoEl.setAttribute("data-modaltext", lines.join("\n"));
+}
+
+  if (force) {
+    $("errPct").value = p.defaultErrPct;
+    $("errMode").value = p.defaultMode;
+  }
+}
+
+  function setPositioningCopy(mode) {
+    const el = $("positioningText");
+    if (!el) return;
+
+    if (mode === "sport") {
+      el.textContent =
+        "Mode sportif : vise la soutenabilité. Déficit trop fort + charge élevée = fatigue/perf.";
+      return;
+    }
+    if (mode === "expert") {
+      el.textContent =
+        "Mode expert : lis la donnée comme un signal bruité. Compare surtout sur 7 jours et vérifie les garde-fous.";
+      return;
+    }
+    el.textContent =
+      "Mode simple : cohérence sur 7 jours, pas perfection au jour le jour. Écran simplifié.";
+  }
+
+  function applyUseMode(mode) {
+    const m = (mode === "sport" || mode === "expert") ? mode : "simple";
+    document.body.setAttribute("data-usemode", m);
+
+    setPositioningCopy(m);
+
+    // ouvrir "Limites" seulement en expert
+    const det = $("limitsDetails");
+    if (det) det.open = (m === "expert");
+  }
+
+  /* ================== presets régime (objectif% + macros) ================== */
+  const DIET_PRESETS = {
+    cut_standard:   { label:"Standard (sportif)",     goalPct: 85,  protPerKg: 1.9, fatPerKg: 0.9 },
+    cut_aggressive: { label:"Agressif (court terme)", goalPct: 75,  protPerKg: 2.2, fatPerKg: 0.8 },
+    recomp:         { label:"Recomposition (léger déficit)",   goalPct: 92,  protPerKg: 1.8, fatPerKg: 0.9 },
+    maintain:       { label:"Maintien / équilibre",           goalPct: 100, protPerKg: 1.6, fatPerKg: 1.0 },
+    endurance:      { label:"Performance endurance",          goalPct: 95,  protPerKg: 1.7, fatPerKg: 0.9 }
+  };
+
+  function dietLabel(mode) {
+    if (!mode) return "-";
+    if (mode === "custom") return "Personnalisé";
+    return DIET_PRESETS[mode]?.label || mode;
+  }
+
+  function setDietNote(mode, changed=false) {
+    if (mode === "custom") {
+      $("dietNote").textContent = changed
+        ? "Preset modifié → mode Personnalisé (tes valeurs restent telles quelles)."
+        : "Mode personnalisé : tu contrôles objectif (%) + prot/lip manuellement.";
+      return;
+    }
+    const p = DIET_PRESETS[mode];
+    if (!p) { $("dietNote").textContent = "Preset sélectionné."; return; }
+    $("dietNote").textContent = `Preset sélectionné (${p.label}) — tu peux l’ajuster : toute modification bascule en Personnalisé.`;
+  }
+
+  function applyDietPreset(mode) {
+    if (mode === "custom") { setDietNote("custom", false); return; }
+    const p = DIET_PRESETS[mode];
+    if (!p) return;
+
+    $("goalPct").value   = p.goalPct;
+    $("protPerKg").value = p.protPerKg;
+    $("fatPerKg").value  = p.fatPerKg;
+
+    setDietNote(mode, false);
+  }
+
+  function forceCustomIfPresetEdited() {
+    const mode = $("dietMode").value;
+    if (mode === "custom") return;
+    $("dietMode").value = "custom";
+    setDietNote("custom", true);
+  }
+  /* ======================================================================== */
+
+  /* ✅ Badge régime */
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+  function makeDietBadge(dietMode, goalPct) {
+    const label = dietLabel(dietMode);
+    const pct = Number.isFinite(goalPct) ? Math.round(goalPct) : "-";
+    return `<span class="pill"><b>${escapeHtml(label)}</b> ${pct}%</span>`;
+  }
+
+  const PROFILES_KEY = "secheapp.profiles.v1";
+  const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
+
+  function slugProfile(name) {
+    return String(name ?? "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9\-_]/g, "")
+      .slice(0, 40);
+  }
+
+  function loadProfiles() {
+    try { return JSON.parse(localStorage.getItem(PROFILES_KEY) || "[]"); }
+    catch { return []; }
+  }
+  function saveProfiles(list) { localStorage.setItem(PROFILES_KEY, JSON.stringify(list)); }
+  function getActiveProfile() { return localStorage.getItem(ACTIVE_PROFILE_KEY) || ""; }
+  function setActiveProfile(id) { localStorage.setItem(ACTIVE_PROFILE_KEY, id); }
+
+  function ensureDefaultProfile() {
+    let profiles = loadProfiles();
+    if (profiles.length === 0) {
+      profiles = [{ id: "default", label: "default" }];
+      saveProfiles(profiles);
+      setActiveProfile("default");
+    }
+    if (!getActiveProfile()) setActiveProfile(profiles[0].id);
+  }
+
+  function refreshProfileSelect() {
+    const sel = $("profileSelect");
+    if (!sel) return;
+    const profiles = loadProfiles();
+    const active = getActiveProfile();
+    sel.innerHTML = "";
+    for (const p of profiles) {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = p.label;
+      if (p.id === active) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  }
+
+  function daysKeyFor(profileId) { return `secheapp.${profileId}.days.v6`; }
+  function settingsKeyFor(profileId) { return `secheapp.${profileId}.settings.v2`; }
+  function DAYS_KEY() { return daysKeyFor(getActiveProfile() || "default"); }
+  function SETTINGS_KEY() { return settingsKeyFor(getActiveProfile() || "default"); }
+
+  function createOrActivateProfile(label) {
+    const cleanLabel = String(label ?? "").trim();
+    if (!cleanLabel) return;
+    const id = slugProfile(cleanLabel) || "profile";
+    let profiles = loadProfiles();
+    if (!profiles.find(p => p.id === id)) {
+      profiles.push({ id, label: cleanLabel });
+      saveProfiles(profiles);
+    }
+    setActiveProfile(id);
+    refreshProfileSelect();
+    loadProfileSettings();
+    refreshDaySelect();
+    renderDaysHistory();
+    renderMealsTable(getSelectedDate());
+    updateBodyCompUI(getSelectedDate());
+    compute(true);
+  }
+
+  function deleteActiveProfile() {
+    const active = getActiveProfile();
+    if (active === "default") { alert("Le profil 'default' ne peut pas être supprimé."); return; }
+    localStorage.removeItem(daysKeyFor(active));
+    localStorage.removeItem(settingsKeyFor(active));
+    let profiles = loadProfiles().filter(p => p.id !== active);
+    saveProfiles(profiles);
+    const next = profiles[0]?.id || "default";
+    setActiveProfile(next);
+    refreshProfileSelect();
+    loadProfileSettings();
+    refreshDaySelect();
+    renderDaysHistory();
+    renderMealsTable(getSelectedDate());
+    updateBodyCompUI(getSelectedDate());
+    compute(true);
+  }
+
+  function saveProfileSettings() {
+    const payload = {
+      sex: $("sex").value,
+      age: toNum($("age").value),
+      height: toNum($("height").value),
+      weight: toNum($("weight").value),
+
+      watchBrand: $("watchBrand").value,
+      montre: toNum($("montre").value),
+      errPct: toNum($("errPct").value),
+      errMode: $("errMode").value,
+
+      dietMode: $("dietMode").value,
+      goalPct: toNum($("goalPct").value),
+
+      protPerKg: toNum($("protPerKg").value),
+      fatPerKg: toNum($("fatPerKg").value),
+
+      useMode: $("useMode")?.value || "simple",
+
+      updatedAt: new Date().toISOString()
+    };
+    localStorage.setItem(SETTINGS_KEY(), JSON.stringify(payload));
+  }
+
+  function loadProfileSettings() {
+    let payload = null;
+    try { payload = JSON.parse(localStorage.getItem(SETTINGS_KEY()) || "null"); } catch {}
+    if (!payload) return;
+
+    const has = (k) => Object.prototype.hasOwnProperty.call(payload, k);
+
+    if (has("sex") && payload.sex) $("sex").value = payload.sex;
+    if (has("age")) $("age").value = payload.age;
+    if (has("height")) $("height").value = payload.height;
+    if (has("weight")) $("weight").value = payload.weight;
+
+    if (has("watchBrand") && payload.watchBrand) $("watchBrand").value = payload.watchBrand;
+    applyBrandPreset($("watchBrand").value, false);
+
+    if (has("montre")) $("montre").value = payload.montre;
+    if (has("errPct")) $("errPct").value = payload.errPct;
+    if (has("errMode") && payload.errMode) $("errMode").value = payload.errMode;
+
+    if (has("dietMode") && payload.dietMode) $("dietMode").value = payload.dietMode;
+
+    if (has("useMode") && $("useMode")) {
+      const v = payload.useMode;
+      $("useMode").value = (v === "sport" || v === "expert") ? v : "simple";
+    }
+
+    if (has("goalPct")) $("goalPct").value = payload.goalPct;
+    if (has("protPerKg")) $("protPerKg").value = payload.protPerKg;
+    if (has("fatPerKg")) $("fatPerKg").value = payload.fatPerKg;
+
+    setDietNote($("dietMode").value, false);
+    applyUseMode($("useMode")?.value || "simple");
+  }
+
+  function isoToday() { return new Date().toISOString().slice(0,10); }
+  function getSelectedDate() {
+    const v = $("dayDate").value;
+    return v && v.length === 10 ? v : isoToday();
+  }
+
+  function loadDays() {
+    try { return JSON.parse(localStorage.getItem(DAYS_KEY()) || "[]"); }
+    catch { return []; }
+  }
+  function saveDays(days) { localStorage.setItem(DAYS_KEY(), JSON.stringify(days)); }
+  function getDay(dateStr) { return loadDays().find(d => d.date === dateStr) || null; }
+
+  function upsertDay(dayObj) {
+    const days = loadDays();
+    const idx = days.findIndex(d => d.date === dayObj.date);
+    if (idx >= 0) days[idx] = dayObj; else days.push(dayObj);
+    saveDays(days);
+    renderDaysHistory();
+    refreshDaySelect();
+  }
+
+  function refreshDaySelect() {
+    const sel = $("daySelect");
+    if (!sel) return;
+    const days = loadDays().sort((a,b) => b.date.localeCompare(a.date));
+    sel.innerHTML = "";
+    if (days.length === 0) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "(aucune journée)";
+      sel.appendChild(opt);
+      return;
+    }
+    for (const d of days) {
+      const opt = document.createElement("option");
+      opt.value = d.date;
+      opt.textContent = d.date;
+      sel.appendChild(opt);
+    }
+  }
+
+  function deleteDay(dateStr) {
+    let days = loadDays();
+    days = days.filter(d => d.date !== dateStr);
+    saveDays(days);
+    renderDaysHistory();
+    refreshDaySelect();
+  }
+
+  function exportDays() {
+    const payload = {
+      version: 6,
+      exportedAt: new Date().toISOString(),
+      profile: getActiveProfile(),
+      days: loadDays()
+    };
+    $("daysJsonBox").value = JSON.stringify(payload, null, 2);
+  }
+
+  function importDays() {
+    const text = $("daysJsonBox").value.trim();
+    if (!text) return;
+    let payload;
+    try { payload = JSON.parse(text); } catch { alert("JSON invalide"); return; }
+    if (!payload || !Array.isArray(payload.days)) { alert("Format attendu: {days:[...]}."); return; }
+    const existing = loadDays();
+    const map = new Map(existing.map(d => [d.date, d]));
+    for (const d of payload.days) {
+      if (!d.date) continue;
+      map.set(d.date, d);
+    }
+    saveDays(Array.from(map.values()));
+    renderDaysHistory();
+    refreshDaySelect();
+  }
+
+  function clearDays() {
+    localStorage.removeItem(DAYS_KEY());
+    renderDaysHistory();
+    refreshDaySelect();
+  }
+
+  function normalizeMeal(m) {
+    return {
+      id: m.id || (crypto.randomUUID?.() ?? (`m_${Date.now()}_${Math.random().toString(16).slice(2)}`)),
+      name: String(m.name ?? "").trim(),
+      k: Math.max(0, toNum(m.k)),
+      p: Math.max(0, toNum(m.p)),
+      c: Math.max(0, toNum(m.c)),
+      f: Math.max(0, toNum(m.f)),
+      createdAt: m.createdAt || new Date().toISOString()
+    };
+  }
+
+  function getMealsForDay(dateStr) {
+    const d = getDay(dateStr);
+    return Array.isArray(d?.meals) ? d.meals.map(normalizeMeal) : [];
+  }
+
+  function setMealsForDay(dateStr, meals) {
+    const existing = getDay(dateStr) || { date: dateStr };
+    const dayObj = { ...existing, date: dateStr, meals: meals.map(normalizeMeal), updatedAt: new Date().toISOString() };
+    upsertDay(dayObj);
+  }
+
+  function mealsTotals(meals) {
+    return meals.reduce((acc, m) => {
+      acc.k += toNum(m.k); acc.p += toNum(m.p); acc.c += toNum(m.c); acc.f += toNum(m.f);
+      return acc;
+    }, {k:0,p:0,c:0,f:0});
+  }
+
+  function syncEatenFromMeals(dateStr) {
+    const meals = getMealsForDay(dateStr);
+    const t = mealsTotals(meals);
+    $("eatenKcal").value = round(t.k, 0);
+    $("eatenP").value = round(t.p, 1);
+    $("eatenC").value = round(t.c, 1);
+    $("eatenF").value = round(t.f, 1);
+    return t;
+  }
+
+  function renderMealsTable(dateStr) {
+    const meals = getMealsForDay(dateStr).sort((a,b) => (a.createdAt||"").localeCompare(b.createdAt||""));
+    const wrap = $("mealsTableWrap");
+
+    if (meals.length === 0) {
+      wrap.innerHTML = `<p class="muted">Aucun repas encodé pour cette journée.</p>`;
+      syncEatenFromMeals(dateStr);
+      return;
+    }
+
+    wrap.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="text-align:left">Repas</th><th>kcal</th><th>P</th><th>G</th><th>L</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            ${meals.map(m => `
+              <tr data-mealid="${m.id}">
+                <td class="td-left"><input data-field="name" value="${escapeHtml(m.name)}" /></td>
+                <td><input data-field="k" type="number" min="0" step="1" value="${round(m.k,0)}" /></td>
+                <td><input data-field="p" type="number" min="0" step="0.1" value="${round(m.p,1)}" /></td>
+                <td><input data-field="c" type="number" min="0" step="0.1" value="${round(m.c,1)}" /></td>
+                <td><input data-field="f" type="number" min="0" step="0.1" value="${round(m.f,1)}" /></td>
+                <td><button class="btn-mini btn-danger" data-action="del" type="button">Suppr.</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    wrap.querySelectorAll("input").forEach(inp => {
+      inp.addEventListener("change", () => {
+        const tr = inp.closest("tr");
+        const id = tr.getAttribute("data-mealid");
+        const field = inp.getAttribute("data-field");
+        const mealsNow = getMealsForDay(dateStr);
+        const idx = mealsNow.findIndex(x => x.id === id);
+        if (idx < 0) return;
+
+        const updated = { ...mealsNow[idx] };
+        if (field === "name") updated.name = inp.value;
+        else updated[field] = toNum(inp.value);
+
+        mealsNow[idx] = normalizeMeal(updated);
+        setMealsForDay(dateStr, mealsNow);
+        syncEatenFromMeals(dateStr);
+        compute(true);
+      });
+    });
+
+    wrap.querySelectorAll("button[data-action='del']").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tr = btn.closest("tr");
+        const id = tr.getAttribute("data-mealid");
+        const mealsNow = getMealsForDay(dateStr).filter(x => x.id !== id);
+        setMealsForDay(dateStr, mealsNow);
+        renderMealsTable(dateStr);
+        compute(true);
+      });
+    });
+
+    syncEatenFromMeals(dateStr);
+  }
+
+  function addMealFromInputs() {
+    const dateStr = getSelectedDate();
+    $("dayDate").value = dateStr;
+
+    const name = $("mealName").value.trim() || "Repas";
+    const m = normalizeMeal({
+      name,
+      k: toNum($("mealK").value),
+      p: toNum($("mealP").value),
+      c: toNum($("mealC").value),
+      f: toNum($("mealF").value),
+      createdAt: new Date().toISOString()
+    });
+
+    const mealsNow = getMealsForDay(dateStr);
+    mealsNow.push(m);
+    setMealsForDay(dateStr, mealsNow);
+
+    $("mealName").value = "";
+    $("mealK").value = 0; $("mealP").value = 0; $("mealC").value = 0; $("mealF").value = 0;
+
+    renderMealsTable(dateStr);
+    compute(true);
+  }
+
+  function clearMealsForDay() {
+    const dateStr = getSelectedDate();
+    if (!confirm(`Vider tous les repas de la journée ${dateStr} ?`)) return;
+    $("dayDate").value = dateStr;
+    setMealsForDay(dateStr, []);
+    renderMealsTable(dateStr);
+    compute(true);
+  }
+
+  function applyPer100ToMeal() {
+    const k100 = toNum($("qKcal100")?.value);
+    const g    = toNum($("qWeight")?.value);
+    const p100 = toNum($("qP100")?.value);
+    const c100 = toNum($("qC100")?.value);
+    const f100 = toNum($("qF100")?.value);
+
+    if (k100 > 0 && g > 0) $("mealK").value = round(k100 * g / 100, 0);
+    if (p100 > 0 && g > 0) $("mealP").value = round(p100 * g / 100, 1);
+    if (c100 > 0 && g > 0) $("mealC").value = round(c100 * g / 100, 1);
+    if (f100 > 0 && g > 0) $("mealF").value = round(f100 * g / 100, 1);
+  }
+
+  function computeWeightStats(dateStr, daysArr) {
+    const sorted = [...daysArr].sort((a,b)=>a.date.localeCompare(b.date));
+    const eligible = sorted.filter(d => d.date <= dateStr && toNum(d.morningWeight) > 0);
+    const last7 = eligible.slice(-7);
+
+    if (last7.length === 0) return { avg7:null, wkVar:null };
+
+    const avg7 = last7.reduce((s,d)=>s + toNum(d.morningWeight), 0) / last7.length;
+
+    const prevPool = eligible.slice(0, Math.max(0, eligible.length - last7.length));
+    const prev7 = prevPool.slice(-7);
+    let wkVar = null;
+    if (prev7.length >= 3) {
+      const prevAvg = prev7.reduce((s,d)=>s + toNum(d.morningWeight), 0) / prev7.length;
+      wkVar = ((avg7 - prevAvg) / prevAvg) * 100;
+    }
+    return { avg7, wkVar };
+  }
+
+  function safeNum(v) {
+    const n = toNum(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function getDayEatenKcal(dayObj) {
+    if (dayObj?.eaten && Number.isFinite(toNum(dayObj.eaten.k))) return safeNum(dayObj.eaten.k);
+    if (Array.isArray(dayObj?.meals)) {
+      return dayObj.meals.reduce((s,m)=> s + safeNum(m?.k), 0);
+    }
+    return 0;
+  }
+
+  function compute7dEnergyTrend(dateStr, daysArr) {
+    const sorted = [...daysArr].sort((a,b)=>a.date.localeCompare(b.date));
+    const eligible = sorted.filter(d => d.date <= dateStr);
+    const last7 = eligible.slice(-7);
+
+    if (last7.length === 0) {
+      return {
+        n: 0,
+        spendAvg: null,
+        eatAvg: null,
+        defAvg: null,
+        projWkKg: null,
+        quality: { days:0, spendDays:0, eatDays:0, weightDays:0 },
+        theoWkKg: null,
+        realWkKg: null
+      };
+    }
+
+    let spendSum = 0, spendDays = 0;
+    let eatSum = 0, eatDays = 0;
+    let weightDays = 0;
+
+    for (const d of last7) {
+      const spend = safeNum(d?.montreAdjusted);
+      if (spend > 0) { spendSum += spend; spendDays++; }
+
+      const eatenK = getDayEatenKcal(d);
+      const hasMeals = Array.isArray(d?.meals) && d.meals.length > 0;
+      if (hasMeals || eatenK > 0) { eatSum += eatenK; eatDays++; }
+
+      if (safeNum(d?.morningWeight) > 0) weightDays++;
+    }
+
+    const spendAvg = spendDays ? (spendSum / spendDays) : null;
+    const eatAvg   = eatDays ? (eatSum / eatDays) : null;
+    const defAvg   = (spendAvg != null && eatAvg != null) ? (spendAvg - eatAvg) : null;
+
+    const projWkKg = (defAvg != null) ? ((defAvg * 7) / 7700) : null;
+
+    const eligibleWithWeight = sorted.filter(d => d.date <= dateStr && safeNum(d?.morningWeight) > 0);
+    const last14w = eligibleWithWeight.slice(-14);
+
+    let realWkKg = null;
+    if (last14w.length >= 10) {
+      const second7 = last14w.slice(-7);
+      const first7  = last14w.slice(0, last14w.length - 7).slice(-7);
+
+      const avgA = second7.reduce((s,d)=> s + safeNum(d.morningWeight), 0) / second7.length;
+      const avgB = first7.reduce((s,d)=> s + safeNum(d.morningWeight), 0) / first7.length;
+
+      realWkKg = (avgA - avgB);
+    }
+
+    return {
+      n: last7.length,
+      spendAvg, eatAvg, defAvg,
+      projWkKg,
+      quality: { days:last7.length, spendDays, eatDays, weightDays },
+      theoWkKg: projWkKg,
+      realWkKg
+    };
+  }
+
+  function render7dEnergyTrendUI(dateStr) {
+    const elSpend = $("avg7SpendKcal");
+    const elEat   = $("avg7EatKcal");
+    const elDef   = $("avg7DefKcal");
+    const elProj  = $("projWkKg");
+    const elCmp   = $("deltaRealVsTheo");
+    const elQual  = $("dataQuality7");
+    const elNote  = $("trend7Note");
+
+    if (!elSpend || !elEat || !elDef || !elProj || !elCmp || !elQual || !elNote) return;
+
+    const daysArr = loadDays();
+    const t = compute7dEnergyTrend(dateStr, daysArr);
+
+    if (t.n === 0) {
+      elSpend.value = "-";
+      elEat.value   = "-";
+      elDef.value   = "-";
+      elProj.value  = "-";
+      elCmp.value   = "-";
+      elQual.value  = "-";
+      elNote.textContent = "Aucune donnée exploitable pour la tendance 7j.";
+      return;
+    }
+
+    elSpend.value = (t.spendAvg == null) ? "-" : Math.round(t.spendAvg);
+    elEat.value   = (t.eatAvg == null)   ? "-" : Math.round(t.eatAvg);
+    elDef.value   = (t.defAvg == null)   ? "-" : Math.round(t.defAvg);
+
+    elProj.value  = (t.projWkKg == null) ? "-" : (round(t.projWkKg, 2) + " kg/sem");
+
+    if (t.realWkKg == null || t.theoWkKg == null) {
+      elCmp.value = "-";
+    } else {
+      const real = t.realWkKg;
+      const theo = t.theoWkKg;
+      const gap  = real - theo;
+      elCmp.value = `réel ${round(real,2)} vs théorique ${round(theo,2)} (écart ${round(gap,2)})`;
+    }
+
+    elQual.value = `${t.quality.days}j | dépense:${t.quality.spendDays}/7 | repas:${t.quality.eatDays}/7 | poids:${t.quality.weightDays}/7`;
+
+    let msg = "Lecture : compare surtout sur 7 jours. La dépense montre est un signal bruité.";
+    if (t.quality.eatDays < 5) msg += " ⚠️ Peu de jours avec repas encodés → tendance calories moins fiable.";
+    if (t.quality.spendDays < 5) msg += " ⚠️ Peu de jours avec dépense corrigée → tendance dépense moins fiable.";
+    if (t.quality.weightDays < 4) msg += " ⚠️ Peu de poids → comparaison réel/théorique fragile.";
+
+    elNote.textContent = msg;
+  }
+
+  function updateBodyCompUI(dateStr) {
+    const d = getDay(dateStr);
+    const mw = $("morningWeight");
+    if (mw) mw.value = (toNum(d?.morningWeight) > 0) ? d.morningWeight : "";
+
+    const fp = $("fatPct"); const mp = $("musclePct"); const bk = $("boneKg");
+    if (fp) fp.value = (toNum(d?.fatPct) > 0) ? d.fatPct : "";
+    if (mp) mp.value = (toNum(d?.musclePct) > 0) ? d.musclePct : "";
+    if (bk) bk.value = (toNum(d?.boneKg) > 0) ? d.boneKg : "";
+
+    const daysArr = loadDays();
+    const { avg7, wkVar } = computeWeightStats(dateStr, daysArr);
+
+    const a7 = $("avg7Weight"); const wv = $("wkVarPct");
+    if (a7) a7.value = (avg7==null) ? "-" : round(avg7, 2);
+    if (wv) wv.value = (wkVar==null) ? "-" : (round(wkVar, 2) + " %");
+
+    const hCm = toNum($("height").value);
+    const hM = hCm > 0 ? hCm / 100 : 0;
+    const wMorning = toNum($("morningWeight")?.value);
+    const wProfile = toNum($("weight").value);
+    const wUsed = (wMorning > 0) ? wMorning : wProfile;
+
+    let bmi = null;
+    if (hM > 0 && wUsed > 0) bmi = wUsed / (hM * hM);
+
+    const bwu = $("bmiWeightUsed"); const bv = $("bmiVal"); const bc = $("bmiCat");
+    if (bwu) bwu.value = (wUsed > 0) ? round(wUsed,1) + " kg" : "-";
+    if (bv) bv.value = (bmi==null) ? "-" : round(bmi, 1);
+    if (bc) bc.value = (bmi==null) ? "-" : bmiCategory(bmi);
+
+    render7dEnergyTrendUI(dateStr);
+  }
+
+  function saveBodyCompForDay(dateStr) {
+    const existing = getDay(dateStr) || { date: dateStr };
+    const dayObj = {
+      ...existing,
+      date: dateStr,
+      morningWeight: (toNum($("morningWeight")?.value) > 0) ? toNum($("morningWeight").value) : null,
+      fatPct: (toNum($("fatPct")?.value) > 0) ? toNum($("fatPct").value) : null,
+      musclePct: (toNum($("musclePct")?.value) > 0) ? toNum($("musclePct").value) : null,
+      boneKg: (toNum($("boneKg")?.value) > 0) ? toNum($("boneKg").value) : null,
+      updatedAt: new Date().toISOString()
+    };
+    upsertDay(dayObj);
+  }
+
+  function renderDaysHistory() {
+    const box = $("daysHistory");
+    if (!box) return;
+
+    const days = loadDays().sort((a,b) => b.date.localeCompare(a.date));
+    if (days.length === 0) {
+      box.innerHTML = "<p class='muted'>Aucune journée enregistrée (profil actif).</p>";
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Poids</th>
+              <th>Montre</th>
+              <th>Dépense corrigée</th>
+              <th>Régime</th>
+              <th>Objectif %</th>
+              <th>Cible kcal</th>
+              <th>Repas</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${days.map(d => {
+              const goal = (d.goalPct != null) ? d.goalPct : 0;
+              return `
+                <tr>
+                  <td>${d.date}</td>
+                  <td>${(toNum(d.morningWeight)>0) ? round(d.morningWeight,1) : "-"}</td>
+                  <td>${Math.round(d.montreRaw ?? 0)}</td>
+                  <td>${Math.round(d.montreAdjusted ?? 0)}</td>
+                  <td>${escapeHtml(dietLabel(d.dietMode))}</td>
+                  <td>${Math.round(goal ?? 0)}%</td>
+                  <td>${Math.round(d.targetKcal ?? 0)}</td>
+                  <td>${Array.isArray(d.meals) ? d.meals.length : 0}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function loadDayIntoForm(dateStr) {
+    const d = getDay(dateStr);
+    if (!d) return;
+    $("dayDate").value = d.date;
+
+    if (d.watchBrand) $("watchBrand").value = d.watchBrand;
+    applyBrandPreset($("watchBrand").value, false);
+
+    if (d.montreRaw != null) $("montre").value = d.montreRaw;
+    if (d.errPct != null) $("errPct").value = d.errPct;
+    if (d.errMode) $("errMode").value = d.errMode;
+
+    if (d.dietMode) $("dietMode").value = d.dietMode;
+
+    if (d.goalPct != null) $("goalPct").value = d.goalPct;
+    if (d.protPerKg != null) $("protPerKg").value = d.protPerKg;
+    if (d.fatPerKg != null) $("fatPerKg").value = d.fatPerKg;
+
+    setDietNote($("dietMode").value, false);
+
+    renderMealsTable(d.date);
+    updateBodyCompUI(d.date);
+    compute(true);
+  }
+
+  function compute(saveToJournal=true, scrollToResults=false) {
+    const sex = $("sex").value;
+    const age = toNum($("age").value);
+    const h = toNum($("height").value);
+    const w = toNum($("weight").value);
+
+    const montre = toNum($("montre").value);
+    const errPct = Math.max(0, toNum($("errPct").value));
+    const errMode = $("errMode").value;
+
+    const dietMode = $("dietMode").value;
+
+    const goalPctRaw = toNum($("goalPct").value);
+    const goalPct = clamp(goalPctRaw, 60, 130);
+    if (goalPct !== goalPctRaw) $("goalPct").value = goalPct;
+
+    const protPerKg = Math.max(0, toNum($("protPerKg").value));
+    const fatPerKg  = Math.max(0, toNum($("fatPerKg").value));
+
+    const dateForDay = getSelectedDate();
+    $("dayDate").value = dateForDay;
+
+    const eaten = syncEatenFromMeals(dateForDay);
+    const eatenK = eaten.k, eatenP = eaten.p, eatenC = eaten.c, eatenF = eaten.f;
+
+    const errFactor = errPct / 100;
+    let montreAdjusted = montre;
+    if (errMode === "conservative") montreAdjusted = montre * (1 - errFactor);
+    if (errMode === "optimistic")   montreAdjusted = montre * (1 + errFactor);
+
+    const targetKcal = montreAdjusted * (goalPct/100);
+
+    const targetP = protPerKg * w;
+    const targetF = fatPerKg  * w;
+    const kcalFromPF = (targetP * 4) + (targetF * 9);
+    const kcalLeftForC = targetKcal - kcalFromPF;
+
+    const targetCraw = kcalLeftForC / 4;
+    const targetCshow = Math.max(0, targetCraw);
+
+    const remK = targetKcal - eatenK;
+    const remP = targetP - eatenP;
+    const remC = targetCraw - eatenC;
+    const remF = targetF - eatenF;
+
+    const remKShow = Math.max(0, remK);
+    const remPShow = Math.max(0, remP);
+    const remCShow = Math.max(0, remC);
+    const remFShow = Math.max(0, remF);
+
+    const bmr = mifflinStJeor(sex, w, h, age);
+    updateBodyCompUI(dateForDay);
+
+    $("out").style.display = "block";
+if (scrollToResults) {
+  $("out").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+    const kpis = $("kpis");
+    kpis.innerHTML = "";
+    const mk = (title, value, cls="") => {
+      const d = document.createElement("div");
+      if (cls) d.className = cls;
+      d.innerHTML = `<b>${title}</b>${value}`;
+      return d;
+    };
+
+    const dietBadge = makeDietBadge(dietMode, goalPct);
+
+    kpis.appendChild(mk("Régime", dietBadge));
+    kpis.appendChild(mk("Objectif (%)", round(goalPct,0) + "%"));
+    kpis.appendChild(mk("Montre saisie (kcal)", round(montre,0)));
+    kpis.appendChild(mk("Dépense corrigée (kcal)", round(montreAdjusted,0), "warn"));
+    kpis.appendChild(mk("Cible (kcal)", round(targetKcal,0), "ok"));
+
+    const bmrKpi = mk("BMR estimé (kcal)", round(bmr,0));
+    bmrKpi.setAttribute("data-um","expert");
+    kpis.appendChild(bmrKpi);
+
+    $("tK").textContent = round(targetKcal, 0);
+    $("tP").textContent = round(targetP, 1);
+    $("tC").textContent = round(targetCshow, 1);
+    $("tF").textContent = round(targetF, 1);
+
+    $("eK").textContent  = round(eatenK, 0);
+    $("eP2").textContent = round(eatenP, 1);
+    $("eC2").textContent = round(eatenC, 1);
+    $("eF2").textContent = round(eatenF, 1);
+
+    $("rK").textContent = round(remKShow, 0);
+    $("rP").textContent = round(remPShow, 1);
+    $("rC").textContent = round(remCShow, 1);
+    $("rF").textContent = round(remFShow, 1);
+
+    let note = `Objectif appliqué: ${round(goalPct,0)}% de la dépense corrigée. Mode erreur: ${errMode} (±${round(errPct,0)}%).`;
+    if (kcalLeftForC < 0) {
+      note += " ⚠️ Protéines + lipides dépassent les calories cibles → glucides affichés clampés à 0. Réduis prot/lip ou augmente l’objectif (%).";
+    }
+    $("notes").textContent = note;
+
+    if (saveToJournal) {
+      const existing = getDay(dateForDay) || { date: dateForDay };
+      const meals = getMealsForDay(dateForDay);
+
+      const dayObj = {
+        ...existing,
+        date: dateForDay,
+
+        watchBrand: $("watchBrand").value,
+        montreRaw: montre,
+        montreAdjusted,
+        errPct,
+        errMode,
+
+        dietMode: dietMode,
+        goalPct,
+
+        protPerKg,
+        fatPerKg,
+
+        meals,
+        eaten: { k: eatenK, p: eatenP, c: eatenC, f: eatenF },
+
+        targetKcal, targetP, targetC: targetCraw, targetF,
+        remaining: { k: remK, p: remP, c: remC, f: remF },
+
+        morningWeight: (toNum($("morningWeight")?.value) > 0) ? toNum($("morningWeight").value) : (existing.morningWeight ?? null),
+        fatPct: (toNum($("fatPct")?.value) > 0) ? toNum($("fatPct").value) : (existing.fatPct ?? null),
+        musclePct: (toNum($("musclePct")?.value) > 0) ? toNum($("musclePct").value) : (existing.musclePct ?? null),
+        boneKg: (toNum($("boneKg")?.value) > 0) ? toNum($("boneKg").value) : (existing.boneKg ?? null),
+
+        bmr,
+        updatedAt: new Date().toISOString()
+      };
+
+      upsertDay(dayObj);
+      saveProfileSettings();
+    }
+
+    applyUseMode($("useMode")?.value || "simple");
+  }
+  /* =========================
+     ✅ Cloud sync (pull/push)
+     ========================= */
+
+  function setCloudStatus(msg){
+    const el = $("cloudStatus");
+    if (el) el.textContent = "Statut : " + msg;
+  }
+
+  async function cloudGetUser(){
+    if (!supa) return null;
+    const { data, error } = await supa.auth.getUser();
+    if (error) return null;
+    return data?.user || null;
+  }
+
+  function buildLocalSnapshot(profileId){
+    // Snapshot minimal : settings + days + meta
+    let settings = null;
+    try { settings = JSON.parse(localStorage.getItem(settingsKeyFor(profileId)) || "null"); } catch {}
+    let days = [];
+    try { days = JSON.parse(localStorage.getItem(daysKeyFor(profileId)) || "[]"); } catch { days = []; }
+
+    return {
+      schemaVersion: 1,
+      profileId,
+      settings: settings || null,
+      days: Array.isArray(days) ? days : [],
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function writeSnapshotToLocal(snapshot){
+    const profileId = snapshot?.profileId || getActiveProfile() || "default";
+    if (snapshot?.settings) localStorage.setItem(settingsKeyFor(profileId), JSON.stringify(snapshot.settings));
+    if (Array.isArray(snapshot?.days)) localStorage.setItem(daysKeyFor(profileId), JSON.stringify(snapshot.days));
+  }
+
+  // Merge : settings "dernier updatedAt gagne" ; days merge par date ; meals merge par id
+  function mergeSnapshots(localSnap, cloudSnap){
+    if (!cloudSnap) return localSnap;
+    if (!localSnap) return cloudSnap;
+
+    const out = {
+      schemaVersion: 1,
+      profileId: localSnap.profileId || cloudSnap.profileId || "default",
+      settings: null,
+      days: [],
+      updatedAt: new Date().toISOString()
+    };
+
+    // --- settings
+    const lS = localSnap.settings;
+    const cS = cloudSnap.settings;
+    const lAt = (lS && lS.updatedAt) ? String(lS.updatedAt) : "";
+    const cAt = (cS && cS.updatedAt) ? String(cS.updatedAt) : "";
+    out.settings = (cAt > lAt) ? cS : lS;
+
+    // --- days
+    const lDays = Array.isArray(localSnap.days) ? localSnap.days : [];
+    const cDays = Array.isArray(cloudSnap.days) ? cloudSnap.days : [];
+
+    const map = new Map(); // date -> dayObj
+    for (const d of lDays) if (d?.date) map.set(d.date, d);
+    for (const d of cDays) {
+      if (!d?.date) continue;
+      const existing = map.get(d.date);
+      if (!existing) { map.set(d.date, d); continue; }
+
+      const eAt = String(existing.updatedAt || "");
+      const dAt = String(d.updatedAt || "");
+      // jour le + récent gagne, MAIS on tente un merge meals si les deux ont
+      const winner = (dAt > eAt) ? d : existing;
+      const loser  = (dAt > eAt) ? existing : d;
+
+      // merge meals par id si possible
+      const wm = Array.isArray(winner.meals) ? winner.meals : [];
+      const lm = Array.isArray(loser.meals) ? loser.meals : [];
+      const mm = new Map();
+      for (const m of lm) if (m?.id) mm.set(m.id, m);
+      for (const m of wm) if (m?.id) mm.set(m.id, m);
+      const mergedMeals = Array.from(mm.values()).sort((a,b)=> String(a.createdAt||"").localeCompare(String(b.createdAt||"")));
+
+      map.set(d.date, { ...winner, meals: mergedMeals, updatedAt: winner.updatedAt || new Date().toISOString() });
+    }
+
+    out.days = Array.from(map.values()).sort((a,b)=> String(a.date).localeCompare(String(b.date)));
+    return out;
+  }
+
+  async function cloudPull(){
+    if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
+    const user = await cloudGetUser();
+    if (!user) { setCloudStatus("Non connecté."); return; }
+
+    const profileId = getActiveProfile() || "default";
+
+    const { data, error } = await supa
+      .from("cloud_profiles")
+      .select("payload, updated_at")
+      .eq("user_id", user.id)
+      .eq("profile_id", profileId)
+      .maybeSingle();
+
+    if (error) { setCloudStatus("Erreur pull : " + error.message); return; }
+    if (!data?.payload) { setCloudStatus("Aucune sauvegarde cloud pour ce profil."); return; }
+
+    // merge cloud -> local
+    const localSnap = buildLocalSnapshot(profileId);
+    const cloudSnap = data.payload;
+    const merged = mergeSnapshots(localSnap, cloudSnap);
+
+    writeSnapshotToLocal(merged);
+
+    // refresh UI
+    loadProfileSettings();
+    refreshDaySelect();
+    renderDaysHistory();
+    renderMealsTable(getSelectedDate());
+    updateBodyCompUI(getSelectedDate());
+    compute(true);
+
+    setCloudStatus("Pull OK (cloud → local).");
+  }
+
+  async function cloudPush(){
+    if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
+    const user = await cloudGetUser();
+    if (!user) { setCloudStatus("Non connecté."); return; }
+
+    const profileId = getActiveProfile() || "default";
+    const localSnap = buildLocalSnapshot(profileId);
+
+    const row = {
+      user_id: user.id,
+      profile_id: profileId,
+      payload: localSnap,
+      updated_at: new Date().toISOString()
+    };
+
+    const { error } = await supa
+      .from("cloud_profiles")
+      .upsert(row, { onConflict: "user_id,profile_id" });
+
+    if (error) { setCloudStatus("Erreur push : " + error.message); return; }
+
+    setCloudStatus("Push OK (local → cloud).");
+  }
+
+  async function cloudSync(){
+    if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
+    const user = await cloudGetUser();
+    if (!user) { setCloudStatus("Non connecté."); return; }
+
+    const profileId = getActiveProfile() || "default";
+
+    // pull
+    const { data, error } = await supa
+      .from("cloud_profiles")
+      .select("payload")
+      .eq("user_id", user.id)
+      .eq("profile_id", profileId)
+      .maybeSingle();
+
+    if (error) { setCloudStatus("Erreur pull : " + error.message); return; }
+
+    const localSnap = buildLocalSnapshot(profileId);
+    const cloudSnap = data?.payload || null;
+
+    const merged = mergeSnapshots(localSnap, cloudSnap);
+
+    // write local
+    writeSnapshotToLocal(merged);
+
+    // push merged
+    const row = {
+      user_id: user.id,
+      profile_id: profileId,
+      payload: merged,
+      updated_at: new Date().toISOString()
+    };
+
+    const { error: pushErr } = await supa
+      .from("cloud_profiles")
+      .upsert(row, { onConflict: "user_id,profile_id" });
+
+    if (pushErr) { setCloudStatus("Merge OK mais push KO : " + pushErr.message); return; }
+
+    // refresh UI
+    loadProfileSettings();
+    refreshDaySelect();
+    renderDaysHistory();
+    renderMealsTable(getSelectedDate());
+    updateBodyCompUI(getSelectedDate());
+    compute(true);
+
+    setCloudStatus("Sync OK (Pull → Merge → Push).");
+  }
+
+  async function cloudLoginWithEmail(email){
+    if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
+    const e = String(email||"").trim();
+    if (!e) { setCloudStatus("Entre un email."); return; }
+
+    const { error } = await supa.auth.signInWithOtp({
+      email: e,
+      options: {
+        // IMPORTANT : tu dois autoriser cette URL dans Supabase Auth Redirect URLs
+        emailRedirectTo: window.location.href
+      }
+    });
+
+    if (error) { setCloudStatus("Erreur login : " + error.message); return; }
+    setCloudStatus("Lien envoyé. Ouvre tes emails et clique le lien.");
+  }
+
+  async function cloudLogout(){
+    if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
+    await supa.auth.signOut();
+    setCloudStatus("Déconnecté (local uniquement).");
+  }
+
+
+  /* ---------------- Events ---------------- */
+  $("btnCreateProfile")?.addEventListener("click", () => createOrActivateProfile($("profileName").value));
+  $("btnDeleteProfile")?.addEventListener("click", deleteActiveProfile);
+
+  $("watchBrand").addEventListener("change", () => {
+    applyBrandPreset($("watchBrand").value, true);
+    saveProfileSettings();
+    compute(true);
+  });
+
+  $("profileSelect")?.addEventListener("change", (e) => {
+    setActiveProfile(e.target.value);
+    loadProfileSettings();
+    $("dayDate").value = isoToday();
+    refreshDaySelect();
+    renderDaysHistory();
+    renderMealsTable(getSelectedDate());
+    updateBodyCompUI(getSelectedDate());
+    compute(true);
+  });
+
+  $("dietMode").addEventListener("change", () => {
+    const mode = $("dietMode").value;
+    if (mode !== "custom") applyDietPreset(mode);
+    else setDietNote("custom", false);
+    saveProfileSettings();
+    compute(true);
+  });
+
+  $("useMode").addEventListener("change", () => {
+    applyUseMode($("useMode").value);
+    saveProfileSettings();
+    compute(true);
+  });
+
+function isSportOrExpert(){
+  const m = document.body.getAttribute("data-usemode");
+  return (m === "sport" || m === "expert");
+}
+
+function openWatchInfoModal(text){
+  const modal = $("watchInfoModal");
+  const body  = $("watchInfoBody");
+  if (!modal || !body) return;
+  body.textContent = text || "Aucune information.";
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeWatchInfoModal(){
+  const modal = $("watchInfoModal");
+  if (!modal) return;
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+$("watchProfileInfo")?.addEventListener("click", (e) => {
+  if (!isSportOrExpert()) return; // ✅ modale en sport + expert
+  const text = e.currentTarget.getAttribute("data-modaltext") || "";
+  openWatchInfoModal(text);
+});
+
+// Esc pour fermer
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeWatchInfoModal();
+});
+
+  ["goalPct","protPerKg","fatPerKg"].forEach(id => {
+    $(id).addEventListener("change", () => {
+      forceCustomIfPresetEdited();
+      saveProfileSettings();
+      compute(true);
+    });
+  });
+
+  $("calcBtn").addEventListener("click", () => compute(true, true));
+$("calcSpendBtn").addEventListener("click", () => compute(true, true));
+
+  $("btnAddMeal").addEventListener("click", addMealFromInputs);
+  $("btnClearMeals").addEventListener("click", clearMealsForDay);
+  $("btnApplyPer100")?.addEventListener("click", applyPer100ToMeal);
+
+  $("btnLoadDay")?.addEventListener("click", () => {
+    const date = $("daySelect").value;
+    if (date) loadDayIntoForm(date);
+  });
+
+  $("btnDeleteDay")?.addEventListener("click", () => {
+    const date = $("daySelect").value;
+    if (!date) return;
+    deleteDay(date);
+    renderMealsTable(getSelectedDate());
+    updateBodyCompUI(getSelectedDate());
+    compute(true);
+  });
+
+  $("btnExportDays")?.addEventListener("click", exportDays);
+  $("btnImportDays")?.addEventListener("click", importDays);
+  $("btnClearDays")?.addEventListener("click", clearDays);
+    /* ✅ Cloud buttons */
+  $("btnCloudLogin")?.addEventListener("click", () => cloudLoginWithEmail($("cloudEmail")?.value));
+  $("btnCloudLogout")?.addEventListener("click", cloudLogout);
+  $("btnCloudPull")?.addEventListener("click", cloudPull);
+  $("btnCloudPush")?.addEventListener("click", cloudPush);
+  $("btnCloudSync")?.addEventListener("click", cloudSync);
+
+  $("dayDate").addEventListener("change", () => {
+    const d = getSelectedDate();
+    renderMealsTable(d);
+    compute(true);
+  });
+
+  const autoSaveIds = ["sex","age","height","weight","montre","errPct","errMode","dietMode"];
+  autoSaveIds.forEach(id => $(id).addEventListener("change", () => { saveProfileSettings(); compute(true); }));
+
+  ["morningWeight","fatPct","musclePct","boneKg"].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener("change", () => {
+      const dateStr = getSelectedDate();
+      saveBodyCompForDay(dateStr);
+      updateBodyCompUI(dateStr);
+      compute(true);
+    });
+  });
+
+document.addEventListener("DOMContentLoaded", () => {
+  $("watchInfoClose")?.addEventListener("click", closeWatchInfoModal);
+  $("watchInfoOk")?.addEventListener("click", closeWatchInfoModal);
+  document
+    .querySelector("#watchInfoModal .modal__backdrop")
+    ?.addEventListener("click", closeWatchInfoModal);
+
+handleMagicLinkCallback(); 
+});
+
+
+  /* ---------------- Init ---------------- */
+  ensureDefaultProfile();
+  refreshProfileSelect();
+
+  applyBrandPreset($("watchBrand").value, true);
+
+  loadProfileSettings();
+  $("dayDate").value = isoToday();
+
+  if ($("dietMode").value !== "custom") setDietNote($("dietMode").value, false);
+
+  refreshDaySelect();
+  renderDaysHistory();
+  renderMealsTable(getSelectedDate());
+  updateBodyCompUI(getSelectedDate());
+applyUseMode($("useMode")?.value || "simple");
+
+(async () => {
+  if (!supa) { setCloudStatus("local uniquement (Supabase non configuré)."); return; }
+  const user = await cloudGetUser();
+  setCloudStatus(user ? ("connecté : " + (user.email || "utilisateur")) : "non connecté.");
+})();
+
+compute(true);
+
+</script>
+</body>
+</html>
