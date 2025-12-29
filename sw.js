@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_VERSION = "2025-12-29-01";     // <-- change à chaque release
+const CACHE_VERSION = "bump sw cache 2025-12-29-02";     // <-- change à chaque release
 const CACHE_NAME = `suivi-calorie-${CACHE_VERSION}`;
 
 const PRECACHE = [
@@ -72,3 +72,4 @@ self.addEventListener("fetch", (event) => {
     }
   })());
 });
+
