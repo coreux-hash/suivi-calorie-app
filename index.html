@@ -293,22 +293,6 @@
     padding:.55rem;
     text-align:center
   }
-/* Tables “fixes” (Repas du jour + Résultats) : scroll horizontal propre sur mobile */
-.table-wrap.table-fixed table{
-  table-layout: fixed;
-  min-width: 640px; /* force un vrai scroll horizontal sur mobile */
-}
-
-.table-wrap.table-fixed th,
-.table-wrap.table-fixed td{
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.table-wrap.table-fixed td input{
-  min-width: 0; /* empêche l’input d’élargir la colonne */
-}
-
   th{
     background: rgba(255,255,255,.08);
     color: rgba(255,255,255,.88);
@@ -931,7 +915,7 @@
         <h2>Résultats</h2>
         <div class="kpi" id="kpis"></div>
 
-        <div class="table-wrap table-fixed">
+        <div class="table-wrap">
           <table>
             <thead>
               <tr>
@@ -1705,7 +1689,7 @@ function mifflinStJeor(sex, weightKg, heightCm, ageY) {
 
         if (meals.length === 0) {
   wrap.innerHTML = `
-    <div class="table-wrap table-fixed mealsTable">
+    <div class="table-wrap mealsTable">
       <table>
         <thead>
           <tr>
