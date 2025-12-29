@@ -622,7 +622,7 @@
 
       <div class="grid">
         <div class="card">
-          <h2>Profil (pour mémoire / cohérence)</h2>
+          <h2>Données utilisateur</h2>
           <div class="row">
             <div>
               <label>Sexe</label>
@@ -676,7 +676,8 @@
 
             <!-- Sport+Expert : référence preset (info) -->
             <div data-um="sport">
-              <label>Référence preset (info)</label>
+              <label>Info de la montre choisie</label>
+              <label>Clic</label>
               <div class="mt-025">
                 <span
                   id="watchProfileInfo"
@@ -684,7 +685,7 @@
                   tabindex="0"
                   role="button"
                   aria-label="Infos profil de montre"
-                  data-tip="Choisis une montre pour voir les notes."
+                  data-tip="Infos profil de montre"
                 >ℹ️</span>
               </div>
             </div>
@@ -694,6 +695,9 @@
             <div>
               <label>Dépense Montre du jour (kcal)</label>
               <input id="montre" type="number" min="0" step="1" placeholder="ex: 3300" value="3300" />
+<div class="muted self-end">
+              L’objectif (%) est dans “Répartition protéines / glucides / lipides” (onglet Repas).
+            </div>
             </div>
 
             <!-- Sport+Expert : marge d'erreur -->
@@ -714,9 +718,7 @@
                 <option value="optimistic">Optimiste (Montre + erreur)</option>
               </select>
             </div>
-            <div class="muted self-end">
-              L’objectif (%) est dans “Répartition protéines / glucides / lipides” (onglet Repas).
-            </div>
+            
           </div>
 
           <p class="muted m-02-0">
@@ -1680,9 +1682,10 @@ const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
         const meals = getMealsForDay(dateStr).sort((a,b) => (a.createdAt||"").localeCompare(b.createdAt||""));
 
         if (meals.length === 0) {
+
   wrap.innerHTML = `
     <div class="table-wrap">
-      <table>
+       <table class="wide-table">
         <thead>
           <tr>
             <th class="text-left">Repas</th>
@@ -1708,7 +1711,7 @@ const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
 
         wrap.innerHTML = `
           <div class="table-wrap">
-            <table>
+            <table class="wide-table">
               <thead>
                 <tr><th class="text-left">Repas</th><th>kcal</th><th>P</th><th>G</th><th>L</th><th>Actions</th></tr>
               </thead>
