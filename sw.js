@@ -26,16 +26,29 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
+  // ✅ Pour la page (navigation) : network-first
+  if (req.mode === "navigate") {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", copy));
+          return res;
+        })
+        .catch(() => caches.match("./index.html"))
+    );
+    return;
+  }
+
+  // ✅ Pour le reste : cache-first (comme avant)
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
-        // Optionnel : cache dynamique des fichiers récupérés
         const copy = res.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
         return res;
-      }).catch(() => caches.match("./")); // fallback
+      }).catch(() => caches.match("./"));
     })
   );
 });
-
