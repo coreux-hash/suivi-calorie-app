@@ -297,8 +297,6 @@
    TABLE REPAS DU JOUR — SCROLL HORIZONTAL INDÉPENDANT
    (ne touche PAS aux autres tableaux)
    ========================================================= */
-
-/* wrapper scrollable */
 .meals-wrap{
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
@@ -306,19 +304,16 @@
   max-width:100%;
 }
 
-/* table large uniquement pour les repas */
 .meals-wrap table.wide-table{
-  min-width:720px;        /* force le dépassement => scroll visible */
-  table-layout:fixed;     /* stabilise les colonnes */
+  min-width:720px;      /* force le dépassement => scroll visible */
+  table-layout:fixed;   /* stabilise les colonnes */
 }
 
-/* empêche le texte et les inputs d'élargir la page */
 .meals-wrap th,
 .meals-wrap td{
   white-space:nowrap;
 }
 
-/* CRITIQUE : sans ça, les inputs cassent tout */
 .meals-wrap td{
   min-width:0;
 }
@@ -328,7 +323,7 @@
   box-sizing:border-box;
 }
 
-/* colonne "Repas" un peu plus large */
+/* colonne “Repas” */
 .meals-wrap th.text-left,
 .meals-wrap td.td-left{
   text-align:left;
@@ -529,6 +524,17 @@
     margin:.6rem 0;
     padding:.8rem;
   }
+
+/* =========================================================
+   FIX MOBILE : empêche les blocs flex de forcer une largeur mini
+   (sinon la page entière scroll horizontalement)
+   ========================================================= */
+@media (max-width: 520px){
+  .brand{ min-width: 0 !important; }
+  .row > div{ min-width: 0 !important; }
+  .appbar__inner{ flex-wrap: wrap; }
+}
+
 
 </style>
 
@@ -1766,32 +1772,12 @@ wrap.innerHTML = `
       <tbody>
         ${meals.map(m => `
           <tr data-mealid="${m.id}">
-            <td class="td-left">
-              <input data-field="name" value="${escapeHtml(m.name)}" />
-            </td>
-            <td>
-              <input data-field="k" type="number" min="0" step="1"
-                     value="${round(m.k,0)}" />
-            </td>
-            <td>
-              <input data-field="p" type="number" min="0" step="0.1"
-                     value="${round(m.p,1)}" />
-            </td>
-            <td>
-              <input data-field="c" type="number" min="0" step="0.1"
-                     value="${round(m.c,1)}" />
-            </td>
-            <td>
-              <input data-field="f" type="number" min="0" step="0.1"
-                     value="${round(m.f,1)}" />
-            </td>
-            <td>
-              <button class="btn-mini btn-danger"
-                      data-action="del"
-                      type="button">
-                Suppr.
-              </button>
-            </td>
+            <td class="td-left"><input data-field="name" value="${escapeHtml(m.name)}" /></td>
+            <td><input data-field="k" type="number" min="0" step="1" value="${round(m.k,0)}" /></td>
+            <td><input data-field="p" type="number" min="0" step="0.1" value="${round(m.p,1)}" /></td>
+            <td><input data-field="c" type="number" min="0" step="0.1" value="${round(m.c,1)}" /></td>
+            <td><input data-field="f" type="number" min="0" step="0.1" value="${round(m.f,1)}" /></td>
+            <td><button class="btn-mini btn-danger" data-action="del" type="button">Suppr.</button></td>
           </tr>
         `).join("")}
       </tbody>
@@ -2692,7 +2678,6 @@ elNote.innerHTML = `
   </div> <!-- /container -->
 </body>
 </html>
-
 
 
 
