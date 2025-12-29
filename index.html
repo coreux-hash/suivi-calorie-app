@@ -299,17 +299,6 @@
   }
   .td-left{text-align:left}
 
-  /* --- Meals table (inputs) : même gabarit que "Résultats" + scroll stable --- */
-  .mealsTable table{
-    table-layout: fixed;
-    min-width: 640px; /* force un scroll horizontal sur mobile comme le tableau Résultats */
-  }
-  .mealsTable th, .mealsTable td{ overflow:hidden; }
-  .mealsTable td input{
-    width:100%;
-    min-width:0; /* évite que l'input force l'élargissement des colonnes */
-  }
-
   textarea{
     min-height:110px;
     font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -385,21 +374,6 @@
   .tip:focus::after, .tip:focus::before,
   .tip:focus-visible::after, .tip:focus-visible::before{
     opacity:1; visibility:visible;
-  }
-
-  /* Mobile : évite que le tooltip sorte de l’écran (ancre à droite) */
-  @media (max-width: 520px){
-    .tip::after{
-      left:auto;
-      right:0;
-      transform:none;
-      width: min(320px, calc(100vw - 24px));
-    }
-    .tip::before{
-      left:auto;
-      right:14px;
-      transform:none;
-    }
   }
 
   /* Mini-modale */
@@ -479,30 +453,41 @@
 }
 
 
+  /* === Utilities (replacing inline styles) === */
+  .mt-015{ margin-top:.15rem; }
+  .mt-02{ margin-top:.2rem; }
+  .mt-025{ margin-top:.25rem; }
+  .mt-03{ margin-top:.3rem; }
+  .mt-035{ margin-top:.35rem; }
+  .mt-04{ margin-top:.4rem; }
+  .mt-045{ margin-top:.45rem; }
+  .mt-05{ margin-top:.5rem; }
+  .mt-055{ margin-top:.55rem; }
+  .mt-06{ margin-top:.6rem; }
 
-  /* --- Utilitaires (remplace styles inline) --- */
-  .u01{margin-top:.6rem;}
-  .u02{margin:.3rem 0 .6rem;}
-  .u03{margin-top:.25rem;}
-  .u04{margin-top:.15rem;}
-  .u05{cursor:pointer;}
-  .u06{margin:.5rem 0 0; padding-left:1.1rem;}
-  .u07{align-self:flex-end;}
-  .u08{margin:.15rem 0 0;}
-  .u09{margin-top:.35rem;}
-  .u10{margin-top:.2rem;}
-  .u11{min-width:220px;flex:2;}
-  .u12{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.10);margin:.6rem 0;padding:.8rem;}
-  .u13{margin-top:.4rem;}
-  .u14{margin-top:.3rem;}
-  .u15{margin-top:.5rem;}
-  .u16{display:none;}
-  .u17{margin:.6rem 0; padding:.8rem;}
-  .u18{min-width:240px;flex:2;}
-  .u19{margin-top:.45rem;}
-  .u20{margin-top:.55rem;}
-  .u21{text-align:left;}
-  .u22{margin:.4rem 0 0 1.1rem; padding:0;}
+  .m-015-0{ margin:.15rem 0 0; }
+  .m-02-0{ margin:.2rem 0 0; }
+  .m-03-06{ margin:.3rem 0 .6rem; }
+
+  .my06-p08{ margin:.6rem 0; padding:.8rem; }
+  .mt05-pl11{ margin:.5rem 0 0; padding-left:1.1rem; }
+  .ml11-mt04-p0{ margin:.4rem 0 0 1.1rem; padding:0; }
+
+  .self-end{ align-self:flex-end; }
+  .cursor-pointer{ cursor:pointer; }
+  .text-left{ text-align:left; }
+  .hidden{ display:none; }
+
+  .minw220-flex2{ min-width:220px; flex:2; }
+  .minw240-flex2{ min-width:240px; flex:2; }
+
+  .panel-subtle{
+    background:rgba(255,255,255,.04);
+    border-color:rgba(255,255,255,.10);
+    margin:.6rem 0;
+    padding:.8rem;
+  }
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -549,7 +534,7 @@
 </div>
 
   <div class="container">
-    <div class="notice notice--warn u01">
+    <div class="notice notice--warn mt-06">
       <div class="noticeTitle">Bon à savoir</div>
       <p>Tu saisis tes données, l’application calcule des repères. <b>La montre reste une estimation</b>, ça ne remplace pas un avis médical.</p>
     </div>
@@ -561,7 +546,7 @@
       <div class="card" id="positioningCard">
         <h2>Rôle de l'application et ses limites d'utilisation</h2>
 
-        <p class="muted u02">
+        <p class="muted m-03-06">
           Outil <b>local</b> pour suivre ta dépense (montre) et organiser ton suivi.
           <b>Ce n’est pas un avis médical</b> et <b>la montre reste une estimation</b>.
         </p>
@@ -589,22 +574,22 @@
               <option value="expert">Expert</option>
             </select>
 
-            <div class="muted u03">
+            <div class="muted mt-025">
               Change l’affichage (les calculs restent identiques).
             </div>
           </div>
 
           <div>
             <label>Rappel rapide</label>
-            <div class="muted" id="positioningText" class="u04">
+            <div class="muted mt-015" id="positioningText">
               Mode simple : vise la régularité sur 7 jours, pas le chiffre parfait au quotidien.
             </div>
           </div>
         </div>
 
-        <details id="limitsDetails" class="u01">
-          <summary class="muted u05">Limites & responsabilités (à lire une fois)</summary>
-          <ul class="muted u06">
+        <details id="limitsDetails" class="mt-06">
+          <summary class="muted cursor-pointer">Limites & responsabilités (à lire une fois)</summary>
+          <ul class="muted mt05-pl11">
             <li>La dépense “montre” est une <b>estimation</b> : vise la <b>tendance</b>, pas le chiffre parfait.</li>
             <li>Si pathologie / traitement / TCA / grossesse : fais valider par un pro de santé.</li>
             <li>Si fatigue/sommeil/perf se dégradent : ajuste déficit, charge et récupération.</li>
@@ -623,10 +608,10 @@
             <label>Nouveau profil (nom/identifiant)</label>
             <input id="profileName" type="text" placeholder="ex: Christophe…" />
           </div>
-          <div class="u07">
+          <div class="self-end">
             <button id="btnCreateProfile" type="button">Créer & activer</button>
           </div>
-          <div class="u07">
+          <div class="self-end">
             <button id="btnDeleteProfile" class="btn-danger" type="button">Supprimer ce profil</button>
           </div>
         </div>
@@ -684,7 +669,7 @@
                 <option value="amazfit">Amazfit</option>
                 <option value="fitbit">Fitbit / Google</option>
               </select>
-              <div class="muted u03">
+              <div class="muted mt-025">
                 La marque sert de <b>point de départ</b> : elle propose une marge d’erreur par défaut.
               </div>
             </div>
@@ -692,7 +677,7 @@
             <!-- Sport+Expert : référence preset (info) -->
             <div data-um="sport">
               <label>Référence preset (info)</label>
-              <div class="u03">
+              <div class="mt-025">
                 <span
                   id="watchProfileInfo"
                   class="info-dot tip"
@@ -709,14 +694,13 @@
             <div>
               <label>Dépense Montre du jour (kcal)</label>
               <input id="montre" type="number" min="0" step="1" placeholder="ex: 3300" value="3300" />
-              <p class="muted u08">L’objectif (%) est dans “Répartition protéines / glucides / lipides” (onglet Repas).</p>
             </div>
 
             <!-- Sport+Expert : marge d'erreur -->
             <div data-um="sport">
               <label>Marge d’erreur Montre (%)</label>
               <input id="errPct" type="number" min="0" step="1" value="10" />
-              <p class="muted u08">Ordre de grandeur, pas une valeur exacte.</p>
+              <p class="muted m-015-0">Ordre de grandeur, pas une valeur exacte.</p>
             </div>
           </div>
 
@@ -730,13 +714,17 @@
                 <option value="optimistic">Optimiste (Montre + erreur)</option>
               </select>
             </div>
-            <div class="muted u07">
-              = dépense affichée par la montre, ajustée selon la marge d’erreur choisie.
+            <div class="muted self-end">
+              L’objectif (%) est dans “Répartition protéines / glucides / lipides” (onglet Repas).
             </div>
           </div>
 
-          <div class="row u09">
-            <div class="u07">
+          <p class="muted m-02-0">
+            = dépense affichée par la montre, ajustée selon la marge d’erreur choisie
+          </p>
+
+          <div class="row mt-035">
+            <div class="self-end">
               <button id="calcSpendBtn" type="button">Recalculer (mise à jour des résultats)</button>
             </div>
           </div>
@@ -779,7 +767,7 @@
                 >?</span>
               </label>
               <input id="goalPct" type="number" min="60" max="130" step="1" value="85" />
-              <div class="muted u03">
+              <div class="muted mt-025">
                 100% = maintien. &lt;100% = déficit. &gt;100% = surplus. (Appliqué sur “Dépense corrigée”.)
               </div>
             </div>
@@ -805,7 +793,7 @@
             </div>
           </div>
 
-          <p class="muted" id="dietNote" class="u10">
+          <p class="muted mt-02" id="dietNote">
             Presets = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”.
           </p>
 
@@ -833,37 +821,37 @@
           <h2>Repas du jour (historique + total automatique)</h2>
 <!-- 1) Nom du repas (commun aux 2 méthodes) -->
 <div class="row">
-  <div class="u11">
+  <div class="minw220-flex2">
     <label>Nom du repas</label>
     <input id="mealName" type="text" placeholder="ex: Petit-déj, Pancakes, Collation, Dîner…" />
   </div>
 </div>
 
 <!-- 2) Sous-dashboard MANUEL (kcal/P/G/L) -->
-<div class="card u12">
+<div class="card panel-subtle">
   <h3>Apport du repas (manuel)</h3>
   <p class="muted">Saisie directe : kcal / P / G / L.</p>
 
-  <div class="row u13">
+  <div class="row mt-04">
     <div><label>kcal</label><input id="mealK" type="number" min="0" step="1" value="0" /></div>
     <div><label>P (g)</label><input id="mealP" type="number" min="0" step="0.1" value="0" /></div>
     <div><label>G (g)</label><input id="mealC" type="number" min="0" step="0.1" value="0" /></div>
     <div><label>L (g)</label><input id="mealF" type="number" min="0" step="0.1" value="0" /></div>
   </div>
 
-  <p class="muted u10">
+  <p class="muted mt-02">
     Astuce : si tu utilises l’option rapide /100 g (Mode Expert), ces champs se remplissent automatiquement.
   </p>
 </div>
 
 
-<div class="card" data-um="expert" class="u12">
+<div class="card panel-subtle" data-um="expert">
           <h3 data-um="expert">Option rapide /100 g (facultatif)</h3>
 <p class="muted" data-um="expert">
   Remplit automatiquement kcal / P / G / L à partir d’un emballage.
 </p>
-          <div class="row u13" data-um="expert">
-            <div class="u11">
+          <div class="row mt-04" data-um="expert">
+            <div class="minw220-flex2">
               <label>kcal / 100 g (option rapide)</label>
               <input id="qKcal100" type="number" min="0" step="1" placeholder="ex: 420" />
             </div>
@@ -885,33 +873,33 @@
             </div>
           </div>
 
-          <div class="row u14" data-um="expert">
-            <div class="u07">
+          <div class="row mt-03" data-um="expert">
+            <div class="self-end">
               <button id="btnApplyPer100" type="button">Remplir à partir de /100 g</button>
             </div>
           </div>
 
-          <p class="muted u10" data-um="expert">
+          <p class="muted mt-02" data-um="expert">
             Exemple : barre 35 g à 420 kcal/100 g → entre 420 et 35, clique sur “Remplir”, puis “Ajouter ce repas”.
           </p>
 </div>
 
           <div class="row">
-            <div class="u07">
+            <div class="self-end">
               <button id="btnAddMeal" type="button">Ajouter ce repas (nouvelle ligne)</button>
             </div>
-            <div class="u07">
+            <div class="self-end">
               <button id="btnClearMeals" class="btn-danger" type="button">Vider les repas du jour</button>
             </div>
           </div>
 
           <div id="mealsTableWrap"></div>
-          <p class="muted u15">Tu peux éditer directement une cellule : le total se met à jour automatiquement.</p>
+          <p class="muted mt-05">Tu peux éditer directement une cellule : le total se met à jour automatiquement.</p>
         </div>
       </div>
 
       <!-- Résultats (uniquement dans Repas) -->
-      <div class="card" id="out" class="u16">
+      <div class="card hidden" id="out">
         <h2>Résultats</h2>
         <div class="kpi" id="kpis"></div>
 
@@ -988,7 +976,7 @@
         </div>
 
         <!-- Tendance 7 jours : Expert uniquement -->
-        <div class="card" data-um="expert" class="u17">
+        <div class="card my06-p08" data-um="expert">
           <h3>Tendance 7 jours (Expert)</h3>
 
           <div class="row">
@@ -1021,7 +1009,7 @@
             </div>
           </div>
 
-          <p class="muted" id="trend7Note" class="u13">-</p>
+          <p class="muted mt-04" id="trend7Note">-</p>
         </div>
 
         <p class="muted">
@@ -1038,12 +1026,12 @@
     <label>Choisir une date</label>
     <input id="dayDate" type="date" />
   </div>
-  <div class="u07">
+  <div class="self-end">
     <button id="btnDeleteDay" class="btn-danger" type="button">Supprimer journée</button>
   </div>
 </div>
 
-        <div id="daysHistory" class="muted u01"></div>
+        <div id="daysHistory" class="muted mt-06"></div>
       </div>
     </section>
 
@@ -1055,70 +1043,70 @@
         <h2>Compte & synchronisation (cloud)</h2>
 
         <div class="row">
-          <div class="u18">
+          <div class="minw240-flex2">
             <label>Email (Optionnel: Sans email, l’app reste en local)</label>
             <input id="cloudEmail" type="email" placeholder="ex: toi@email.com" />
-            <div class="muted u03">
+            <div class="muted mt-025">
             </div>
           </div>
 
-          <div class="u07">
+          <div class="self-end">
             <button id="btnCloudLogin" type="button">Recevoir un lien</button>
           </div>
 
-          <div class="u07">
+          <div class="self-end">
             <button id="btnCloudLogout" type="button">Se déconnecter</button>
           </div>
         </div>
 
-        <div class="row u14">
-          <div class="u07">
+        <div class="row mt-03">
+          <div class="self-end">
             <button id="btnCloudPull" type="button">Récupérer (Pull)</button>
           </div>
-          <div class="u07">
+          <div class="self-end">
             <button id="btnCloudPush" type="button">Envoyer (Push)</button>
           </div>
-          <div class="u07">
+          <div class="self-end">
             <button id="btnCloudSync" type="button">Synchroniser (Pull → Fusion → Push)</button>
           </div>
         </div>
 
-        <p class="muted" id="cloudStatus" class="u19">
+        <p class="muted mt-045" id="cloudStatus">
           État : local uniquement.
         </p>
 
-        <details class="u13">
-          <summary class="muted u05">Comment ça marche</summary>
-          <div class="muted u13">
+        <details class="mt-04">
+          <summary class="muted cursor-pointer">Comment ça marche</summary>
+          <div class="muted mt-04">
             Pull = récupère la sauvegarde du cloud.<br/>
             Push = envoie ta sauvegarde locale au cloud.<br/>
             Synchroniser = Pull, fusion, puis Push.
           </div>
         </details>
     <!-- ✅ Sauvegarde manuelle (offline) — Expert uniquement -->
-    <details data-um="expert" class="u01">
-      <summary class="muted u05">Sauvegarde manuelle (offline) — Plan B</summary>
+    <details data-um="expert" class="mt-06">
+      <summary class="muted cursor-pointer">Sauvegarde manuelle (offline) — Plan B</summary>
 
-      <div class="muted u13">
+      <div class="muted mt-04">
         Si tu n’as pas de cloud (ou pas de réseau), tu peux exporter un JSON et le recoller ailleurs.
         C’est volontairement caché en Simple/Sportif pour garder l’app lisible.
       </div>
 
-      <div class="row u15">
-        <div class="u07">
+      <div class="row mt-05">
+        <div class="self-end">
           <button id="btnExportDays" type="button">Exporter JSON</button>
         </div>
-        <div class="u07">
+        <div class="self-end">
           <button id="btnImportDays" type="button">Importer JSON</button>
         </div>
-        <div class="u07">
+        <div class="self-end">
           <button id="btnClearDays" class="btn-danger" type="button">Tout effacer (profil)</button>
         </div>
       </div>
 
-      <textarea id="daysJsonBox" placeholder="JSON ici (export/import)…" class="u20"></textarea>
+      <textarea id="daysJsonBox" placeholder="JSON ici (export/import)…" class="mt-055"></textarea>
 
-      <div class="muted u09">
+      <div class="muted mt-035">
         Astuce : tu peux envoyer ce JSON sur un autre appareil, puis le coller ici et cliquer “Importer”.
       </div>
     </details>
@@ -1172,7 +1160,6 @@
   // UX mobile : si le panneau menu est ouvert, on le referme après sélection
   try{ closeMenu(); }catch{}
 }
-
 
 function closeMenu(){
   const panel = $("menuPanel");
@@ -1236,24 +1223,29 @@ function initTabs(){
 }
 
 
-      /* =========================================================
-         Optionnel : Sync multi-support (Supabase)
-         ---------------------------------------------------------
-         - L’app fonctionne 100% en local sans ce bloc.
-         - Pour garder le comportement actuel : laisser ENABLE_CLOUD_SYNC = true
-         - Pour désactiver la synchro cloud sans casser l’app : mettre false
-         ========================================================= */
-      const ENABLE_CLOUD_SYNC = true;
+      /* =========================
+         ✅ Supabase (à renseigner)
+         ========================= */
+      // ==============================
+// Sync multi-support (Supabase)
+// - Permet de retrouver tes données sur plusieurs appareils.
+// - L'app reste utilisable en local si la synch est indisponible.
+// ==============================
+const ENABLE_CLOUD_SYNC = true;
 
-      const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
+const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
       const SUPABASE_ANON_KEY = "sb_publishable_VvPPkGiqqRBj1QSsdVboGg_uHzO06-o";
 
       let supa = null;
-      if (ENABLE_CLOUD_SYNC && window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
-        supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+        if (ENABLE_CLOUD_SYNC) {
+          supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+          supa = null;
+        }
       }
 
-function mifflinStJeor(sex, weightKg, heightCm, ageY) {
+      function mifflinStJeor(sex, weightKg, heightCm, ageY) {
         if (sex === "M") return 10*weightKg + 6.25*heightCm - 5*ageY + 5;
         return 10*weightKg + 6.25*heightCm - 5*ageY - 161;
       }
@@ -1268,7 +1260,7 @@ function mifflinStJeor(sex, weightKg, heightCm, ageY) {
          ✅ Magic link callback handler
          ========================= */
       async function handleMagicLinkCallback() {
-        if (!ENABLE_CLOUD_SYNC || !supa) return;
+        if (!supa) return;
 
         const params = new URLSearchParams(window.location.search);
         const token_hash = params.get("token_hash");
@@ -1689,11 +1681,11 @@ function mifflinStJeor(sex, weightKg, heightCm, ageY) {
 
         if (meals.length === 0) {
   wrap.innerHTML = `
-    <div class="table-wrap mealsTable">
+    <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th class="u21">Repas</th>
+            <th class="text-left">Repas</th>
             <th>kcal</th>
             <th>P</th>
             <th>G</th>
@@ -1715,10 +1707,10 @@ function mifflinStJeor(sex, weightKg, heightCm, ageY) {
 
 
         wrap.innerHTML = `
-    <div class="table-wrap mealsTable">
+          <div class="table-wrap">
             <table>
               <thead>
-                <tr><th class="u21">Repas</th><th>kcal</th><th>P</th><th>G</th><th>L</th><th>Actions</th></tr>
+                <tr><th class="text-left">Repas</th><th>kcal</th><th>P</th><th>G</th><th>L</th><th>Actions</th></tr>
               </thead>
               <tbody>
                 ${meals.map(m => `
@@ -1973,7 +1965,7 @@ if (t.quality.weightDays < 4)
 elNote.innerHTML = `
   <p>${intro}</p>
   ${warnings.length ? `
-    <ul class="u22">
+    <ul class="ml11-mt04-p0">
       ${warnings.map(w => `<li>${w}</li>`).join("")}
     </ul>
   ` : ``}
@@ -2629,7 +2621,6 @@ elNote.innerHTML = `
   </div> <!-- /container -->
 </body>
 </html>
-
 
 
 
