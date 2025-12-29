@@ -2372,14 +2372,16 @@
     </script>
 
     <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("./sw.js?v=2025-12-29-01");
-        });
-      }
-    </script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", async () => {
+      const reg = await navigator.serviceWorker.register("./sw.js?v=2025-12-29-02");
+      reg.update();
+    });
+  }
+</script>
 
   </div> <!-- /container -->
 </body>
 </html>
+
 
