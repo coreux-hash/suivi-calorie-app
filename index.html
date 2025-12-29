@@ -293,6 +293,48 @@
     padding:.55rem;
     text-align:center
   }
+/* =========================================================
+   TABLE REPAS DU JOUR — SCROLL HORIZONTAL INDÉPENDANT
+   (ne touche PAS aux autres tableaux)
+   ========================================================= */
+
+/* wrapper scrollable */
+.meals-wrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  width:100%;
+  max-width:100%;
+}
+
+/* table large uniquement pour les repas */
+.meals-wrap table.wide-table{
+  min-width:720px;        /* force le dépassement => scroll visible */
+  table-layout:fixed;     /* stabilise les colonnes */
+}
+
+/* empêche le texte et les inputs d'élargir la page */
+.meals-wrap th,
+.meals-wrap td{
+  white-space:nowrap;
+}
+
+/* CRITIQUE : sans ça, les inputs cassent tout */
+.meals-wrap td{
+  min-width:0;
+}
+.meals-wrap td input{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* colonne "Repas" un peu plus large */
+.meals-wrap th.text-left,
+.meals-wrap td.td-left{
+  text-align:left;
+  width:220px;
+}
+
   th{
     background: rgba(255,255,255,.08);
     color: rgba(255,255,255,.88);
@@ -1684,52 +1726,78 @@ const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
         if (meals.length === 0) {
 
   wrap.innerHTML = `
-    <div class="table-wrap">
-       <table class="wide-table">
-        <thead>
-          <tr>
-            <th class="text-left">Repas</th>
-            <th>kcal</th>
-            <th>P</th>
-            <th>G</th>
-            <th>L</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="6" class="muted">Aucun repas encodé pour cette journée.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  `;
-  syncEatenFromMeals(dateStr);
-  return;
+  <div class="table-wrap meals-wrap">
+    <table class="wide-table">
+      <thead>
+        <tr>
+          <th class="text-left">Repas</th>
+          <th>kcal</th>
+          <th>P</th>
+          <th>G</th>
+          <th>L</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="6" class="muted">Aucun repas encodé pour cette journée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+`;
+syncEatenFromMeals(dateStr);
+return;
 }
 
-
-        wrap.innerHTML = `
-          <div class="table-wrap">
-            <table class="wide-table">
-              <thead>
-                <tr><th class="text-left">Repas</th><th>kcal</th><th>P</th><th>G</th><th>L</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-                ${meals.map(m => `
-                  <tr data-mealid="${m.id}">
-                    <td class="td-left"><input data-field="name" value="${escapeHtml(m.name)}" /></td>
-                    <td><input data-field="k" type="number" min="0" step="1" value="${round(m.k,0)}" /></td>
-                    <td><input data-field="p" type="number" min="0" step="0.1" value="${round(m.p,1)}" /></td>
-                    <td><input data-field="c" type="number" min="0" step="0.1" value="${round(m.c,1)}" /></td>
-                    <td><input data-field="f" type="number" min="0" step="0.1" value="${round(m.f,1)}" /></td>
-                    <td><button class="btn-mini btn-danger" data-action="del" type="button">Suppr.</button></td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-        `;
+wrap.innerHTML = `
+  <div class="table-wrap meals-wrap">
+    <table class="wide-table">
+      <thead>
+        <tr>
+          <th class="text-left">Repas</th>
+          <th>kcal</th>
+          <th>P</th>
+          <th>G</th>
+          <th>L</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${meals.map(m => `
+          <tr data-mealid="${m.id}">
+            <td class="td-left">
+              <input data-field="name" value="${escapeHtml(m.name)}" />
+            </td>
+            <td>
+              <input data-field="k" type="number" min="0" step="1"
+                     value="${round(m.k,0)}" />
+            </td>
+            <td>
+              <input data-field="p" type="number" min="0" step="0.1"
+                     value="${round(m.p,1)}" />
+            </td>
+            <td>
+              <input data-field="c" type="number" min="0" step="0.1"
+                     value="${round(m.c,1)}" />
+            </td>
+            <td>
+              <input data-field="f" type="number" min="0" step="0.1"
+                     value="${round(m.f,1)}" />
+            </td>
+            <td>
+              <button class="btn-mini btn-danger"
+                      data-action="del"
+                      type="button">
+                Suppr.
+              </button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  </div>
+`;
 
         wrap.querySelectorAll("input").forEach(inp => {
           inp.addEventListener("change", () => {
@@ -2624,7 +2692,6 @@ elNote.innerHTML = `
   </div> <!-- /container -->
 </body>
 </html>
-
 
 
 
