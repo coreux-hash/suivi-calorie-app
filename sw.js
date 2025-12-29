@@ -1,4 +1,4 @@
-const CACHE_NAME = "suivi-calorie-v1";
+const CACHE_NAME = "suivi-calorie-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -38,3 +38,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
