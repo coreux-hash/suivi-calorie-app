@@ -31,6 +31,11 @@
   }
 
   *{box-sizing:border-box}
+html, body{
+  max-width:100%;
+  overflow-x:hidden;
+}
+
   body{
     font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     margin:0;
@@ -282,7 +287,56 @@
   .warn{background: var(--warn) !important; border-color: var(--warn-b) !important}
   .bad{background: var(--bad) !important; border-color: var(--bad-b) !important}
 
+ /* ✅ CRITIQUE : autorise les items de la grid à rétrécir (sinon overflow interne KO) */
+.grid > * { min-width: 0; }
+.card { min-width: 0; }
+
   /* --- Table --- */
+
+/* ✅ table repas : doit dépasser pour que .meals-wrap scrolle */
+.meals-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; max-width:100%; }
+.meals-wrap table.wide-table{
+  width: max-content;      /* force largeur réelle du contenu */
+  min-width: 600px;       /* ou + si tu veux être sûr */
+  table-layout: fixed;
+}
+/* === Table repas : largeur des colonnes === */
+.meals-wrap table.wide-table th:nth-child(1),
+.meals-wrap table.wide-table td:nth-child(1){
+  width: 70px;   /* Nom du repas */
+}
+
+.meals-wrap table.wide-table th:nth-child(2),
+.meals-wrap table.wide-table td:nth-child(2){
+  width: 50px;    /* kcal */
+}
+
+.meals-wrap table.wide-table th:nth-child(3),
+.meals-wrap table.wide-table td:nth-child(3),
+.meals-wrap table.wide-table th:nth-child(4),
+.meals-wrap table.wide-table td:nth-child(4),
+.meals-wrap table.wide-table th:nth-child(5),
+.meals-wrap table.wide-table td:nth-child(5){
+  width: 50px;    /* P G L */
+}
+
+.meals-wrap table.wide-table th:nth-child(6),
+.meals-wrap table.wide-table td:nth-child(6){
+  width: 20px;    /* Actions */
+}
+
+.meals-wrap th, .meals-wrap td{ white-space: nowrap; }
+.meals-wrap td{ min-width:0; }
+.meals-wrap td input{ width:100%; min-width:0; box-sizing:border-box; }
+
+  .table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    width:100%;
+    border-radius: 16px;
+  }
+
+
   .table-wrap{
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
@@ -490,6 +544,7 @@
     margin:.6rem 0;
     padding:.8rem;
   }
+
 
 </style>
 
