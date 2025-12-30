@@ -125,7 +125,9 @@
   display:flex;
   align-items:center;
   gap:10px;
+  position:relative; /* ✅ ancre le menuPanel */
 }
+
 
 /* le bloc texte peut rétrécir sans casser la ligne */
 .brandText{
@@ -170,7 +172,7 @@
 /* Le panneau déroulant */
 .menuPanel{
   position:absolute;
-  right:0;
+  left:0;
   top: calc(100% + 10px);
   width: min(240px, 84vw);
   padding: 10px;
@@ -287,67 +289,13 @@
     width:100%;
     border-radius: 16px;
   }
+
   table{width:100%;border-collapse:collapse;margin-top:.5rem;background: rgba(0,0,0,.12)}
   th,td{
     border:1px solid rgba(255,255,255,.10);
     padding:.55rem;
     text-align:center
   }
-
-/* =========================================================
-   TABLE REPAS DU JOUR — scroll mobile uniquement
-   (desktop STRICTEMENT inchangé)
-   ========================================================= */
-
-.meals-wrap{
-  width:100%;
-}
-
-/* ===== DESKTOP (par défaut) ===== */
-/* → comportement IDENTIQUE à ton code original */
-.meals-wrap table.wide-table{
-  width:100%;
-  table-layout:auto;
-}
-
-/* ===== MOBILE / PETITS ÉCRANS ===== */
-@media (max-width: 820px){
-
-  .meals-wrap{
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    max-width:100%;
-    border-radius:16px;
-  }
-
-  .meals-wrap table.wide-table{
-    min-width:720px;        /* force le scroll */
-    width:max-content;      /* empêche la compression */
-    table-layout:fixed;     /* colonnes stables */
-  }
-
-  .meals-wrap th,
-  .meals-wrap td{
-    white-space:nowrap;
-  }
-
-  .meals-wrap td{
-    min-width:0;
-  }
-
-  .meals-wrap td input{
-    width:100%;
-    min-width:0;
-    box-sizing:border-box;
-  }
-
-  .meals-wrap th.text-left,
-  .meals-wrap td.td-left{
-    width:260px;
-  }
-}
-
-
   th{
     background: rgba(255,255,255,.08);
     color: rgba(255,255,255,.88);
@@ -390,7 +338,7 @@
     font-size:13px;line-height:1;margin-left:.35rem;
     color:rgba(255,255,255,.92);
     background: rgba(0,0,0,.18);
-    cursor:help; user-select:none;
+    cursor:pointer; user-select:none;
   }
 
   /* Tooltip CSS-only (hover + focus) */
@@ -555,35 +503,32 @@
   <div class="appbar__inner">
 
     <!-- BRAND = logo + texte + bouton hamburger sur le logo -->
-    <div class="brand brand--with-menu">
+<div class="brand brand--with-menu">
 
-      <!-- bouton hamburger DANS le carré bleu -->
-      <button id="menuBtn"
-              class="logoDot menuBtnOverLogo"
-              type="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-              aria-controls="menuPanel">
-        ☰
-      </button>
+  <button id="menuBtn"
+          class="logoDot"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="menuPanel">
+    ☰
+  </button>
 
-      <!-- texte à droite du logo -->
-      <div class="brandText">
-        <div class="brandTitle">Montre • Calories & Nutrition</div>
-        <div class="brandSub">Local • multi-profils • synchro en option</div>
-      </div>
+  <div class="brandText">
+    <div class="brandTitle">Montre • Calories & Nutrition</div>
+    <div class="brandSub">Local • multi-profils • synchro en option</div>
+  </div>
 
-    </div>
+  <!-- ✅ panneau dropdown ancré au bouton ☰ -->
+  <div id="menuPanel" class="menuPanel" role="menu" aria-label="Pages">
+    <button class="menuItem is-active" type="button" role="menuitem" data-tab="dash">Aperçu</button>
+    <button class="menuItem" type="button" role="menuitem" data-tab="repas">Repas</button>
+    <button class="menuItem" type="button" role="menuitem" data-tab="journal">Suivi</button>
+    <button class="menuItem" type="button" role="menuitem" data-tab="cloud">Synchronisation</button>
+  </div>
 
-    <!-- panneau dropdown (reste à droite du brand dans le DOM) -->
-    <div class="nav" aria-label="Navigation">
-      <div id="menuPanel" class="menuPanel" role="menu" aria-label="Pages">
-        <button class="menuItem is-active" type="button" role="menuitem" data-tab="dash">Aperçu</button>
-        <button class="menuItem" type="button" role="menuitem" data-tab="repas">Repas</button>
-        <button class="menuItem" type="button" role="menuitem" data-tab="journal">Suivi</button>
-        <button class="menuItem" type="button" role="menuitem" data-tab="cloud">Synchronisation</button>
-      </div>
-    </div>
+</div>
+
 
   </div>
 </div>
@@ -732,16 +677,15 @@
             <!-- Sport+Expert : référence preset (info) -->
             <div data-um="sport">
               <label>Info de la montre choisie</label>
-              <label>Clic</label>
+              <div class="muted mt-015">Clique sur ℹ️</div>
               <div class="mt-025">
                 <span
-                  id="watchProfileInfo"
-                  class="info-dot tip"
-                  tabindex="0"
-                  role="button"
-                  aria-label="Infos profil de montre"
-                  data-tip="Infos profil de montre"
-                >ℹ️</span>
+  id="watchProfileInfo"
+  class="info-dot"
+  tabindex="0"
+  role="button"
+  aria-label="Infos profil de montre"
+>ℹ️</span>
               </div>
             </div>
           </div>
@@ -1200,6 +1144,14 @@
       };
       const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
+// ✅ Compat : l’app appelait refreshDaySelect() avant.
+// On n’a plus de <select id="daySelect">, donc on garde la fonction
+// pour éviter une erreur JS qui stoppe tout le script.
+function refreshDaySelect(){
+  // no-op
+}
+
+
       function setActiveTab(tab){
   // Supporte à la fois :
   // - les "tabs" desktop (boutons .tabBtn)
@@ -1629,26 +1581,6 @@ const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
         refreshDaySelect();
       }
 
-      function refreshDaySelect() {
-        const sel = $("daySelect");
-        if (!sel) return;
-        const days = loadDays().sort((a,b) => b.date.localeCompare(a.date));
-        sel.innerHTML = "";
-        if (days.length === 0) {
-          const opt = document.createElement("option");
-          opt.value = "";
-          opt.textContent = "(aucune journée)";
-          sel.appendChild(opt);
-          return;
-        }
-        for (const d of days) {
-          const opt = document.createElement("option");
-          opt.value = d.date;
-          opt.textContent = d.date;
-          sel.appendChild(opt);
-        }
-      }
-
       function deleteDay(dateStr) {
         let days = loadDays();
         days = days.filter(d => d.date !== dateStr);
@@ -1739,8 +1671,8 @@ const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
         if (meals.length === 0) {
 
   wrap.innerHTML = `
-  <div class="meals-wrap">
-     <table class="wide-table">
+    <div class="meals-wrap">
+       <table class="wide-table">
         <thead>
           <tr>
             <th class="text-left">Repas</th>
@@ -2557,11 +2489,19 @@ elNote.innerHTML = `
         compute(true);
       });
 
-      $("watchProfileInfo")?.addEventListener("click", (e) => {
-        if (!isSportOrExpert()) return;
-        const text = e.currentTarget.getAttribute("data-modaltext") || "";
-        openWatchInfoModal(text);
-      });
+      $("watchProfileInfo")?.addEventListener("keydown", (e) => {
+  if (!isSportOrExpert()) return;
+  if (e.key !== "Enter" && e.key !== " ") return;
+  e.preventDefault();
+  const text = e.currentTarget.getAttribute("data-modaltext") || "";
+  openWatchInfoModal(text);
+});
+
+$("watchProfileInfo")?.addEventListener("click", (e) => {
+  if (!isSportOrExpert()) return;
+  const text = e.currentTarget.getAttribute("data-modaltext") || "";
+  openWatchInfoModal(text);
+});
 
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeWatchInfoModal();
@@ -2575,17 +2515,11 @@ elNote.innerHTML = `
         });
       });
 
-      $("calcBtn")?.addEventListener("click", () => compute(true, true));
       $("calcSpendBtn")?.addEventListener("click", () => compute(true, true));
 
       $("btnAddMeal")?.addEventListener("click", addMealFromInputs);
       $("btnClearMeals")?.addEventListener("click", clearMealsForDay);
       $("btnApplyPer100")?.addEventListener("click", applyPer100ToMeal);
-
-      $("btnLoadDay")?.addEventListener("click", () => {
-        const date = $("daySelect").value;
-        if (date) loadDayIntoForm(date);
-      });
 
       $("btnDeleteDay")?.addEventListener("click", () => {
         const date = getSelectedDate();
@@ -2679,7 +2613,6 @@ elNote.innerHTML = `
   </div> <!-- /container -->
 </body>
 </html>
-
 
 
 
