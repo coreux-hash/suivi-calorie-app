@@ -49,10 +49,11 @@ html, body{
   }
 
   .container{
-    max-width: 1050px;
-    margin: 0 auto;
-    padding: 16px;
-  }
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-top: 78px; /* ← compense la hauteur de la appbar fixe */
+}
 
   h1{
     font-size:1.25rem;
@@ -66,13 +67,18 @@ html, body{
   .muted small{color:var(--muted2)}
   a{color:inherit}
 
-  /* --- Top bar --- */
-  .appbar{
-    position:sticky; top:0; z-index:1000;
-    backdrop-filter: blur(12px);
-    background: linear-gradient(to bottom, rgba(11,16,32,.88), rgba(11,16,32,.68));
-    border-bottom:1px solid rgba(255,255,255,.10);
-  }
+  /* --- Top bar (FIXED, bulletproof) --- */
+.appbar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  backdrop-filter: blur(12px);
+  background: linear-gradient(to bottom, rgba(11,16,32,.88), rgba(11,16,32,.68));
+  border-bottom:1px solid rgba(255,255,255,.10);
+}
   .appbar__inner{
     display:flex; align-items:center; gap:12px;
     max-width:1050px;
@@ -329,6 +335,59 @@ html, body{
 .meals-wrap td{ min-width:0; }
 .meals-wrap td input{ width:100%; min-width:0; box-sizing:border-box; }
 
+/* === Historique des journées === */
+.history-table{
+  table-layout: fixed; /* essentiel pour forcer les largeurs */
+}
+
+/* Date */
+.history-table th:nth-child(1),
+.history-table td:nth-child(1){
+  width: 110px;
+}
+
+/* Poids */
+.history-table th:nth-child(2),
+.history-table td:nth-child(2){
+  width: 80px;
+}
+
+/* Montre */
+.history-table th:nth-child(3),
+.history-table td:nth-child(3){
+  width: 90px;
+}
+
+/* Dépense corrigée */
+.history-table th:nth-child(4),
+.history-table td:nth-child(4){
+  width: 120px;
+}
+
+/* Régime (souvent trop serré) */
+.history-table th:nth-child(5),
+.history-table td:nth-child(5){
+  width: 160px;
+}
+
+/* Objectif % */
+.history-table th:nth-child(6),
+.history-table td:nth-child(6){
+  width: 90px;
+}
+
+/* Cible kcal */
+.history-table th:nth-child(7),
+.history-table td:nth-child(7){
+  width: 100px;
+}
+
+/* Repas */
+.history-table th:nth-child(8),
+.history-table td:nth-child(8){
+  width: 70px;
+}
+
   .table-wrap{
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
@@ -394,6 +453,19 @@ html, body{
     background: rgba(0,0,0,.18);
     cursor:pointer; user-select:none;
   }
+
+.kpi-info{
+  margin-left:.35rem;
+  font-weight:900;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;height:22px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.18);
+}
 
   /* Tooltip CSS-only (hover + focus) */
   .tip{ position:relative; }
@@ -544,6 +616,62 @@ html, body{
     margin:.6rem 0;
     padding:.8rem;
   }
+/* ======================================================
+   TOOLTIP PINNÉ (reste affiché, clamp mobile)
+   ====================================================== */
+
+/* Bouton info dans KPI */
+.kpi-info{
+  margin-left:.35rem;
+  font-weight:900;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;height:22px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.18);
+}
+
+/* Tooltip réel (JS) */
+.pinned-tip{
+  position:fixed;
+  z-index:9999;
+  display:none;
+  width:min(360px, 92vw);
+  max-height:70vh;
+  overflow:auto;
+  white-space:pre-wrap;
+  background:#0b0f1a;
+  color:#fff;
+  border-radius:14px;
+  padding:.7rem .8rem;
+  font-size:.92rem;
+  line-height:1.25;
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.pinned-tip__head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:.6rem;
+  margin-bottom:.4rem;
+  font-weight:900;
+}
+
+.pinned-tip__close{
+  width:auto;
+  min-width:auto;
+  padding:.2rem .45rem;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  cursor:pointer;
+}
 
 
 </style>
@@ -1468,6 +1596,113 @@ const SUPABASE_URL = "https://ztrqqtjktydibcznbpen.supabase.co";
           .replace(/"/g,"&quot;")
           .replace(/'/g,"&#039;");
       }
+
+// ✅ Tooltip “pinné” : reste affiché + ne déborde pas en mobile
+function initPinnedTips(){
+  // crée le conteneur 1 seule fois
+  let tip = document.getElementById("pinnedTip");
+  if (!tip){
+    tip = document.createElement("div");
+    tip.id = "pinnedTip";
+    tip.className = "pinned-tip";
+    tip.setAttribute("role", "dialog");
+    tip.setAttribute("aria-hidden", "true");
+    tip.innerHTML = `
+      <div class="pinned-tip__head">
+        <div>Info</div>
+        <button type="button" class="pinned-tip__close" aria-label="Fermer">✕</button>
+      </div>
+      <div class="pinned-tip__body"></div>
+    `;
+    document.body.appendChild(tip);
+
+    tip.querySelector(".pinned-tip__close")?.addEventListener("click", closePinnedTip);
+  }
+
+  function openPinnedTipFrom(el){
+    const text = el.getAttribute("data-tip") || "";
+    const body = tip.querySelector(".pinned-tip__body");
+    if (body) body.textContent = text;
+
+    // Affiche d'abord pour mesurer correctement
+    tip.style.display = "block";
+    tip.setAttribute("aria-hidden","false");
+
+    // Positionnement “clamp” dans l’écran
+    const r = el.getBoundingClientRect();
+    const pad = 10;
+
+    // dimensions tooltip
+    const tw = tip.offsetWidth;
+    const th = tip.offsetHeight;
+
+    // position préférée : sous l'élément
+    let top = r.bottom + 8;
+    // si ça déborde en bas, on met au-dessus
+    if (top + th > window.innerHeight - pad){
+      top = r.top - th - 8;
+    }
+    // clamp vertical
+    top = Math.max(pad, Math.min(top, window.innerHeight - th - pad));
+
+    // centré sur l’élément
+    let left = r.left + (r.width/2) - (tw/2);
+    // clamp horizontal
+    left = Math.max(pad, Math.min(left, window.innerWidth - tw - pad));
+
+    tip.style.top  = `${Math.round(top)}px`;
+    tip.style.left = `${Math.round(left)}px`;
+
+    // mémorise la source pour toggle
+    tip._sourceEl = el;
+  }
+
+  function closePinnedTip(){
+    tip.style.display = "none";
+    tip.setAttribute("aria-hidden","true");
+    tip._sourceEl = null;
+  }
+
+  // Expose global pour le bouton close
+  window.closePinnedTip = closePinnedTip;
+
+  // Click sur n'importe quel élément avec data-tip -> toggle pinned tooltip
+  document.addEventListener("click", (e) => {
+    const target = e.target.closest("[data-tip]");
+    const inTip = tip.contains(e.target);
+
+    if (target){
+      e.preventDefault();
+      e.stopPropagation();
+
+      // toggle si on reclique la même icône
+      if (tip.style.display === "block" && tip._sourceEl === target){
+        closePinnedTip();
+      } else {
+        openPinnedTipFrom(target);
+      }
+      return;
+    }
+
+    // clic ailleurs : ferme
+    if (!inTip && tip.style.display === "block"){
+      closePinnedTip();
+    }
+  });
+
+  // Escape : ferme
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && tip.style.display === "block"){
+      closePinnedTip();
+    }
+  });
+
+  // si on resize/orientation change : ferme (simple & propre)
+  window.addEventListener("resize", () => {
+    if (tip.style.display === "block") closePinnedTip();
+  });
+}
+
       function makeDietBadge(dietMode, goalPct) {
         const label = dietLabel(dietMode);
         const pct = Number.isFinite(goalPct) ? Math.round(goalPct) : "-";
@@ -2077,9 +2312,11 @@ elNote.innerHTML = `
           return;
         }
 
+/* === Historique des journées === */
+
         box.innerHTML = `
           <div class="table-wrap">
-            <table>
+            <table class="history-table">
               <thead>
                 <tr>
                   <th>Date</th>
@@ -2214,10 +2451,28 @@ elNote.innerHTML = `
           kpis.appendChild(mk("Dépense corrigée (kcal)", round(montreAdjusted,0), "warn"));
           kpis.appendChild(mk("Cible (kcal)", round(targetKcal,0), "ok"));
 
-          const bmrKpi = mk("BMR estimé (kcal)", round(bmr,0));
-          bmrKpi.setAttribute("data-um","expert");
-          kpis.appendChild(bmrKpi);
-        }
+          const bmrKpi = document.createElement("div");
+bmrKpi.setAttribute("data-um","expert");
+
+const bmrText =
+`Pourquoi ?
+Le BMR (métabolisme de base) = l’énergie minimale au repos (organes, respiration, température…).
+
+Comment l’utiliser ?
+• Ce n’est PAS ta dépense du jour.
+• Ta dépense réelle = BMR + activité + digestion (ordre de grandeur).
+• Ici, c’est un repère : si ton objectif kcal est trop bas vs ton quotidien → fatigue/perf en baisse.
+
+Exemple
+BMR ≈ ${round(bmr,0)} kcal : même une journée “calme” dépasse souvent ce chiffre (marche + activité + etc.).`;
+
+bmrKpi.innerHTML =
+  `<b>BMR estimé (kcal)</b>${round(bmr,0)} ` +
+  `<span class="kpi-info" role="button" tabindex="0" data-tip="${escapeHtml(bmrText)}">ℹ️</span>`;
+
+kpis.appendChild(bmrKpi); // ✅ indispensable
+
+      }
 
         if ($("tK")) $("tK").textContent = round(targetKcal, 0);
         if ($("tP")) $("tP").textContent = round(targetP, 1);
@@ -2629,6 +2884,7 @@ $("watchProfileInfo")?.addEventListener("click", (e) => {
 
       /* ---------------- Init ---------------- */
       initTabs();
+initPinnedTips();
 
       ensureDefaultProfile();
       refreshProfileSelect();
