@@ -3307,7 +3307,7 @@ function syncCarbModeUI(){
     }
   }
 
-  if ($("carbGuardEnabled")) $("carbGuardEnabled").disabled = lowCarb2;
+  if ($("carbGuardEnabled")) $("carbGuardEnabled").disabled = false;
 
   const lowBox = $("lowCarbBox");
   if (lowBox) lowBox.style.display = lowCarb2 ? "" : "none";
@@ -3524,7 +3524,30 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
         if (has("diabEnabled") && $("diabEnabled")) $("diabEnabled").checked = !!payload.diabEnabled;
         applyDiabMode($("diabEnabled")?.checked);
         applyUseMode($("useMode")?.value || "simple");
+// ✅ Rejouer les UI dérivées du régime au chargement (sinon protRangeHint reste sur "—")
+try{
+  const mode = $("dietMode")?.value || "none";
+  if (mode === "none" || mode === "") {
+    // Important : ne pas appeler setDietNoneUI() ici si tu veux garder les valeurs restaurées.
+    // On met juste le hint cohérent.
+    if ($("protRangeHint")) $("protRangeHint").textContent = "Plage protéines : —";
+  } else {
+    setProtRangeUI(mode, false); // clampValue=false : on respecte protPerKg restauré
+  }
+}catch(e){}
+
       }
+
+function refreshDietDerivedUI(){
+  const mode = $("dietMode")?.value || "none";
+  if (!mode || mode === "none"){
+    if ($("protRangeHint")) $("protRangeHint").textContent = "Plage protéines : —";
+    return;
+  }
+  setProtRangeUI(mode, false);
+  // Optionnel : ici tu peux aussi recaler d’autres hints si besoin
+}
+
 
       function loadDays() {
         try { return JSON.parse(localStorage.getItem(DAYS_KEY()) || "[]"); }
@@ -6260,8 +6283,26 @@ $("dayDate")?.addEventListener("change", () => {
   });
 
   // Carb-guard & low-carb toggles
-  $("carbGuardEnabled")?.addEventListener("change", () => { syncCarbModeUI(); compute(true); });
-  $("lowCarbEnabled")?.addEventListener("change", () => { syncCarbModeUI(); saveProfileSettings(); compute(true); });
+// Carb-guard & low-carb toggles (exclusivité symétrique, sans verrou UI)
+$("carbGuardEnabled")?.addEventListener("change", () => {
+  // si j'active les repères => je coupe le low-carb
+  if ($("carbGuardEnabled").checked && $("lowCarbEnabled")) $("lowCarbEnabled").checked = false;
+  syncCarbModeUI();
+  saveProfileSettings();
+  compute(true);
+});
+
+$("lowCarbEnabled")?.addEventListener("change", () => {
+  // si j'active le low-carb => je coupe les repères
+  if ($("lowCarbEnabled").checked && $("carbGuardEnabled")) $("carbGuardEnabled").checked = false;
+  syncCarbModeUI();
+  saveProfileSettings();
+  compute(true);
+});
+
+$("lowCarbLevel")?.addEventListener("change", () => { populateLowCarbSteps(); saveProfileSettings(); compute(true); });
+$("lowCarbStep")?.addEventListener("change", () => { saveProfileSettings(); compute(true); });
+
   $("lowCarbLevel")?.addEventListener("change", () => { populateLowCarbSteps(); saveProfileSettings(); compute(true); });
   $("lowCarbStep")?.addEventListener("change", () => { saveProfileSettings(); compute(true); });
 }
