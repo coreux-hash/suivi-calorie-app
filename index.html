@@ -3793,6 +3793,12 @@ function refreshDietDerivedUI(){
         if (p100 > 0 && g > 0) $("mealP").value = round(p100 * g / 100, 1);
         if (c100 > 0 && g > 0) $("mealC").value = round(c100 * g / 100, 1);
         if (f100 > 0 && g > 0) $("mealF").value = round(f100 * g / 100, 1);
+
+          // ✅ UX: reset automatique des champs “option rapide 100g”
+  ["qKcal100","qWeight","qP100","qC100","qF100"].forEach(id => {
+    const el = $(id);
+    if (el) el.value = "";
+  });
       }
 
 /* =====================================================================
