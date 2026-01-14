@@ -5469,25 +5469,54 @@ initDiabModule();
         setCloudStatus("Sync OK (Pull → Merge → Push).");
       }
 
-      async function cloudLoginWithEmail(email){
-        if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
-        const e = String(email||"").trim();
-        if (!e) { setCloudStatus("Entre un email."); return; }
+    async function cloudLoginWithEmail(email){
+  if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
 
-        const { error } = await supa.auth.signInWithOtp({
-          email: e,
-          options: { emailRedirectTo: window.location.href }
-        });
+  const e = String(email || "").trim();
+  if (!e) { setCloudStatus("Entre un email."); return; }
 
-        if (error) { setCloudStatus("Erreur login : " + error.message); return; }
-        setCloudStatus("Lien envoyé. Ouvre tes emails et clique le lien.");
-      }
+  // 1) Cas critique : app ouverte en file:// (tu l’as dans tes logs)
+  if (location.protocol === "file:") {
+    setCloudStatus("Erreur login : l'app est ouverte en file://. Lance-la via http://localhost (serveur local) pour activer la synchro.");
+    return;
+  }
 
-      async function cloudLogout(){
-        if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
-        await supa.auth.signOut();
-        setCloudStatus("Déconnecté (local uniquement).");
-      }
+  // 2) Redirect stable (évite file:// + évite query/hash)
+  const redirectTo = location.origin + location.pathname;
+
+  try {
+    const { data, error } = await supa.auth.signInWithOtp({
+      email: e,
+      options: { emailRedirectTo: redirectTo }
+    });
+
+    if (error) {
+      setCloudStatus("Erreur login : " + (error.message || "inconnue"));
+      return;
+    }
+
+    setCloudStatus("Lien envoyé. Ouvre tes emails et clique le lien.");
+  } catch (err) {
+    // 3) Ici tu captures le vrai problème "Failed to fetch" (DNS / réseau / extension / CORS)
+    const msg = String(err?.message || err || "");
+    if (/Failed to fetch/i.test(msg)) {
+      setCloudStatus("Erreur login : Failed to fetch (réseau/DNS/CORS/extension). Vérifie la console (net::ERR_NAME_NOT_RESOLVED).");
+    } else {
+      setCloudStatus("Erreur login : " + msg);
+    }
+  }
+}
+
+async function cloudLogout(){
+  if (!supa) { setCloudStatus("Sync inactive (Supabase non configuré)."); return; }
+  try {
+    await supa.auth.signOut();
+    setCloudStatus("Déconnecté (local uniquement).");
+  } catch (err) {
+    setCloudStatus("Erreur logout : " + String(err?.message || err || ""));
+  }
+}
+
 
 /* createClient */ 
 
@@ -5875,10 +5904,58 @@ updateCarbCalcPanel({
     groupEnergy.appendChild(mk("Cible du jour (kcal)", round(targetKcal, 0), "ok"));
     kpis.appendChild(groupEnergy);
 
-    const bmrKpi = document.createElement("div");
-    bmrKpi.setAttribute("data-um", "expert");
-    // (tel quel : tu complètes ton rendu BMR comme avant)
-  }
+// Groupe 3 : BMR (2 bulles, pleine largeur)
+const groupBmr = document.createElement("div");
+groupBmr.className = "kpis-group";
+groupBmr.setAttribute("data-um", "expert");
+
+// ✅ Force ce groupe à occuper toute la ligne du conteneur .kpi (flex-wrap)
+groupBmr.style.flex = "1 1 100%";
+groupBmr.style.width = "100%";
+
+const bmrText =
+`Pourquoi ?
+Le BMR (métabolisme de base) = l’énergie minimale au repos (organes, respiration, température…).
+
+Comment l’utiliser ?
+• Ce n’est PAS ta dépense du jour.
+• Ta dépense réelle = BMR + activité + digestion.
+• Ici, c’est un repère : si ton objectif kcal est trop bas vs ton quotidien → fatigue/perf en baisse.
+
+Exemple
+BMR ≈ ${round(bmr,0)} kcal : même une journée “calme” dépasse souvent ce chiffre.`;
+
+const deltaBmr = round(targetKcal - bmr, 0);
+const deltaSign = deltaBmr > 0 ? "+" : "";
+const deltaText =
+`Lecture
+Cible du jour − BMR.
+
+Interprétation
+• Si c’est très bas / négatif : ta cible est proche (ou sous) ton métabolisme de base → prudence.
+• Si c’est positif : ta cible laisse une marge au-dessus du BMR (activité, digestion, etc.).
+
+Valeur
+${round(targetKcal,0)} − ${round(bmr,0)} = ${deltaSign}${deltaBmr} kcal`;
+
+// 1) BMR
+groupBmr.appendChild(
+  mk(
+    "BMR estimé (kcal)",
+    `${round(bmr,0)} <span class="info-dot" role="button" tabindex="0" data-modaltext="${escapeHtml(bmrText)}">ℹ️</span>`
+  )
+);
+
+// 2) Écart cible - BMR
+groupBmr.appendChild(
+  mk(
+    "Écart cible − BMR (kcal)",
+    `${deltaSign}${deltaBmr} <span class="info-dot" role="button" tabindex="0" data-modaltext="${escapeHtml(deltaText)}">ℹ️</span>`
+  )
+);
+
+kpis.appendChild(groupBmr);
+}
 
   // ============================================================
   // 8) Remplissage tableaux Résultats (targets / eaten / remaining)
@@ -6659,4 +6736,3 @@ initApp();
 </section>
 </div></body>
 </html>
-
