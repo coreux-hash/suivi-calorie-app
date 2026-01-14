@@ -1161,7 +1161,7 @@ Exception : ..." role="button" tabindex="0">ℹ️</span>
           <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Un minimum de lipdes est toujours nécessaire et indispensable au bon fonctionnement du corps (hormones, vitamines, récupération).
 Hors mode 'Personnalisé',ce minimum est appliqué automatiquement." role="button" tabindex="0">ℹ️</span>
 </label>
-<input id="fatFloorGPerKg" max="1.0" min="0.6" step="0.1" type="number" value="0"/>
+<input id="fatFloorGPerKg" max="1.0" min="0.6" step="0.1" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]+" value="0"/>
 <div id="fatRangeHint">Plage lipides : —</div>
 </div>
 
@@ -1288,8 +1288,8 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
 <select id="carbStep"></select>
 </div>
 <div style="min-width:140px">
-<input id="carbCapGPerKg" min="0" step="1" type="number" value="0">
-</input></div>
+<input id="carbCapGPerKg" min="0" step="1" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]+" value="0">
+</div>
 </div>
 <div class="muted" style="margin-top:.25rem">
             Limite <b>maximale de glucides</b> utilisée quand les repères sont activés.
@@ -6301,10 +6301,20 @@ $("lowCarbEnabled")?.addEventListener("change", () => {
 });
 
 $("lowCarbLevel")?.addEventListener("change", () => { populateLowCarbSteps(); saveProfileSettings(); compute(true); });
-$("lowCarbStep")?.addEventListener("change", () => { saveProfileSettings(); compute(true); });
+$("lowCarbStep")?.addEventListener("change", () => {
+    const lvl = $("lowCarbLevel")?.value || "moderate";
+    setLowCarbRangeUI(lvl, true); // clamp + maj min/max + hint
+    saveProfileSettings();
+    compute(true);
+  });
 
   $("lowCarbLevel")?.addEventListener("change", () => { populateLowCarbSteps(); saveProfileSettings(); compute(true); });
-  $("lowCarbStep")?.addEventListener("change", () => { saveProfileSettings(); compute(true); });
+  $("lowCarbStep")?.addEventListener("change", () => {
+    const lvl = $("lowCarbLevel")?.value || "moderate";
+    setLowCarbRangeUI(lvl, true); // clamp + maj min/max + hint
+    saveProfileSettings();
+    compute(true);
+  });
 }
 
 /* =====================================================================
