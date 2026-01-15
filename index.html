@@ -789,6 +789,24 @@ label.inline input{width:auto}
   background: rgba(123,255,176,.10);
 }
 
+/* Compromis : forcer l'alignement à gauche (override du style global) */
+#compromiseBox, 
+#compromiseBox table,
+#compromiseBox th,
+#compromiseBox td{
+  text-align: left !important;
+}
+/* Compromis : restaurer les puces et l’alignement */
+#compromiseBox ul{
+  list-style: disc;
+  padding-left: 1.1rem;
+  margin-left: 0;
+  text-align: left;
+}
+
+#compromiseBox li{
+  text-align: left;
+}
 
 
 /* --- Carb repères : panneau explicatif (UI) --- */
@@ -835,11 +853,8 @@ label.inline input{width:auto}
 <!-- Visible sur toutes les pages -->
 <div class="notice notice--warn mt-06">
 <div class="noticeTitle">Bon à savoir</div>
-<p>
-        Tu saisis tes données, l’application calcule des <b>repères</b>.
-        <b>La montre reste une estimation</b>.
-        Cette application ne remplace pas un avis médical.
-      </p>
+<p>• Tu saisis tes données, l’application calcule des <b>repères</b>. <b>La montre reste une estimation</b>. Cette application ne remplace pas un avis médical.</p>
+<p>• <b>boire fait partie de l’équilibre alimentaire</b>. Une hydratation suffisante influence l’énergie, la digestion et la lecture des signaux de faim.</p>
 </div>
 <!-- =========================
          WELCOME
@@ -929,9 +944,9 @@ label.inline input{width:auto}
      ========================= -->
 <section class="tabSection is-active" data-tabsection="dash">
 
-<div class="notice notice--ok mt-06">
-  <div class="noticeTitle">Mini-tuto — Profil</div>
-  <div class="muted">
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Profil</summary>
+  <div class="muted mt-025">
     <b>But :</b> poser la base avant l’onglet Objectif et l’onglet Repas.<br/>
     1) <b>Renseigne tes infos</b> (sexe, âge, taille, <b>poids de référence</b>) : elles servent aux repères (g/kg) et aux calculs.<br/>
     2) Choisis ton <b>utilisateur</b> (ou crée-en un) : chaque utilisateur garde ses données séparées.<br/>
@@ -939,7 +954,7 @@ label.inline input{width:auto}
     4) Choisis la <b>marque</b> et la <b>prudence</b> : la montre donne une estimation, pas une valeur exacte.<br/>
     <b>Règle :</b> si tu changes ces éléments, les objectifs et résultats se recalculent.
   </div>
-</div>
+</details>
 
 <div class="card" id="positioningCard">
 <h2>Mode d'affichage</h2>
@@ -1106,9 +1121,35 @@ label.inline input{width:auto}
      ========================= -->
 <section class="tabSection" data-tabsection="goal">
 
-<div class="notice notice--warn mt-06">
-  <div class="noticeTitle">Mini-tuto — Objectif</div>
-  <div class="muted">
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Objectif<span class="info-dot" role="button" tabindex="0"
+  aria-label="Comment fonctionne la page Objectif ?"
+  data-modaltext="Objectif : comment cette page s’insère dans l’app
+
+1) Méthode globale (ordre logique)
+• Profil : tu donnes la dépense du jour (base de calcul).
+• Objectif (cette page) : tu définis la règle du jeu (répartition + compromis).
+• Repas : tu encodes le consommé, l’app compare à la cible.
+• Historique : tu lis la tendance, pas une journée isolée.
+
+2) Ce que tu règles ici
+• Type de régime (preset) = une structure de départ.
+• Objectif (%) = déficit/maintien par rapport à la dépense.
+• Protéines = socle (priorité).
+• Lipides = plancher (garde-fou).
+• Glucides = variable d’ajustement (selon ce qu’il reste).
+
+3) Repères glucidiques vs Low-carb
+• Repères glucidiques : tu fixes un cadre (objectif + plafond).
+• Low-carb : contrainte plus forte pour stabilité (souvent au prix d’intensité).
+Important : l’app évite les contradictions (certains réglages se verrouillent quand un mode est actif).
+
+4) Résultats
+La synthèse de la cible calculée s’affiche en bas de cette page (zone Résultats).">
+  ℹ️
+</span>
+</summary>
+  <div class="muted mt-025">
     <b>But :</b> choisir un compromis (sèche, performance, stabilité) avant de saisir les repas.<br/>
     1) <b>Régime</b> = une base automatique (protéines, lipides min, glucides ajustés).<br/>
     2) <b>Objectif (%)</b> = la quantité totale (100% ≈ maintien, moins = déficit).<br/>
@@ -1117,7 +1158,7 @@ label.inline input{width:auto}
     5) <b>Glucides</b> = variable d’ajustement (repères ou low-carb selon ton choix).<br/>
     <b>Résultats :</b> la synthèse s’affiche juste en dessous (zone “Résultats”). 
   </div>
-</div>
+</details>
 
 
 <div class="card">
@@ -1126,6 +1167,43 @@ label.inline input{width:auto}
       Ici, tu définis <b>comment ton énergie est répartie</b>.
       Certains champs sont à remplir, d’autres se calculent automatiquement.
     </p>
+
+<!-- =========================================================
+     COMPROMIS OPTIMAUX — menu déroulant + fiche sous le menu
+     (sans boutons, sans modal)
+     ========================================================= -->
+<div class="card panel-subtle">
+  <h2>Compromis optimal</h2>
+  <p class="muted">
+    Choisis un compromis : l’explication apparaît juste en dessous pour t’aider à paramétrer l’app.
+  </p>
+
+  <div class="row">
+    <div>
+      <label for="compromiseSelect">Choisir un compromis</label>
+      <select id="compromiseSelect">
+        <option value="">— Sélectionner —</option>
+        <option value="eq_global">Équilibrage global (base santé / stabilité)</option>
+        <option value="eq_gly">Confort glycémique (équilibrage orienté satiété)</option>
+        <option value="cut_sport">Sèche sportive (référence amaigrissement)</option>
+        <option value="cut_fast">Sèche agressive (court terme)</option>
+        <option value="recomp">Recomposition (entre deux)</option>
+        <option value="endurance">Performance / endurance</option>
+        <option value="protect">Protection musculaire / récupération prioritaire</option>
+        <option value="adherence">Simplicité / adhérence long terme</option>
+      </select>
+      <p class="muted mt-025">
+        Astuce : si tu hésites, commence par <b>Équilibrage global</b> (base) ou <b>Sèche sportive</b> (perte de gras).
+      </p>
+    </div>
+  </div>
+
+  <div id="compromiseBox" class="calcPanel mt-025" aria-live="polite">
+    <div class="muted">Sélectionne un compromis pour afficher la fiche.</div>
+  </div>
+</div>
+
+
 <!-- Régime + objectif -->
 <div class="row">
 <div>
@@ -1168,9 +1246,10 @@ Augmentes = cas particuliers (ex. recharge, endurance)." role="button" tabindex=
 <div>
 <label>
           Protéines (g/kg de poids)
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Garde-fou : un minimum de protéines ....
-Hors mode 'Personnalisé', l'app applique...
-Exception : ..." role="button" tabindex="0">ℹ️</span>
+          <span aria-label="Informations — Protéines" class="info-dot" data-modaltext="Elles servent de base stable dans les calculs.
+• Elles sont fixées en premier.
+• Elles ne varient pas selon les calories restantes.
+Le reste de l’énergie est réparti autour de ce socle." role="button" tabindex="0">ℹ️</span>
 </label>
 <input id="protPerKg" min="0" step="0.1" type="number" value="0"/>
 <div id="protRangeHint">Plage protéines : —</div>
@@ -1186,8 +1265,14 @@ Exception : ..." role="button" tabindex="0">ℹ️</span>
 <div>
 <label>
           Lipides minimum (g/kg/j)
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Un minimum de lipdes est toujours nécessaire et indispensable au bon fonctionnement du corps (hormones, vitamines, récupération).
-Hors mode 'Personnalisé',ce minimum est appliqué automatiquement." role="button" tabindex="0">ℹ️</span>
+          <span aria-label="Informations — Lipides minimum" class="info-dot" data-modaltext="Pourquoi un minimum
+
+Les lipides jouent un rôle fonctionnel essentiel.
+L’app impose donc un plancher de sécurité :
+• pour éviter des journées trop basses,
+• et maintenir une répartition cohérente.
+
+Si les glucides sont limités, les lipides peuvent augmenter pour compenser." role="button" tabindex="0">ℹ️</span>
 </label>
 <input id="fatFloorGPerKg" max="1.0" min="0.6" step="0.1" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]+" value="0"/>
 <div id="fatRangeHint">Plage lipides : —</div>
@@ -1197,9 +1282,10 @@ Hors mode 'Personnalisé',ce minimum est appliqué automatiquement." role="butto
 <div>
 <label>
           Ratio Glucides / Protéines
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Il fixe une relation maximale entre glucides et protéines.
+          <span aria-label="Informations — Ratio C/P" class="info-dot" data-modaltext="Comment le ratio est utilisé: Il fixe une relation maximale entre glucides et protéines.
 Repères glucidiques OFF : Tu fixes ton ratio C/P pour te donner un repère (ça n’impose rien automatiquement).
-Repères glucidiques ON : L’app applique ton ratio comme limite glucides (et ajuste le reste pour rester sur la cible kcal)." role="button" tabindex="0">ℹ️</span>
+Repères glucidiques ON : le ratio devient une limite glucides,
+et l’app ajuste le reste pour rester sur la cible kcal." role="button" tabindex="0">ℹ️</span>
 </label>
 <input id="ratioCP" max="2.0" min="0.0" step="0.1" type="number" value="0"/>
 <input aria-hidden="true" class="hidden" disabled="" id="ratioCPText" type="text" value="--"/>
@@ -1212,12 +1298,15 @@ Repères glucidiques ON : L’app applique ton ratio comme limite glucides (et a
 <div id="carbAutoBox">
 <label>
           Glucides ajustés
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Les glucides servent à équilibrer la journée.
-L’app les ajuste pour rester cohérente avec ton objectif." role="button" tabindex="0">ℹ️</span>
+          <span aria-label="Informations — Glucides ajustés" class="info-dot" data-modaltext="Les glucides servent à équilibrer la journée.
+L’app les ajuste automatiquement pour rester cohérente avec :
+• tes protéines sont fixées (priorité).
+• Un minimum de lipides est garanti (sécurité).
+• Le reste de l’énergie va aux glucides" role="button" tabindex="0">ℹ️</span>
 </label>
 <input disabled="" id="carbAutoHint" value="Plafond glucidique : —"/>
 <div class="muted mt-025">
-          Calculés automatiquement selon tes choix précédents (objectif, protéines, lipides).
+          Ajustés automatiquement pour équilibrer la journée, une fois les protéines et les lipides minimum définis
         </div>
 <div aria-live="polite" class="calcPanel mt-025" id="carbCalcPanel">
 <div class="calcRow">
@@ -1241,9 +1330,10 @@ L’app les ajuste pour rester cohérente avec ton objectif." role="button" tabi
 <!-- Repères glucidiques (panel) -->
 <div class="card panel-subtle">
 
-<div class="notice notice--ok mt-06">
-  <div class="noticeTitle">Mini-tuto — Glucides (repères vs low-carb)</div>
-  <div class="muted">
+
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Glucides (repères vs low-carb)</summary>
+  <div class="muted mt-025">
     <b>Deux logiques différentes :</b><br/>
     • <b>Repères glucidiques</b> : servent surtout à <b>cadrer le maintien</b>, déficit léger ou une sèche modérée.
       Sans repères, les glucides peuvent monter excessivement et mécaniquement quand la dépense est élevée.
@@ -1253,10 +1343,10 @@ L’app les ajuste pour rester cohérente avec ton objectif." role="button" tabi
       parfois au détriment de la performance.<br/>
     <b>Important :</b> ces modes sont exclusifs pour éviter des réglages contradictoires.
   </div>
-</div>
+</details>
 
 
-
+  <div class="muted">
 <h3 class="h3">Repères glucidiques</h3>
 <p class="muted">
         Ces repères aident à maintenir une cohérence entre ton objectif et la répartition des apports.
@@ -1342,7 +1432,12 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
 </div>
 </div>
 </div>
-</div><!-- /card principal Objectif -->
+</div>
+
+</div>
+
+
+<!-- /card principal Objectif -->
 <!-- ✅ (déplacé ici) Diabète — raccourcis dans Repas -->
 <div aria-live="polite" class="card diab-panel span-2 is-disabled" id="diabPanelInRepas">
 <div class="row" style="align-items:flex-end">
@@ -1387,21 +1482,24 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 <!-- ✅ Mount point : Résultats dans OBJECTIF -->
 <div id="outMountGoal"></div>
 </section><!-- /goal -->
+
+
 <!-- =========================
      REPAS
      ========================= -->
+
 <section class="tabSection" data-tabsection="repas">
 
-<div class="notice notice--ok mt-06">
-  <div class="noticeTitle">Mini-tuto — Repas</div>
-  <div class="muted">
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Repas</summary>
+  <div class="muted mt-025">
     <b>But :</b> remplir le journal alimentaire, même approximatif.<br/>
     1) Ajoute un repas (nom + K/P/G/L).<br/>
     2) L’app additionne et met à jour le reste automatiquement.<br/>
-    3) Corriger un repas corrige toute la journée.<br/>
-    <b>Astuce :</b> le calcul “/100 g” peut pré-remplir les champs.
+    3) Corriger un repas corrige toute la journée ( le calcul “/100 g” peut pré-remplir les champs.)<br/>
+    <b>Astuce : boire suffisamment fait aussi partie de l’équilibre de la journée.</b>
   </div>
-</div>
+</details>
 
 
 <div class="card">
@@ -1591,20 +1689,22 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 </div>
 </div>
 </div><!-- /out -->
+
+
 <!-- =========================
          JOURNAL
          ========================= -->
 <section class="tabSection" data-tabsection="journal">
 
-<div class="notice notice--warn mt-06">
-  <div class="noticeTitle">Mini-tuto — Historique</div>
-  <div class="muted">
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Historique</summary>
+  <div class="muted mt-025">
     <b>But :</b> lire la cohérence sur plusieurs jours.<br/>
     1) Ne juge pas une journée : cherche une <b>tendance</b>.<br/>
     2) Si tu modifies une donnée passée, tu modifies la tendance : c’est normal.<br/>
     3) Supprimer sert à corriger une erreur, pas à “optimiser” l’historique.
   </div>
-</div>
+</details>
 
 
 <!-- Suivi poids & compo : Sport + Expert -->
@@ -1807,16 +1907,16 @@ Visible uniquement si l’option diabète est activée.
          ========================= -->
 <section class="tabSection" data-tabsection="diab">
 
-<div class="notice notice--warn mt-06">
-  <div class="noticeTitle">Mini-tuto — Diabète</div>
-  <div class="muted">
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Diabète</summary>
+  <div class="muted mt-025">
     <b>But :</b> observer des patterns (repas + contexte), sans interprétation automatique.<br/>
     1) Note le contexte (activité, stress, sommeil, etc.).<br/>
     2) Saisis les repas (glucides) et les glycémies.<br/>
     3) Utilise les notes : elles expliquent souvent plus que le chiffre.<br/>
     <b>Règle :</b> on cherche une répétition de situations, pas une valeur isolée.
   </div>
-</div>
+</details>
 
 
 <div class="card">
@@ -1826,6 +1926,7 @@ Visible uniquement si l’option diabète est activée.
 <div class="grid">
 <div class="card">
 <h2>Diabète — journée</h2>
+
 <div class="row" style="margin-top:.35rem">
 <div>
 <label>Activité (résumé)<span aria-label="Pourquoi noter l’activité ?" class="info-dot" data-modaltext="L’activité peut influencer la glycémie.
@@ -1886,8 +1987,7 @@ Une estimation suffit." role="button" tabindex="0">ℹ️</span>
 <div class="card">
 <h2 style="margin:.1rem 0 .6rem">Diabète — glycémies (journal)</h2>
 <p class="muted" style="margin-top:-.2rem">
-       Données stockées localement. Conversion d’unités automatique.
-    </p>
+Rappel : l’hydratation fait partie de la cohérence globale, même si elle n’est pas mesurée ici.</p>
 <div class="kpi" id="diab_dayKpis" style="align-self:flex-end"></div>
 <p class="muted" id="diab_dayNote"></p>
 <div class="row">
@@ -1986,20 +2086,22 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 </div></div>
 </div>
 </section>
+
+
 <!-- =========================
      CLOUD
      ========================= -->
 <section class="tabSection" data-tabsection="cloud">
 
-<div class="notice notice--ok mt-06">
-  <div class="noticeTitle">Mini-tuto — Cloud</div>
-  <div class="muted">
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Cloud</summary>
+  <div class="muted mt-025">
     <b>But :</b> sauvegarder / restaurer tes données quand tu le décides.<br/>
     • Sans email : tout reste <b>sur cet appareil</b>.<br/>
     • Avec email : tu peux <b>recevoir un lien</b>, puis Pull/Push/Sync.<br/>
     <b>Important :</b> rien n’est envoyé automatiquement sans action de ta part.
   </div>
-</div>
+</details>
 
 <div class="card" id="cloudCard">
 <h2>Compte &amp; synchronisation (optionnelle)</h2>
@@ -2086,16 +2188,16 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
      ========================= -->
 <section class="tabSection" data-tabsection="lexicon">
 
-<div class="notice notice--ok mt-06">
-  <div class="noticeTitle">Mini-tuto — Lexique</div>
-  <div class="muted">
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Lexicon</summary>
+  <div class="muted mt-025">
     <b>But :</b> éviter les contresens.<br/>
     • “Glucides” ≠ “sucre” ≠ “mauvais”.<br/>
     • “Lipides” ≠ “graisse corporelle”.<br/>
     • “Protéines” ≠ “muscle instantané”.<br/>
     Lis cette page quand un chiffre te fait réagir : elle explique ce que l’app veut dire (et ce qu’elle ne dit pas).
   </div>
-</div>
+</details>
 
   <div class="card">
     <h2>Lexique</h2>
@@ -2129,6 +2231,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
     <!-- 🍽️ MACROS & NUTRITION -->
     <div class="notice notice--ok mt-06">
       <div class="noticeTitle">Macros &amp; nutrition</div>
+     <p>(À noter : l’équilibre alimentaire ne concerne pas uniquement ce que l’on mange, mais aussi l’hydratation.)<p/>
 
       <h4>Protéines</h4>
       <p class="muted">
@@ -2299,18 +2402,25 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
         Il s’adapte au contexte de la journée.
       </p>
 
-      <h4>Scénarios d’usage</h4>
-      <p class="muted">
-        Décrivent des configurations courantes.
-        Ce ne sont ni des conseils ni des parcours imposés.
-        Ils servent de repères de compréhension.
-      </p>
-
       <h4>Mode Expert</h4>
       <p class="muted">
         Affiche des détails avancés.
         Il n’oblige pas à optimiser ni à comprendre tous les calculs.
         Il s’adresse aux utilisateurs curieux.
+      </p>
+
+      <h4>Scénarios d’usage (mode d'emploi avancé)</h4>
+      <p class="muted">
+        Décrivent des configurations courantes de l’application, correspondant à un ou plusieurs compromis possibles.
+        Ce ne sont ni des conseils ni des parcours imposés.
+        Ils servent de repères de compréhension selon les réglages choisis.
+      </p>
+
+      <h4>Compromis (boussole)</h4>
+      <p class="muted">
+        Décrivent la logique générale choisie par l’utilisateur entre plusieurs priorités possibles (perte de gras, performance, récupération, simplicité, stabilité…) pouvant amener à plusieurs scénarios.
+        Ils n’imposent pas de réglages précis.
+        Ils servent à donner du sens aux choix de régime, d’objectifs et de repères utilisés dans l’application.
       </p>
     </div>
 
@@ -2353,6 +2463,138 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
         Elle garantit la cohérence interne.
       </p>
     </div>
+<!-- 🧩 SCÉNARIOS D’USAGE (Expert) -->
+<div class="notice notice--ok mt-06" data-um="expert">
+<div class="noticeTitle">Scénarios d’usage (8)</div>
+<p class="muted">
+        Ces scénarios décrivent des <b>usages courants</b> de l’application.
+        Ce sont des <b>repères de compréhension</b>, pas des recommandations personnalisées.
+      </p>
+<details class="mt-025">
+<summary><b>1) Suivi libre et flexible</b> (équilibre quotidien)</summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Régime : standard / équilibre<br/>
+          • Repères glucidiques : désactivés<br/>
+          • Low-carb : désactivé<br/>
+          • Objectif : ~100 %<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • Les glucides complètent automatiquement les calories restantes.<br/>
+          • Les lipides restent au niveau de base du régime.<br/><br/>
+<b>Usage courant</b><br/>
+          • Journées variées, activité modérée<br/>
+          • Recherche de simplicité et de flexibilité
+        </div>
+</details>
+<details class="mt-025">
+<summary><b>2) Suivi structuré sans restriction forte</b></summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Régime : standard / sportif<br/>
+          • Repères glucidiques : activés<br/>
+          • Low-carb : désactivé<br/>
+          • Objectif : 90–100 %<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • Les glucides sont encadrés par un repère.<br/>
+          • Si un plafond est atteint, le reste s’ajuste automatiquement.<br/><br/>
+<b>Usage courant</b><br/>
+          • Meilleure lisibilité des glucides<br/>
+          • Activité sportive régulière, besoin de cadre sans rigidité
+        </div>
+</details>
+<details class="mt-025">
+<summary><b>3) Réduction calorique progressive</b></summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Régime : déficit / recomposition<br/>
+          • Repères glucidiques : parfois activés<br/>
+          • Low-carb : désactivé<br/>
+          • Objectif : &lt; 100 %<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • La cible calorique diminue.<br/>
+          • Les protéines et les lipides minimum restent prioritaires.<br/><br/>
+<b>Usage courant</b><br/>
+          • Déficit modéré sur plusieurs semaines<br/>
+          • Attention portée à la récupération et à la régularité
+        </div>
+</details>
+<details class="mt-025">
+<summary><b>4) Low-carb explicite</b> (quotidien calme)</summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Low-carb : activé<br/>
+          • Repères glucidiques : activés<br/>
+          • Régime : compatible lipides plus élevés<br/>
+          • Objectif : variable<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • Les glucides sont volontairement limités.<br/>
+          • Les lipides s’ajustent pour compléter la journée.<br/><br/>
+<b>Usage courant</b><br/>
+          • Journées à faible charge glycémique<br/>
+          • Sensibilité personnelle aux glucides, peu d’entraînement intense
+        </div>
+</details>
+<details class="mt-025">
+<summary><b>5) Journée sportive / entraînement</b></summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Régime : sportif / endurance<br/>
+          • Repères glucidiques : désactivés (souvent)<br/>
+          • Low-carb : désactivé<br/>
+          • Objectif : 95–105 %<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • La cible suit la dépense estimée du jour.<br/>
+          • Les glucides prennent plus de place dans la répartition.<br/><br/>
+<b>Usage courant</b><br/>
+          • Entraînement soutenu<br/>
+          • Recherche de maintien ou de performance
+        </div>
+</details>
+<details class="mt-025">
+<summary><b>6) Alternance jours ON / jours OFF</b></summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Réglages ajustés selon la journée<br/>
+          • Repères glucidiques : variables<br/>
+          • Objectif : variable<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • La répartition s’adapte aux choix du jour.<br/>
+          • La lecture se fait surtout sur plusieurs jours (tendances).<br/><br/>
+<b>Usage courant</b><br/>
+          • Organisation semaine / week-end<br/>
+          • Alternance sport / repos, recherche de cohérence globale
+        </div>
+</details>
+<details class="mt-025">
+<summary><b>7) Suivi glycémique</b> (mode diabète)</summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Mode diabète : activé<br/>
+          • Repères glucidiques : souvent activés<br/>
+          • Low-carb : selon préférence personnelle<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • Les glucides du jour sont visibles en continu.<br/>
+          • Les glycémies et notes sont journalisées.<br/><br/>
+<b>Usage courant</b><br/>
+          • Observation des réactions individuelles<br/>
+          • Mise en lien alimentation / glycémies / contexte (non médical)
+        </div>
+</details>
+<details class="mt-025">
+<summary><b>8) Analyse avancée</b> (mode Expert)</summary>
+<div class="muted mt-025">
+<b>Configuration typique</b><br/>
+          • Mode Expert : activé<br/>
+          • Détails avancés visibles<br/><br/>
+<b>Ce que fait l’app</b><br/>
+          • Affiche la logique de répartition et des détails de calcul.<br/>
+          • Facilite la lecture fine des écarts et tendances.<br/><br/>
+<b>Usage courant</b><br/>
+          • Utilisateurs expérimentés ou curieux<br/>
+          • Analyse et compréhension, sans obligation d’optimiser
+        </div>
+</details>
+</div>
   </div>
 </section>
 
@@ -2710,6 +2952,15 @@ function toggleMenu(){
   panel.classList.contains("is-open") ? closeMenu() : openMenu();
 }
 
+function closeAllTutorialDetails(root = document){
+  root.querySelectorAll('details.notice').forEach(d => d.open = false);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  closeAllTutorialDetails(); // tout fermé au démarrage
+});
+
+
 function setActiveTab(tab){
   if (!isTermsAccepted() && tab !== "welcome"){
     alert("Lis et coche 'Conditions générales' pour déverrouiller l’application.");
@@ -2743,6 +2994,9 @@ function setActiveTab(tab){
   }
 
   try{ closeMenu(); }catch{}
+
+  // Ferme les mini-tutos (l’utilisateur choisit d’ouvrir)
+  closeAllTutorialDetails();
 }
 
 function initTabs(){
@@ -3365,7 +3619,7 @@ function applyDietPreset(mode) {
   syncCarbGuardsFromUI();
 }
 
-/* =====================================================================
+ /* =====================================================================
    5) Profils / Storage (profil actif, settings, days)
    UI piloté: #profileSelect, #btnCreateProfile, #btnDeleteProfile
    ===================================================================== */
@@ -5644,8 +5898,8 @@ function updateCarbCalcPanel(ctx){
   // Statut : le plafond ne fait baisser les glucides que s'il est < aux glucides "bruts"
   const isBinding = (Number.isFinite(targetCraw) && targetCraw > (carbCapG + eps));
   const bindLine = isBinding
-    ? "Plafond actif : les glucides sont limités (les calories restantes basculent vers les lipides)."
-    : "Plafond non contraignant : tes glucides calculés sont déjà sous le plafond (rien à limiter).";
+    ? "Plafond actif : Les glucides sont limités (les calories restantes basculent vers les lipides)."
+    : "Plafond non bloquant : Les glucides calculés sont déjà sous le repère fixé.";
 
   // Contexte objectif : où se situe ton plafond g/kg dans la plage de l’objectif
   let goalLine = "";
@@ -6736,6 +6990,176 @@ renderSportSleep7d(getSelectedDate());
   }catch(e){}
 
 })();
+
+/* =========================================================
+   COMPROMIS OPTIMAUX — rendu sous le menu (minimal)
+   Ne touche pas aux calculs : UI purement informative.
+   UI : #compromiseSelect, #compromiseBox
+   ========================================================= */
+(function(){
+  function _esc(s){
+    try{ return (typeof escapeHtml === "function") ? escapeHtml(String(s)) : String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
+    catch{ return String(s); }
+  }
+  function byId(id){ return document.getElementById(id); }
+
+  const COMPROMISE_DATA = {
+    eq_global: {
+      title:"Équilibrage global (base santé / stabilité)",
+      phase:"Équilibrage",
+      objectif:["Poids stable","Énergie régulière","Glycémie plus stable","Habitudes durables" ],
+      compromis:["Pas d’optimisation extrême","Progression physique modérée"],
+      macros:{ c:"≈ 45–55 %", p:"≈ 18–22 %", f:"≈ 25–35 %" },
+      ajust:["Journée active → glucides ↑, lipides ↓","Journée calme → glucides ↓, lipides ↑","Protéines stables"],
+      app:{ preset:"maintain / équilibre", carbGoals:["maintain"], fatFloors:["maintain"] },
+      plus:["Idéal pour poser une base saine avant toute phase plus spécifique.","Convient si l’objectif principal est la régularité, pas la transformation rapide."]
+    },
+    eq_gly: {
+      title:"Confort glycémique (équilibrage orienté satiété)",
+      phase:"Équilibrage / transition",
+      objectif:["Moins de fringales","Énergie plus plate","Meilleure tolérance glucidique"],
+      compromis:["Intensité sportive un peu moindre","Flexibilité sociale réduite"],
+      macros:{ c:"≈ 35–45 %", p:"≈ 20–25 %", f:"≈ 30–35 %" },
+      ajust:["Glucides concentré autour de l’effort","Fibres ↑","Lipides plutôt éloignés du post-effort"],
+      app:{ preset:"recomp", carbGoals:["recomp","maintain"], fatFloors:["recomp","maintain"], note:"Option LOW_CARB modéré possible." },
+      plus:["Utile si tu as souvent faim, des coups de barre ou des envies de sucre.","Convient mieux aux journées peu explosives qu’aux efforts très intenses."]
+    },
+    cut_sport: {
+      title:"Sèche sportive (référence amaigrissement)",
+      phase:"Amaigrissement",
+      objectif:["Perte de gras progressive","Performance encore exploitable","Masse musculaire préservée"],
+      compromis:["Vitesse de perte modérée","Discipline alimentaire régulière"],
+      macros:{ c:"≈ 35–45 %", p:"≈ 25–30 %", f:"≈ 25–30 %" },
+      ajust:["Jours lourds → glucides ↑, lipides ↓","Jours OFF → glucides ↓, lipides ↑","Protéines constantes"],
+      app:{ preset:"cut_standard", carbGoals:["sport"], fatFloors:["sport"] },
+      plus:["Le meilleur compromis pour perdre du gras sans sacrifier l’entraînement.","C’est le choix le plus sûr pour une sèche active et durable."]
+    },
+    cut_fast: {
+      title:"Sèche agressive (court terme)",
+      phase:"Amaigrissement (court terme)",
+      objectif:["Perte de gras rapide","Résultat visible à court terme"],
+      compromis:["Performance en baisse","Fatigue accrue","Durée limitée"],
+      macros:{ c:"≈ 25–35 %", p:"≈ 30–35 %", f:"≈ 25–30 %" },
+      ajust:["Réduire le volume d’entraînement","Planifier une pause / refeed si nécessaire","Surveiller sommeil / récupération"],
+      app:{ preset:"cut_aggressive", carbGoals:["strict"], fatFloors:["strict"] },
+      plus:["À utiliser comme un outil ponctuel, jamais comme un mode de vie.","Adapté à un objectif rapide avec une date précise."]
+    },
+    recomp: {
+      title:"Recomposition (entre deux)",
+      phase:"Transition",
+      objectif:["Améliioration de la composition corporelle","Variations de poids limitées","Transition douce"],
+      compromis:["Résultats plus lents","Nécessite constance"],
+      macros:{ c:"≈ 40–50 %", p:"≈ 20–25 %", f:"≈ 25–30 %" },
+      ajust:["Glucides modulés à l’entraînement","Léger déficit certains jours seulement","Priorité au rassasiant"],
+      app:{ preset:"recomp", carbGoals:["recomp"], fatFloors:["recomp"] },
+      plus:["Idéal si le poids stagne mais que la composition corporelle s’améliore.","Convient bien aux phases de transition ou de reprise."]
+    },
+    endurance: {
+      title:"Performance / endurance",
+      phase:"Performance",
+      objectif:["Soutenir le volume d'entraînement","Récupération énergétique","Performance longue durée"],
+      compromis:["Amaigrissement non prioritaire","Apports plus élevés"],
+      macros:{ c:"≈ 55–65 %", p:"≈ 15–20 %", f:"≈ 20–25 %" },
+      ajust:["Carb-loading ponctuel si besoin","Lipides plus bas transitoirement (48–72 h) en carb-load","Protéines stables"],
+      app:{ preset:"endurance", carbGoals:["volume","carbload"], fatFloors:["volume","carbload"] },
+      plus:["À privilégier quand la performance et le volume priment sur l’esthétique.","Peu compatible avec un objectif d’amaigrissement rapide."]
+    },
+    protect: {
+      title:"Protection musculaire / récupération prioritaire",
+      phase:"Sèche longue / fatigue",
+      objectif:["Préserver la masse maigre","Améliorer la récupération","Réduire le risque de surmenage"],
+      compromis:["Perte de gras plus lente","Déficit volontairement limité"],
+      macros:{ c:"≈ 30–40 %", p:"≈ 28–32 %", f:"≈ 28–32 %" },
+      ajust:["Glucides renforcés post-effort","Lipides maintenus un peu plus hauts les jours OFF","Protéines réparties sur la journée"],
+      app:{ preset:"recomp (ou cut_standard)", carbGoals:["recomp","sport"], fatFloors:["recomp"] },
+      plus:["Idéal en période de fatigue, blessures légères, ou volume élevé.","Bon choix si tu veux continuer à t’entraîner sans t’écraser."]
+    },
+    adherence: {
+      title:"Simplicité / adhérence long terme",
+      phase:"Toutes phases",
+      objectif:["Tenir sur la durée","Réduire la charge mentale","Maintenir une cohérence hebdomadaire"],
+      compromis:["Précision macros moindre","Ajustements moins fins"],
+      macros:{ c:"≈ 40–50 %", p:"≈ 20–25 %", f:"≈ 25–30 %" },
+      ajust:["Repas types répétés","Ajustement hebdo plutôt que journalier","Flexibilité planifiée"],
+      app:{ preset:"maintain (ou recomp)", carbGoals:["maintain"], fatFloors:["maintain"] },
+      plus:["Compromis clé pour éviter l’abandon et le rebond.","Le meilleur choix si tu veux une routine simple qui marche."]
+    }
+  };
+
+function dietPresetLabel(key){
+  if (!key) return "—";
+  // accepte "maintain / équilibre" (texte déjà prêt)
+  if (key.includes("/") || key.includes(" ")) return key;
+  if (typeof dietLabel === "function") return dietLabel(key);
+  if (typeof DIET_PRESETS !== "undefined" && DIET_PRESETS[key]?.label) return DIET_PRESETS[key].label;
+  return key;
+}
+
+function carbGoalLabel(key){
+  if (!key) return "—";
+  if (typeof CARB_GOALS !== "undefined" && CARB_GOALS[key]?.label) return CARB_GOALS[key].label;
+  return key;
+}
+
+function fatFloorLabel(key){
+  if (!key) return "—";
+  if (typeof FAT_FLOORS !== "undefined" && FAT_FLOORS[key]?.note) return FAT_FLOORS[key].note; // plus humain
+  if (typeof FAT_FLOORS !== "undefined" && FAT_FLOORS[key]?.min != null) return `Plancher ${FAT_FLOORS[key].min} g/kg`;
+  return key;
+}
+
+
+  function render(c){
+const chips = [];
+chips.push(`DIET_PRESETS: ${dietPresetLabel(c.app.preset)}`);
+chips.push(`CARB_GOALS: ${c.app.carbGoals.map(carbGoalLabel).join(", ")}`);
+chips.push(`FAT_FLOORS: ${c.app.fatFloors.map(fatFloorLabel).join(", ")}`);
+if (c.app.note) chips.push(c.app.note);
+
+
+    const list = (arr)=> `<ul class="muted" style="margin:.25rem 0 .25rem 1.1rem">${arr.map(x=>`<li>${_esc(x)}</li>`).join("")}</ul>`;
+
+    return `
+      <div style="margin-bottom:.35rem"><b>${_esc(c.title)}</b> <span class="muted">— ${_esc(c.phase)}</span></div>
+      <table>
+        <tbody>
+          <tr><th style="width:220px">Objectif (apporte)</th><td>${list(c.objectif)}</td></tr>
+          <tr><th>Compromis</th><td>${list(c.compromis)}</td></tr>
+          <tr><th>Équilibre macros (%)</th>
+              <td class="muted">Glucides ${_esc(c.macros.c)} · Protéines ${_esc(c.macros.p)} · Lipides ${_esc(c.macros.f)}</td></tr>
+          <tr><th>Ajustement fin</th><td>${list(c.ajust)}</td></tr>
+          <tr><th>Choix (selon l’app)</th><td class="muted">${_esc(chips.join(" · "))}</td></tr>
+        </tbody>
+      </table>
+      <div class="muted" style="margin-top:.5rem">
+        <b>👉</b> ${_esc(c.plus[0])}<br>
+        <b>👉</b> ${_esc(c.plus[1])}
+      </div>
+    `;
+  }
+
+  function wire(){
+    const sel = byId("compromiseSelect");
+    const box = byId("compromiseBox");
+    if (!sel || !box) return;
+
+    function update(){
+      const key = String(sel.value || "");
+      const c = COMPROMISE_DATA[key];
+      if (!c){
+        box.innerHTML = '<div class="muted">Sélectionne un compromis pour afficher la fiche.</div>';
+        return;
+      }
+      box.innerHTML = render(c);
+    }
+    sel.addEventListener("change", update);
+    update();
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", wire);
+  else wire();
+})();
+
 
 wireEvents();
 initApp();
