@@ -928,6 +928,19 @@ label.inline input{width:auto}
      DASHBOARD
      ========================= -->
 <section class="tabSection is-active" data-tabsection="dash">
+
+<div class="notice notice--ok mt-06">
+  <div class="noticeTitle">Mini-tuto — Profil</div>
+  <div class="muted">
+    <b>But :</b> poser la base avant l’onglet Objectif et l’onglet Repas.<br/>
+    1) <b>Renseigne tes infos</b> (sexe, âge, taille, <b>poids de référence</b>) : elles servent aux repères (g/kg) et aux calculs.<br/>
+    2) Choisis ton <b>utilisateur</b> (ou crée-en un) : chaque utilisateur garde ses données séparées.<br/>
+    3) Entre ta <b>dépense du jour (montre)</b> : c’est la base kcal de la journée.<br/>
+    4) Choisis la <b>marque</b> et la <b>prudence</b> : la montre donne une estimation, pas une valeur exacte.<br/>
+    <b>Règle :</b> si tu changes ces éléments, les objectifs et résultats se recalculent.
+  </div>
+</div>
+
 <div class="card" id="positioningCard">
 <h2>Mode d'affichage</h2>
 <div class="row">
@@ -1092,6 +1105,21 @@ label.inline input{width:auto}
      OBJECTIF
      ========================= -->
 <section class="tabSection" data-tabsection="goal">
+
+<div class="notice notice--warn mt-06">
+  <div class="noticeTitle">Mini-tuto — Objectif</div>
+  <div class="muted">
+    <b>But :</b> choisir un compromis (sèche, performance, stabilité) avant de saisir les repas.<br/>
+    1) <b>Régime</b> = une base automatique (protéines, lipides min, glucides ajustés).<br/>
+    2) <b>Objectif (%)</b> = la quantité totale (100% ≈ maintien, moins = déficit).<br/>
+    3) <b>Protéines</b> structurent la journée (socle).<br/>
+    4) <b>Lipides minimum</b> = garde-fou (ne pas “couper à zéro”).<br/>
+    5) <b>Glucides</b> = variable d’ajustement (repères ou low-carb selon ton choix).<br/>
+    <b>Résultats :</b> la synthèse s’affiche juste en dessous (zone “Résultats”). 
+  </div>
+</div>
+
+
 <div class="card">
 <h2>Répartition protéines / glucides / lipides</h2>
 <p class="muted">
@@ -1212,6 +1240,23 @@ L’app les ajuste pour rester cohérente avec ton objectif." role="button" tabi
 
 <!-- Repères glucidiques (panel) -->
 <div class="card panel-subtle">
+
+<div class="notice notice--ok mt-06">
+  <div class="noticeTitle">Mini-tuto — Glucides (repères vs low-carb)</div>
+  <div class="muted">
+    <b>Deux logiques différentes :</b><br/>
+    • <b>Repères glucidiques</b> : servent surtout à <b>cadrer le maintien</b>, déficit léger ou une sèche modérée.
+      Sans repères, les glucides peuvent monter excessivement et mécaniquement quand la dépense est élevée.
+      L’objectif (g/kg) et le plafond évitent cette dérive.<br/>
+    • <b>Low-carb</b> : impose une <b>contrainte forte</b> sur les glucides.
+      Utile en cas de <b>diabète</b>, de <b>sèche stricte</b> ou pour rechercher une stabilité faim/glycémie,
+      parfois au détriment de la performance.<br/>
+    <b>Important :</b> ces modes sont exclusifs pour éviter des réglages contradictoires.
+  </div>
+</div>
+
+
+
 <h3 class="h3">Repères glucidiques</h3>
 <p class="muted">
         Ces repères aident à maintenir une cohérence entre ton objectif et la répartition des apports.
@@ -1346,6 +1391,19 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
      REPAS
      ========================= -->
 <section class="tabSection" data-tabsection="repas">
+
+<div class="notice notice--ok mt-06">
+  <div class="noticeTitle">Mini-tuto — Repas</div>
+  <div class="muted">
+    <b>But :</b> remplir le journal alimentaire, même approximatif.<br/>
+    1) Ajoute un repas (nom + K/P/G/L).<br/>
+    2) L’app additionne et met à jour le reste automatiquement.<br/>
+    3) Corriger un repas corrige toute la journée.<br/>
+    <b>Astuce :</b> le calcul “/100 g” peut pré-remplir les champs.
+  </div>
+</div>
+
+
 <div class="card">
 <h2>Repas du jour</h2>
 <p class="muted mt-02" id="dietNote">
@@ -1537,6 +1595,18 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
          JOURNAL
          ========================= -->
 <section class="tabSection" data-tabsection="journal">
+
+<div class="notice notice--warn mt-06">
+  <div class="noticeTitle">Mini-tuto — Historique</div>
+  <div class="muted">
+    <b>But :</b> lire la cohérence sur plusieurs jours.<br/>
+    1) Ne juge pas une journée : cherche une <b>tendance</b>.<br/>
+    2) Si tu modifies une donnée passée, tu modifies la tendance : c’est normal.<br/>
+    3) Supprimer sert à corriger une erreur, pas à “optimiser” l’historique.
+  </div>
+</div>
+
+
 <!-- Suivi poids & compo : Sport + Expert -->
 <div class="card mt-06" data-um="sport">
 <h2>Sport &amp; sommeil (journal local)</h2>
@@ -1736,6 +1806,19 @@ Visible uniquement si l’option diabète est activée.
          DIABÈTE
          ========================= -->
 <section class="tabSection" data-tabsection="diab">
+
+<div class="notice notice--warn mt-06">
+  <div class="noticeTitle">Mini-tuto — Diabète</div>
+  <div class="muted">
+    <b>But :</b> observer des patterns (repas + contexte), sans interprétation automatique.<br/>
+    1) Note le contexte (activité, stress, sommeil, etc.).<br/>
+    2) Saisis les repas (glucides) et les glycémies.<br/>
+    3) Utilise les notes : elles expliquent souvent plus que le chiffre.<br/>
+    <b>Règle :</b> on cherche une répétition de situations, pas une valeur isolée.
+  </div>
+</div>
+
+
 <div class="card">
 <p class="muted" style="margin-top:-.2rem">
         Suivi personnel (local). Aucun calcul de dose/ajustement thérapeutique.
@@ -1745,20 +1828,23 @@ Visible uniquement si l’option diabète est activée.
 <h2>Diabète — journée</h2>
 <div class="row" style="margin-top:.35rem">
 <div>
-<label>Activité (résumé)<span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="..." role="button" tabindex="0">ℹ️</span></label>
+<label>Activité (résumé)<span aria-label="Pourquoi noter l’activité ?" class="info-dot" data-modaltext="L’activité peut influencer la glycémie.
+Un résumé suffit (pas besoin de précision)." role="button" tabindex="0">ℹ️</span></label>
 <input id="diab_dayActivity" placeholder="ex: tennis 1h30 + marche 6k pas" type="text"/>
 </div>
 <div>
 <label>
           Stress (0–10)
-          <span class="info-dot" title="Auto-évaluation simple (pas médical).">?</span>
+          <span aria-label="Pourquoi le stress compte ?" class="info-dot" data-modaltext="Le stress peut faire varier la glycémie, même sans changement alimentaire.
+Note ton ressenti global de la journée." role="button" tabindex="0">ℹ️</span>
 </label>
 <input id="diab_dayStress" max="10" min="0" placeholder="ex: 6" step="1" type="number"/>
 </div>
 <div>
 <label>
           Sommeil (heures)
-          <span class="info-dot" title="Durée totale approximative.">?</span>
+          <span aria-label="Pourquoi le sommeil ?" class="info-dot" data-modaltext="Un sommeil court ou perturbé peut influencer la glycémie le lendemain.
+Une estimation suffit." role="button" tabindex="0">ℹ️</span>
 </label>
 <input id="diab_daySleepH" max="24" min="0" placeholder="ex: 6.5" step="0.1" type="number"/>
 </div>
@@ -1767,7 +1853,7 @@ Visible uniquement si l’option diabète est activée.
 <div>
 <label>
           Infection / maladie ?
-          <span class="info-dot" title="Oui/non — pour contextualiser les variations de glycémie.">?</span>
+          <span aria-label="À quoi ça sert ?" class="info-dot" data-modaltext="Une infection ou une maladie peut augmenter la glycémie temporairement." role="button" tabindex="0">ℹ️</span>
 </label>
 <select id="diab_daySick">
 <option selected="" value="">(non renseigné)</option>
@@ -1778,7 +1864,7 @@ Visible uniquement si l’option diabète est activée.
 <div>
 <label>
           Alcool ?
-          <span class="info-dot" title="Oui/non — pour contextualiser la journée.">?</span>
+          <span aria-label="Pourquoi le noter ?" class="info-dot" data-modaltext="L’alcool peut modifier la glycémie, parfois avec un décalage." role="button" tabindex="0">ℹ️</span>
 </label>
 <select id="diab_dayAlcohol">
 <option selected="" value="">(non renseigné)</option>
@@ -1800,20 +1886,22 @@ Visible uniquement si l’option diabète est activée.
 <div class="card">
 <h2 style="margin:.1rem 0 .6rem">Diabète — glycémies (journal)</h2>
 <p class="muted" style="margin-top:-.2rem">
-       Tout est stocké localement (dans ton navigateur). Conversion mg/dL↔mmol/L : affichage (stockage interne en mg/dL)
+       Données stockées localement. Conversion d’unités automatique.
     </p>
 <div class="kpi" id="diab_dayKpis" style="align-self:flex-end"></div>
 <p class="muted" id="diab_dayNote"></p>
 <div class="row">
 <div>
-<label>Valeur</label>
+<label>Valeur<span aria-label="Comment utiliser cette valeur ?" class="info-dot" data-modaltext="Valeur mesurée par toi.
+L’application ne fait aucune interprétation médicale." role="button" tabindex="0">ℹ️</span></label>
 <input id="diab_gValue" min="0" placeholder="ex: 108 (mg/dL) ou 6.0 (mmol/L)" step="0.1" type="number"/>
 </div>
 <div class="row">
 <div>
 <label>
       Unité glycémie
-      <span class="info-dot" title="mg/dL ↔ mmol/L (conversion d'affichage).">?</span>
+      <span aria-label="Unité d’affichage" class="info-dot" data-modaltext="Les données sont stockées en interne en mg/dL.
+L’unité affichée peut être changée librement." role="button" tabindex="0">ℹ️</span>
 </label>
 <select id="diab_glucoseUnit">
 <option selected="" value="mgdl">mg/dL</option>
@@ -1824,7 +1912,8 @@ Visible uniquement si l’option diabète est activée.
 <!-- garder l'input existant en “compat” mais invisible si tu veux éviter de casser des refs -->
 <input class="hidden" id="diab_carbPortionG" type="number" value="15"/>
 <div>
-<label>Moment</label>
+<label>Moment<span aria-label="Pourquoi préciser le moment ?" class="info-dot" data-modaltext="La glycémie varie selon le moment de la journée.
+Cette information aide à relire l’historique." role="button" tabindex="0">ℹ️</span></label>
 <select id="diab_gContext">
 <option selected="" value="à jeun">à jeun</option>
 <option value="avant repas">avant repas</option>
@@ -1849,7 +1938,9 @@ Visible uniquement si l’option diabète est activée.
 <div class="row">
 <label>
       HbA1c (%) (labo)
-      <span class="info-dot" title="Indicateur labo (tendance sur ~2–3 mois). Informatif uniquement.">?</span>
+      <span aria-label="À propos de l’HbA1c" class="info-dot" data-modaltext="Valeur issue d’un résultat de laboratoire.
+L’HbA1c donne une vue globale de l’équilibre glycémique sur plusieurs semaines.
+Elle est enregistrée à titre informatif, sans interprétation médicale." role="button" tabindex="0">ℹ️</span>
 </label>
 <input id="diab_hba1c" max="20" min="3" placeholder="ex: 6.4" step="0.1" type="number"/>
 </div>
@@ -1899,6 +1990,17 @@ Visible uniquement si l’option diabète est activée.
      CLOUD
      ========================= -->
 <section class="tabSection" data-tabsection="cloud">
+
+<div class="notice notice--ok mt-06">
+  <div class="noticeTitle">Mini-tuto — Cloud</div>
+  <div class="muted">
+    <b>But :</b> sauvegarder / restaurer tes données quand tu le décides.<br/>
+    • Sans email : tout reste <b>sur cet appareil</b>.<br/>
+    • Avec email : tu peux <b>recevoir un lien</b>, puis Pull/Push/Sync.<br/>
+    <b>Important :</b> rien n’est envoyé automatiquement sans action de ta part.
+  </div>
+</div>
+
 <div class="card" id="cloudCard">
 <h2>Compte &amp; synchronisation (optionnelle)</h2>
 <p class="muted">
@@ -1983,374 +2085,278 @@ Visible uniquement si l’option diabète est activée.
      LEXICON
      ========================= -->
 <section class="tabSection" data-tabsection="lexicon">
-<div class="card">
-<h2>Lexique</h2>
-<p class="muted">
+
+<div class="notice notice--ok mt-06">
+  <div class="noticeTitle">Mini-tuto — Lexique</div>
+  <div class="muted">
+    <b>But :</b> éviter les contresens.<br/>
+    • “Glucides” ≠ “sucre” ≠ “mauvais”.<br/>
+    • “Lipides” ≠ “graisse corporelle”.<br/>
+    • “Protéines” ≠ “muscle instantané”.<br/>
+    Lis cette page quand un chiffre te fait réagir : elle explique ce que l’app veut dire (et ce qu’elle ne dit pas).
+  </div>
+</div>
+
+  <div class="card">
+    <h2>Lexique</h2>
+    <p class="muted">
       Ce lexique explique les termes utilisés dans l’application.
       Les définitions sont données à titre de <b>repères de compréhension</b>,
       pas de recommandations médicales.
     </p>
-<!-- 🔋 ÉNERGIE & CALORIES -->
-<div class="notice notice--warn mt-06">
-<div class="noticeTitle">Énergie &amp; calories</div>
-<h4>Calorie (kcal)</h4>
-<p class="muted">
-        Dans l’application, la calorie est une unité de repère utilisée pour estimer
-        l’énergie apportée par l’alimentation et dépensée dans la journée.
+
+    <!-- 🔋 ÉNERGIE & CALORIES -->
+    <div class="notice notice--warn mt-06">
+      <div class="noticeTitle">Énergie &amp; calories</div>
+
+      <h4>Calorie (kcal)</h4>
+      <p class="muted">
+        Unité de repère utilisée pour estimer l’énergie apportée par l’alimentation
+        et dépensée dans la journée.
         Ce n’est pas une mesure exacte du corps humain.
-        Elle sert à comparer les journées entre elles et à garder une cohérence globale.
+        Elle sert surtout à comparer les journées entre elles et à garder une cohérence globale.
       </p>
-<h4>BMR (métabolisme de base)</h4>
-<p class="muted">
-        Dans l’application, le BMR représente une estimation de l’énergie minimale
-        dépensée au repos.
-        Ce n’est pas un objectif alimentaire ni une dépense journalière.
+
+      <h4>BMR (métabolisme de base)</h4>
+      <p class="muted">
+        Estimation de l’énergie minimale dépensée au repos
+        (fonctions vitales, respiration, température).
+        Ce n’est ni un objectif alimentaire ni une dépense journalière.
         Il sert uniquement de repère pour éviter des objectifs trop bas.
       </p>
-</div>
-<!-- 🍽️ MACROS & NUTRITION -->
-<div class="notice notice--ok mt-06">
-<div class="noticeTitle">Macros &amp; nutrition</div>
-<h4>Protéines</h4>
-<p class="muted">
-        Dans l’application, les protéines sont un repère nutritionnel prioritaire
-        dans la répartition des apports.
+    </div>
+
+    <!-- 🍽️ MACROS & NUTRITION -->
+    <div class="notice notice--ok mt-06">
+      <div class="noticeTitle">Macros &amp; nutrition</div>
+
+      <h4>Protéines</h4>
+      <p class="muted">
+        Repère nutritionnel prioritaire dans la répartition des apports.
         Elles ne constituent pas une prescription individuelle.
         Elles servent à structurer les repas et la récupération.
       </p>
-<h4>Glucides</h4>
-<p class="muted">
-        Dans l’application, les glucides sont un levier d’ajustement énergétique
-        selon l’objectif et l’activité.
+
+      <h4>Glucides</h4>
+      <p class="muted">
+        Levier d’ajustement énergétique selon l’objectif et l’activité.
         Ils ne sont ni bons ni mauvais en soi.
         Ils aident à adapter l’alimentation au rythme quotidien.
       </p>
-<h4>Lipides</h4>
-<p class="muted">
-        Dans l’application, les lipides sont un apport indispensable intégré
-        à la répartition globale.
-        Ils ne doivent pas être supprimés ni sur-interprétés.
+
+      <h4>Lipides</h4>
+      <p class="muted">
+        Apport indispensable intégré à la répartition globale.
+        Ils ne doivent ni être supprimés ni sur-interprétés.
         Ils participent à l’équilibre énergétique.
       </p>
-<h4>Ratio glucides / protéines</h4>
-<p class="muted">
-        Dans l’application, ce ratio est un repère optionnel qui limite la place
-        des glucides par rapport aux protéines.
+
+      <h4>Ratio glucides / protéines</h4>
+      <p class="muted">
+        Repère optionnel qui limite la place des glucides par rapport aux protéines.
         Il ne définit pas un équilibre nutritionnel universel.
         Il aide à structurer certaines journées.
       </p>
-<h4>Lipides minimum</h4>
-<p class="muted">
-        Dans l’application, les lipides minimum correspondent à un seuil
-        de sécurité nutritionnelle.
+
+      <h4>Lipides minimum</h4>
+      <p class="muted">
+        Seuil de sécurité nutritionnelle.
         Ce n’est pas une recommandation médicale personnalisée.
-        Ils garantissent une base stable lorsque les glucides sont réduits.
+        Il garantit une base stable lorsque les glucides sont réduits.
       </p>
-<h4>Repères glucidiques</h4>
-<p class="muted">
-        Dans l’application, les repères glucidiques sont des limites de cohérence
-        optionnelles.
-        Ils ne sont ni obligatoires ni bloquants.
-        Ils servent à mieux visualiser et encadrer les glucides.
+
+      <h4>Repères glucidiques</h4>
+      <p class="muted">
+        Limites de cohérence optionnelles.
+        Elles ne sont ni obligatoires ni bloquantes.
+        Elles servent à mieux visualiser et encadrer les glucides.
       </p>
-<h4>Low-carb (mode)</h4>
-<p class="muted">
-        Dans l’application, le mode low-carb correspond à une organisation
-        volontairement basse en glucides.
+
+      <h4>Low-carb (mode)</h4>
+      <p class="muted">
+        Organisation volontairement basse en glucides.
         Ce n’est ni un régime médical ni une obligation.
-        Il permet d’explorer une répartition différente selon le contexte.
+        Elle permet d’explorer une répartition différente selon le contexte.
       </p>
-</div>
-<!-- 📊 SUIVI & TENDANCES -->
-<div class="notice notice--warn mt-06">
-<div class="noticeTitle">Suivi &amp; tendances</div>
-<h4>Masse grasse (%)</h4>
-<p class="muted">
-        Dans l’application, la masse grasse est une valeur indicative fournie
-        par la balance.
+    </div>
+
+    <!-- 📊 SUIVI & TENDANCES -->
+    <div class="notice notice--warn mt-06">
+      <div class="noticeTitle">Suivi &amp; tendances</div>
+
+      <h4>Masse grasse (%)</h4>
+      <p class="muted">
+        Valeur indicative fournie par la balance.
         Elle ne reflète pas précisément la composition corporelle réelle.
         Elle se lit surtout dans le temps.
       </p>
-<h4>Masse musculaire (%)</h4>
-<p class="muted">
-        Dans l’application, la masse musculaire est une estimation dépendante
-        de l’appareil utilisé.
+
+      <h4>Masse musculaire (%)</h4>
+      <p class="muted">
+        Estimation dépendante de l’appareil utilisé.
         Elle ne mesure pas la performance.
         Elle sert à observer des tendances.
       </p>
-<h4>Masse osseuse (kg)</h4>
-<p class="muted">
-        Dans l’application, la masse osseuse est une valeur approximative issue
-        des balances connectées.
+
+      <h4>Masse osseuse (kg)</h4>
+      <p class="muted">
+        Valeur approximative issue des balances connectées.
         Elle n’a pas de portée diagnostique.
         Elle reste généralement stable dans le temps.
       </p>
-<h4>IMC</h4>
-<p class="muted">
-        Dans l’application, l’IMC est un indice standard basé sur le poids et la taille.
+
+      <h4>IMC</h4>
+      <p class="muted">
+        Indice standard basé sur le poids et la taille.
         Il ne distingue pas masse musculaire et masse grasse.
         Il est fourni comme repère général.
       </p>
-<h4>Catégorie IMC (indicatif)</h4>
-<p class="muted">
-        Dans l’application, la catégorie IMC est une classification automatique
-        et indicative.
+
+      <h4>Catégorie IMC (indicatif)</h4>
+      <p class="muted">
+        Classification automatique et indicative.
         Elle ne reflète pas l’état de santé individuel.
         Elle sert uniquement de lecture standardisée.
       </p>
-</div>
-<!-- 🩸 MODE DIABÈTE -->
-<div class="notice notice--ok mt-06">
-<div class="noticeTitle">Mode diabète (si activé)</div>
-<h4>Mode diabète (dans l’application)</h4>
-<p class="muted">
-        Dans l’application, le mode diabète active un journal de suivi personnel.
+    </div>
+
+    <!-- 🩸 MODE DIABÈTE -->
+    <div class="notice notice--ok mt-06">
+      <div class="noticeTitle">Mode diabète (si activé)</div>
+
+      <h4>Mode diabète</h4>
+      <p class="muted">
+        Active un journal de suivi personnel.
         Il ne remplace pas un suivi médical ni un traitement.
         Il aide à observer des liens entre alimentation, glycémies et contexte.
       </p>
-<h4>Glycémie et unités</h4>
-<p class="muted">
-        Dans l’application, la glycémie correspond aux valeurs mesurées
-        par l’utilisateur, dans les unités de son choix.
-        L’application n’interprète pas ces valeurs.
+
+      <h4>Glycémie et unités</h4>
+      <p class="muted">
+        Valeurs mesurées par l’utilisateur, affichées dans l’unité de son choix.
+        L’application n’en fait aucune interprétation médicale.
         Elles servent uniquement au suivi personnel.
       </p>
-<h4>Journal glycémique</h4>
-<p class="muted">
-        Dans l’application, le journal glycémique regroupe les mesures et le contexte.
+
+      <h4>Journal glycémique</h4>
+      <p class="muted">
+        Regroupe les mesures et le contexte associé.
         Il ne permet aucune prédiction.
         Il aide à visualiser des tendances.
       </p>
-<h4>Glucides du jour</h4>
-<p class="muted">
-        Dans l’application, les glucides du jour représentent le total encodé.
-        Ils ne constituent pas une limite médicale.
-        Ils servent de repère visuel pendant la journée.
+
+      <h4>Glucides du jour</h4>
+      <p class="muted">
+        Total des glucides encodés pour la journée.
+        Ce n’est pas une limite médicale.
+        C’est un repère visuel pendant la journée.
       </p>
-<h4>Repères glucidiques (diabète)</h4>
-<p class="muted">
-        Dans l’application, ces repères servent à structurer la lecture des glucides.
+
+      <h4>Repères glucidiques (diabète)</h4>
+      <p class="muted">
+        Repères optionnels pour structurer la lecture des glucides.
         Ils n’ont aucune valeur thérapeutique.
         Ils facilitent l’observation des effets alimentaires.
       </p>
-<h4>Low-carb (diabète)</h4>
-<p class="muted">
-        Dans l’application, le low-carb en mode diabète est une organisation volontaire.
-        Il ne remplace aucun traitement.
-        Il sert uniquement à explorer des variations personnelles.
+
+      <h4>Low-carb (diabète)</h4>
+      <p class="muted">
+        Organisation volontairement basse en glucides.
+        Elle ne remplace aucun traitement.
+        Elle permet d’explorer des variations personnelles.
       </p>
-</div>
-<!-- 🧩 COMBINAISONS & USAGES -->
-<div class="notice notice--warn mt-06">
-<div class="noticeTitle">Combinaisons &amp; usages</div>
-<h4>Régime standard</h4>
-<p class="muted">
-        Dans l’application, le régime standard correspond à une répartition équilibrée
-        et souple.
+    </div>
+
+    <!-- 🧩 COMBINAISONS & USAGES -->
+    <div class="notice notice--warn mt-06">
+      <div class="noticeTitle">Combinaisons &amp; usages</div>
+
+      <h4>Régime standard</h4>
+      <p class="muted">
+        Répartition équilibrée et souple.
         Ce n’est pas un modèle universel.
-        Il favorise la simplicité au quotidien.
+        Elle favorise la simplicité au quotidien.
       </p>
-<h4>Régime sportif</h4>
-<p class="muted">
-        Dans l’application, le régime sportif donne plus de place à l’énergie disponible.
+
+      <h4>Régime sportif</h4>
+      <p class="muted">
+        Donne plus de place à l’énergie disponible.
         Il ne garantit pas la performance.
         Il accompagne les journées actives.
       </p>
-<h4>Régime déficit</h4>
-<p class="muted">
-        Dans l’application, le régime déficit réduit la cible calorique globale.
+
+      <h4>Régime déficit</h4>
+      <p class="muted">
+        Réduit la cible calorique globale.
         Il ne définit pas un rythme de perte de poids.
         Il structure une phase de réduction progressive.
       </p>
-<h4>Objectif (%)</h4>
-<p class="muted">
-        Dans l’application, l’objectif ajuste la quantité totale d’énergie visée.
+
+      <h4>Objectif (%)</h4>
+      <p class="muted">
+        Ajuste la quantité totale d’énergie visée.
         Il ne correspond pas à un résultat garanti.
         Il s’adapte au contexte de la journée.
       </p>
-<h4>Scénarios d’usage</h4>
-<p class="muted">
-        Dans l’application, les scénarios d’usage décrivent des configurations courantes.
-        Ils ne sont ni des conseils ni des parcours imposés.
+
+      <h4>Scénarios d’usage</h4>
+      <p class="muted">
+        Décrivent des configurations courantes.
+        Ce ne sont ni des conseils ni des parcours imposés.
         Ils servent de repères de compréhension.
       </p>
-<h4>Mode Expert</h4>
-<p class="muted">
-        Dans l’application, le mode Expert affiche des détails avancés.
+
+      <h4>Mode Expert</h4>
+      <p class="muted">
+        Affiche des détails avancés.
         Il n’oblige pas à optimiser ni à comprendre tous les calculs.
         Il s’adresse aux utilisateurs curieux.
       </p>
-</div>
-<!-- ⌚ MONTRE & AJUSTEMENTS (Expert) -->
-<div class="notice notice--ok mt-06" data-um="expert">
-<div class="noticeTitle">Montre &amp; ajustements (optionnel)</div>
-<h4>Incertitude (%)</h4>
-<p class="muted">
-        Dans l’application, l’incertitude représente une marge appliquée
-        à l’estimation de la montre.
+    </div>
+
+    <!-- ⌚ MONTRE & AJUSTEMENTS (Expert) -->
+    <div class="notice notice--ok mt-06" data-um="expert">
+      <div class="noticeTitle">Montre &amp; ajustements (optionnel)</div>
+
+      <h4>Incertitude (%)</h4>
+      <p class="muted">
+        Marge appliquée à l’estimation de la montre.
         Elle ne corrige pas la réalité biologique.
         Elle évite une confiance excessive dans un chiffre unique.
       </p>
-<h4>Mode prudent</h4>
-<p class="muted">
-        Dans l’application, le mode prudent applique une correction conservatrice.
+
+      <h4>Mode prudent</h4>
+      <p class="muted">
+        Applique une correction conservatrice.
         Il ne protège pas de tous les écarts.
         Il favorise une approche plus sécurisée.
       </p>
-<h4>Mode large</h4>
-<p class="muted">
-        Dans l’application, le mode large autorise une estimation plus permissive.
+
+      <h4>Mode large</h4>
+      <p class="muted">
+        Autorise une estimation plus permissive.
         Il ne garantit pas l’exactitude.
         Il s’utilise dans des contextes spécifiques.
       </p>
-<h4>Dépense ajustée</h4>
-<p class="muted">
-        Dans l’application, la dépense ajustée est la base de calcul utilisée.
+
+      <h4>Dépense ajustée</h4>
+      <p class="muted">
+        Base de calcul utilisée pour la journée.
         Elle reste une approximation.
-        Elle sert de repère central pour la journée.
+        Elle sert de repère central.
       </p>
-<h4>Dépense utilisée</h4>
-<p class="muted">
-        Dans l’application, la dépense utilisée correspond à la valeur prise
-        en compte dans les calculs.
+
+      <h4>Dépense utilisée</h4>
+      <p class="muted">
+        Valeur effectivement prise en compte dans les calculs.
         Elle ne représente pas la dépense réelle du corps.
         Elle garantit la cohérence interne.
       </p>
-</div>
-<!-- 🧩 SCÉNARIOS D’USAGE (Expert) -->
-<div class="notice notice--ok mt-06" data-um="expert">
-<div class="noticeTitle">Scénarios d’usage (8)</div>
-<p class="muted">
-        Ces scénarios décrivent des <b>usages courants</b> de l’application.
-        Ce sont des <b>repères de compréhension</b>, pas des recommandations personnalisées.
-      </p>
-<details class="mt-025">
-<summary><b>1) Suivi libre et flexible</b> (équilibre quotidien)</summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Régime : standard / équilibre<br/>
-          • Repères glucidiques : désactivés<br/>
-          • Low-carb : désactivé<br/>
-          • Objectif : ~100 %<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • Les glucides complètent automatiquement les calories restantes.<br/>
-          • Les lipides restent au niveau de base du régime.<br/><br/>
-<b>Usage courant</b><br/>
-          • Journées variées, activité modérée<br/>
-          • Recherche de simplicité et de flexibilité
-        </div>
-</details>
-<details class="mt-025">
-<summary><b>2) Suivi structuré sans restriction forte</b></summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Régime : standard / sportif<br/>
-          • Repères glucidiques : activés<br/>
-          • Low-carb : désactivé<br/>
-          • Objectif : 90–100 %<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • Les glucides sont encadrés par un repère.<br/>
-          • Si un plafond est atteint, le reste s’ajuste automatiquement.<br/><br/>
-<b>Usage courant</b><br/>
-          • Meilleure lisibilité des glucides<br/>
-          • Activité sportive régulière, besoin de cadre sans rigidité
-        </div>
-</details>
-<details class="mt-025">
-<summary><b>3) Réduction calorique progressive</b></summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Régime : déficit / recomposition<br/>
-          • Repères glucidiques : parfois activés<br/>
-          • Low-carb : désactivé<br/>
-          • Objectif : &lt; 100 %<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • La cible calorique diminue.<br/>
-          • Les protéines et les lipides minimum restent prioritaires.<br/><br/>
-<b>Usage courant</b><br/>
-          • Déficit modéré sur plusieurs semaines<br/>
-          • Attention portée à la récupération et à la régularité
-        </div>
-</details>
-<details class="mt-025">
-<summary><b>4) Low-carb explicite</b> (quotidien calme)</summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Low-carb : activé<br/>
-          • Repères glucidiques : activés<br/>
-          • Régime : compatible lipides plus élevés<br/>
-          • Objectif : variable<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • Les glucides sont volontairement limités.<br/>
-          • Les lipides s’ajustent pour compléter la journée.<br/><br/>
-<b>Usage courant</b><br/>
-          • Journées à faible charge glycémique<br/>
-          • Sensibilité personnelle aux glucides, peu d’entraînement intense
-        </div>
-</details>
-<details class="mt-025">
-<summary><b>5) Journée sportive / entraînement</b></summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Régime : sportif / endurance<br/>
-          • Repères glucidiques : désactivés (souvent)<br/>
-          • Low-carb : désactivé<br/>
-          • Objectif : 95–105 %<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • La cible suit la dépense estimée du jour.<br/>
-          • Les glucides prennent plus de place dans la répartition.<br/><br/>
-<b>Usage courant</b><br/>
-          • Entraînement soutenu<br/>
-          • Recherche de maintien ou de performance
-        </div>
-</details>
-<details class="mt-025">
-<summary><b>6) Alternance jours ON / jours OFF</b></summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Réglages ajustés selon la journée<br/>
-          • Repères glucidiques : variables<br/>
-          • Objectif : variable<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • La répartition s’adapte aux choix du jour.<br/>
-          • La lecture se fait surtout sur plusieurs jours (tendances).<br/><br/>
-<b>Usage courant</b><br/>
-          • Organisation semaine / week-end<br/>
-          • Alternance sport / repos, recherche de cohérence globale
-        </div>
-</details>
-<details class="mt-025">
-<summary><b>7) Suivi glycémique</b> (mode diabète)</summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Mode diabète : activé<br/>
-          • Repères glucidiques : souvent activés<br/>
-          • Low-carb : selon préférence personnelle<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • Les glucides du jour sont visibles en continu.<br/>
-          • Les glycémies et notes sont journalisées.<br/><br/>
-<b>Usage courant</b><br/>
-          • Observation des réactions individuelles<br/>
-          • Mise en lien alimentation / glycémies / contexte (non médical)
-        </div>
-</details>
-<details class="mt-025">
-<summary><b>8) Analyse avancée</b> (mode Expert)</summary>
-<div class="muted mt-025">
-<b>Configuration typique</b><br/>
-          • Mode Expert : activé<br/>
-          • Détails avancés visibles<br/><br/>
-<b>Ce que fait l’app</b><br/>
-          • Affiche la logique de répartition et des détails de calcul.<br/>
-          • Facilite la lecture fine des écarts et tendances.<br/><br/>
-<b>Usage courant</b><br/>
-          • Utilisateurs expérimentés ou curieux<br/>
-          • Analyse et compréhension, sans obligation d’optimiser
-        </div>
-</details>
-</div>
-</div>
+    </div>
+  </div>
 </section>
+
+
 <!-- Scripts -->
 <script>
 /* =====================================================================
@@ -5058,7 +5064,7 @@ function diab_renderDayKpis(dateStr){
   const carbs = Number.isFinite(carbsDay) ? carbsDay : 0;
 
   box.innerHTML = `<div class="card"><b>Glucides (g)</b>${round(carbs,1)}</div>`;
-  note.textContent = "TOTAL des glucides des repas du jour encodés";
+  note.textContent = "Valeur informative. Total des glucides des repas encodés pour la journée.";
 }
 
 function diab_renderDaysHistory(targetId){
@@ -5872,11 +5878,20 @@ updateCarbCalcPanel({
   // ============================================================
   // 7) Affichage sortie + KPI groups
   // ============================================================
-  if ($("out")) {
-    $("out").classList.remove("hidden");
-    $("out").style.display = "block";
-    if (scrollToResults) $("out").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+// ✅ Ne jamais forcer l’affichage du panneau résultats ici.
+// L’affichage + montage dépend uniquement de l’onglet actif (mountResultsPanel).
+const activeTab =
+  document.body.getAttribute("data-tab") ||
+  document.querySelector(".menuItem.is-active")?.dataset.tab ||
+  localStorage.getItem("secheapp.ui.activeTab") ||
+  "dash";
+
+mountResultsPanel(activeTab);
+
+if (scrollToResults && (activeTab === "goal" || activeTab === "repas")) {
+  $("out")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 
   const kpis = $("kpis");
   if (kpis) {
@@ -5915,15 +5930,16 @@ groupBmr.style.width = "100%";
 
 const bmrText =
 `Pourquoi ?
-Le BMR (métabolisme de base) = l’énergie minimale au repos (organes, respiration, température…).
+Le métabolisme de base correspond à l’énergie minimale dépensée au repos
+(respiration, organes, température…).
 
 Comment l’utiliser ?
 • Ce n’est PAS ta dépense du jour.
-• Ta dépense réelle = BMR + activité + digestion.
-• Ici, c’est un repère : si ton objectif kcal est trop bas vs ton quotidien → fatigue/perf en baisse.
+• Ta dépense réelle est toujours plus élevée (activité, digestion, mouvements).
+• Ici, c’est un repère : un objectif trop bas par rapport à ton quotidien peut entraîner fatigue ou baisse de performance.
 
 Exemple
-BMR ≈ ${round(bmr,0)} kcal : même une journée “calme” dépasse souvent ce chiffre.`;
+BMR ≈ ${round(bmr,0)} kcal. Même une journée “calme” dépasse généralement cette valeur.`;
 
 const deltaBmr = round(targetKcal - bmr, 0);
 const deltaSign = deltaBmr > 0 ? "+" : "";
