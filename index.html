@@ -789,6 +789,33 @@ label.inline input{width:auto}
   background: rgba(123,255,176,.10);
 }
 
+/* =========================================================
+   COMPROMIS — accordéon scrollable mobile
+   ========================================================= */
+#compromiseBox .comp-acc summary{
+  cursor:pointer;
+  user-select:none;
+  padding:.45rem .55rem;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+}
+
+#compromiseBox .comp-acc summary::-webkit-details-marker{ display:none; }
+
+#compromiseBox .comp-acc .comp-acc__body{
+  margin-top:.5rem;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  max-height: 55vh;             /* mobile: garde une forme "verticale" */
+  padding-right:.25rem;         /* évite que le scroll colle au bord */
+}
+
+@media (min-width: 980px){
+  #compromiseBox .comp-acc .comp-acc__body{ max-height: 60vh; }
+}
+
+
 /* Compromis : forcer l'alignement à gauche (override du style global) */
 #compromiseBox, 
 #compromiseBox table,
@@ -1180,7 +1207,6 @@ La synthèse de la cible calculée s’affiche en bas de cette page (zone Résul
 
   <div class="row">
     <div>
-      <label for="compromiseSelect">Choisir un compromis</label>
       <select id="compromiseSelect">
         <option value="">— Sélectionner —</option>
         <option value="eq_global">Équilibrage global (base santé / stabilité)</option>
@@ -7011,7 +7037,7 @@ renderSportSleep7d(getSelectedDate());
       compromis:["Pas d’optimisation extrême","Progression physique modérée"],
       macros:{ c:"≈ 45–55 %", p:"≈ 18–22 %", f:"≈ 25–35 %" },
       ajust:["Journée active → glucides ↑, lipides ↓","Journée calme → glucides ↓, lipides ↑","Protéines stables"],
-      app:{ preset:"maintain / équilibre", carbGoals:["maintain"], fatFloors:["maintain"] },
+      app:{ preset:"maintien / équilibre", carbGoals:["maintain"], fatFloors:["maintain"] },
       plus:["Idéal pour poser une base saine avant toute phase plus spécifique.","Convient si l’objectif principal est la régularité, pas la transformation rapide."]
     },
     eq_gly: {
@@ -7138,35 +7164,44 @@ function fatFloorLabel(key){
 const chips = [];
 const presetKey = resolveDietPresetKey(c.app.preset); // <-- utile pour futur "Appliquer"
 
-chips.push(`Régime : ${dietPresetLabel(c.app.preset)}`);
-chips.push(`Objectif glucides : ${(c.app.carbGoals||[]).map(carbGoalLabel).join(", ")}`);
+chips.push(`Type de Régime : ${dietPresetLabel(c.app.preset)}`);
+chips.push(`Repères glucidiques : ${(c.app.carbGoals||[]).map(carbGoalLabel).join(", ")}`);
 chips.push(`Plancher lipides : ${(c.app.fatFloors||[]).map(fatFloorLabel).join(", ")}`);
 
 if (c.app.note) chips.push(c.app.note);
 
 
 
-    const list = (arr)=> `<ul class="muted" style="margin:.25rem 0 .25rem 1.1rem">${arr.map(x=>`<li>${_esc(x)}</li>`).join("")}</ul>`;
+  const presetTxt = dietPresetLabel ? dietPresetLabel(c.app.preset) : c.app.preset;
+  const carbTxt   = (c.app.carbGoals||[]).map(x => (carbGoalLabel ? carbGoalLabel(x) : x)).join(", ");
+  const fatTxt    = (c.app.fatFloors||[]).map(x => (fatFloorLabel ? fatFloorLabel(x) : x)).join(", ");
+  const accTitle  = `Régime : ${presetTxt} · Objectif glucides : ${carbTxt} · Plancher lipides : ${fatTxt}`;
 
-    return `
-      <div style="margin-bottom:.35rem"><b>${_esc(c.title)}</b> <span class="muted">— ${_esc(c.phase)}</span></div>
-      <table>
-        <tbody>
-          <tr><th style="width:220px">Objectif (apporte)</th><td>${list(c.objectif)}</td></tr>
-          <tr><th>Compromis</th><td>${list(c.compromis)}</td></tr>
-          <tr><th>Équilibre macros (%)</th>
-              <td class="muted">Glucides ${_esc(c.macros.c)} · Protéines ${_esc(c.macros.p)} · Lipides ${_esc(c.macros.f)}</td></tr>
-          <tr><th>Ajustement fin</th><td>${list(c.ajust)}</td></tr>
-          <tr><th>Choix (selon l’app)</th><td class="muted">${_esc(chips.join(" · "))}</td></tr>
-        </tbody>
-      </table>
-      <div class="muted" style="margin-top:.5rem">
-        <b>👉</b> ${_esc(c.plus[0])}<br>
-        <b>👉</b> ${_esc(c.plus[1])}
+  const list = (arr)=> `<ul class="muted" style="margin:.25rem 0 .25rem 1.1rem">${arr.map(x=>`<li>${_esc(x)}</li>`).join("")}</ul>`;
+
+  return `
+    <details class="comp-acc" open>
+      <summary class="muted">${_esc(accTitle)}</summary>
+
+      <div class="comp-acc__body">
+        <table>
+          <tbody>
+            <tr><th style="width:220px">Objectif (apporte)</th><td>${list(c.objectif)}</td></tr>
+            <tr><th>Compromis</th><td>${list(c.compromis)}</td></tr>
+            <tr><th>Équilibre macros (%)</th>
+                <td class="muted">Glucides ${_esc(c.macros.c)} · Protéines ${_esc(c.macros.p)} · Lipides ${_esc(c.macros.f)}</td></tr>
+            <tr><th>Ajustement fin</th><td>${list(c.ajust)}</td></tr>
+          </tbody>
+        </table>
+
+        <div class="muted" style="margin-top:.5rem">
+          <b>👉</b> ${_esc(c.plus[0])}<br>
+          <b>👉</b> ${_esc(c.plus[1])}
+        </div>
       </div>
-    `;
-  }
-
+    </details>
+  `;
+}
   function wire(){
     const sel = byId("compromiseSelect");
     const box = byId("compromiseBox");
@@ -7180,6 +7215,9 @@ if (c.app.note) chips.push(c.app.note);
         return;
       }
       box.innerHTML = render(c);
+      const det = box.querySelector("details");
+if (det) det.open = true;
+
     }
     sel.addEventListener("change", update);
     update();
