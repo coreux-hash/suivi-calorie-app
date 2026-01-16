@@ -7086,6 +7086,31 @@ renderSportSleep7d(getSelectedDate());
     }
   };
 
+function _norm(s){
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")   // enlève accents
+    .replace(/[^a-z0-9]+/g, " ")                        // ponctuation -> espaces
+    .trim();
+}
+
+function resolveDietPresetKey(raw){
+  if (!raw) return "";
+  const s = String(raw);
+
+  // 1) clé directe (cut_standard, maintain, recomp...)
+  if (typeof DIET_PRESETS !== "undefined" && DIET_PRESETS[s]) return s;
+
+  // 2) match sur label officiel (ex: "maintain / équilibre" -> "Maintien / équilibre")
+  if (typeof DIET_PRESETS !== "undefined"){
+    const n = _norm(s);
+    for (const [k, v] of Object.entries(DIET_PRESETS)){
+      if (_norm(v?.label || "") === n) return k;
+    }
+  }
+  return "";
+}
+
 function dietPresetLabel(key){
   if (!key) return "—";
   // accepte "maintain / équilibre" (texte déjà prêt)
@@ -7111,10 +7136,14 @@ function fatFloorLabel(key){
 
   function render(c){
 const chips = [];
-chips.push(`DIET_PRESETS: ${dietPresetLabel(c.app.preset)}`);
-chips.push(`CARB_GOALS: ${c.app.carbGoals.map(carbGoalLabel).join(", ")}`);
-chips.push(`FAT_FLOORS: ${c.app.fatFloors.map(fatFloorLabel).join(", ")}`);
+const presetKey = resolveDietPresetKey(c.app.preset); // <-- utile pour futur "Appliquer"
+
+chips.push(`Régime : ${dietPresetLabel(c.app.preset)}`);
+chips.push(`Objectif glucides : ${(c.app.carbGoals||[]).map(carbGoalLabel).join(", ")}`);
+chips.push(`Plancher lipides : ${(c.app.fatFloors||[]).map(fatFloorLabel).join(", ")}`);
+
 if (c.app.note) chips.push(c.app.note);
+
 
 
     const list = (arr)=> `<ul class="muted" style="margin:.25rem 0 .25rem 1.1rem">${arr.map(x=>`<li>${_esc(x)}</li>`).join("")}</ul>`;
@@ -7176,4 +7205,3 @@ initApp();
 </section>
 </div></body>
 </html>
-
