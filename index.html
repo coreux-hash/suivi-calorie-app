@@ -129,7 +129,7 @@ a{color:inherit}
 }
 
 .brandTitle{font-weight:800; line-height:1.05}
-.brandSub{font-size:.82rem;color:var(--muted); margin-top:2px}
+.brandSub{font-size:.78rem;color:var(--muted); margin-top:2px}
 
 /* Brand + menu intégré */
 .brand--with-menu{
@@ -260,8 +260,8 @@ button{
 }
 button:hover{filter: brightness(1.05)}
 .btn-danger{
-  border-color: rgba(231,76,60,.55);
-  background: linear-gradient(135deg, rgba(231,76,60,.35), rgba(231,76,60,.15));
+  border-color: rgba(255,255,255,.10);
+  background: linear-gradient(135deg, rgba(255, 255, 255, .08));
 }
 .btn-mini{
   padding:.28rem .55rem;
@@ -350,6 +350,426 @@ button:hover{filter: brightness(1.05)}
 
 .history-table th:nth-child(9),
 .history-table td:nth-child(9){ width: 90px; }
+
+
+
+/* ======================================================
+   HISTORIQUE V2 — CALENDRIER + SIDEBAR
+   ====================================================== */
+.historyV2Head{ align-items:flex-end; justify-content:space-between; gap:.6rem; flex-wrap:wrap; }
+.historyMonthNav{ display:flex; align-items:center; gap:.5rem; }
+#histMonth{
+  width: 160px; min-width: 140px;
+  padding:.5rem .65rem; border-radius: 12px;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+}
+.historyDatePick{ min-width: 190px; }
+.historyDatePick input[type="date"]{ width:100%; }
+.historyV2Layout{ display:grid; grid-template-columns: 1.35fr .85fr; gap: 12px; align-items:start; }
+.histCalendarWrap{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: 16px;
+  padding: 10px;
+}
+.histCalendarDow{
+  display:grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 4px 8px;
+  color: var(--muted);
+  font-weight:800;
+  font-size:.78rem;
+}
+.histCalendarGrid{ display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.calDay{
+  position:relative;
+  min-height: 0;
+  aspect-ratio: 1 / 1.05; /* quasi-carré (un peu plus haut) */
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  padding: 10px;
+  cursor:pointer;
+  text-align:left;
+  color: var(--text);
+}
+
+/* Nolio-like strict (Option B) : pas de KPI dans les cases.
+   - archivé : fond léger
+   - filled : halo vert (box-shadow, ne change pas la géométrie) */
+.calDay.is-past{ background: rgba(255,255,255,.04); }
+.calDay.is-filled{
+  box-shadow:
+    0 0 0 1px rgba(90,220,170,.28),
+    0 0 22px rgba(90,220,170,.14);
+}
+
+/* Calendrier : point sur chaque jour (graphisme unique) */
+.calDay{ position:relative; }
+.calDay::after{
+  content:"";
+  position:absolute;
+  top:10px; right:10px;
+  width:9.6px; height:9.6px;
+  border-radius:999px;
+  background: rgba(255,255,255,.22);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.25);
+  opacity:.55;
+}
+.calDay.is-filled::after{
+  background: rgba(90,220,170,.95);
+  opacity:1;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 0 10px rgba(90,220,170,.35);
+}
+
+
+.calDay:hover{ background: rgba(255,255,255,.06); }
+.calDay:active{ transform: translateY(1px); }
+.calDay.is-out{ opacity:.45; }
+.calDay.is-selected{
+  outline: 2px solid rgba(124,92,255,.45);
+  box-shadow: 0 0 0 5px rgba(124,92,255,.12);
+}
+.calDay.is-empty{
+  cursor: default;
+  opacity: .65;
+}
+.calDay.is-empty:hover{ background: rgba(0,0,0,.12); }
+@media (max-width: 560px){
+  .histCalendarWrap{ padding: 8px; }
+  .histCalendarGrid{ gap: 6px; }
+  .histCalendarDow{ gap: 6px; font-size:.75rem; }
+  .calDay{ padding: 6px; border-radius: 12px; min-height: 0; aspect-ratio: 1 / 1; }
+  .calNum{ font-size:.85rem; }
+}
+.calNum{ font-weight:900; font-size:.95rem; opacity:.92; }
+.pill.ok{ background: var(--ok); border-color: var(--ok-b); }
+.pill.warn{ background: var(--warn); border-color: var(--warn-b); }
+.pill.bad{ background: var(--bad); border-color: var(--bad-b); }
+.pill.diab{ background: rgba(150,90,220,.22); border-color: rgba(200,150,255,.22); }
+.pill .mini{ font-weight:900; opacity:.95; }
+
+.histSidebar{ display:block; }
+
+/* Nolio-like strict: lisibilité du mois d'abord (cellules quasi carrées + sidebar scroll) */
+.histCalendarWrap{ display:flex; flex-direction:column; }
+.histCalendarGrid{ align-content:start; }
+.histSidebar{
+  position: sticky;
+  top: 12px;
+  overflow: auto;
+  padding-right: 4px;
+}
+@media (max-width: 880px){
+  .histSidebar{ position: static; max-height: none; overflow: visible; padding-right: 0; }
+}
+
+.histSideStack{ display:flex; flex-direction:column; gap:10px; }
+.sideCard{
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+  padding: 12px;
+}
+
+.kpiSportList{ display:flex; flex-direction:column; gap:6px; }
+.kpiSportRow{ display:flex; justify-content:space-between; gap:10px; padding:6px 8px; border-radius:12px; border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.10); }
+.kpiSportType{ font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 58%; }
+.kpiSportMeta{ color: var(--muted); font-weight:800; white-space:nowrap; }
+@media (max-width:560px){
+  .kpiSportType{ max-width: 52%; }
+}
+
+.sideCard h3{ margin:0 0 .35rem 0; font-size:.95rem; }
+.sideBig{ font-size: 1.55rem; font-weight: 950; letter-spacing: .2px; }
+.sideRow{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:baseline; }
+.sideRow .muted{ font-size:.9rem; }
+.sideTitleRow{ display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+.diabCard{ background: rgba(110,60,160,.18); border-color: rgba(200,150,255,.16); }
+
+.sr-only{
+  position:absolute; width:1px;height:1px; padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0); border:0;
+}
+
+/* Sport sessions list */
+.is-hidden{ display:none !important; }
+
+.btn-wide{ width:100%; border-radius:14px; }
+.btn-icon{ padding:.45rem .6rem; line-height:1; }
+
+.sportEditor, .sleepEditor{ border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.10); border-radius: 16px; padding: 12px; }
+.sleepSummary{ border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04); border-radius: 16px; padding: 12px; }
+.sleepSummaryTop{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.sleepSummaryRange{ margin-top:.45rem; font-weight:950; letter-spacing:.2px; }
+
+.sportSessionsList{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.sportSessionRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+}
+.sportSessionRow .left{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.sportSessionRow .title{ font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sportSessionRow .meta{ color: var(--muted); font-size:.9rem; }
+
+.sportSessionRow .right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+.loadBar{
+  width: 84px;
+  height: 10px;
+  border-radius: 999px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  overflow:hidden;
+}
+.loadBar i{
+  display:block;
+  height:100%;
+  background: rgba(90,220,170,.55);
+}
+.loadPct{
+  font-weight:900;
+  color: var(--muted);
+  min-width: 38px;
+  text-align:right;
+}
+
+/* Mobile: buttons full width in sport/sleep cards */
+@media (max-width: 560px){
+  #sportCard .row button,
+  #sleepCard .row button,
+  #sportCard .btn-wide{
+    width:100%;
+  }
+  .sportSessionRow{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .sportSessionRow .right{
+    justify-content:space-between;
+  }
+  .loadBar{ width: 100%; flex:1; }
+  .loadPct{ min-width: 44px; text-align:right; }
+}
+
+/* ======================================================
+   HISTORIQUE — REDUCTION DU BRUIT (accordéons)
+   ====================================================== */
+.acc{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: 16px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.acc > summary{
+  list-style:none;
+  cursor:pointer;
+  user-select:none;
+  padding: 12px 12px;
+  font-weight: 950;
+  color: var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.acc > summary::-webkit-details-marker{ display:none; }
+.acc > summary:after{
+  content: "▾";
+  opacity:.75;
+  font-weight: 900;
+}
+.acc[open] > summary:after{ content:"▴"; }
+.accBody{
+  padding: 12px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.accGrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+}
+.accGrid3{
+  grid-template-columns: repeat(3, minmax(0,1fr));
+}
+.accTile{
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.10);
+  border-radius: 14px;
+  padding: 10px;
+}
+.accTile label{ display:block; font-weight:900; margin-bottom:6px; }
+.accSubTitle{
+  margin: 10px 0 8px;
+  font-weight: 950;
+  opacity:.9;
+}
+.tiny{ font-size:.85rem; }
+@media (max-width: 520px){
+  .accGrid{ grid-template-columns: 1fr; }
+  .accGrid3{ grid-template-columns: 1fr; }
+  .acc > summary{ padding: 11px 12px; }
+}
+
+/* Mobile : sidebar passe sous le calendrier */
+@media (max-width: 880px){
+  .historyV2Layout{ grid-template-columns: 1fr; }
+}
+
+/* Smartphone : calendrier compact, sans débordement */
+@media (max-width: 560px){
+  .historyV2Head{ flex-direction:column; align-items:stretch; gap:.5rem; }
+  .historyMonthNav{ width:100%; justify-content:space-between; }
+  #histMonth{ width:100%; }
+  .historyDatePick{ width:100%; min-width:0; }
+  .historyDatePick input[type="date"]{ width:100%; }
+  .historyV2Head .self-end{ width:100%; }
+  .historyV2Head button{ width:100%; }
+
+  .histCalendarWrap{ padding:8px; border-radius:14px; }
+  .histCalendarDow{ gap:6px; padding:0 2px 6px; font-size:.72rem; }
+  .histCalendarGrid{ gap:6px; }
+  .calDay{ min-height:64px; padding:8px; border-radius:12px; }
+  .calNum{ font-size:.88rem; }
+.pill{ padding:5px 7px; border-radius:11px; font-size:.76rem; }
+  
+
+/* --- V2 mobile overflow fixes --- */
+html, body { max-width: 100%; overflow-x: hidden; }
+.historyV2Layout > * { min-width: 0; } /* critical for CSS grid overflow */
+.histCalendarGrid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.calDay { min-width: 0; }
+.pill { max-width: 100%; }
+.pill .muted { white-space: nowrap; }
+#histSidebar, .histCalendarWrap { max-width: 100%; }
+
+#diabHistoryBody .row { flex-wrap: wrap; }
+
+/* Diabète (historique mesures) : éviter débordement */
+#diab_daysHistory_suivi{ overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; max-width:100%; }
+#diab_daysHistory_suivi table{ min-width: 760px; }
+#diab_daysHistory_suivi th, #diab_daysHistory_suivi td{ white-space:nowrap; }
+
+#diabHistoryTableWrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; max-width:100%; }
+#diabHistoryTableWrap table{ min-width: 760px; }
+#diabHistoryTableWrap th, #diabHistoryTableWrap td{ white-space:nowrap; }
+
+
+#diabHistoryBody input[type="date"] { width: 100%; }
+
+@media (max-width: 560px){
+  .historyV2Head{ align-items:stretch; }
+  .historyMonthNav{ width:100%; }
+  #histMonth{ width:100%; min-width: 0; }
+  .historyDatePick{ width:100%; min-width: 0; }
+  .historyDatePick input[type="date"]{ width:100%; }
+
+  /* stack action buttons to avoid horizontal overflow */
+  #btnDiabHistRefresh { width:100%; }
+  .historyV2Head .self-end{ width:100%; }
+}
+
+/* cache la pill dépense dans les cases pour alléger */
+  .calDay .pill:nth-of-type(2){ display:none; }
+
+  .histSideStack{ gap:8px; }
+  .sideCard{ padding:10px; border-radius:14px; }
+  .sideBig{ font-size:1.35rem; }
+  .sideRow{ gap:8px 10px; }
+  .sideRow .muted{ font-size:.86rem; }
+}
+
+
+
+/* ======================================================
+   HISTORIQUE V2 — STYLE "NOLIO-LIKE" (jours vides / remplis)
+   Objectif : cases compactes, cartes colorées, vides discrets.
+   ====================================================== */
+.calDay{
+  min-height: 0;
+  padding: 8px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:6px;
+}
+.calNum{
+  font-weight:950;
+  font-size:.92rem;
+  opacity:.92;
+}
+.calEmpty{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:auto;
+  padding: 5px 6px;
+  border-radius: 12px;
+  border:1px dashed rgba(255,255,255,.14);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.65);
+  font-weight:850;
+}
+.calLine1{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px;
+  font-weight:950;
+}
+.calLine1 .k{ font-size:.92rem; }
+.calLine1 .d{ font-size:.86rem; opacity:.9; }
+.calLine2{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:850;
+  font-size:.78rem;
+  opacity:.92;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.calIcon{ opacity:.9; }
+.calSub{ opacity:.82; font-weight:800; }
+
+/* Mobile compact : cases carrées + typographie plus petite */
+@media (max-width: 560px){
+  .histCalendarGrid{ gap: 6px; }
+  .calDay{
+    padding: 7px;
+    border-radius: 14px;
+    aspect-ratio: 1 / 1;
+  }
+  .calNum{ font-size:.86rem; }
+.calLine1 .k{ font-size:.86rem; }
+  .calLine2{ font-size:.78rem; }
+  .calEmpty{ padding: 6px 7px; border-radius: 11px; font-size:.78rem; }
+}
 
 /* table-wrap (défini 2 fois dans ton CSS : on le garde tel quel) */
 .table-wrap{
@@ -601,6 +1021,42 @@ details[open] summary:before{content:"▾ "}
   padding:.8rem;
 }
 
+/* Segmented control (Repas: Manuel / Rapide) */
+.seg{
+  display:flex; gap:6px; align-items:center;
+  padding:6px;
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  width: fit-content;
+}
+.seg button{
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  font-weight:800;
+  border-radius: 14px;
+  padding:.45rem .65rem;
+  cursor:pointer;
+  line-height:1;
+}
+.seg button:hover{ background: rgba(255,255,255,.08); }
+.seg button.is-active{
+  background: linear-gradient(135deg, rgba(124,92,255,.32), rgba(45,212,191,.20));
+  border-color: rgba(255,255,255,.26);
+}
+.hidden{ display:none !important; }
+.mealActions{
+  display:flex; gap:10px; justify-content:flex-start; flex-wrap:wrap;
+}
+.btn-ghost{
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.03);
+  color: var(--muted);
+  font-weight:800;
+}
+.btn-ghost:hover{ background: rgba(255,255,255,.06); color: var(--text); }
+
 /* ======================================================
    10) DIABÈTE — LOCK / EMBED / PANELS
    ====================================================== */
@@ -789,33 +1245,6 @@ label.inline input{width:auto}
   background: rgba(123,255,176,.10);
 }
 
-/* =========================================================
-   COMPROMIS — accordéon scrollable mobile
-   ========================================================= */
-#compromiseBox .comp-acc summary{
-  cursor:pointer;
-  user-select:none;
-  padding:.45rem .55rem;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-}
-
-#compromiseBox .comp-acc summary::-webkit-details-marker{ display:none; }
-
-#compromiseBox .comp-acc .comp-acc__body{
-  margin-top:.5rem;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  max-height: 55vh;             /* mobile: garde une forme "verticale" */
-  padding-right:.25rem;         /* évite que le scroll colle au bord */
-}
-
-@media (min-width: 980px){
-  #compromiseBox .comp-acc .comp-acc__body{ max-height: 60vh; }
-}
-
-
 /* Compromis : forcer l'alignement à gauche (override du style global) */
 #compromiseBox, 
 #compromiseBox table,
@@ -842,6 +1271,50 @@ label.inline input{width:auto}
 .calcLabel{color:#555;font-size:.88rem}
 .calcValue{font-variant-numeric:tabular-nums}
 #carbCalcCapSrc{margin-left:.35rem}
+
+
+/* =========================
+   Diabète — UX journal sérieux
+   ========================= */
+.chipRow{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.15rem; }
+.chip{
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.18);
+  color: rgba(240,245,255,.92);
+  padding:.42rem .65rem;
+  border-radius: 999px;
+  font-size:.92rem;
+  line-height:1;
+  cursor:pointer;
+  user-select:none;
+}
+.chip:hover{ background: rgba(255,255,255,.06); }
+.chip.is-selected{
+  border-color: rgba(87, 255, 162, .35);
+  box-shadow: 0 0 0 3px rgba(87, 255, 162, .10);
+  background: rgba(87, 255, 162, .10);
+}
+
+.acc--mini > summary.noticeTitle{
+  font-size:.95rem;
+  padding:.45rem .65rem;
+}
+
+.miniChart{ margin-top:.65rem; padding:.6rem .65rem; border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.10);
+}
+.miniChartCard{ margin-top:.75rem; }
+
+.miniChartHead{ display:flex; align-items:baseline; justify-content:space-between; gap:.65rem; }
+.miniChartTitle{ font-weight:700; }
+.miniChartWrap{ width:100%; overflow:hidden; border-radius: 12px; margin-top:.45rem; }
+#diabMiniChart{ width:100%; height:140px; display:block; }
+
+@media (max-width: 520px){
+  #diabMiniChart{ height: 160px; }
+  .miniChartHead{ flex-direction:column; align-items:flex-start; }
+}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
@@ -983,9 +1456,13 @@ label.inline input{width:auto}
   </div>
 </details>
 
-<div class="card" id="positioningCard">
-<h2>Mode d'affichage</h2>
-<div class="row">
+
+<div style="flex:1 1 100%;min-width:100%">
+  <details class="notice mt-06" open>
+    <summary class="noticeTitle">Mode d'affichage</summary>
+
+
+<div class="row mt-03">
 <div>
 <label>Choix d'utilisation</label>
 <select id="useMode">
@@ -1060,15 +1537,18 @@ label.inline input{width:auto}
         Le <b>poids de référence</b> sert aux calculs. Ton <b>poids du jour</b> se note dans le Journal pour suivre l’évolution.
       </p>
 <div class="row mt-035">
-<div>
-<label class="inline">
-<input id="diabEnabled" type="checkbox"/>
-            Activer le journal diabète (glucides + glycémies)
-          </label>
-<div class="muted mt-015">
-<b>Carnet de suivi personnel</b>. L’app ne calcule aucune dose et ne remplace pas un avis médical.
-          </div>
-</div>
+  <div>
+    <details class="miniAcc">
+      <summary>Diabète (optionnel)</summary>
+      <label class="inline" style="margin-top:.5rem">
+        <input id="diabEnabled" type="checkbox"/>
+        Activer le journal diabète (glucides + glycémies)
+      </label>
+      <div class="muted" style="margin-top:.35rem">
+        <b>Carnet de suivi personnel</b>. L’app ne calcule aucune dose et ne remplace pas un avis médical.
+      </div>
+    </details>
+  </div>
 </div>
 </div>
 <div class="card">
@@ -1149,7 +1629,8 @@ label.inline input{width:auto}
 <section class="tabSection" data-tabsection="goal">
 
 <details class="notice notice--ok mt-06" open>
-  <summary class="noticeTitle">Mini-tuto — Objectif<span class="info-dot" role="button" tabindex="0"
+  <summary class="noticeTitle">Mini-tuto — Objectif</summary>
+  <span class="info-dot" role="button" tabindex="0"
   aria-label="Comment fonctionne la page Objectif ?"
   data-modaltext="Objectif : comment cette page s’insère dans l’app
 
@@ -1202,11 +1683,12 @@ La synthèse de la cible calculée s’affiche en bas de cette page (zone Résul
 <div class="card panel-subtle">
   <h2>Compromis optimal</h2>
   <p class="muted">
-    Choisis un compromis : l’explication apparaît juste en dessous pour t’aider à paramétrer l’app.
+    Choisis un compromis : un résumé s’affiche. Le détail est repliable si tu veux comprendre.
   </p>
 
   <div class="row">
     <div>
+      <label for="compromiseSelect">Choisir un compromis</label>
       <select id="compromiseSelect">
         <option value="">— Sélectionner —</option>
         <option value="eq_global">Équilibrage global (base santé / stabilité)</option>
@@ -1224,18 +1706,30 @@ La synthèse de la cible calculée s’affiche en bas de cette page (zone Résul
     </div>
   </div>
 
-  <div id="compromiseBox" class="calcPanel mt-025" aria-live="polite">
-    <div class="muted">Sélectionne un compromis pour afficher la fiche.</div>
-  </div>
+  <div class="muted mt-025" id="compromiseSummary">Sélectionne un compromis pour voir le résumé.</div>
+
+  <details id="compromiseDetails" class="mt-025">
+    <summary class="muted" style="cursor:pointer; user-select:none">Voir le détail</summary>
+    <div id="compromiseBox" class="calcPanel mt-025" aria-live="polite">
+      <div class="muted">Sélectionne un compromis pour afficher la fiche.</div>
+    </div>
+  </details>
 </div>
 
 
+<!-- =========================================================
+     OBJECTIF — Réglages macros (Régime / % / Protéines / Lipides / Glucides)
+     + Repères glucidiques
+     + Diabète rapide placé SOUS repères glucidiques
+     + Détails glucides en déroulant
+     ========================================================= -->
+
 <!-- Régime + objectif -->
 <div class="row">
-<div>
-<label>
-          Type de régime (preset)
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Choisis une structure de base, tu pourras ajuster ensuite.
+  <div>
+    <label>
+      Type de régime (preset)
+      <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Choisis une structure de base, tu pourras ajuster ensuite.
 Elle fixe des repères automatiques (protéines, lipides minimum, glucides).
 Repères :
 • Standard : 85%
@@ -1243,55 +1737,59 @@ Repères :
 • Recomp : 92%
 • Maintien : 100%
 • Endurance : 95%" role="button" tabindex="0">ℹ️</span>
-</label>
-<select id="dietMode">
-<option selected="" value="none">— Choisir un régime —</option>
-<option value="cut_standard">Standard (sportif)</option>
-<option value="cut_aggressive">Agressif (court terme)</option>
-<option value="recomp">Recomposition (léger déficit)</option>
-<option value="maintain">Maintien / équilibre</option>
-<option value="endurance">Performance endurance (déficit minime)</option>
-<option value="custom">Personnalisé (manuel)</option>
-</select>
-</div>
-<div>
-<label>
-          Objectif (%)
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Equilibre = 100%.
+    </label>
+    <select id="dietMode">
+      <option selected="" value="none">— Choisir un régime —</option>
+      <option value="cut_standard">Standard (sportif)</option>
+      <option value="cut_aggressive">Agressif (court terme)</option>
+      <option value="recomp">Recomposition (léger déficit)</option>
+      <option value="maintain">Maintien / équilibre</option>
+      <option value="endurance">Performance endurance (déficit minime)</option>
+      <option value="custom">Personnalisé (manuel)</option>
+    </select>
+  </div>
+
+  <div>
+    <label>
+      Objectif (%)
+      <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Equilibre = 100%.
 Diminues = tu manges un peu moins que ta dépense.
 Augmentes = cas particuliers (ex. recharge, endurance)." role="button" tabindex="0">ℹ️</span>
-</label>
-<input id="goalPct" max="130" min="60" step="1" type="number" value="0"/>
-<div class="muted mt-025">
-          Ajuste la <b>quantité totale</b> par rapport à ta dépense du jour.
-        </div>
+    </label>
+    <input id="goalPct" max="130" min="60" step="1" type="number" value="0"/>
+    <div class="muted mt-025">
+      Ajuste la <b>quantité totale</b> par rapport à ta dépense du jour.
+    </div>
+  </div>
 </div>
-</div>
+
 <!-- Protéines + lipides + glucides ajustés + ratio -->
 <div class="row">
-<div>
-<label>
-          Protéines (g/kg de poids)
-          <span aria-label="Informations — Protéines" class="info-dot" data-modaltext="Elles servent de base stable dans les calculs.
+  <div>
+    <label>
+      Protéines (g/kg de poids)
+      <span aria-label="Informations — Protéines" class="info-dot" data-modaltext="Elles servent de base stable dans les calculs.
 • Elles sont fixées en premier.
 • Elles ne varient pas selon les calories restantes.
 Le reste de l’énergie est réparti autour de ce socle." role="button" tabindex="0">ℹ️</span>
-</label>
-<input id="protPerKg" min="0" step="0.1" type="number" value="0"/>
-<div id="protRangeHint">Plage protéines : —</div>
-</div>
-<!-- Ancien champ lipides (si ton JS l’utilise encore). On le garde. -->
-<div hidden="" id="fatPerKgBox">
-<label>Lipides (g/kg de poids)</label>
-<input id="fatPerKg" min="0.8" step="0.1" type="number" value="0.9"/>
-<div id="fatPerKgEffBox" style="display:none">
-          Lipides effectifs (après plancher) : <b id="fatPerKgEffTxt">—</b> g/kg
-        </div>
-</div>
-<div>
-<label>
-          Lipides minimum (g/kg/j)
-          <span aria-label="Informations — Lipides minimum" class="info-dot" data-modaltext="Pourquoi un minimum
+    </label>
+    <input id="protPerKg" min="0" step="0.1" type="number" value="0"/>
+    <div id="protRangeHint">Plage protéines : —</div>
+  </div>
+
+  <!-- Ancien champ lipides (si ton JS l’utilise encore). On le garde. -->
+  <div hidden="" id="fatPerKgBox">
+    <label>Lipides (g/kg de poids)</label>
+    <input id="fatPerKg" min="0.8" step="0.1" type="number" value="0.9"/>
+    <div id="fatPerKgEffBox" style="display:none">
+      Lipides effectifs (après plancher) : <b id="fatPerKgEffTxt">—</b> g/kg
+    </div>
+  </div>
+
+  <div>
+    <label>
+      Lipides minimum (g/kg/j)
+      <span aria-label="Informations — Lipides minimum" class="info-dot" data-modaltext="Pourquoi un minimum
 
 Les lipides jouent un rôle fonctionnel essentiel.
 L’app impose donc un plancher de sécurité :
@@ -1299,213 +1797,225 @@ L’app impose donc un plancher de sécurité :
 • et maintenir une répartition cohérente.
 
 Si les glucides sont limités, les lipides peuvent augmenter pour compenser." role="button" tabindex="0">ℹ️</span>
-</label>
-<input id="fatFloorGPerKg" max="1.0" min="0.6" step="0.1" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]+" value="0"/>
-<div id="fatRangeHint">Plage lipides : —</div>
-</div>
+    </label>
+    <input id="fatFloorGPerKg" max="1.0" min="0.6" step="0.1" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]+" value="0"/>
+    <div id="fatRangeHint">Plage lipides : —</div>
+  </div>
 
-
-<div>
-<label>
-          Ratio Glucides / Protéines
-          <span aria-label="Informations — Ratio C/P" class="info-dot" data-modaltext="Comment le ratio est utilisé: Il fixe une relation maximale entre glucides et protéines.
+  <div>
+    <label>
+      Ratio Glucides / Protéines
+      <span aria-label="Informations — Ratio C/P" class="info-dot" data-modaltext="Comment le ratio est utilisé: Il fixe une relation maximale entre glucides et protéines.
 Repères glucidiques OFF : Tu fixes ton ratio C/P pour te donner un repère (ça n’impose rien automatiquement).
 Repères glucidiques ON : le ratio devient une limite glucides,
 et l’app ajuste le reste pour rester sur la cible kcal." role="button" tabindex="0">ℹ️</span>
-</label>
-<input id="ratioCP" max="2.0" min="0.0" step="0.1" type="number" value="0"/>
-<input aria-hidden="true" class="hidden" disabled="" id="ratioCPText" type="text" value="--"/>
-<div class="muted 0-25" style="margin-top:.25rem">
-          Exemple : 1.0 = autant de glucides que de protéines.
-        </div>
-</div>
+    </label>
+    <input id="ratioCP" max="2.0" min="0.0" step="0.1" type="number" value="0"/>
+    <input aria-hidden="true" class="hidden" disabled="" id="ratioCPText" type="text" value="--"/>
+    <div class="muted 0-25" style="margin-top:.25rem">
+      Exemple : 1.0 = autant de glucides que de protéines.
+    </div>
+  </div>
 
-<div>
-<div id="carbAutoBox">
-<label>
-          Glucides ajustés
-          <span aria-label="Informations — Glucides ajustés" class="info-dot" data-modaltext="Les glucides servent à équilibrer la journée.
+  <div>
+    <div id="carbAutoBox">
+      <label>
+        Glucides ajustés
+        <span aria-label="Informations — Glucides ajustés" class="info-dot" data-modaltext="Les glucides servent à équilibrer la journée.
 L’app les ajuste automatiquement pour rester cohérente avec :
 • tes protéines sont fixées (priorité).
 • Un minimum de lipides est garanti (sécurité).
 • Le reste de l’énergie va aux glucides" role="button" tabindex="0">ℹ️</span>
-</label>
-<input disabled="" id="carbAutoHint" value="Plafond glucidique : —"/>
-<div class="muted mt-025">
-          Ajustés automatiquement pour équilibrer la journée, une fois les protéines et les lipides minimum définis
+      </label>
+      <input disabled="" id="carbAutoHint" value="Plafond glucidique : —"/>
+
+      <div class="muted mt-025">
+        Ajustés automatiquement pour équilibrer la journée, une fois les protéines et les lipides minimum définis
+      </div>
+
+      <!-- ✅ Détails glucides en déroulant (ID carbCalcPanel conservé) -->
+      <details class="mt-025">
+        <summary class="muted" style="cursor:pointer; user-select:none">Détails du calcul</summary>
+        <div aria-live="polite" class="calcPanel mt-025" id="carbCalcPanel">
+          <div class="calcRow">
+            <span class="calcLabel">Glucides calculés (avant plafond)</span>
+            <span class="calcValue"><strong id="carbCalcRawG">—</strong> g</span>
+          </div>
+          <div class="calcRow">
+            <span class="calcLabel">Plafond pris en compte</span>
+            <span class="calcValue">
+              <strong id="carbCalcCapG">—</strong> g <span class="muted" id="carbCalcCapKg"></span>
+              <span class="muted" id="carbCalcCapSrc"></span>
+            </span>
+          </div>
+          <div class="muted" id="carbCalcStatus">—</div>
         </div>
-<div aria-live="polite" class="calcPanel mt-025" id="carbCalcPanel">
-<div class="calcRow">
-<span class="calcLabel">Glucides calculés (avant plafond)</span>
-<span class="calcValue"><strong id="carbCalcRawG">—</strong> g</span>
-</div>
-<div class="calcRow">
-<span class="calcLabel">Plafond pris en compte</span>
-<span class="calcValue">
-<strong id="carbCalcCapG">—</strong> g <span class="muted" id="carbCalcCapKg"></span>
-<span class="muted" id="carbCalcCapSrc"></span>
-</span>
-</div>
-<div class="muted" id="carbCalcStatus">—</div>
-</div>
-</div>
+      </details>
+    </div>
+  </div>
 </div>
 
-</div>
-
-<!-- Repères glucidiques (panel) -->
+<!-- =========================================================
+     REPÈRES GLUCIDIQUES (panel) + DIABÈTE RAPIDE SOUS LES REPÈRES
+     ========================================================= -->
 <div class="card panel-subtle">
 
-
-<details class="notice notice--ok mt-06" open>
-  <summary class="noticeTitle">Mini-tuto — Glucides (repères vs low-carb)</summary>
-  <div class="muted mt-025">
-    <b>Deux logiques différentes :</b><br/>
-    • <b>Repères glucidiques</b> : servent surtout à <b>cadrer le maintien</b>, déficit léger ou une sèche modérée.
-      Sans repères, les glucides peuvent monter excessivement et mécaniquement quand la dépense est élevée.
-      L’objectif (g/kg) et le plafond évitent cette dérive.<br/>
-    • <b>Low-carb</b> : impose une <b>contrainte forte</b> sur les glucides.
-      Utile en cas de <b>diabète</b>, de <b>sèche stricte</b> ou pour rechercher une stabilité faim/glycémie,
-      parfois au détriment de la performance.<br/>
-    <b>Important :</b> ces modes sont exclusifs pour éviter des réglages contradictoires.
-  </div>
-</details>
-
+  <details class="notice notice--ok mt-06" open>
+    <summary class="noticeTitle">Mini-tuto — Glucides (repères vs low-carb)</summary>
+    <div class="muted mt-025">
+      <b>Deux logiques différentes :</b><br/>
+      • <b>Repères glucidiques</b> : servent surtout à <b>cadrer le maintien</b>, déficit léger ou une sèche modérée.
+        Sans repères, les glucides peuvent monter excessivement et mécaniquement quand la dépense est élevée.
+        L’objectif (g/kg) et le plafond évitent cette dérive.<br/>
+      • <b>Low-carb</b> : impose une <b>contrainte forte</b> sur les glucides.
+        Utile en cas de <b>diabète</b>, de <b>sèche stricte</b> ou pour rechercher une stabilité faim/glycémie,
+        parfois au détriment de la performance.<br/>
+      <b>Important :</b> ces modes sont exclusifs pour éviter des réglages contradictoires.
+    </div>
+  </details>
 
   <div class="muted">
-<h3 class="h3">Repères glucidiques</h3>
-<p class="muted">
-        Ces repères aident à maintenir une cohérence entre ton objectif et la répartition des apports.
-      </p>
-<div class="row" style="margin-top:.25rem">
-<div>
-<label class="muted" style="display:flex; align-items:center; gap:.55rem; user-select:none">
-<input id="carbGuardEnabled" type="checkbox"/>
-            Activer les repères (option)
-          </label>
-<div class="muted" style="margin-top:.25rem">
-            Quand activés, les glucides sont encadrés et le reste s’ajuste automatiquement pour rester cohérent avec la cible.
-          </div>
-</div>
-<div>
-<label class="muted" style="display:flex; align-items:center; gap:.55rem; user-select:none">
-<input id="lowCarbEnabled" type="checkbox"/>
-            Activer les glucides réduits
-          </label>
-<div class="muted" style="margin-top:.25rem">
-            Les glucides réduits ("Low-Carb") sont sont volontairement bas. Les lipides s’ajustent pour compléter la journée..
-          </div>
-</div>
-</div>
-<div class="row" id="lowCarbBox" style="display:none">
-<div>
-<label>Type low-carb</label>
-<select id="lowCarbLevel">
-<option value="moderate">Low-Carb modéré (1,5–2,0 g/kg/j)</option>
-<option value="strict">Low-Carb strict (0,5–1,0 g/kg/j)</option>
-</select>
-<div class="muted" style="margin-top:.25rem">Choisis le niveau, puis un palier (g/kg/j).</div>
-</div>
-<div>
-<label>Palier low-carb (g/kg/j)</label>
-<input id="lowCarbStep" inputmode="decimal" max="2.0" min="0.5" step="0.1" type="number" value="1.5"/>
-<div class="muted" id="lowCarbHelp" style="margin-top:.25rem"></div>
-</div>
-</div>
-<div class="row" id="carbGuardBox" style="display:none">
-<div>
-<label>
-            Objectif (g/kg/j)
-            <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Quand les repères sont désactivés, les glucides s’ajustent librement en fonction des autres choix.
+    <h3 class="h3">Repères glucidiques</h3>
+    <p class="muted">
+      Ces repères aident à maintenir une cohérence entre ton objectif et la répartition des apports.
+    </p>
+
+    <div class="row" style="margin-top:.25rem">
+      <div>
+        <label class="muted" style="display:flex; align-items:center; gap:.55rem; user-select:none">
+          <input id="carbGuardEnabled" type="checkbox"/>
+          Activer les repères (option)
+          <span class="info-dot" role="button" tabindex="0" aria-label="Info repères glucidiques" data-modaltext="Quand activés, les glucides sont encadrés (objectif + plafond) et le reste s’ajuste automatiquement pour rester cohérent avec ta cible.">ℹ️</span>
+        </label>
+      </div>
+      <div>
+        <label class="muted" style="display:flex; align-items:center; gap:.55rem; user-select:none">
+          <input id="lowCarbEnabled" type="checkbox"/>
+          Activer les glucides réduits
+          <span class="info-dot" role="button" tabindex="0" aria-label="Info low-carb" data-modaltext="Low-carb : les glucides sont volontairement bas. Les lipides s’ajustent pour compléter la journée.">ℹ️</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="row" id="lowCarbBox" style="display:none">
+      <div>
+        <label>Type low-carb</label>
+        <select id="lowCarbLevel">
+          <option value="moderate">Low-Carb modéré (1,5–2,0 g/kg/j)</option>
+          <option value="strict">Low-Carb strict (0,5–1,0 g/kg/j)</option>
+        </select>
+        <div class="muted" style="margin-top:.25rem">Choisis le niveau, puis un palier (g/kg/j).</div>
+      </div>
+      <div>
+        <label>Palier low-carb (g/kg/j)</label>
+        <input id="lowCarbStep" inputmode="decimal" max="2.0" min="0.5" step="0.1" type="number" value="1.5"/>
+        <div class="muted" id="lowCarbHelp" style="margin-top:.25rem"></div>
+      </div>
+    </div>
+
+    <div class="row" id="carbGuardBox" style="display:none">
+      <div>
+        <label>
+          Objectif (g/kg/j)
+          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Quand les repères sont désactivés, les glucides s’ajustent librement en fonction des autres choix.
 
 L’app propose des options cohérentes avec le régime choisi.
 
 En mode Personnalisé, tu peux ajuster librement.
 En mode preset, seules les options compatibles sont proposées." role="button" tabindex="0">ℹ️</span>
-</label>
-<select id="carbGoal">
-<option selected="" value="none">— Choisir un objectif —</option>
-<option value="dry_strict">Sèche stricte (2–3 g/kg/j)</option>
-<option value="dry_sport">Sèche sportive (3–4 g/kg/j)</option>
-<option value="recomp">Recomposition (4–5 g/kg/j)</option>
-<option value="maintain_active">Maintien actif (4–6 g/kg/j)</option>
-<option value="endurance_volume">Endurance / volume (6–8 g/kg/j)</option>
-<option value="carb_loading">Carb-loading (8–12 g/kg/j, 48–72h)</option>
-</select>
-<div class="muted" id="carbGoalHelp" style="margin-top:.25rem"></div>
-</div>
-<div>
-<label>
-            Plafond glucidique
-            <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Plafond fixe une limite de glucides pour la journée.
+        </label>
+        <select id="carbGoal">
+          <option selected="" value="none">— Choisir un objectif —</option>
+          <option value="dry_strict">Sèche stricte (2–3 g/kg/j)</option>
+          <option value="dry_sport">Sèche sportive (3–4 g/kg/j)</option>
+          <option value="recomp">Recomposition (4–5 g/kg/j)</option>
+          <option value="maintain_active">Maintien actif (4–6 g/kg/j)</option>
+          <option value="endurance_volume">Endurance / volume (6–8 g/kg/j)</option>
+          <option value="carb_loading">Carb-loading (8–12 g/kg/j, 48–72h)</option>
+        </select>
+        <div class="muted" id="carbGoalHelp" style="margin-top:.25rem"></div>
+      </div>
+
+      <div>
+        <label>
+          Plafond glucidique
+          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Plafond fixe une limite de glucides pour la journée.
 Si elle est atteinte, le reste s’ajuste automatiquement pour rester cohérent.
  
 Le plafond glucidique fonctionne par paliers. Chaque pas correspond à 0,1 g/kg, soit environ 50 g de glucides pour un adulte.
  
 Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer visuellement. Le plafond agit uniquement lorsque ce palier est réellement dépassé.." role="button" tabindex="0">ℹ️</span>
-</label>
-<div class="row" style="gap:.4rem">
-<div class="hidden">
-<select id="carbStep"></select>
-</div>
-<div style="min-width:140px">
-<input id="carbCapGPerKg" min="0" step="1" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]+" value="0">
-</div>
-</div>
-<div class="muted" style="margin-top:.25rem">
-            Limite <b>maximale de glucides</b> utilisée quand les repères sont activés.
+        </label>
+
+        <div class="row" style="gap:.4rem">
+          <div class="hidden">
+            <select id="carbStep"></select>
           </div>
-</div>
-</div>
-</div>
-</div>
-
-</div>
-
-
-<!-- /card principal Objectif -->
-<!-- ✅ (déplacé ici) Diabète — raccourcis dans Repas -->
-<div aria-live="polite" class="card diab-panel span-2 is-disabled" id="diabPanelInRepas">
-<div class="row" style="align-items:flex-end">
-<div style="flex:2;min-width:240px">
-<h2 style="margin:.1rem 0 .25rem">
-          Option diabète — repères glucidiques
-          <span class="pill" id="diabQuickStatus">(désactivé)</span>
-</h2>
-<p class="muted" style="margin:0">
-          Ici, tu vois l’essentiel pendant que tu ajoutes tes repas.
-        </p>
-</div>
-</div>
-<div class="row mt-04">
-<div>
-<label>Glucides du jour (g)</label>
-<input disabled="" id="diabQuickCarbG" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-          Total des glucides encodés aujourd’hui.
+          <div style="min-width:140px">
+            <input id="carbCapGPerKg" min="0" step="1" type="text" inputmode="decimal" pattern="[0-9]*[\.,]?[0-9]+" value="0">
+          </div>
         </div>
-</div>
-<div>
-<label>
-          Dernière glycémie
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Ce champ est informatif.
-Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ️</span>
-</label>
-<input disabled="" id="diabQuickLastG" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-          Valeur saisie dans le journal Diabète.
+
+        <div class="muted" style="margin-top:.25rem">
+          Limite <b>maximale de glucides</b> utilisée quand les repères sont activés.
         </div>
-</div>
-</div>
-<div class="mt-06 hidden" id="diabQuickReco">
-<div class="noticeTitle" style="margin-bottom:.35rem">Repères utiles</div>
-<div class="muted mt-05" id="diabQuickLine">
-        Option diabète désactivée : activer pour afficher zones, plafond et alertes.
       </div>
-<p class="muted" id="diabQuickRecoText" style="margin:0 0 .5rem"></p>
-</div>
-</div>
-<!-- ✅ Mount point : Résultats dans OBJECTIF -->
+    </div>
+
+    <!-- ✅ ICI : Diabète rapide sous les repères glucidiques -->
+    <!-- Note UX : on évite "card dans card" => on retire la classe "card" -->
+    <div aria-live="polite" class="diab-panel is-disabled mt-06" id="diabPanelInRepas">
+      <div class="row" style="align-items:flex-end">
+        <div style="flex:2;min-width:240px">
+          <details class="notice mt-06" id="diabQuickDetails">
+            <summary class="noticeTitle" style="display:flex; align-items:center; justify-content:space-between; gap:.75rem">
+              <span>Option diabète — repères glucidiques</span>
+              <span class="pill" id="diabQuickStatus">(désactivé)</span>
+            </summary>
+
+            <div class="muted mt-025">
+              Vue rapide pendant l’encodage : glucides du jour + dernière glycémie (informatif).
+            </div>
+
+            <div class="row mt-04">
+              <div>
+                <label>Glucides du jour (g)</label>
+                <input disabled="" id="diabQuickCarbG" value="-"/>
+                <div class="muted" style="margin-top:.25rem">Total des glucides encodés aujourd’hui.</div>
+              </div>
+
+              <div>
+                <label>
+                  Dernière glycémie
+                  <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Ce champ est informatif.
+Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ️</span>
+                </label>
+                <input disabled="" id="diabQuickLastG" value="-"/>
+                <div class="muted" style="margin-top:.25rem">Valeur saisie dans le journal Diabète.</div>
+              </div>
+            </div>
+
+            <div class="mt-06 hidden" id="diabQuickReco">
+              <div class="noticeTitle" style="margin-bottom:.35rem">Repères utiles</div>
+              <div class="muted mt-05" id="diabQuickLine">
+                Option diabète désactivée : activer pour afficher zones, plafond et alertes.
+              </div>
+              <p class="muted" id="diabQuickRecoText" style="margin:0 0 .5rem"></p>
+
+              <div class="row mt-04" style="justify-content:flex-end">
+                <button type="button" class="btn" onclick="setActiveTab('diab');">Ouvrir le journal diabète</button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+    <!-- /Diabète rapide -->
+
+  </div><!-- /muted -->
+</div><!-- /card panel-subtle -->
+
+<!-- ✅ Mount point : Résultats dans OBJECTIF (reste EN DEHORS du diab-panel) -->
 <div id="outMountGoal"></div>
 </section><!-- /goal -->
 
@@ -1531,7 +2041,7 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 <div class="card">
 <h2>Repas du jour</h2>
 <p class="muted mt-02" id="dietNote">
-      Presets = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”.
+      Type de régime = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”.
     </p>
 <div class="row">
 <div class="minw220-flex2">
@@ -1540,10 +2050,21 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 <p class="muted">
           Ajoute tes repas : les totaux se calculent automatiquement.
         </p>
+
 </div>
 </div>
+
+<!-- Mode d'encodage (Manuel / Rapide) -->
+<div class="row" style="align-items:center; justify-content:space-between; gap:12px; margin-top:.2rem">
+  <div class="seg" role="tablist" aria-label="Mode d'encodage repas">
+    <button id="mealModeManual" class="is-active" type="button" role="tab" aria-selected="true">Manuel</button>
+    <button id="mealModeQuick" type="button" role="tab" aria-selected="false">Rapide /100 g</button>
+  </div>
+  </div>
+
 <!-- Sous-dashboard MANUEL -->
-<div class="card panel-subtle">
+
+<div class="card panel-subtle" id="mealPanelManual">
 <h3>Apport du repas (manuel)</h3>
 <p class="muted">Entre directement les valeurs si tu les connais.</p>
 <div class="row mt-04">
@@ -1557,12 +2078,12 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
       </p>
 </div>
 <!-- Option /100g (expert) -->
-<div class="card panel-subtle" data-um="expert">
-<h3 data-um="expert">Option rapide /100 g (facultatif)</h3>
+<div class="card panel-subtle hidden" id="mealPanelQuick" data-um="expert">
+<h3 data-um="expert">Rapide /100 g</h3>
 <p class="muted" data-um="expert">
-        Utilise les valeurs pour 100 g indiquées sur l'emballage.
+        Saisis l’étiquette (/100 g) + le poids. Puis “Calculer & ajouter”.
       </p>
-<div class="row mt-04" data-um="expert">
+<div class="row mt-05" data-um="expert">
 <div>
 <label>kcal / 100 g</label>
 <input id="qKcal100" min="0" placeholder="ex: 420" step="1" type="number"/>
@@ -1586,23 +2107,25 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 </div>
 <div class="row mt-03" data-um="expert">
 <div class="self-end">
-<button id="btnApplyPer100" type="button">Remplir à partir de /100 g</button>
+</div>
+<div class="self-end">
+<button id="btnQuickAddMeal" type="button">Calculer & ajouter</button>
 </div>
 </div>
 <p class="muted mt-02" data-um="expert">
-        Les valeurs du repas sont calculées automatiquement à partir du poids. Exemple : 35 g à 420 kcal/100 g → clique sur Remplir, puis Ajouter ce repas.
+        Les valeurs du repas sont calculées automatiquement à partir du poids. Exemple : 35 g à 420 kcal/100 g → clique sur “Calculer & ajouter”.
       </p>
 </div>
-<div class="row">
-<div class="self-end">
-<button id="btnAddMeal" type="button">Ajouter ce repas (nouvelle ligne)</button>
-</div>
-<div class="self-end">
-<button class="btn-danger" id="btnClearMeals" type="button">Vider la journée</button>
-</div>
+<div class="row mealActions">
+  <div class="self-end">
+    <button id="btnAddMeal" type="button">Ajouter ce repas</button>
+  </div>
 </div>
 <div class="row mt-04" id="mealsTableWrap"></div>
 <p class="muted mt-05">Tu peux modifier une cellule directement. Les totaux se mettent à jour automatiquement.</p>
+<div class="row" style="justify-content:flex-end; margin-top:.35rem">
+  <button class="btn-danger btn-ghost" id="btnClearMeals" type="button">Vider la journée</button>
+</div>
 </div><!-- /card Repas -->
 <!-- ✅ Mount point : Résultats dans REPAS -->
 <div id="outMountRepas"></div>
@@ -1732,200 +2255,270 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
   </div>
 </details>
 
+<!-- Historique : V2 calendrier + panneau latéral (remplace le tableau) -->
+<div class="card" id="historyV2Card">
+  <div class="historyV2Head row">
+    <div class="historyMonthNav">
+      <button class="btn-mini" id="histPrevMonth" type="button" title="Mois précédent">‹</button>
+      <input id="histMonth" type="month"/>
+      <button class="btn-mini" id="histNextMonth" type="button" title="Mois suivant">›</button>
+    </div>
 
-<!-- Suivi poids & compo : Sport + Expert -->
-<div class="card mt-06" data-um="sport">
-<h2>Sport &amp; sommeil (journal local)</h2>
-<div class="muted">But : contextualiser tes macros avec 2–3 signaux simples (sans automatisme caché).</div>
-<div class="row mt-06">
-<div>
-<label>Sport — durée (min)</label>
-<input id="sportMin" min="0" step="5" type="number" value="0"/>
+    <!-- Compat : l’app pilote encore dayDate pour charger une journée -->
+    <div class="historyDatePick">
+      <label class="sr-only" for="dayDate">Date sélectionnée</label>
+      <input id="dayDate" type="date"/>
+    </div>
+
+    <div class="self-end">
+    </div>
+    <div class="self-end">
+    </div>
+  </div>
+
+  <div class="historyV2Layout mt-06">
+  <div class="histCalendarWrap">
+    <div class="histCalendarDow">
+      <div>lun.</div><div>mar.</div><div>mer.</div><div>jeu.</div><div>ven.</div><div>sam.</div><div>dim.</div>
+    </div>
+    <div id="histCalendar" class="histCalendarGrid" aria-label="Calendrier mensuel"></div>
+  </div>
+
+  <aside id="histSidebar" class="histSidebar">
+    <!-- Vignettes du jour (calories / diabète / sport / sommeil) -->
+    <div id="histSideSummary" class="histSideStack"></div>
+
+    <!-- Slot : on déplace ici le bloc existant Sport & Sommeil (journal local) -->
+    <div id="histMoveSportSleepHere"></div>
+
+    <!-- KPI 7 jours (sport/sommeil) -->
+    <div class="mt-06" id="sportSleep7d"></div>
+
+    <!-- Diabète : jour sélectionné + historique des mesures (repliable) -->
+    </details>
+  </aside>
 </div>
-<div>
-<label>Sport — kcal / charge</label>
-<input id="sportKcal" min="0" step="10" type="number" value="0"/>
 </div>
-<div>
-<label>Sport — type (optionnel)</label>
-<input id="sportType" placeholder="Trail, muscu, padel…" type="text"/>
-</div>
-</div>
-<div class="row mt-06">
-<div>
-<label>Sommeil — durée (h)</label>
-<input id="sleepH" min="0" step="0.25" type="number" value="0"/>
-</div>
-<div>
-<label>Sommeil — score (optionnel)</label>
-<input id="sleepScore" max="100" min="0" step="1" type="number" value="0"/>
-</div>
-<div>
-<label>Coucher / lever (optionnel)</label>
-<div class="grid" style="gap:.5rem">
-<input id="sleepBed" type="time"/>
-<input id="sleepWake" type="time"/>
-</div>
-</div>
-</div>
-<div class="mt-06" id="sportSleep7d"></div>
-</div>
-<div class="card">
-<h2>Historique (stocké localement)</h2>
-<div class="row">
-<div>
-<label>Poids (mesure standardisée)</label>
-<input id="morningWeight" min="0" placeholder="ex: 83.6" step="0.1" type="number"/>
-<div class="muted" style="margin-top:.25rem">
-Idéalement mesuré dans des conditions similaires (heure, tenue, balance).
+<div class="mt-06">
+  <details class="acc" id="accDiabHistoryFull">
+    <summary>Historique diabète — mesures (analyse)</summary>
+    <div class="accBody">
+<div class="muted tiny">
+          Suivi nutritionnel & hygiène de vie du jour sélectionné.
+        </div>
+
+        <div class="muted diab-lockmsg" id="diabHistoryLockMsg">
+          Option diabète désactivée : active-la pour afficher le suivi.
+        </div>
+
+        <div class="mt-06" id="diabHistoryBody">
+          <div class="row" style="align-items:flex-end">
+            <div style="min-width: 170px;">
+              <label>Date</label>
+              <input id="diabHistDate" type="date"/>
+            </div>
+            <div class="self-end">
+              <button id="btnDiabHistRefresh" type="button">Rafraîchir</button>
+            </div>
           </div>
+        </div>
+
+      <div class="mt-06" id="diabHistoryTableWrap">
+        <div id="diab_daysHistory_suivi"></div>
+      </div>
+    </div>
+  </details>
+
+<!-- Suivi sport & sommeil : Sport + Expert -->
+<div class="card mt-06" data-um="sport" id="sportCard">
+  <div class="row" style="align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap">
+    <h2 style="margin:0">Sport</h2>
+    <span class="pill ok is-hidden" id="sportSavedPill" aria-live="polite">✔ Enregistré</span>
+  </div>
+
+  <!-- Liste des séances du jour (journal empilable) -->
+  <div id="sportSessionsList" class="sportSessionsList mt-06"></div>
+
+  <button id="btnSportAdd" type="button" class="btn-wide mt-06">+ Ajouter une séance</button>
+
+  <!-- Éditeur : volontairement caché tant que l'utilisateur n'a pas déclenché l'action -->
+  <div id="sportEditor" class="sportEditor mt-06 is-hidden">
+    <div class="row">
+      <div>
+        <label>Type</label>
+        <input id="sportType" type="text" placeholder="Footing, renfo…"/>
+      </div>
+      <div>
+        <label>Durée (min)</label>
+        <input id="sportMin" type="number" min="0" step="5" value="0"/>
+      </div>
+      <div>
+        <label>kcal</label>
+        <input id="sportKcal" type="number" min="0" step="10" value="0"/>
+      </div>
+    </div>
+
+    <div class="row mt-06" style="justify-content:flex-end; gap:.5rem">
+      <button id="btnSportCancel" type="button" class="btn-ghost">Annuler</button>
+      <button id="btnSportSave" type="button">Enregistrer</button>
+    </div>
+  </div>
 </div>
-<div>
-<label>Moyenne 7 jours (auto)</label>
-<input disabled="" id="avg7Weight" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Lisse les variations quotidiennes.
-          </div>
+
+<div class="card mt-06" data-um="sport" id="sleepCard">
+  <div class="row" style="align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap">
+    <h2 style="margin:0">Sommeil</h2>
+      <span class="pill ok is-hidden" id="sleepSavedPill" aria-live="polite">✔ Enregistré</span>
+      <button id="btnSleepEdit" type="button" class="btn-wide mt-06">+ Ajouter une saisie directe</button>
+    </div>
+
+  <!-- Carte de consultation (1 seul enregistrement) -->
+  <div id="sleepSummary" class-hidden="sleepSummary mt-06">
+    <div class="muted" style="margin-top:.25rem">Corrige plus tard si nécessaire.</div>
+  </div>
+
+  <!-- Éditeur (caché par défaut) -->
+  <div id="sleepEditor" class="sleepEditor mt-06 is-hidden">
+    <div class="row">
+      <div>
+        <label>Durée (h)</label>
+        <input id="sleepH" type="number" min="0" step="0.25" value="0"/>
+      </div>
+      <div>
+        <label>Score (optionnel)</label>
+        <input id="sleepScore" type="number" min="0" max="100" step="1" value="0"/>
+      </div>
+      <div>
+        <label>Coucher / lever</label>
+        <div class="grid" style="gap:.5rem">
+          <input id="sleepBed" type="time"/>
+          <input id="sleepWake" type="time"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-06" style="justify-content:flex-end; gap:.5rem">
+      <button id="btnSleepCancel" type="button" class="btn-ghost">Annuler</button>
+      <button id="btnSleepSave" type="button">Enregistrer</button>
+    </div>
+  </div>
 </div>
-<div>
-<label>Variation hebdomadaire</label>
-<input disabled="" id="wkVarPct" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Évolution estimée par rapport à la semaine précédente.
-          </div>
+
+<div class="card" id="historyNoiseCard">
+  <h2>Historique</h2>
+
+  <details class="acc" id="accHistAdvanced">
+    <summary>Historique avancé — Dépense / poids / IMC sur 7 jours</summary>
+    <div class="accBody">
+
+      <div class="accGrid">
+        <div class="accTile">
+          <label>Poids de référence</label>
+          <input id="morningWeight" min="0" placeholder="ex: 83.6" step="0.1" type="number"/>
+          <div class="muted tiny">Mesure standardisée (heure, tenue, balance).</div>
+        </div>
+
+        <div class="accTile">
+          <label>Moyenne 7 jours</label>
+          <input disabled="" id="avg7Weight" placeholder="-" type="text"/>
+          <div class="muted tiny">Lisse les variations quotidiennes.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Variation hebdomadaire</label>
+          <input disabled="" id="wkVarPct" placeholder="-" type="text"/>
+          <div class="muted tiny">Évolution estimée vs semaine précédente.</div>
+        </div>
+
+        <div class="accTile">
+          <label>IMC</label>
+          <input disabled="" id="bmiVal" placeholder="-" type="text"/>
+          <div class="muted tiny">Indicateur, pas un diagnostic.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Catégorie IMC</label>
+          <input disabled="" id="bmiCat" placeholder="-" type="text"/>
+          <div class="muted tiny">Lecture simplifiée.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Poids utilisé IMC</label>
+          <input disabled="" id="bmiWeightUsed" placeholder="-" type="text"/>
+          <div class="muted tiny">Poids du jour ou référence.</div>
+        </div>
+      </div>
+
+      <div class="accSubTitle">Composition (optionnel)</div>
+      <div class="accGrid accGrid3">
+        <div class="accTile">
+          <label>Masse grasse (%)</label>
+          <input id="fatPct" min="0" placeholder="ex: 18.5" step="0.1" type="number"/>
+        </div>
+        <div class="accTile">
+          <label>Masse musculaire (%)</label>
+          <input id="musclePct" min="0" placeholder="ex: 42.0" step="0.1" type="number"/>
+        </div>
+        <div class="accTile">
+          <label>Masse osseuse (kg)</label>
+          <input id="boneKg" min="0" placeholder="ex: 3.2" step="0.1" type="number"/>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="acc" id="accTrendExpert" data-um="expert">
+    <summary>Tendance 7 jours (Expert)</summary>
+    <div class="accBody">
+
+      <div class="accGrid">
+        <div class="accTile">
+          <label>Dépense moyenne (7 jours)</label>
+          <input disabled="" id="avg7SpendKcal" type="text"/>
+          <div class="muted tiny">Basée sur la montre.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Consommation moyenne (7 jours)</label>
+          <input disabled="" id="avg7EatKcal" type="text"/>
+          <div class="muted tiny">Dépend des repas encodés.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Écart moyen estimé</label>
+          <input disabled="" id="deltaRealVsTheo" type="text"/>
+          <div class="muted tiny">Dépense − consommation.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Projection hebdo (ordre de grandeur)</label>
+          <input disabled="" id="projWkKg" type="text"/>
+          <div class="muted tiny">Basée sur l’écart moyen.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Poids observé vs tendance estimée</label>
+          <input disabled="" id="avg7DefKcal" type="text"/>
+          <div class="muted tiny">Comparaison indicative.</div>
+        </div>
+
+        <div class="accTile">
+          <label>Qualité des données (7 jours)</label>
+          <input disabled="" id="dataQuality7" type="text"/>
+          <div class="muted tiny">Plus il y a de jours complets, plus c’est fiable.</div>
+        </div>
+      </div>
+
+      <div class="muted tiny mt-06" id="trend7Note">-</div>
+    </div>
+  </details>
 </div>
-</div>
-<div class="row">
-<div>
-<label>Masse grasse (%)</label>
-<input id="fatPct" min="0" placeholder="ex: 18.5" step="0.1" type="number"/>
-</div>
-<div>
-<label>Masse musculaire (%)</label>
-<input id="musclePct" min="0" placeholder="ex: 42.0" step="0.1" type="number"/>
-</div>
-<div>
-<label>Masse osseuse (kg)</label>
-<input id="boneKg" min="0" placeholder="ex: 3.2" step="0.1" type="number"/>
-</div>
-</div>
-<div class="row">
-<div>
-<label>IMC<span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Indice de Masse Corporelle : IMC = poids / taille².
- Poids utilisé = poids mesuré si encodé, sinon poids “profil”.
-L’IMC ne distingue pas masse musculaire et masse grasse." role="button" tabindex="0">ℹ️</span></label>
-<input disabled="" id="bmiVal" value="-"/>
-</div>
-<div>
-<label>Catégorie IMC (indicatif)</label>
-<input disabled="" id="bmiCat" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Classement standard basé sur le poids et la taille.
-          </div>
-</div>
-<div>
-<label>Poids utilisé pour l'IMC</label>
-<input disabled="" id="bmiWeightUsed" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Poids mesuré du jour, ou poids de référence si non encodé.
-          </div>
-</div>
-</div>
-<!-- Tendance 7 jours : Expert uniquement -->
-<div class="card my06-p08" data-um="expert">
-<h3>Tendance 7 jours (Expert)</h3>
-<div class="row">
-<div>
-<label>Dépense moyenne (7 jours)</label>
-<input disabled="" id="avg7SpendKcal" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Basée sur les estimations de la montre.
-          </div>
-</div>
-<div>
-<label>Consommation moyenne (7 jours)</label>
-<input disabled="" id="avg7EatKcal" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Dépend des repas réellement encodés.
-          </div>
-</div>
-<div>
-<label>Écart moyen estimé</label>
-<input disabled="" id="avg7DefKcal" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Différence moyenne entre dépense et consommation.
-          </div>
-</div>
-</div>
-<div class="row">
-<div>
-<label>Projection hebdo— ordre de grandeur</label>
-<input disabled="" id="projWkKg" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Projection théorique basée sur l’écart moyen.
-          </div>
-</div>
-<div>
-<label>Poids observé vs tendance estimée</label>
-<input disabled="" id="deltaRealVsTheo" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Comparaison indicative sur 7 jours.
-          </div>
-</div>
-<div>
-<label>Qualité des données (7 jours)</label>
-<input disabled="" id="dataQuality7" value="-"/>
-<div class="muted" style="margin-top:.25rem">
-Plus il y a de jours complets, plus la tendance est fiable.
-          </div>
-</div>
-</div>
-<p class="muted mt-04" id="trend7Note">-</p>
-</div>
-</div>
-<!-- Historique : visible pour tous -->
-<div class="card">
-<h2>Historique des journées (stocké localement)</h2>
-<div class="row">
-<div>
-<label>Choisir une date</label>
-<input id="dayDate" type="date"/>
-</div>
-<div class="self-end">
-<button id="calcBtn" type="button">Recalculer la journée</button>
-</div>
-<div class="self-end">
-<button class="btn-danger" id="btnDeleteDay" type="button">Supprimer TOUT l'historique</button>
-</div>
-</div>
-<div class="muted mt-06" id="daysHistory"></div>
-<div class="card mt-06" id="diabHistoryCard">
-<h2 style="margin:.1rem 0 .6rem">Historique journée — option diabète</h2>
-<div class="muted" style="margin-top:.15rem">
-            Synthèse par journée : glucides consommés et relevés glycémiques.
-Visible uniquement si l’option diabète est activée.
-          </div>
-<!-- Message quand le mode diabète est OFF -->
-<div class="muted diab-lockmsg" id="diabHistoryLockMsg">
-            Option diabète désactivée : active-la pour afficher l’historique diabète.
-          </div>
-<!-- Contenu verrouillable (OFF => grisé + non cliquable) -->
-<div class="mt-06 diab-locked" id="diabHistoryBody">
-<div class="row">
-<div>
-<label>Choisir une date</label>
-<input id="diabHistDate" type="date"/>
-</div>
-<div class="self-end">
-<button id="btnDiabHistRefresh" type="button">Recalculer la journée diabète</button>
-</div>
-<div class="self-end">
-<button class="btn-danger" id="btnDiabDeleteDay" type="button">Supprimer TOUT l'historique diabète</button>
-</div>
-</div>
-<div class="mt-06" id="diab_daysHistory_suivi"></div>
-</div>
-</div>
+
+
+
+<!-- Compat : ancien point d’injection (ne doit plus être visible) -->
+  <div class="hidden" id="daysHistory"></div>
 </div>
 </section>
 <!-- =========================
@@ -1933,7 +2526,7 @@ Visible uniquement si l’option diabète est activée.
          ========================= -->
 <section class="tabSection" data-tabsection="diab">
 
-<details class="notice notice--ok mt-06" open>
+<details class="notice notice--ok mt-06">
   <summary class="noticeTitle">Mini-tuto — Diabète</summary>
   <div class="muted mt-025">
     <b>But :</b> observer des patterns (repas + contexte), sans interprétation automatique.<br/>
@@ -2005,7 +2598,7 @@ Une estimation suffit." role="button" tabindex="0">ℹ️</span>
 </div>
 </div>
 <div class="hidden" style="margin-top:.35rem">
-<div style="align-self:flex-end">
+<div style="align-self:flex-end;min-width:180px">
 <button id="diab_btnSaveDayMeta" type="button">Rafraîchir (glucides)</button>
 </div>
 </div>
@@ -2040,6 +2633,7 @@ L’unité affichée peut être changée librement." role="button" tabindex="0">
 <div>
 <label>Moment<span aria-label="Pourquoi préciser le moment ?" class="info-dot" data-modaltext="La glycémie varie selon le moment de la journée.
 Cette information aide à relire l’historique." role="button" tabindex="0">ℹ️</span></label>
+
 <select id="diab_gContext">
 <option selected="" value="à jeun">à jeun</option>
 <option value="avant repas">avant repas</option>
@@ -2061,30 +2655,68 @@ Cette information aide à relire l’historique." role="button" tabindex="0">ℹ
 <label>Note (optionnel)</label>
 <input id="diab_gNote" placeholder="ex: stress, repas riche, symptômes…" type="text"/>
 </div>
-<div class="row">
-<label>
-      HbA1c (%) (labo)
-      <span aria-label="À propos de l’HbA1c" class="info-dot" data-modaltext="Valeur issue d’un résultat de laboratoire.
+<div style="flex:1 1 100%;min-width:100%">
+  <details class="notice mt-06" open>
+        <summary class="noticeTitle">Labo (optionnel)</summary>
+
+
+<div class="row mt-03">
+
+    À titre informatif, sans interprétation médicale.</div>
+    <div class="row mt-03">
+      <div class="row">
+        <label>
+          HbA1c (%) (labo)
+          <span aria-label="À propos de l’HbA1c" class="info-dot" data-modaltext="Valeur issue d’un résultat de laboratoire.
 L’HbA1c donne une vue globale de l’équilibre glycémique sur plusieurs semaines.
 Elle est enregistrée à titre informatif, sans interprétation médicale." role="button" tabindex="0">ℹ️</span>
-</label>
-<input id="diab_hba1c" max="20" min="3" placeholder="ex: 6.4" step="0.1" type="number"/>
+        </label>
+        <input id="diab_hba1c" max="20" min="3" placeholder="ex: 6.4" step="0.1" type="number"/>
+      </div>
+      <div class="row">
+        <label>Date labo</label>
+        <input id="diab_hba1cDate" type="date"/>
+      </div>
+    </div>
+  </details>
 </div>
-<div class="row">
-<label>Date labo</label>
-<input id="diab_hba1cDate" type="date"/>
-</div>
-<div style="align-self:flex-end">
+<div style="align-self:flex-end;min-width:180px">
 <button id="diab_btnAddGlucose" type="button">Ajouter mesure</button>
 </div>
-<div style="align-self:flex-end">
+<div style="align-self:flex-end;min-width:180px">
 <button class="btn-danger" id="diab_btnClearGlucose" type="button">Vider glycémies du jour</button>
 </div>
 </div>
 <div id="diab_glucoseTableWrap"></div>
+
 <p class="muted" style="margin-top:.45rem">Tu peux éditer directement une cellule.</p>
 </div>
+
 </div>
+<details class="acc acc--mini diabChartAcc" id="diabChartAcc">
+  <summary class="noticeTitle">Évolution des glycémies (jour) <span class="muted tiny" style="font-weight:500;margin-left:.5rem">Indication visuelle, non médicale.</span></summary>
+  <div class="miniChartBody">
+    <div id="diabMiniChartWrap" class="miniChartWrap" aria-label="Mini courbe glycémique du jour">
+    <svg id="diabMiniChart" viewBox="0 0 640 140" preserveAspectRatio="none" role="img" aria-label="Courbe glycémie">
+      <defs>
+        <linearGradient id="diabZoneOk" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="rgba(76, 217, 100, .22)"/>
+          <stop offset="100%" stop-color="rgba(76, 217, 100, .06)"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="640" height="140" fill="transparent"></rect>
+      <!-- zone de confort visuelle -->
+      <rect id="diabZoneBand" x="0" y="52" width="640" height="36" fill="url(#diabZoneOk)" rx="10"></rect>
+      <path id="diabLine" d="" fill="none" stroke="rgba(230,235,255,.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      <g id="diabDots"></g>
+      <g id="diabXAxis"></g>
+    </svg>
+  </div>
+  <div id="diabMiniChartEmpty" class="muted tiny" style="display:none;margin-top:.35rem">Aucune glycémie encodée pour cette journée.</div>
+  </div>
+</details>
+
+
 <div id="diabBlocksHome"></div>
 <div id="diabBlocksWrap">
 <div class="card">
@@ -2095,14 +2727,14 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 </div>
 <div class="row">
 <div style="flex:2;min-width:260px"><label>Note</label><input id="diab_mealNote" placeholder="optionnel" type="text"/></div>
-<div style="align-self:flex-end"><button id="diab_btnAddMeal" type="button">Ajouter ce repas</button></div>
-<div style="align-self:flex-end"><button class="btn-danger" id="diab_btnClearMeals" type="button">Vider repas du jour</button></div>
+<div style="align-self:flex-end;min-width:180px"><button id="diab_btnAddMeal" type="button">Ajouter ce repas</button></div>
+<div style="align-self:flex-end;min-width:180px"><button class="btn-danger" id="diab_btnClearMeals" type="button">Vider repas du jour</button></div>
 </div>
 <h3 class="muted" style="margin:.7rem 0 .35rem">Calcul “au 100 g” (optionnel)</h3>
 <div class="row">
 <div><label>Poids (g)</label><input id="diab_qWeight" min="0" step="1" type="number" value="0"/></div>
 <div><label>Glucides /100g</label><input id="diab_qC100" min="0" step="0.1" type="number" value="0"/></div>
-<div style="align-self:flex-end"><button id="diab_btnApplyPer100" type="button">Appliquer → repas</button></div>
+<div style="align-self:flex-end;min-width:180px"><button id="diab_btnApplyPer100" type="button">Appliquer → repas</button></div>
 </div>
 <div id="diab_mealsTableWrap"></div>
 </div>
@@ -2697,7 +3329,7 @@ const DOM_MAP = {
     name:"#mealName", k:"#mealK", p:"#mealP", c:"#mealC", f:"#mealF",
     btnAdd:"#btnAddMeal",
     btnClear:"#btnClearMeals",
-    per100: { btn:"#btnApplyPer100", qKcal:"#qKcal100", qW:"#qWeight", qP:"#qP100", qC:"#qC100", qF:"#qF100" }
+    per100: { qKcal:"#qKcal100", qW:"#qWeight", qP:"#qP100", qC:"#qC100", qF:"#qF100" }
   },
 
   // --- Sorties / résultats / KPI ---
@@ -3012,7 +3644,9 @@ function setActiveTab(tab){
     renderMealsTable(d);
     syncEatenFromMeals(d);
     compute(true);
-  }
+
+        try{ historyV2_render(($("histMonth")?.value) || dateStr.slice(0,7), dateStr); }catch(e){}
+      }
 
   // ✅ Entrée onglet objectif => recalcul (évite résultats obsolètes)
   if (tab === "goal") {
@@ -3135,12 +3769,12 @@ function setDietNote(modeKey){
   const el = $("dietNote");
   if (!el) return;
 
-  if (!modeKey) { el.textContent = "Presets = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”."; return; }
+  if (!modeKey) { el.textContent = "Type de régime = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”."; return; }
   if (modeKey === "none") { el.textContent = "—"; return; }
   if (modeKey === "custom") { el.textContent = "Mode Personnalisé : tu ajustes librement objectif / protéines / lipides."; return; }
 
   const p = DIET_PRESETS[modeKey];
-  if (!p) { el.textContent = "Presets = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”."; return; }
+  if (!p) { el.textContent = "Type de régime = valeurs de départ. Si tu modifies objectif/prot/lip, l’app bascule en “Personnalisé”."; return; }
   el.textContent = `Preset “${p.label}” : ${p.goalPct}% · prot ${p.protPerKg} g/kg · lip ${p.fatPerKg} g/kg. (Modifier objectif/prot/lip ⇒ “Personnalisé”.)`;
 }
 
@@ -3620,6 +4254,22 @@ function syncCarbModeUI(){
     syncCarbGuardsFromUI?.();
   }
 
+  // ✅ Résumé (scan) : évite le bruit et rappelle le mode actif
+  const sumEl = $("carbModeSummary");
+  if (sumEl){
+    if (lowCarb2){
+      const lvl = $("lowCarbLevel")?.value || "";
+      const step = $("lowCarbStep")?.value || "";
+      sumEl.textContent = `Mode glucides : Low‑carb ${lvl ? ("("+lvl+")") : ""} — palier ${step || "—"} g/kg/j`;
+    } else if (carbGuard2){
+      const gk = $("carbGoal")?.value || "";
+      const cap = $("carbCapGPerKg")?.value || "";
+      sumEl.textContent = `Mode glucides : Repères — objectif ${gk || "—"} · plafond ${cap || "—"} g/kg/j`;
+    } else {
+      sumEl.textContent = "Mode glucides : Ajustement automatique (aucun repère / low‑carb)";
+    }
+  }
+
   if (lowCarb2) populateLowCarbSteps();
 }
 
@@ -3991,7 +4641,7 @@ function refreshDietDerivedUI(){
                     <td><input data-field="p" type="number" min="0" step="0.1" value="${round(m.p,1)}" /></td>
                     <td><input data-field="c" type="number" min="0" step="0.1" value="${round(m.c,1)}" /></td>
                     <td><input data-field="f" type="number" min="0" step="0.1" value="${round(m.f,1)}" /></td>
-                    <td><button class="btn-mini btn-danger" data-action="del" type="button">Suppr.</button></td>
+                    <td><button class="btn-mini btn-danger" data-action="del" type="button">🗑️</button></td>
                   </tr>
                 `).join("")}
               </tbody>
@@ -4313,61 +4963,345 @@ function refreshDietDerivedUI(){
         upsertDay(dayObj);
       }
 
-      function renderDaysHistory() {
-        const box = $("daysHistory");
-        if (!box) return;
+      
+// --- Date helpers (local, avoids UTC month/day shifts) ---
+function ymLocal(dt){
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,"0");
+  return `${y}-${m}`;
+}
+function ymdLocal(dt){
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,"0");
+  const d = String(dt.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
 
-        const days = loadDays().sort((a,b) => b.date.localeCompare(a.date));
-        if (days.length === 0) {
-          box.innerHTML = "<p class='muted'>Aucune journée enregistrée (profil actif).</p>";
-          return;
-        }
+function renderDaysHistory() {
+  // V2 : calendrier mensuel + panneau latéral.
+  const cal = $("histCalendar");
+  const monthInp = $("histMonth");
+  const side = $("histSideSummary");
+  if (!cal || !monthInp || !side) {
+    const box = $("daysHistory");
+    if (box) box.innerHTML = "<p class='muted'>Historique : UI calendrier non disponible.</p>";
+    return;
+  }
 
-/* === Historique des journées === */
+  historyV2_initOnce();
 
-        box.innerHTML = `
-          <div class="table-wrap">
-            <table class="history-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Poids</th>
-                  <th>Montre</th>
-                  <th>Dépense corrigée</th>
-                  <th>Régime</th>
-                  <th>Objectif %</th>
-                  <th>Cible kcal</th>
-                  <th>Repas</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${days.map(d => {
-                  const goal = (d.goalPct != null) ? d.goalPct : 0;
-                  return `
-                    <tr>
-                      <td>${d.date}</td>
-                      <td>${(toNum(d.morningWeight)>0) ? round(d.morningWeight,1) : "-"}</td>
-                      <td>${Math.round(d.montreRaw ?? 0)}</td>
-                      <td>${Math.round(d.montreAdjusted ?? 0)}</td>
-                      <td>${escapeHtml(dietLabel(d.dietMode))}</td>
-                      <td>${Math.round(goal ?? 0)}%</td>
-                      <td>${Math.round(d.targetKcal ?? 0)}</td>
-                      <td>${Array.isArray(d.meals) ? d.meals.length : 0}</td>
-                      <td><button class="btn-mini btn-danger"
-        data-action="del-day"
-        data-date="${escapeHtml(d.date)}"
-        type="button">Suppr.</button></td>
-                    </tr>
-                  `;
-                }).join("")}
-              </tbody>
-            </table>
+  // mois affiché = mois de la date sélectionnée (ou today)
+  const dateStr = getSelectedDate();
+  const d = (dateStr && dateStr.length === 10) ? new Date(dateStr + "T00:00:00") : new Date();
+  const ym = ymLocal(d); // YYYY-MM
+  if (!monthInp.value) monthInp.value = ym;
+
+  historyV2_render(monthInp.value, dateStr);
+}
+
+let __historyV2_inited = false;
+
+function historyV2_initOnce(){
+  if (__historyV2_inited) return;
+  __historyV2_inited = true;
+
+  // Nav mois
+  $("histPrevMonth")?.addEventListener("click", () => {
+    const m = $("histMonth")?.value || ymLocal(new Date());
+    const d = new Date(m + "-01T00:00:00");
+    d.setMonth(d.getMonth() - 1);
+    $("histMonth").value = ymLocal(d);
+    historyV2_render($("histMonth").value, getSelectedDate());
+  });
+  $("histNextMonth")?.addEventListener("click", () => {
+    const m = $("histMonth")?.value || ymLocal(new Date());
+    const d = new Date(m + "-01T00:00:00");
+    d.setMonth(d.getMonth() + 1);
+    $("histMonth").value = ymLocal(d);
+    historyV2_render($("histMonth").value, getSelectedDate());
+  });
+  $("histMonth")?.addEventListener("change", () => {
+    historyV2_render($("histMonth").value, getSelectedDate());
+  });
+
+  window.addEventListener("resize", () => historyV2_syncSidebarHeight());
+
+  // Clic jour calendrier
+  $("histCalendar")?.addEventListener("click", (e) => {
+    const btn = e.target?.closest?.(".calDay");
+    if (!btn) return;
+    if (btn.disabled || btn.getAttribute("data-has") === "0") return;
+    const dateStr = btn.getAttribute("data-date");
+    if (!dateStr) return;
+
+    // Mise à jour “source of truth”
+    if ($("dayDate")) {
+      $("dayDate").value = dateStr;
+      $("dayDate").dispatchEvent(new Event("change", { bubbles:true }));
+    }
+
+    // refresh UI (sélection)
+    historyV2_render($("histMonth")?.value || dateStr.slice(0,7), dateStr);
+  });
+
+
+
+}
+
+function historyV2_render(monthYYYYMM, selectedDateStr){
+  historyV2_renderCalendar(monthYYYYMM, selectedDateStr);
+  historyV2_renderSidebar(selectedDateStr);
+  historyV2_syncSidebarHeight();
+}
+
+
+function historyV2_syncSidebarHeight(){
+  const side = $("histSidebar");
+  const calWrap = document.querySelector(".histCalendarWrap");
+  if (!side || !calWrap) return;
+
+  // En colonne unique (mobile), on laisse le flux normal (pas de hauteur forcée)
+  if (window.matchMedia && window.matchMedia("(max-width: 880px)").matches){
+    side.style.height = "";
+    side.style.maxHeight = "";
+    side.style.overflow = "";
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    const h = Math.round(calWrap.getBoundingClientRect().height);
+    if (!h || h < 120) return;
+    side.style.height = h + "px";
+    side.style.maxHeight = h + "px";
+    side.style.overflow = "auto";
+  });
+}
+
+function historyV2_renderCalendar(monthYYYYMM, selectedDateStr){
+  const cal = $("histCalendar");
+  if (!cal) return;
+
+  const daysByDate = new Map(loadDays().map(d => [d.date, d]));
+  const monthStart = new Date(monthYYYYMM + "-01T00:00:00");
+  const y = monthStart.getFullYear();
+  const m = monthStart.getMonth();
+
+  // Lundi = 0..6
+  const first = new Date(y, m, 1);
+  const firstDow = (first.getDay() + 6) % 7; // JS: Sun=0 → Mon=0
+  const gridStart = new Date(y, m, 1 - firstDow);
+
+  const cells = [];
+  for (let i=0;i<42;i++){
+    const d = new Date(gridStart);
+    d.setDate(gridStart.getDate() + i);
+    const dateStr = ymdLocal(d);
+    const inMonth = (d.getMonth() === m);
+    const dayObj = inMonth ? daysByDate.get(dateStr) : null;
+
+    const hasArchive = !!dayObj;
+    const hasData = historyV2_hasMeaningfulData(dayObj);
+    const isFilled = hasData;  // alias UX
+const selClass = (selectedDateStr === dateStr) ? " is-selected" : "";
+    const outClass = inMonth ? "" : " is-out";
+
+    // Fond léger : uniquement pour les jours passés (date < date sélectionnée)
+    const refStr = (selectedDateStr && selectedDateStr.length===10) ? selectedDateStr : ymdLocal(new Date());
+    const ref = new Date(refStr + "T00:00:00");
+    const cur = new Date(dateStr + "T00:00:00");
+    const isPast = inMonth && (cur.getTime() < ref.getTime());
+    const pastClass = isPast ? " is-past" : "";
+
+    cells.push(`
+      <button type="button" class="calDay${outClass}${pastClass}${selClass}${hasArchive?" is-archived":" is-unarchived"}${isFilled?" is-filled":" is-empty"}" data-date="${dateStr}" data-has="${hasData?1:0}" data-arch="${hasArchive?1:0}">
+        <div class="calNum">${d.getDate()}</div>
+              </button>
+    `);
+  }
+
+  cal.innerHTML = cells.join("");
+}
+
+
+function historyV2_mealTotals(dayObj){
+  const meals = Array.isArray(dayObj?.meals) ? dayObj.meals : [];
+  return meals.reduce((acc, m) => {
+    acc.k += Math.max(0, toNum(m.k));
+    acc.p += Math.max(0, toNum(m.p));
+    acc.c += Math.max(0, toNum(m.c));
+    acc.f += Math.max(0, toNum(m.f));
+    return acc;
+  }, { k:0, p:0, c:0, f:0 });
+}
+
+function historyV2_hasMeaningfulData(dayObj){
+  if (!dayObj) return false;
+
+  // Repas / calories (significatif = >0 kcal)
+  const tot = historyV2_mealTotals(dayObj);
+  if (toNum(tot.k) > 0 || toNum(tot.p) > 0 || toNum(tot.c) > 0 || toNum(tot.f) > 0) return true;
+
+  // Sport (significatif = minutes/kcal >0 OU au moins 1 séance sauvegardée)
+  const sport = dayObj.sport || {};
+  const ss = Array.isArray(dayObj.sportSessions) ? dayObj.sportSessions : [];
+  if (ss.length) return true;
+  if (toNum(sport.minutes) > 0 || toNum(sport.kcal) > 0) return true;
+
+  // Sommeil
+  const sleep = dayObj.sleep || {};
+  if (toNum(sleep.hours) > 0 || toNum(sleep.score) > 0 || String(sleep.bed||"").trim() || String(sleep.wake||"").trim()) return true;
+
+  // Diabète (uniquement si option activée)
+  try{
+    const diabOn = !!$("diabEnabled")?.checked;
+    if (diabOn){
+      const gl = Array.isArray(dayObj.diabGlucose) ? dayObj.diabGlucose : [];
+      const hasMeta = !!(dayObj.diabMeta && Object.keys(dayObj.diabMeta).length);
+      const hasSettings = !!(dayObj.diabSettings && Object.keys(dayObj.diabSettings).length);
+      if (gl.length || hasMeta || hasSettings) return true;
+    }
+  }catch(e){}
+
+  return false;
+}
+
+function historyV2_renderSidebar(dateStr){
+  const side = $("histSideSummary");
+  if (!side) return;
+
+  const d = getDay(dateStr);
+  if (!d){
+    side.innerHTML = `
+      <div class="sideCard">
+        <h3>${escapeHtml(dateStr || "")}</h3>
+        <div class="muted">Aucune donnée enregistrée pour cette date.</div>
+      </div>
+    `;
+    if ($("diabHistDate")) $("diabHistDate").value = dateStr || "";
+    return;
+  }
+
+  const tot = historyV2_mealTotals(d);
+  const eatK = Math.round(tot.k);
+  const spendK = Math.round(toNum(d.montreAdjusted ?? d.montreRaw ?? 0));
+  const targetK = Math.round(toNum(d.targetKcal ?? 0));
+  const delta = (targetK > 0 && eatK > 0) ? Math.round(eatK - targetK) : null;
+
+  const diet = escapeHtml(dietLabel(d.dietMode));
+  const mealsN = Array.isArray(d.meals) ? d.meals.length : 0;
+
+  // Sport / sommeil (journal local)
+  const s = d.sport || {};
+  const sl = d.sleep || {};
+  const sportMin = Math.round(toNum(s.minutes)||0);
+  const sportK = Math.round(toNum(s.kcal)||0);
+
+  // Détails séances (UX : afficher ici les séances sauvegardées, pas un simple "type")
+  const __sessions = (typeof getSportSessionsForDay === "function") ? getSportSessionsForDay(dateStr) : (Array.isArray(d?.sportSessions) ? d.sportSessions : []);
+  const sportDetails = (!__sessions || !__sessions.length)
+    ? `<div class="muted" style="margin-top:.35rem">Aucune séance enregistrée.</div>`
+    : `<div class="kpiSportList" style="margin-top:.45rem">` + __sessions.slice(0,4).map(ss => {
+        const t = escapeHtml(String(ss.type||"").trim() || "Sport");
+        const mn = Math.round(toNum(ss.minutes)||0);
+        const kk = Math.round(toNum(ss.kcal)||0);
+        return `<div class="kpiSportRow"><span class="kpiSportType">${t}</span><span class="kpiSportMeta">${mn} min · ${kk} kcal</span></div>`;
+      }).join("") + (__sessions.length>4 ? `<div class="muted" style="margin-top:.25rem">+${__sessions.length-4} autre(s) séance(s)</div>` : ``) + `</div>`;
+
+  const sleepH = (toNum(sl.hours)||0);
+  const sleepScore = Math.round(toNum(sl.score)||0);
+
+  // Diabète (option)
+  const diabOn = !!$("diabEnabled")?.checked;
+  let diabCard = "";
+  try{
+    if (diabOn){
+      const glRaw = Array.isArray(d?.diabGlucose) ? d.diabGlucose : [];
+      const gl = glRaw.map(diab_normalizeGlucose);
+      const settings = diab_getSettings();
+      const unit = $("diab_glucoseUnit")?.value || settings.glucoseUnit || "mgdl";
+
+      const last = gl.length ? gl[gl.length-1] : null;
+      const lastVal = last ? diab_displayGlucose(last.mgdl, unit) : "-";
+
+      const hypo = gl.filter(x => (toNum(x.mgdl)||0) > 0 && (toNum(x.mgdl)||0) < 70).length;
+      const hyper = gl.filter(x => (toNum(x.mgdl)||0) > 180).length;
+
+      const carbs = Math.round(toNum(tot.c)||0);
+
+      const hasMeta = !!(d?.diabMeta && Object.keys(d.diabMeta).length);
+      const hasSettings = !!(d?.diabSettings && Object.keys(d.diabSettings).length);
+
+      if (gl.length || hasMeta || hasSettings){
+        diabCard = `
+          <div class="sideCard diabCard">
+            <div class="sideTitleRow">
+              <h3 style="margin:0">Diabète</h3>
+              <span class="pill diab"><span class="mini">${gl.length||0}G</span><span class="muted">mesures</span></span>
+            </div>
+            <div class="sideRow" style="margin-top:.35rem">
+              <div class="sideBig">${lastVal} <span class="muted">${unit==="mmol"?"mmol/L":"mg/dL"}</span></div>
+              <div class="muted">${carbs}g glucides</div>
+              <div class="muted">hypo:${hypo||0}</div>
+              <div class="muted">hyper:${hyper||0}</div>
+            </div>
+            <div class="muted" style="margin-top:.35rem">Détail dans l’onglet Diabète.</div>
           </div>
         `;
       }
+    }
+  }catch(e){}
 
-      function loadDayIntoForm(dateStr) {
+  side.innerHTML = `
+    <div class="sideCard" style="background: var(--warn); border-color: var(--warn-b);">
+      <div class="sideTitleRow">
+        <h3 style="margin:0">${escapeHtml(dateStr)}</h3>
+        <span class="pill ${delta==null ? "warn" : (delta<=150 && delta>=-250 ? "ok":"bad")}">
+          <span class="mini">${delta==null ? "—" : (delta>0?"+":"") + delta}</span>
+          <span class="muted">vs cible</span>
+        </span>
+      </div>
+
+      <div class="sideRow" style="margin-top:.35rem">
+        <div class="sideBig">${eatK || "—"} <span class="muted">kcal</span></div>
+        <div class="muted">${tot.p ? Math.round(tot.p) : 0}g P</div>
+        <div class="muted">${tot.c ? Math.round(tot.c) : 0}g G</div>
+        <div class="muted">${tot.f ? Math.round(tot.f) : 0}g L</div>
+      </div>
+
+      <div class="muted" style="margin-top:.35rem">
+        Dépense ${spendK || "—"} · Cible ${targetK || "—"} · ${diet} · ${mealsN} repas
+      </div>
+
+      <div class="kpi" style="margin-top:.55rem">
+        <span class="pill"><span class="mini">${Math.round(toNum(d.goalPct ?? 0))}%</span><span class="muted">objectif</span></span>
+      </div>
+    </div>
+
+    ${diabCard}
+
+    <div class="sideCard" style="background: rgba(32,96,78,.35); border-color: rgba(90,220,170,.22);">
+      <div class="sideTitleRow">
+        <h3 style="margin:0">Sport</h3>
+        <span class="pill"><span class="mini">${sportMin||0} min</span><span class="muted">${sportK||0} kcal</span></span>
+      </div>
+      ${sportDetails}
+    </div>
+
+    <div class="sideCard" style="background: rgba(70,90,170,.22); border-color: rgba(140,160,255,.16);">
+      <div class="sideTitleRow">
+        <h3 style="margin:0">Sommeil</h3>
+        <span class="pill"><span class="mini">${sleepH ? round(sleepH,1) : 0}h</span><span class="muted">${sleepScore? (sleepScore+"/10") : "score —"}</span></span>
+      </div>
+      <div class="muted" style="margin-top:.35rem">
+        Coucher ${escapeHtml(sl.bed||"—")} · Lever ${escapeHtml(sl.wake||"—")}
+      </div>
+    </div>
+  `;
+
+  if ($("diabHistDate")) $("diabHistDate").value = dateStr || "";
+}
+
+function loadDayIntoForm(dateStr) {
         const d = getDay(dateStr);
         if (!d) return;
         $("dayDate").value = d.date;
@@ -4416,27 +5350,198 @@ function getSportSleepForDay(dateStr){
 }
 
 function loadSportSleepIntoUI(dateStr){
-  const ss = getSportSleepForDay(dateStr);
-  if ($("sportMin")) $("sportMin").value = ss.sport.minutes || 0;
-  if ($("sportKcal")) $("sportKcal").value = ss.sport.kcal || 0;
-  if ($("sportType")) $("sportType").value = ss.sport.type || "";
+  const d = getDay(dateStr) || { date: dateStr };
 
-  if ($("sleepH")) $("sleepH").value = ss.sleep.hours || 0;
-  if ($("sleepScore")) $("sleepScore").value = ss.sleep.score || 0;
-  if ($("sleepBed")) $("sleepBed").value = ss.sleep.bed || "";
-  if ($("sleepWake")) $("sleepWake").value = ss.sleep.wake || "";
+  // Sport : on prépare l'ajout d'une séance (on ne charge pas l'agrégat dans les champs)
+  if ($("sportMin")) $("sportMin").value = 0;
+  if ($("sportKcal")) $("sportKcal").value = 0;
+  if ($("sportType")) $("sportType").value = "";
+
+  // Liste des séances déjà sauvegardées
+  renderSportSessionsList(dateStr);
+
+  // Sommeil : 1 nuit = 1 enregistrement (on charge l'existant)
+  const sleep = d.sleep || {};
+  if ($("sleepH")) $("sleepH").value = Math.max(0, toNum(sleep.hours) || 0);
+  if ($("sleepScore")) $("sleepScore").value = Math.max(0, toNum(sleep.score) || 0);
+  if ($("sleepBed")) $("sleepBed").value = String(sleep.bed || "");
+  if ($("sleepWake")) $("sleepWake").value = String(sleep.wake || "");
+
+  // UI: cartes compactes (pas d'autosave visible)
+  try{ renderSleepSummaryForDay(dateStr); }catch(e){}
+  try{ sleepUI_setEditMode(false); }catch(e){}
+  try{ sportUI_setEditor(false); }catch(e){}
+
+  renderSportSleep7d(dateStr);
 }
 
-function saveSportSleepForDay(dateStr){
+function showSavedPill(id){
+  const el = $(id);
+  if (!el) return;
+  el.classList.remove("is-hidden");
+  clearTimeout(el.__t);
+  el.__t = setTimeout(() => {
+    el.classList.add("is-hidden");
+  }, 1400);
+}
+
+function sportUI_setEditor(on){
+  const ed = $("sportEditor");
+  if (!ed) return;
+  ed.classList.toggle("is-hidden", !on);
+  if (on){
+    // focus first field
+    setTimeout(()=>{ $("sportType")?.focus(); }, 30);
+  }
+}
+
+function sleepUI_setEditMode(on){
+  $("sleepEditor")?.classList.toggle("is-hidden", !on);
+  $("sleepSummary")?.classList.toggle("is-hidden", on);
+  // When opening, focus first field
+  if (on) setTimeout(()=>{ $("sleepH")?.focus(); }, 30);
+}
+
+function renderSleepSummaryForDay(dateStr){
+  const d = getDay(dateStr) || { date: dateStr };
+  const sl = d.sleep || {};
+  const h = Math.max(0, toNum(sl.hours) || 0);
+  const score = Math.max(0, toNum(sl.score) || 0);
+  const bed = String(sl.bed || "").trim();
+  const wake = String(sl.wake || "").trim();
+
+  const dur = $("sleepSummaryDur");
+  const sc = $("sleepSummaryScore");
+  const rg = $("sleepSummaryRange");
+
+  if (dur) dur.textContent = (h > 0) ? (round(h,1) + "h") : "—";
+  if (sc) sc.textContent = (score > 0) ? (score + " / 10") : "score —";
+  if (rg) rg.textContent = (bed || wake) ? (`${bed || "—"} → ${wake || "—"}`) : "—";
+}
+
+function getSportSessionsForDay(dateStr){
+  const d = getDay(dateStr) || { date: dateStr };
+  const arr = Array.isArray(d.sportSessions) ? d.sportSessions : [];
+  return arr
+    .filter(x => x && (toNum(x.minutes)||0) > 0 || (toNum(x.kcal)||0) > 0 || String(x.type||"").trim())
+    .map(x => ({
+      id: String(x.id || ""),
+      type: String(x.type || "").trim(),
+      minutes: Math.max(0, toNum(x.minutes) || 0),
+      kcal: Math.max(0, toNum(x.kcal) || 0),
+      createdAt: String(x.createdAt || "")
+    }));
+}
+
+function computeSportAggregateFromSessions(sessions){
+  const mins = sessions.reduce((s,x)=>s + (toNum(x.minutes)||0), 0);
+  const kc = sessions.reduce((s,x)=>s + (toNum(x.kcal)||0), 0);
+  const types = sessions.map(x=>String(x.type||"").trim()).filter(Boolean);
+  const type = types.length === 0 ? "" : (types.length === 1 ? types[0] : "Multi");
+  return { minutes: Math.round(mins), kcal: Math.round(kc), type };
+}
+
+function renderSportSessionsList(dateStr){
+  const box = $("sportSessionsList");
+  if (!box) return;
+
+  const sessions = getSportSessionsForDay(dateStr);
+
+  if (!sessions.length){
+    box.innerHTML = `<div class="muted">Aucune séance.</div>`;
+    return;
+  }
+
+  // Indicateur visuel simple : % de charge (kcal) vs repère fixe
+  const REF_KCAL = 700; // repère “séance costaud” (pas médical)
+  const pct = (k) => clamp((Math.max(0,toNum(k)||0) / REF_KCAL) * 100, 0, 100);
+
+  box.innerHTML = sessions.map(s => {
+    const p = pct(s.kcal);
+    return `
+      <div class="sportSessionRow">
+        <div class="left">
+          <div class="title">${escapeHtml(s.type || "Sport")}</div>
+          <div class="meta">${Math.round(s.minutes||0)} min · ${Math.round(s.kcal||0)} kcal</div>
+        </div>
+        <div class="right">
+          <div class="loadBar" aria-hidden="true"><i style="width:${p.toFixed(0)}%"></i></div>
+          <div class="loadPct">${p.toFixed(0)}%</div>
+          <button type="button" class="btn-ghost btn-icon" title="Supprimer" data-sportdel="${escapeHtml(s.id)}">✕</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function clearSportInputs(){
+  if ($("sportMin")) $("sportMin").value = 0;
+  if ($("sportKcal")) $("sportKcal").value = 0;
+  if ($("sportType")) $("sportType").value = "";
+}
+
+function addSportSessionFromInputs(dateStr){
+  const minutes = Math.max(0, toNum($("sportMin")?.value) || 0);
+  const kcal = Math.max(0, toNum($("sportKcal")?.value) || 0);
+  const type = String($("sportType")?.value || "").trim();
+
+  // aucune donnée => pas de sauvegarde
+  if (minutes <= 0 && kcal <= 0 && !type) return;
+
+  const existing = getDay(dateStr) || { date: dateStr };
+  const sessions = Array.isArray(existing.sportSessions) ? existing.sportSessions.slice() : [];
+
+  const id = "s_" + Math.random().toString(36).slice(2,10) + "_" + Date.now().toString(36);
+  sessions.push({ id, type, minutes, kcal, createdAt: new Date().toISOString() });
+
+  const agg = computeSportAggregateFromSessions(sessions);
+
+  const dayObj = {
+    ...existing,
+    date: dateStr,
+    sportSessions: sessions,
+    sport: agg, // agrégat compat (KPIs, calendrier)
+    updatedAt: new Date().toISOString()
+  };
+
+  upsertDay(dayObj);
+
+  // UI
+  renderSportSessionsList(dateStr);
+  renderSportSleep7d(dateStr);
+
+  // rafraîchir calendrier + panneau (si présent)
+  try{ historyV2_render(($("histMonth")?.value) || dateStr.slice(0,7), dateStr); }catch(e){}
+  clearSportInputs();
+}
+
+function deleteSportSession(dateStr, sessionId){
+  const existing = getDay(dateStr);
+  if (!existing) return;
+
+  const sessions = Array.isArray(existing.sportSessions) ? existing.sportSessions.slice() : [];
+  const next = sessions.filter(s => String(s.id||"") !== String(sessionId||""));
+  const agg = computeSportAggregateFromSessions(next);
+
+  const dayObj = {
+    ...existing,
+    date: dateStr,
+    sportSessions: next,
+    sport: agg,
+    updatedAt: new Date().toISOString()
+  };
+  upsertDay(dayObj);
+
+  renderSportSessionsList(dateStr);
+  renderSportSleep7d(dateStr);
+  try{ historyV2_render(($("histMonth")?.value) || dateStr.slice(0,7), dateStr); }catch(e){}
+}
+
+function saveSleepForDay(dateStr){
   const existing = getDay(dateStr) || { date: dateStr };
   const dayObj = {
     ...existing,
     date: dateStr,
-    sport: {
-      minutes: Math.max(0, toNum($("sportMin")?.value) || 0),
-      kcal: Math.max(0, toNum($("sportKcal")?.value) || 0),
-      type: String($("sportType")?.value || "").trim()
-    },
     sleep: {
       hours: Math.max(0, toNum($("sleepH")?.value) || 0),
       score: Math.max(0, toNum($("sleepScore")?.value) || 0),
@@ -4446,6 +5551,13 @@ function saveSportSleepForDay(dateStr){
     updatedAt: new Date().toISOString()
   };
   upsertDay(dayObj);
+  renderSportSleep7d(dateStr);
+  try{ historyV2_render(($("histMonth")?.value) || dateStr.slice(0,7), dateStr); }catch(e){}
+}
+
+// Compat : ancien nom (utilisé par certains écouteurs)
+function saveSportSleepForDay(dateStr){
+  saveSleepForDay(dateStr);
 }
 
 function getLastNDays(dateStr, n=7){
@@ -4788,27 +5900,7 @@ function applyDiabMode(enabled){
   diab_updateQuickKpis(getSelectedDate?.() || "");
 }
 
-
-function diab_deleteAllHistory(){
-  const days = loadDays();
-  let n = 0;
-
-  for (const d of days){
-    if (!d?.date) continue;
-    if (!d.diabGlucose && !d.diabMeta && !d.diabMeals) continue;
-
-    const dayObj = { ...d };
-    delete dayObj.diabGlucose;
-    delete dayObj.diabMeta;
-    delete dayObj.diabMeals;
-    dayObj.updatedAt = new Date().toISOString();
-    upsertDay(dayObj);
-    n++;
-  }
-  return n;
-}
-
-      function notifyDiabProfileChanged(){
+function notifyDiabProfileChanged(){
         const frame = $("diabFrame");
         try{
           frame?.contentWindow?.postMessage({ type:"PROFILE_CHANGED" }, "*");
@@ -4884,8 +5976,7 @@ function diab_deleteDiabHistoryRow(dateStr){
 
 function diab_initHistorySuivi(){
   const inp = $("diabHistDate");
-  const del = $("btnDiabDeleteDay");
-  const ref = $("btnDiabHistRefresh");
+const ref = $("btnDiabHistRefresh");
 
   if (inp){
     inp.value = getSelectedDate?.() || new Date().toISOString().slice(0,10);
@@ -4900,18 +5991,6 @@ function diab_initHistorySuivi(){
       try{ diab_refreshHistoryUI(v); }catch(e){}
     });
   }
-
-if (del){
-  del.addEventListener("click", () => {
-    if (!confirm("Supprimer TOUT l’historique diabète (toutes dates) ?")) return;
-
-    const n = diab_deleteAllHistory();
-    diab_refreshHistoryUI();
-    alert(n ? `Historique diabète supprimé (${n} journée(s)).` : "Aucune donnée diabète à supprimer.");
-  });
-}
-
-
   if (ref){
     ref.addEventListener("click", () => {
       diab_refreshHistoryUI();
@@ -5097,7 +6176,7 @@ function diab_renderMealsTable(dateStr){
                 <td><b>${round(net,1)}</b></td>
                 <td>${round(portions,2)}</td>
                 <td class="td-left"><input data-field="note" value="${escapeHtml(m.note)}" /></td>
-                <td><button class="btn-mini btn-danger" data-action="del">Suppr.</button></td>
+                <td><button class="btn-mini btn-danger" data-action="del">🗑️</button></td>
               </tr>
             `;
           }).join("")}
@@ -5244,7 +6323,7 @@ function diab_renderGlucoseTable(dateStr){
                        value="${diab_displayGlucose(g.mgdl, unit)}" />
               </td>
               <td class="td-left"><input data-field="note" value="${escapeHtml(g.note)}" /></td>
-              <td><button class="btn-mini btn-danger" data-action="del">Suppr.</button></td>
+              <td><button class="btn-mini btn-danger" data-action="del">🗑️</button></td>
             </tr>
           `).join("")}
         </tbody>
@@ -5287,6 +6366,111 @@ function diab_renderGlucoseTable(dateStr){
   });
 }
 
+
+function diab_syncMomentChips(){
+  const wrap = $("diab_momentChips");
+  const sel  = $("diab_gContext");
+  if (!wrap || !sel) return;
+  const v = String(sel.value || "").toLowerCase();
+  wrap.querySelectorAll("button.chip").forEach(btn => {
+    const bv = String(btn.getAttribute("data-val") || "").toLowerCase();
+    btn.classList.toggle("is-selected", bv === v);
+  });
+}
+
+function diab_renderMiniChart(dateStr){
+  const svg = $("diabMiniChart");
+  const line = $("diabLine");
+  const dots = $("diabDots");
+  const xAxis = $("diabXAxis");
+  const empty = $("diabMiniChartEmpty");
+  if (!svg || !line || !dots || !xAxis || !empty) return;
+
+  const d = getDay(dateStr);
+  const unit = $("diab_glucoseUnit")?.value || "mgdl";
+  const gl = Array.isArray(d?.diabGlucose) ? d.diabGlucose.map(diab_normalizeGlucose) : [];
+
+  const ptsRaw = gl
+    .map(x => {
+      const mgdl = Number.isFinite(toNum(x.mgdl)) ? toNum(x.mgdl) : null;
+      const t = (x.time || x.t || x.hour || "").toString();
+      return { mgdl, time: t, ctx: x.ctx || x.context || x.moment || "" };
+    })
+    .filter(x => x.mgdl != null);
+
+  if (ptsRaw.length === 0){
+    line.setAttribute("d", "");
+    dots.innerHTML = "";
+    xAxis.innerHTML = "";
+    empty.style.display = "block";
+    return;
+  }
+  empty.style.display = "none";
+
+  // --- X : temps (si time présent) sinon index ---
+  const hasTime = ptsRaw.some(p => /^\d{2}:\d{2}$/.test(p.time));
+  const toMin = (hhmm) => {
+    const [hh, mm] = hhmm.split(":").map(n=>parseInt(n,10));
+    if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
+    return hh*60 + mm;
+  };
+
+  const pts = ptsRaw.map((p,i) => {
+    const xKey = hasTime && /^\d{2}:\d{2}$/.test(p.time) ? toMin(p.time) : i;
+    const yVal = (unit === "mmol") ? diab_mgdlToMmol(p.mgdl) : p.mgdl;
+    return { xKey, yVal, label: p.time || "" };
+  }).sort((a,b)=> (a.xKey??0) - (b.xKey??0));
+
+  const W = 640, H = 140;
+  const padL = 26, padR = 10, padT = 12, padB = 22;
+  const w = W - padL - padR;
+  const h = H - padT - padB;
+
+  const xMin = pts[0].xKey;
+  const xMax = pts[pts.length-1].xKey;
+  const xSpan = (xMax - xMin) || 1;
+
+  let yMin = Math.min(...pts.map(p=>p.yVal));
+  let yMax = Math.max(...pts.map(p=>p.yVal));
+  const padY = Math.max((yMax - yMin) * 0.15, unit==="mmol" ? 0.6 : 12);
+  yMin -= padY; yMax += padY;
+  const ySpan = (yMax - yMin) || 1;
+
+  const X = (xKey) => padL + ((xKey - xMin) / xSpan) * w;
+  const Y = (yVal) => padT + (1 - ((yVal - yMin) / ySpan)) * h;
+
+  // --- Path (polyline lissée simple) ---
+  const dPath = pts.map((p,idx)=>{
+    const x = X(p.xKey), y = Y(p.yVal);
+    return `${idx===0?'M':'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ");
+  line.setAttribute("d", dPath);
+
+  // --- Dots ---
+  dots.innerHTML = pts.map(p=>{
+    const x = X(p.xKey), y = Y(p.yVal);
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="rgba(87,255,162,.85)" stroke="rgba(0,0,0,.35)" stroke-width="1.2"></circle>`;
+  }).join("");
+
+  // --- X axis labels (sobre) ---
+  xAxis.innerHTML = "";
+  if (hasTime){
+    const ticks = ["06:00","12:00","18:00","24:00"];
+    const tickMins = [360, 720, 1080, 1440];
+    const gx = ticks.map((t,i)=>{
+      const x = X(tickMins[i]);
+      return `<text x="${x.toFixed(1)}" y="${(H-6).toFixed(1)}" text-anchor="middle" fill="rgba(220,230,255,.65)" font-size="10">${t}</text>`;
+    }).join("");
+    xAxis.innerHTML = gx;
+  } else {
+    // indices -> juste début/fin
+    const x0 = X(xMin), x1 = X(xMax);
+    xAxis.innerHTML =
+      `<text x="${x0.toFixed(1)}" y="${(H-6).toFixed(1)}" text-anchor="start" fill="rgba(220,230,255,.65)" font-size="10">début</text>
+       <text x="${x1.toFixed(1)}" y="${(H-6).toFixed(1)}" text-anchor="end" fill="rgba(220,230,255,.65)" font-size="10">fin</text>`;
+  }
+}
+
 function diab_addGlucoseFromInputs(){
   const dateStr = getSelectedDate();
   const unit = $("diab_glucoseUnit")?.value || "mgdl";
@@ -5310,16 +6494,20 @@ function diab_addGlucoseFromInputs(){
   if ($("diab_gTime")) $("diab_gTime").value = "";
 
   diab_renderGlucoseTable(dateStr);
+  diab_renderMiniChart(dateStr);
   diab_renderDayKpis(dateStr);
   diab_renderDaysHistory();
+  diab_syncMomentChips();
 }
 
 function diab_clearGlucoseForDay(){
   const dateStr = getSelectedDate();
   diab_setGlucoseForDay(dateStr, []);
   diab_renderGlucoseTable(dateStr);
+  diab_renderMiniChart(dateStr);
   diab_renderDayKpis(dateStr);
   diab_renderDaysHistory();
+  diab_syncMomentChips();
 }
 
 function diab_glucoseStats(itemsMgdl){
@@ -5439,7 +6627,7 @@ function diab_renderDaysHistory(targetId){
                   <button class="btn-mini btn-danger"
                           data-action="diab-day-del"
                           data-date="${escapeHtml(d.date)}"
-                          type="button">Suppr.</button>
+                          type="button">🗑️</button>
                 </td>
               </tr>
             `;
@@ -5470,8 +6658,10 @@ function diab_renderAll(dateStr){
   diab_loadMetaIntoUI(dateStr);
   diab_renderMealsTable(dateStr);
   diab_renderGlucoseTable(dateStr);
+  diab_renderMiniChart(dateStr);
   diab_renderDayKpis(dateStr);
   diab_renderDaysHistory();
+  diab_syncMomentChips();
 }
 
 function initDiabModule(){
@@ -5487,6 +6677,21 @@ function initDiabModule(){
 
   $("diab_btnAddGlucose")?.addEventListener("click", () => diab_addGlucoseFromInputs());
   $("diab_btnClearGlucose")?.addEventListener("click", () => diab_clearGlucoseForDay());
+
+  // moment chips (UX) -> alimente le select compat
+  const chipsWrap = $("diab_momentChips");
+  const selMoment = $("diab_gContext");
+  if (chipsWrap && selMoment){
+    chipsWrap.querySelectorAll("button.chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const v = btn.getAttribute("data-val") || "";
+        selMoment.value = v;
+        diab_syncMomentChips();
+      });
+    });
+    selMoment.addEventListener("change", diab_syncMomentChips);
+    diab_syncMomentChips();
+  }
 
   // settings change => sauvegarde (dans la journée) + refresh
   ["diab_glucoseUnit"].forEach(id => {
@@ -5512,6 +6717,7 @@ $("diab_btnSaveDayMeta")?.addEventListener("click", () => {
   const d = getSelectedDate();
   diab_renderDayKpis(d);
   diab_renderDaysHistory();
+  diab_syncMomentChips();
 });
 
 
@@ -6581,15 +7787,74 @@ window.addEventListener("diab:carbs-pushed", (e) => {
   // Repas
   $("btnAddMeal")?.addEventListener("click", addMealFromInputs);
   $("btnClearMeals")?.addEventListener("click", clearMealsForDay);
-  $("btnApplyPer100")?.addEventListener("click", applyPer100ToMeal);
 
-["sportMin","sportKcal","sportType","sleepH","sleepScore","sleepBed","sleepWake"].forEach(id=>{
-  $(id)?.addEventListener("change", () => {
-    const d = getSelectedDate();
-    saveSportSleepForDay(d);
-    renderSportSleep7d(d);
+  // Repas — UI: Manuel vs Rapide /100g (réduit le bruit)
+  function mealUI_setMode(mode){
+    const isQuick = mode === "quick";
+    const bM = $("mealModeManual");
+    const bQ = $("mealModeQuick");
+    const pM = $("mealPanelManual");
+    const pQ = $("mealPanelQuick");
+
+    if (bM){ bM.classList.toggle("is-active", !isQuick); bM.setAttribute("aria-selected", (!isQuick).toString()); }
+    if (bQ){ bQ.classList.toggle("is-active", isQuick);  bQ.setAttribute("aria-selected", (isQuick).toString()); }
+    if (pM) pM.classList.toggle("hidden", isQuick);
+    if (pQ) pQ.classList.toggle("hidden", !isQuick);
+  }
+  $("mealModeManual")?.addEventListener("click", () => mealUI_setMode("manual"));
+  $("mealModeQuick")?.addEventListener("click", () => mealUI_setMode("quick"));
+
+  // Action unique en mode /100g : calcule puis ajoute le repas
+  $("btnQuickAddMeal")?.addEventListener("click", () => {
+    applyPer100ToMeal();
+    addMealFromInputs();
   });
+
+  // Valeur par défaut : Manuel
+  mealUI_setMode("manual");
+// Sommeil : édition explicite (1 nuit = 1 enregistrement)
+$("btnSleepEdit")?.addEventListener("click", () => {
+  sleepUI_setEditMode(true);
 });
+$("btnSleepCancel")?.addEventListener("click", () => {
+  // revert UI to stored values for the selected date
+  const d = getSelectedDate();
+  loadSportSleepIntoUI(d);
+  sleepUI_setEditMode(false);
+});
+$("btnSleepSave")?.addEventListener("click", () => {
+  const d = getSelectedDate();
+  saveSleepForDay(d);
+  showSavedPill("sleepSavedPill");
+  sleepUI_setEditMode(false);
+  renderSleepSummaryForDay(d);
+});
+
+// Sport : multi-séances (journal empilable)
+$("btnSportAdd")?.addEventListener("click", () => {
+  sportUI_setEditor(true);
+});
+$("btnSportCancel")?.addEventListener("click", () => {
+  sportUI_setEditor(false);
+  clearSportInputs();
+});
+$("btnSportSave")?.addEventListener("click", () => {
+  const d = getSelectedDate();
+  addSportSessionFromInputs(d);
+  showSavedPill("sportSavedPill");
+  sportUI_setEditor(false);
+});
+
+// Suppression séance (event delegation)
+$("sportSessionsList")?.addEventListener("click", (ev) => {
+  const btn = ev.target?.closest?.("[data-sportdel]");
+  if (!btn) return;
+  const d = getSelectedDate();
+  const id = btn.getAttribute("data-sportdel") || "";
+  deleteSportSession(d, id);
+  showSavedPill("sportSavedPill");
+});
+
 
 
   // Historique : delete all
@@ -6603,6 +7868,7 @@ window.addEventListener("diab:carbs-pushed", (e) => {
     renderMealsTable(d);
     updateBodyCompUI(d);
     compute(true);
+    renderDaysHistory();
   });
 
   $("btnExportDays")?.addEventListener("click", exportDays);
@@ -7037,7 +8303,7 @@ renderSportSleep7d(getSelectedDate());
       compromis:["Pas d’optimisation extrême","Progression physique modérée"],
       macros:{ c:"≈ 45–55 %", p:"≈ 18–22 %", f:"≈ 25–35 %" },
       ajust:["Journée active → glucides ↑, lipides ↓","Journée calme → glucides ↓, lipides ↑","Protéines stables"],
-      app:{ preset:"maintien / équilibre", carbGoals:["maintain"], fatFloors:["maintain"] },
+      app:{ preset:"maintain / équilibre", carbGoals:["maintain"], fatFloors:["maintain"] },
       plus:["Idéal pour poser une base saine avant toute phase plus spécifique.","Convient si l’objectif principal est la régularité, pas la transformation rapide."]
     },
     eq_gly: {
@@ -7112,31 +8378,6 @@ renderSportSleep7d(getSelectedDate());
     }
   };
 
-function _norm(s){
-  return String(s || "")
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")   // enlève accents
-    .replace(/[^a-z0-9]+/g, " ")                        // ponctuation -> espaces
-    .trim();
-}
-
-function resolveDietPresetKey(raw){
-  if (!raw) return "";
-  const s = String(raw);
-
-  // 1) clé directe (cut_standard, maintain, recomp...)
-  if (typeof DIET_PRESETS !== "undefined" && DIET_PRESETS[s]) return s;
-
-  // 2) match sur label officiel (ex: "maintain / équilibre" -> "Maintien / équilibre")
-  if (typeof DIET_PRESETS !== "undefined"){
-    const n = _norm(s);
-    for (const [k, v] of Object.entries(DIET_PRESETS)){
-      if (_norm(v?.label || "") === n) return k;
-    }
-  }
-  return "";
-}
-
 function dietPresetLabel(key){
   if (!key) return "—";
   // accepte "maintain / équilibre" (texte déjà prêt)
@@ -7161,64 +8402,79 @@ function fatFloorLabel(key){
 
 
   function render(c){
-const chips = [];
-const presetKey = resolveDietPresetKey(c.app.preset); // <-- utile pour futur "Appliquer"
+    const chips = [];
+    chips.push(`Type de régime : ${dietPresetLabel(c.app.preset)}`);
+    chips.push(`Repères glucides : ${c.app.carbGoals.map(carbGoalLabel).join(", ")}`);
+    chips.push(`Plancher lipides : ${c.app.fatFloors.map(fatFloorLabel).join(", ")}`);
+    if (c.app.note) chips.push(c.app.note);
 
-chips.push(`Type de Régime : ${dietPresetLabel(c.app.preset)}`);
-chips.push(`Repères glucidiques : ${(c.app.carbGoals||[]).map(carbGoalLabel).join(", ")}`);
-chips.push(`Plancher lipides : ${(c.app.fatFloors||[]).map(fatFloorLabel).join(", ")}`);
+    const list = (arr)=> `<ul class="muted" style="margin:.25rem 0 .25rem 1.1rem">${arr.map(x=>`<li>${_esc(x)}</li>`).join("")}</ul>`;
 
-if (c.app.note) chips.push(c.app.note);
-
-
-
-  const presetTxt = dietPresetLabel ? dietPresetLabel(c.app.preset) : c.app.preset;
-  const carbTxt   = (c.app.carbGoals||[]).map(x => (carbGoalLabel ? carbGoalLabel(x) : x)).join(", ");
-  const fatTxt    = (c.app.fatFloors||[]).map(x => (fatFloorLabel ? fatFloorLabel(x) : x)).join(", ");
-  const accTitle  = `Régime : ${presetTxt} · Objectif glucides : ${carbTxt} · Plancher lipides : ${fatTxt}`;
-
-  const list = (arr)=> `<ul class="muted" style="margin:.25rem 0 .25rem 1.1rem">${arr.map(x=>`<li>${_esc(x)}</li>`).join("")}</ul>`;
-
-  return `
-    <details class="comp-acc" open>
-      <summary class="muted">${_esc(accTitle)}</summary>
-
-      <div class="comp-acc__body">
-        <table>
-          <tbody>
-            <tr><th style="width:220px">Objectif (apporte)</th><td>${list(c.objectif)}</td></tr>
-            <tr><th>Compromis</th><td>${list(c.compromis)}</td></tr>
-            <tr><th>Équilibre macros (%)</th>
-                <td class="muted">Glucides ${_esc(c.macros.c)} · Protéines ${_esc(c.macros.p)} · Lipides ${_esc(c.macros.f)}</td></tr>
-            <tr><th>Ajustement fin</th><td>${list(c.ajust)}</td></tr>
-          </tbody>
-        </table>
-
-        <div class="muted" style="margin-top:.5rem">
-          <b>👉</b> ${_esc(c.plus[0])}<br>
-          <b>👉</b> ${_esc(c.plus[1])}
-        </div>
+    return `
+      <div style="margin-bottom:.35rem"><b>${_esc(c.title)}</b> <span class="muted">— ${_esc(c.phase)}</span></div>
+      <table>
+        <tbody>
+          <tr><th style="width:220px">Objectif (apporte)</th><td>${list(c.objectif)}</td></tr>
+          <tr><th>Compromis</th><td>${list(c.compromis)}</td></tr>
+          <tr><th>Équilibre macros (%)</th>
+              <td class="muted">Glucides ${_esc(c.macros.c)} · Protéines ${_esc(c.macros.p)} · Lipides ${_esc(c.macros.f)}</td></tr>
+          <tr><th>Ajustement fin</th><td>${list(c.ajust)}</td></tr>
+          <tr><th>Réglages appliqués par l’app</th><td class="muted">${_esc(chips.join(" · "))}</td></tr>
+        </tbody>
+      </table>
+      <div class="muted" style="margin-top:.5rem">
+        <b>👉</b> ${_esc(c.plus[0])}<br>
+        <b>👉</b> ${_esc(c.plus[1])}
       </div>
-    </details>
-  `;
-}
+    `;
+  }
+
   function wire(){
     const sel = byId("compromiseSelect");
     const box = byId("compromiseBox");
+    const summary = byId("compromiseSummary");
+    const details = byId("compromiseDetails");
     if (!sel || !box) return;
+
+    let prevKey = String(sel.value || "");
+
+    function buildSummary(c){
+      // résumé court : 2 objectifs + 1 compromis
+      const o = Array.isArray(c.objectif) ? c.objectif.slice(0,2) : [];
+      const k = Array.isArray(c.compromis) ? c.compromis.slice(0,1) : [];
+      const bits = []
+        .concat(o.map(x=>_esc(x)))
+        .concat(k.map(x=>_esc(x)));
+      return `<b>${_esc(c.phase)}</b> · ${bits.join(" · ")}`;
+    }
 
     function update(){
       const key = String(sel.value || "");
       const c = COMPROMISE_DATA[key];
+
       if (!c){
+        if (summary) summary.innerHTML = 'Sélectionne un compromis pour voir le résumé.';
         box.innerHTML = '<div class="muted">Sélectionne un compromis pour afficher la fiche.</div>';
+        if (details) details.open = false;
+        prevKey = key;
         return;
       }
-      box.innerHTML = render(c);
-      const det = box.querySelector("details");
-if (det) det.open = true;
 
+      // 1) résumé toujours visible
+      if (summary) summary.innerHTML = buildSummary(c);
+
+      // 2) détail repliable
+      box.innerHTML = render(c);
+
+      // Auto-ouvrir le détail uniquement quand l’utilisateur change de compromis
+      if (details){
+        if (prevKey !== key && key){
+          details.open = true;
+        }
+      }
+      prevKey = key;
     }
+
     sel.addEventListener("change", update);
     update();
   }
