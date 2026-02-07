@@ -1342,6 +1342,7 @@ label.inline input{width:auto}
 <button class="menuItem hidden" data-tab="diab" id="diabMenuItem" role="menuitem" type="button">Diabète</button>
 <button class="menuItem" data-tab="goal" role="menuitem" type="button">Objectif</button>
 <button class="menuItem" data-tab="repas" role="menuitem" type="button">Repas</button>
+<button class="menuItem" data-tab="synth" role="menuitem" type="button">Synthèse</button>
 <button class="menuItem" data-tab="journal" role="menuitem" type="button">Historique</button>
 <button class="menuItem" data-tab="cloud" role="menuitem" type="button">Données &amp; sauvegarde</button>
 <button class="menuItem" data-tab="lexicon" role="menuitem" type="button">Lexique</button>
@@ -2015,6 +2016,36 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
   </div><!-- /muted -->
 </div><!-- /card panel-subtle -->
 
+
+<!-- ✅ Mini synthèse (lecture rapide) — Objectif
+     Objectif UX : ne pas dupliquer le panneau complet “Résultats” sur plusieurs onglets.
+     Ici : signal minimal + raccourci vers Synthèse. -->
+<div class="card panel-subtle" id="miniSummaryGoalCard">
+  <h3>Synthèse du jour (rapide)</h3>
+  <div class="row mt-03" style="align-items:flex-end">
+    <div style="flex:1;min-width:140px">
+      <label>Reste (kcal)</label>
+      <input id="miniGoal_remK" readonly type="number" value="0"/>
+    </div>
+    <div style="flex:1;min-width:140px">
+      <label>Reste (G)</label>
+      <input id="miniGoal_remC" readonly type="number" value="0"/>
+    </div>
+    <div style="flex:1;min-width:140px">
+      <label>Reste (P)</label>
+      <input id="miniGoal_remP" readonly type="number" value="0"/>
+    </div>
+    <div style="flex:1;min-width:140px">
+      <label>Reste (L)</label>
+      <input id="miniGoal_remF" readonly type="number" value="0"/>
+    </div>
+  </div>
+  <div class="row mt-04" style="justify-content:flex-end">
+    <button type="button" class="btn" onclick="setActiveTab('synth');$('out')?.scrollIntoView({behavior:'smooth',block:'start'});">Voir la synthèse complète</button>
+  </div>
+</div>
+
+<!-- ✅ Mount point : Résultats dans OBJECTIF (désactivé : panneau unique en Synthèse) -->
 <!-- ✅ Mount point : Résultats dans OBJECTIF (reste EN DEHORS du diab-panel) -->
 <div id="outMountGoal"></div>
 </section><!-- /goal -->
@@ -2127,10 +2158,62 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
   <button class="btn-danger btn-ghost" id="btnClearMeals" type="button">Vider la journée</button>
 </div>
 </div><!-- /card Repas -->
+
+<!-- ✅ Mini synthèse (lecture rapide) — Repas
+     Objectif UX : garder l’encodage + feedback minimal, sans dupliquer la synthèse complète. -->
+<div class="card panel-subtle" id="miniSummaryRepasCard">
+  <h3>Synthèse du jour (rapide)</h3>
+  <div class="row mt-03" style="align-items:flex-end">
+    <div style="flex:1;min-width:140px">
+      <label>Reste (kcal)</label>
+      <input id="miniRepas_remK" readonly type="number" value="0"/>
+    </div>
+    <div style="flex:1;min-width:140px">
+      <label>Reste (G)</label>
+      <input id="miniRepas_remC" readonly type="number" value="0"/>
+    </div>
+    <div style="flex:1;min-width:140px">
+      <label>Reste (P)</label>
+      <input id="miniRepas_remP" readonly type="number" value="0"/>
+    </div>
+    <div style="flex:1;min-width:140px">
+      <label>Reste (L)</label>
+      <input id="miniRepas_remF" readonly type="number" value="0"/>
+    </div>
+  </div>
+  <div class="row mt-04" style="justify-content:flex-end">
+    <button type="button" class="btn" onclick="setActiveTab('synth');$('out')?.scrollIntoView({behavior:'smooth',block:'start'});">Voir la synthèse complète</button>
+  </div>
+</div>
+
+<!-- ✅ Mount point : Résultats dans REPAS (désactivé : panneau unique en Synthèse) -->
 <!-- ✅ Mount point : Résultats dans REPAS -->
 <div id="outMountRepas"></div>
+
 </section><!-- /repas -->
-<!-- ✅ Résultats (unique, monté dynamiquement dans goal/repas via JS) -->
+
+<!-- =========================
+     SYNTHÈSE DU JOUR (résultats)
+     Point d’ancrage UNIQUE pour l’état du jour : objectifs / consommé / reste.
+     Les onglets Objectif & Repas gardent l’encodage, pas l’affichage complet des résultats.
+     ========================= -->
+<section class="tabSection" data-tabsection="synth">
+
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Synthèse</summary>
+  <div class="muted mt-025">
+    <b>But :</b> lire l’état de la journée (cible / consommé / reste).<br/>
+    Les détails avancés (BMR, “où vont les calories”) sont réservés au <b>mode expert</b>.
+  </div>
+</details>
+
+<!-- ✅ Mount point : Résultats (unique) -->
+<div id="outMountSynth"></div>
+
+</section><!-- /synth -->
+
+<!-- ✅ Résultats (unique, monté dynamiquement dans synth via JS) -->
+
 <div class="card hidden" id="out">
 <h2>Résultats</h2>
 <div class="card panel-subtle">
@@ -2171,7 +2254,7 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 </div>
 <p class="muted" id="notes"></p>
 <!-- VIZ — Où vont les calories ? -->
-<div class="card" id="calFlowCard">
+<div class="card" id="calFlowCard" data-um="expert">
 <h2>Où vont les calories ?</h2>
 <p class="muted">
       Les calories sont réparties selon les priorités choisies  : <b>protéines</b>, puis <b>lipides minimum</b>, puis <b>glucides</b>.
@@ -3653,6 +3736,11 @@ function setActiveTab(tab){
     compute(true);
   }
 
+  // ✅ Entrée onglet synthèse => recalcul (évite résultats obsolètes)
+  if (tab === "synth") {
+    compute(true);
+  }
+
   try{ closeMenu(); }catch{}
 
   // Ferme les mini-tutos (l’utilisateur choisit d’ouvrir)
@@ -3722,22 +3810,19 @@ function initTabs(){
 }
 
 function mountResultsPanel(activeTab){
+  // Objectif UX : 1 seul point d’ancrage pour les Résultats => onglet "Synthèse"
   const out = $("out");
   if (!out) return;
 
-  const goalMount  = $("outMountGoal");
-  const repasMount = $("outMountRepas");
+  const synthMount = $("outMountSynth");
 
-  const shouldShow = (activeTab === "goal" || activeTab === "repas");
+  const shouldShow = (activeTab === "synth");
   out.classList.toggle("hidden", !shouldShow);
 
-  if (!shouldShow) return;
-
-  const target = (activeTab === "goal") ? goalMount : repasMount;
-  if (!target) return;
+  if (!synthMount) return;
 
   // Déplace le même node (pas de duplication => pas de conflit d'IDs)
-  if (out.parentNode !== target) target.appendChild(out);
+  if (out.parentNode !== synthMount) synthMount.appendChild(out);
 }
 
 
@@ -7491,6 +7576,22 @@ kpis.appendChild(groupBmr);
   if ($("rP")) $("rP").textContent = round(remPShow, 1);
   if ($("rC")) $("rC").textContent = round(remCShow, 1);
   if ($("rF")) $("rF").textContent = round(remFShow, 1);
+
+  // ============================================================
+  // 8bis) Mini synthèse (Objectif/Repas) — feedback minimal + cohérent
+  // ============================================================
+  const setMini = (prefix) => {
+    const k = $(prefix + "_remK");
+    const p = $(prefix + "_remP");
+    const c = $(prefix + "_remC");
+    const f = $(prefix + "_remF");
+    if (k) k.value = String(round(remKShow, 0));
+    if (p) p.value = String(round(remPShow, 1));
+    if (c) c.value = String(round(remCShow, 1));
+    if (f) f.value = String(round(remFShow, 1));
+  };
+  setMini("miniGoal");
+  setMini("miniRepas");
 
   // ============================================================
   // 9) Note (texte explicatif) + panneau pédagogique
