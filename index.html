@@ -2432,8 +2432,18 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
         <input id="sportType" type="text" placeholder="Footing, renfo…"/>
       </div>
       <div>
-        <label>Durée (min)</label>
-        <input id="sportMin" type="number" min="0" step="5" value="0"/>
+        <label>Durée</label>
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:.5rem">
+          <div class="row" style="gap:.35rem; align-items:center">
+            <input id="sportHh" type="number" min="0" max="12" step="1" value="0" inputmode="numeric"/>
+            <span class="muted">h</span>
+          </div>
+          <div class="row" style="gap:.35rem; align-items:center">
+            <input id="sportMm" type="number" min="0" max="59" step="5" value="0" inputmode="numeric"/>
+            <span class="muted">min</span>
+          </div>
+        </div>
+        <input id="sportMin" type="number" min="0" step="5" value="0" style="display:none"/>
       </div>
       <div>
         <label>kcal</label>
@@ -2442,7 +2452,6 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
     </div>
 
     <div class="row mt-06" style="justify-content:flex-end; gap:.5rem">
-      <button id="btnSportCancel" type="button" class="btn-ghost">Annuler</button>
       <button id="btnSportSave" type="button">Enregistrer</button>
     </div>
   </div>
@@ -2464,8 +2473,18 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
   <div id="sleepEditor" class="sleepEditor mt-06 is-hidden">
     <div class="row">
       <div>
-        <label>Durée (h)</label>
-        <input id="sleepH" type="number" min="0" step="0.25" value="0"/>
+        <label>Durée</label>
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:.5rem">
+          <div class="row" style="gap:.35rem; align-items:center">
+            <input id="sleepHh" type="number" min="0" max="24" step="1" value="0" inputmode="numeric"/>
+            <span class="muted">h</span>
+          </div>
+          <div class="row" style="gap:.35rem; align-items:center">
+            <input id="sleepMm" type="number" min="0" max="59" step="5" value="0" inputmode="numeric"/>
+            <span class="muted">min</span>
+          </div>
+        </div>
+        <input id="sleepH" type="number" min="0" step="0.25" value="0" style="display:none"/>
       </div>
       <div>
         <label>Score (optionnel)</label>
@@ -2481,7 +2500,6 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
     </div>
 
     <div class="row mt-06" style="justify-content:flex-end; gap:.5rem">
-      <button id="btnSleepCancel" type="button" class="btn-ghost">Annuler</button>
       <button id="btnSleepSave" type="button">Enregistrer</button>
     </div>
   </div>
@@ -3517,6 +3535,35 @@ const round = (v, d=1) => {
 };
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
+
+// --- Temps : helpers (minutes <-> HH/MM) ---
+function hmToMinutes(hh, mm){
+  const h = Math.max(0, Math.floor(toNum(hh) || 0));
+  const m = Math.max(0, Math.floor(toNum(mm) || 0));
+  return h*60 + Math.min(59, m);
+}
+function minutesToHM(mins){
+  const m = Math.max(0, Math.round(toNum(mins) || 0));
+  return { h: Math.floor(m/60), m: m % 60 };
+}
+function fmtHM(mins){
+  const x = minutesToHM(mins);
+  return x.m === 0 ? `${x.h}h` : `${x.h}h${String(x.m).padStart(2,'0')}`;
+}
+function fmtSportMinutes(mins){
+  const m = Math.max(0, Math.round(toNum(mins) || 0));
+  if (m < 60) return `${m} min`;
+  const x = minutesToHM(m);
+  return `${x.h}h${String(x.m).padStart(2,'0')}`;
+}
+function getSleepMinutesFromObj(sl){
+  if (!sl) return 0;
+  const mm = toNum(sl.minutes);
+  if (mm > 0) return Math.round(mm);
+  const h = toNum(sl.hours);
+  return h > 0 ? Math.round(h*60) : 0;
+}
+
 function escapeHtml(s){
   return String(s ?? "")
     .replaceAll("&","&amp;")
@@ -4445,6 +4492,8 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
         setActiveProfile(id);
         refreshProfileSelect();
         loadProfileSettings();
+        try{ window.__updateDiabEnabledUI?.(); }catch(e){}
+    try{ window.__updateDiabEnabledUI?.(); }catch(e){}
         lockMacroControls($("dietMode").value === "custom");
         updateCarbGuardExplain();
         updateFatFloorUI();
@@ -4466,6 +4515,7 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
         setActiveProfile(next);
         refreshProfileSelect();
         loadProfileSettings();
+        try{ window.__updateDiabEnabledUI?.(); }catch(e){}
         lockMacroControls($("dietMode").value === "custom");
         updateCarbGuardExplain();
         updateFatFloorUI();
@@ -5234,7 +5284,7 @@ function historyV2_hasMeaningfulData(dayObj){
 
   // Sommeil
   const sleep = dayObj.sleep || {};
-  if (toNum(sleep.hours) > 0 || toNum(sleep.score) > 0 || String(sleep.bed||"").trim() || String(sleep.wake||"").trim()) return true;
+  if (toNum(sleep.minutes) > 0 || toNum(sleep.hours) > 0 || toNum(sleep.score) > 0 || String(sleep.bed||"").trim() || String(sleep.wake||"").trim()) return true;
 
   // Diabète (uniquement si option activée)
   try{
@@ -5367,7 +5417,7 @@ function historyV2_renderSidebar(dateStr){
     <div class="sideCard" style="background: rgba(32,96,78,.35); border-color: rgba(90,220,170,.22);">
       <div class="sideTitleRow">
         <h3 style="margin:0">Sport</h3>
-        <span class="pill"><span class="mini">${sportMin||0} min</span><span class="muted">${sportK||0} kcal</span></span>
+        <span class="pill"><span class="mini">${fmtSportMinutes(sportMin||0)}</span><span class="muted">${sportK||0} kcal</span></span>
       </div>
       ${sportDetails}
     </div>
@@ -5375,7 +5425,7 @@ function historyV2_renderSidebar(dateStr){
     <div class="sideCard" style="background: rgba(70,90,170,.22); border-color: rgba(140,160,255,.16);">
       <div class="sideTitleRow">
         <h3 style="margin:0">Sommeil</h3>
-        <span class="pill"><span class="mini">${sleepH ? round(sleepH,1) : 0}h</span><span class="muted">${sleepScore? (sleepScore+"/10") : "score —"}</span></span>
+        <span class="pill"><span class="mini">${fmtHM(getSleepMinutesFromObj(d.sleep||{}))}</span><span class="muted">${sleepScore? (sleepScore+"/10") : "score —"}</span></span>
       </div>
       <div class="muted" style="margin-top:.35rem">
         Coucher ${escapeHtml(sl.bed||"—")} · Lever ${escapeHtml(sl.wake||"—")}
@@ -5439,6 +5489,8 @@ function loadSportSleepIntoUI(dateStr){
 
   // Sport : on prépare l'ajout d'une séance (on ne charge pas l'agrégat dans les champs)
   if ($("sportMin")) $("sportMin").value = 0;
+  if ($("sportHh")) $("sportHh").value = 0;
+  if ($("sportMm")) $("sportMm").value = 0;
   if ($("sportKcal")) $("sportKcal").value = 0;
   if ($("sportType")) $("sportType").value = "";
 
@@ -5447,7 +5499,13 @@ function loadSportSleepIntoUI(dateStr){
 
   // Sommeil : 1 nuit = 1 enregistrement (on charge l'existant)
   const sleep = d.sleep || {};
+  {
+  const _mins = getSleepMinutesFromObj(sleep);
+  const _hm = minutesToHM(_mins);
+  if ($("sleepHh")) $("sleepHh").value = String(_hm.h);
+  if ($("sleepMm")) $("sleepMm").value = String(_hm.m);
   if ($("sleepH")) $("sleepH").value = Math.max(0, toNum(sleep.hours) || 0);
+}
   if ($("sleepScore")) $("sleepScore").value = Math.max(0, toNum(sleep.score) || 0);
   if ($("sleepBed")) $("sleepBed").value = String(sleep.bed || "");
   if ($("sleepWake")) $("sleepWake").value = String(sleep.wake || "");
@@ -5484,13 +5542,13 @@ function sleepUI_setEditMode(on){
   $("sleepEditor")?.classList.toggle("is-hidden", !on);
   $("sleepSummary")?.classList.toggle("is-hidden", on);
   // When opening, focus first field
-  if (on) setTimeout(()=>{ $("sleepH")?.focus(); }, 30);
+  if (on) setTimeout(()=>{ $("sleepHh")?.focus(); }, 30);
 }
 
 function renderSleepSummaryForDay(dateStr){
   const d = getDay(dateStr) || { date: dateStr };
   const sl = d.sleep || {};
-  const h = Math.max(0, toNum(sl.hours) || 0);
+  const mins = getSleepMinutesFromObj(sl);
   const score = Math.max(0, toNum(sl.score) || 0);
   const bed = String(sl.bed || "").trim();
   const wake = String(sl.wake || "").trim();
@@ -5499,7 +5557,7 @@ function renderSleepSummaryForDay(dateStr){
   const sc = $("sleepSummaryScore");
   const rg = $("sleepSummaryRange");
 
-  if (dur) dur.textContent = (h > 0) ? (round(h,1) + "h") : "—";
+  if (dur) dur.textContent = (mins > 0) ? fmtHM(mins) : "—";
   if (sc) sc.textContent = (score > 0) ? (score + " / 10") : "score —";
   if (rg) rg.textContent = (bed || wake) ? (`${bed || "—"} → ${wake || "—"}`) : "—";
 }
@@ -5628,7 +5686,8 @@ function saveSleepForDay(dateStr){
     ...existing,
     date: dateStr,
     sleep: {
-      hours: Math.max(0, toNum($("sleepH")?.value) || 0),
+      minutes: hmToMinutes($("sleepHh")?.value, $("sleepMm")?.value),
+      hours: Math.max(0, toNum($("sleepH")?.value) || 0), // compat
       score: Math.max(0, toNum($("sleepScore")?.value) || 0),
       bed: String($("sleepBed")?.value || ""),
       wake: String($("sleepWake")?.value || "")
@@ -5655,7 +5714,7 @@ function computeSportSleep7d(dateStr){
   const arr = getLastNDays(dateStr, 7);
 
   let sportMin = 0, sportK = 0, sportDays = 0;
-  let sleepH = 0, sleepDays = 0;
+  let sleepMin = 0, sleepDays = 0;
   let intenseDays = 0, shortSleepDays = 0;
 
   arr.forEach(d=>{
@@ -5667,23 +5726,22 @@ function computeSportSleep7d(dateStr){
     if (m > 0 || k > 0) sportDays++;
     sportMin += m; sportK += k;
 
-    const h = Math.max(0, toNum(sl.hours) || 0);
-    if (h > 0) sleepDays++;
-    sleepH += h;
+    const sm = Math.max(0, getSleepMinutesFromObj(sl) || 0);
+    if (sm > 0) sleepDays++;
+    sleepMin += sm;
 
-    // drapeaux (à calibrer ensuite)
     if (k >= 700 || m >= 90) intenseDays++;
-    if (h > 0 && h < 6.0) shortSleepDays++;
+    if (sm > 0 && sm < 360) shortSleepDays++; // < 6h
   });
 
   return {
     n: arr.length,
     sportMin, sportK, sportDays,
-    sleepH, sleepDays,
+    sleepMin, sleepDays,
     intenseDays, shortSleepDays,
     avgSportMin: sportDays ? (sportMin / sportDays) : 0,
     avgSportK: sportDays ? (sportK / sportDays) : 0,
-    avgSleepH: sleepDays ? (sleepH / sleepDays) : 0
+    avgSleepMin: sleepDays ? (sleepMin / sleepDays) : 0
   };
 }
 
@@ -5702,8 +5760,8 @@ function renderSportSleep7d(dateStr){
     <div class="card" style="border:1px dashed #ddd">
       <b>Synthèse 7 jours</b>
       <div class="muted mt-025">
-        Sport: ${Math.round(s.sportMin)} min • ${Math.round(s.sportK)} kcal (sur ${s.sportDays} j)<br/>
-        Sommeil: ${round(s.avgSleepH,1)} h de moyenne (sur ${s.sleepDays} j)
+        Sport: ${fmtSportMinutes(Math.round(s.sportMin))} • ${Math.round(s.sportK)} kcal (sur ${s.sportDays} j)<br/>
+        Sommeil: ${s.sleepDays ? fmtHM(Math.round(s.avgSleepMin)) : "—"} de moyenne (sur ${s.sleepDays} j)
         ${flags.length ? "<br/><br/>" + flags.join(" • ") : ""}
       </div>
     </div>
@@ -6961,6 +7019,7 @@ initDiabModule();
         writeSnapshotToLocal(merged);
 
         loadProfileSettings();
+        try{ window.__updateDiabEnabledUI?.(); }catch(e){}
   lockMacroControls($("dietMode").value === "custom");
   updateCarbGuardExplain();
   updateFatFloorUI();
@@ -7034,6 +7093,7 @@ initDiabModule();
         if (pushErr) { setCloudStatus("Merge OK mais push KO : " + pushErr.message); return; }
 
         loadProfileSettings();
+        try{ window.__updateDiabEnabledUI?.(); }catch(e){}
   lockMacroControls($("dietMode").value === "custom");
   updateCarbGuardExplain();
   updateFatFloorUI();
@@ -7739,6 +7799,7 @@ function wireEvents(){
   $("profileSelect")?.addEventListener("change", (e) => {
     setActiveProfile(e.target.value);
     loadProfileSettings();
+        try{ window.__updateDiabEnabledUI?.(); }catch(e){}
 
     const accepted = isTermsAccepted();
     if ($("ackTerms")) $("ackTerms").checked = accepted;
@@ -7755,6 +7816,105 @@ function wireEvents(){
     updateBodyCompUI(getSelectedDate());
     compute(true);
   });
+
+  // --- Profils : création / suppression (fix) ---
+  $("btnCreateProfile")?.addEventListener("click", () => {
+    const name = $("profileName")?.value || "";
+    createOrActivateProfile(name);
+    if ($("profileName")) $("profileName").value = "";
+  });
+  $("profileName")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      $("btnCreateProfile")?.click();
+    }
+  });
+  $("btnDeleteProfile")?.addEventListener("click", () => {
+    const active = getActiveProfile();
+    if (active === "default") { deleteActiveProfile(); return; }
+    if (confirm("Supprimer cet utilisateur et ses données locales ?")) deleteActiveProfile();
+  });
+
+  // --- Diabète : rendre l'option réellement inaccessible si OFF ---
+  function updateDiabEnabledUI(){
+    const enabled = !!($("diabEnabled")?.checked);
+
+    // 1) Menu & onglet Diabète
+    document.querySelectorAll('.menuItem[data-tab="diab"], .tabBtn[data-tab="diab"]').forEach(el=>{
+      el.classList.toggle("is-disabled", !enabled);
+      el.setAttribute("aria-disabled", String(!enabled));
+    });
+
+    // 2) Section Diabète (page) + accordéon historique diabète (journal)
+    const diabSec = document.querySelector('.tabSection[data-tabsection="diab"]');
+    if (diabSec) diabSec.classList.toggle("hidden", !enabled);
+
+    const diabHist = $("accDiabHistoryFull");
+    if (diabHist) diabHist.classList.toggle("hidden", !enabled);
+
+    // 3) Panneau rapide (repas) : UI verrouillée si OFF
+    try{ diab_setQuickPanelLocked(!enabled); }catch(e){}
+
+    // 4) Si l'utilisateur est sur l'onglet diabète et désactive → retour journal
+    try{
+      const activeTab = document.querySelector(".tabSection.is-active")?.dataset?.tabsection || "";
+      if (!enabled && activeTab === "diab") setActiveTab("journal");
+    }catch(e){}
+  }
+  window.__updateDiabEnabledUI = updateDiabEnabledUI;
+
+  $("diabEnabled")?.addEventListener("change", () => {
+    saveProfileSettings();
+    updateDiabEnabledUI();
+    // re-render contextuels
+    try{ diab_renderAll(getSelectedDate()); }catch(e){}
+    try{ renderDaysHistory(); }catch(e){}
+    try{ historyV2_render(($("histMonth")?.value) || getSelectedDate().slice(0,7), getSelectedDate()); }catch(e){}
+  });
+
+  // appliquer au démarrage (après loadProfileSettings ci-dessus)
+  updateDiabEnabledUI();
+
+  // --- Sommeil : calcul automatique de la durée à partir coucher/lever ---
+  function computeSleepHoursFromTimes(){
+    const bed = String($("sleepBed")?.value || "");
+    const wake = String($("sleepWake")?.value || "");
+    if (!bed || !wake) return;
+
+    const [bh,bm] = bed.split(":").map(n=>parseInt(n,10));
+    const [wh,wm] = wake.split(":").map(n=>parseInt(n,10));
+    if (![bh,bm,wh,wm].every(n=>Number.isFinite(n))) return;
+
+    let bMin = bh*60 + bm;
+    let wMin = wh*60 + wm;
+    let diff = wMin - bMin;
+    if (diff < 0) diff += 24*60; // nuit qui passe minuit
+
+    const hm = minutesToHM(diff);
+    if ($("sleepHh")) $("sleepHh").value = String(hm.h);
+    if ($("sleepMm")) $("sleepMm").value = String(hm.m);
+    // compat (si d'autres morceaux lisent encore sleepH)
+    if ($("sleepH")) $("sleepH").value = String(Math.round((diff/60)*10)/10);
+  }
+  $("sleepBed")?.addEventListener("change", computeSleepHoursFromTimes);
+  $("sleepWake")?.addEventListener("change", computeSleepHoursFromTimes);
+
+
+  function syncSleepHMToHidden(){
+    const mins = hmToMinutes($("sleepHh")?.value, $("sleepMm")?.value);
+    if ($("sleepH")) $("sleepH").value = String(Math.round((mins/60)*10)/10);
+  }
+  $("sleepHh")?.addEventListener("input", syncSleepHMToHidden);
+  $("sleepMm")?.addEventListener("input", syncSleepHMToHidden);
+
+  function syncSportHMToHidden(){
+    const mins = hmToMinutes($("sportHh")?.value, $("sportMm")?.value);
+    if ($("sportMin")) $("sportMin").value = String(mins);
+  }
+  $("sportHh")?.addEventListener("input", syncSportHMToHidden);
+  $("sportMm")?.addEventListener("input", syncSportHMToHidden);
+
+
 
   // Montre
   $("watchBrand")?.addEventListener("change", () => {
@@ -7917,12 +8077,6 @@ window.addEventListener("diab:carbs-pushed", (e) => {
 $("btnSleepEdit")?.addEventListener("click", () => {
   sleepUI_setEditMode(true);
 });
-$("btnSleepCancel")?.addEventListener("click", () => {
-  // revert UI to stored values for the selected date
-  const d = getSelectedDate();
-  loadSportSleepIntoUI(d);
-  sleepUI_setEditMode(false);
-});
 $("btnSleepSave")?.addEventListener("click", () => {
   const d = getSelectedDate();
   saveSleepForDay(d);
@@ -7934,10 +8088,6 @@ $("btnSleepSave")?.addEventListener("click", () => {
 // Sport : multi-séances (journal empilable)
 $("btnSportAdd")?.addEventListener("click", () => {
   sportUI_setEditor(true);
-});
-$("btnSportCancel")?.addEventListener("click", () => {
-  sportUI_setEditor(false);
-  clearSportInputs();
 });
 $("btnSportSave")?.addEventListener("click", () => {
   const d = getSelectedDate();
@@ -8084,6 +8234,7 @@ try{ diab_initHistorySuivi?.(); }catch(e){}
   if ($("carbGoal")) initCarbGuardsUI();
 
   loadProfileSettings();
+        try{ window.__updateDiabEnabledUI?.(); }catch(e){}
 
   // CGU init
   const accepted = isTermsAccepted();
