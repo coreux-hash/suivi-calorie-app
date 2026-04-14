@@ -5207,3 +5207,80 @@
     line-height:1.15;
   }
 }
+
+
+/* ---- Restauration ciblée : Réglages mobile / macros compacts + ellipsis ---- */
+@media (max-width: 680px){
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:.7rem;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros > div,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox > div,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox > div{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros input,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros select,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox input,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox select,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox input,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox select{
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macrosSecondary > #fatPerKgBox[hidden]{
+    display:none !important;
+  }
+
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:.7rem;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox select.phaseEllipsisTapTarget{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros .muted.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #protRangeHint.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #fatRangeHint.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbGoalHelp.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #lowCarbHelp.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbCalcStatus.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbCalcCapKg.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbCalcCapSrc.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox .muted.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox .muted.phaseEllipsisTapTarget{
+    display:flex;
+    align-items:center;
+    gap:.42rem;
+    min-width:0;
+    max-width:100%;
+    overflow:hidden;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .phaseEllipsisTap__text,
+  .phase2Screen[data-tabsection="settings"] .phaseEllipsisTap__content{
+    display:block;
+    min-width:0;
+    flex:1 1 auto;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .phase2Screen[data-tabsection="settings"] label.phaseEllipsisTapTarget .info-dot{
+    flex:0 0 auto;
+  }
+}

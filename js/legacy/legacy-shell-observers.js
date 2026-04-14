@@ -886,9 +886,17 @@ function phase5Refresh(){
 }
 
 function phaseEllipsisTapGetSettingsCard(){
-  return Array.from(document.querySelectorAll('.phase2Screen[data-tabsection="settings"] .card')).find(card => {
+  const cards = Array.from(document.querySelectorAll('.phase2Screen[data-tabsection="settings"] .card'));
+  const byStructure = cards.find(card => (
+    card.querySelector('#dietMode') ||
+    card.querySelector('#goalPct') ||
+    card.querySelector('#protPerKg') ||
+    card.querySelector('#fatFloorGPerKg')
+  ));
+  if (byStructure) return byStructure;
+  return cards.find(card => {
     const h2 = card.querySelector('h2');
-    return /Répartition protéines\s*\/\s*glucides\s*\/\s*lipides/i.test(h2?.textContent || '');
+    return /(Répartition protéines\s*\/\s*glucides\s*\/\s*lipides|Réglages des macros)/i.test(h2?.textContent || '');
   }) || null;
 }
 function phaseEllipsisTapWrapLabel(label){
@@ -1065,8 +1073,11 @@ function initPhaseEllipsisTapSettings(){
     '#protRangeHint',
     '#fatRangeHint',
     '#carbGoalHelp',
+    '#lowCarbHelp',
     '#lowCarbBox label',
     '#lowCarbBox .muted',
+    '#carbGuardBox label',
+    '#carbGuardBox .muted',
     '#carbCalcStatus',
     '#carbCalcCapKg',
     '#carbCalcCapSrc'
