@@ -5284,3 +5284,64 @@
     flex:0 0 auto;
   }
 }
+
+
+/* ---- Stepper mobile discret : surcouche ciblée sans refonte layout ---- */
+.phase2Screen[data-tabsection="settings"] .mobileStepperHost{
+  position:relative;
+}
+
+.phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper{
+  display:none;
+}
+
+@media (max-width: 680px){
+  .phase2Screen[data-tabsection="settings"] .mobileStepperInput{
+    padding-right:4.4rem;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper{
+    position:absolute;
+    top:50%;
+    right:.38rem;
+    transform:translateY(-50%);
+    display:flex;
+    align-items:center;
+    gap:.22rem;
+    z-index:2;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper__btn{
+    width:1.7rem;
+    min-width:1.7rem;
+    max-width:1.7rem;
+    height:1.7rem;
+    min-height:1.7rem;
+    max-height:1.7rem;
+    flex:0 0 1.7rem;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.06);
+    color:inherit;
+    font-size:1rem;
+    font-family:inherit;
+    font-weight:700;
+    line-height:1;
+    padding:0;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    box-sizing:border-box;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper__btn:active{
+    transform:scale(.97);
+  }
+
+  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper__btn[disabled]{
+    opacity:.45;
+    cursor:default;
+  }
+}
