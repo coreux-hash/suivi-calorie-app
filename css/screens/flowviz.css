@@ -5287,20 +5287,20 @@
 
 
 /* ---- Stepper mobile discret : surcouche ciblée sans refonte layout ---- */
-.phase2Screen[data-tabsection="settings"] .mobileStepperHost{
+.phase2Screen .mobileStepperHost{
   position:relative;
 }
 
-.phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper{
+.phase2Screen .mobileDiscreteStepper{
   display:none;
 }
 
 @media (max-width: 680px){
-  .phase2Screen[data-tabsection="settings"] .mobileStepperInput{
+  .phase2Screen .mobileStepperInput{
     padding-right:4.4rem;
   }
 
-  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper{
+  .phase2Screen .mobileDiscreteStepper{
     position:absolute;
     top:50%;
     right:.38rem;
@@ -5311,7 +5311,7 @@
     z-index:2;
   }
 
-  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper__btn{
+  .phase2Screen .mobileDiscreteStepper__btn{
     width:1.7rem;
     min-width:1.7rem;
     max-width:1.7rem;
@@ -5336,11 +5336,11 @@
     box-sizing:border-box;
   }
 
-  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper__btn:active{
+  .phase2Screen .mobileDiscreteStepper__btn:active{
     transform:scale(.97);
   }
 
-  .phase2Screen[data-tabsection="settings"] .mobileDiscreteStepper__btn[disabled]{
+  .phase2Screen .mobileDiscreteStepper__btn[disabled]{
     opacity:.45;
     cursor:default;
   }
