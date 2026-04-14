@@ -499,7 +499,6 @@ function initPhase3Shell(){
   if (window.__phase3ShellInit) return;
   window.__phase3ShellInit = true;
   try{ document.body.classList.add('phase3Shell'); }catch(e){}
-  phase5BuildTutorialCache();
   phase3HideLegacyTutorials();
   phase3SplitSettingsWatch();
   phase3SplitBodyMetrics();
@@ -607,11 +606,11 @@ function phase5NormalizeTutorialKey(title){
   const txt = String(title || '').trim();
   if (/Profil/i.test(txt)) return 'profile';
   if (/Objectif/i.test(txt)) return 'goal';
-  if (/Glucides/i.test(txt)) return 'carbs';
-  if (/Dépense/i.test(txt)) return 'spend';
+  if (/Dépense|Depense|Montre/i.test(txt)) return 'spend';
+  if (/Repères glucides|Cadrage glucidique|Glucides/i.test(txt)) return 'carbs';
   if (/Repas/i.test(txt)) return 'meals';
   if (/Synthèse/i.test(txt)) return 'summary';
-  if (/Historique/i.test(txt)) return 'history';
+  if (/Lecture des tendances|Historique/i.test(txt)) return 'history';
   if (/Diabète/i.test(txt)) return 'diabetes';
   if (/Cloud/i.test(txt)) return 'cloud';
   if (/Lexicon|Lexique/i.test(txt)) return 'lexicon';
@@ -620,76 +619,12 @@ function phase5NormalizeTutorialKey(title){
 function phase5TutorialSpaceMap(){
   return {
     today:['summary'],
-    journalEntry:['meals','carbs','diabetes'],
+    journalEntry:['meals','carbs'],
     history:['history'],
     settings:['profile','goal','spend']
   };
 }
-function phase5TutorialFallbackMap(){
-  return {
-    summary:{
-      key:'summary',
-      title:'Mini-tuto — Synthèse',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> comprendre l’état nutritionnel du jour.<br/>La synthèse affiche : cible, consommé, reste.<br/>Les détails avancés sont disponibles en mode expert.</div>',
-      bodyText:'But : comprendre l’état nutritionnel du jour. La synthèse affiche : cible, consommé, reste. Les détails avancés sont disponibles en mode expert.'
-    },
-    profile:{
-      key:'profile',
-      title:'Mini-tuto — Profil',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> définir la base des calculs.<br/>Sexe, âge, taille et poids servent à estimer les besoins physiologiques.<br/>Chaque utilisateur possède des données séparées.<br/>Modifier ces informations ajuste automatiquement les repères.</div>',
-      bodyText:'But : définir la base des calculs. Sexe, âge, taille et poids servent à estimer les besoins physiologiques. Chaque utilisateur possède des données séparées. Modifier ces informations ajuste automatiquement les repères.'
-    },
-    spend:{
-      key:'spend',
-      title:'Mini-tuto — Dépense',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> ajuster l’énergie selon l’activité réelle.<br/>La montre fournit une estimation de calories brûlées.<br/>Une marge d’incertitude évite une précision trompeuse.<br/>La cohérence sur plusieurs jours compte plus qu’une valeur exacte.</div>',
-      bodyText:'But : ajuster l’énergie selon l’activité réelle. La montre fournit une estimation de calories brûlées. Une marge d’incertitude évite une précision trompeuse. La cohérence sur plusieurs jours compte plus qu’une valeur exacte.'
-    },
-    goal:{
-      key:'goal',
-      title:'Mini-tuto — Objectif',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> définir l’orientation nutritionnelle.<br/>Le régime structure la répartition protéines / lipides / glucides.<br/>L’objectif (%) ajuste le niveau énergétique global.<br/>Les protéines servent de base journalière. Les lipides minimum assurent un équilibre physiologique. Les glucides s’adaptent selon l’objectif choisi.</div>',
-      bodyText:'But : définir l’orientation nutritionnelle. Le régime structure la répartition protéines / lipides / glucides. L’objectif (%) ajuste le niveau énergétique global. Les protéines servent de base journalière. Les lipides minimum assurent un équilibre physiologique. Les glucides s’adaptent selon l’objectif choisi.'
-    },
-    meals:{
-      key:'meals',
-      title:'Mini-tuto — Repas',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> enregistrer l’alimentation de la journée.<br/>Ajouter un repas met à jour automatiquement les résultats.<br/>Modifier un repas ajuste la synthèse.<br/>Une estimation simple suffit.</div>',
-      bodyText:'But : enregistrer l’alimentation de la journée. Ajouter un repas met à jour automatiquement les résultats. Modifier un repas ajuste la synthèse. Une estimation simple suffit.'
-    },
-    carbs:{
-      key:'carbs',
-      title:'Mini-tuto — Repères glucides, low-carb et diabète',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> comprendre le rôle des glucides dans l’équilibre.<br/>Les repères glucidiques accompagnent un maintien ou un déficit modéré.<br/>Le low-carb applique une contrainte plus forte sur les glucides.<br/>Le repère journalier reste visible pour garder un point de référence.</div>',
-      bodyText:'But : comprendre le rôle des glucides dans l’équilibre. Les repères glucidiques accompagnent un maintien ou un déficit modéré. Le low-carb applique une contrainte plus forte sur les glucides. Le repère journalier reste visible pour garder un point de référence.'
-    },
-    history:{
-      key:'history',
-      title:'Mini-tuto — Historique',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> observer l’évolution dans le temps.<br/>L’historique permet de comparer plusieurs journées.<br/>Les tendances sont plus utiles que les valeurs isolées.</div>',
-      bodyText:'But : observer l’évolution dans le temps. L’historique permet de comparer plusieurs journées. Les tendances sont plus utiles que les valeurs isolées.'
-    },
-    diabetes:{
-      key:'diabetes',
-      title:'Mini-tuto — Diabète',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> suivre les repères utiles au module diabète.<br/>Les mesures restent rattachées à la date active.<br/>Le module ajoute un cadre spécifique sans modifier le reste du flux.</div>',
-      bodyText:'But : suivre les repères utiles au module diabète. Les mesures restent rattachées à la date active. Le module ajoute un cadre spécifique sans modifier le reste du flux.'
-    },
-    cloud:{
-      key:'cloud',
-      title:'Mini-tuto — Cloud',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> gérer la sauvegarde et la synchronisation.<br/>Cloud, import/export JSON et opérations sensibles restent accessibles globalement.<br/>Ces actions n’appartiennent à aucun espace métier en particulier.</div>',
-      bodyText:'But : gérer la sauvegarde et la synchronisation. Cloud, import/export JSON et opérations sensibles restent accessibles globalement. Ces actions n’appartiennent à aucun espace métier en particulier.'
-    },
-    lexicon:{
-      key:'lexicon',
-      title:'Mini-tuto — Lexique',
-      bodyHtml:'<div class="muted mt-025"><b>But :</b> éviter les contresens fréquents.<br/>Glucides ≠ sucre ≠ mauvais.<br/>Lipides ≠ graisse corporelle.<br/>Protéines ≠ muscle instantané.<br/>Les repères nutritionnels sont des outils d’équilibre, pas des jugements.</div>',
-      bodyText:'But : éviter les contresens fréquents. Glucides ≠ sucre ≠ mauvais. Lipides ≠ graisse corporelle. Protéines ≠ muscle instantané. Les repères nutritionnels sont des outils d’équilibre, pas des jugements.'
-    }
-  };
-}
-function phase5SnapshotTutorialSources(){
+function phase5CollectTutorialSources(){
   return Array.from(document.querySelectorAll('details.notice')).map((el) => {
     const summary = el.querySelector('summary');
     const title = (summary?.textContent || '').replace(/\s+/g,' ').trim();
@@ -699,29 +634,8 @@ function phase5SnapshotTutorialSources(){
     clone.querySelector('summary')?.remove();
     const bodyHtml = clone.innerHTML.trim();
     const bodyText = clone.textContent.replace(/\s+/g,' ').trim();
-    const space = el.closest('section[data-tabsection]')?.dataset?.tabsection || '';
-    return { key, title, bodyHtml, bodyText, sourceEl: el, space };
+    return { key, title, bodyHtml, bodyText, sourceEl: el };
   }).filter(Boolean);
-}
-function phase5BuildTutorialCache(){
-  try{
-    window.__phase5TutorialCache = phase5SnapshotTutorialSources();
-  }catch(e){
-    window.__phase5TutorialCache = [];
-  }
-  return window.__phase5TutorialCache;
-}
-function phase5CollectTutorialSources(){
-  const cached = Array.isArray(window.__phase5TutorialCache) ? window.__phase5TutorialCache : null;
-  const dynamicItems = (cached && cached.length) ? cached : phase5BuildTutorialCache();
-  const merged = new Map();
-  Object.values(phase5TutorialFallbackMap()).forEach(item => {
-    if (item?.key) merged.set(item.key, item);
-  });
-  (dynamicItems || []).forEach(item => {
-    if (item?.key) merged.set(item.key, item);
-  });
-  return Array.from(merged.values());
 }
 function phase5GetTutorialsForSpace(tab){
   const map = phase5TutorialSpaceMap();

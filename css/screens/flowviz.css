@@ -5191,3 +5191,19 @@
     white-space:normal;
   }
 }
+
+
+/* ---- Passe ciblée mobile : Réglages quicknav state sur une ligne ---- */
+@media (max-width: 860px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state{
+    display:block;
+    width:100%;
+    max-width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    overflow-wrap:normal;
+    word-break:normal;
+    line-height:1.15;
+  }
+}
