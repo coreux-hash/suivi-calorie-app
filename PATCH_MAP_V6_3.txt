@@ -1,0 +1,21 @@
+PATCH V6.3 — ordre navigation + gatebar repliable + statusbar 6 colonnes
+
+Fichiers modifiés :
+- index.html
+- css/screens/flowviz.css
+- js/legacy/legacy-shell-observers.js
+
+Application :
+1. Remplacer index.html
+2. Remplacer css/screens/flowviz.css
+3. Remplacer js/legacy/legacy-shell-observers.js
+
+Changements :
+- phase1PrimaryNav réordonnée : Réglages > Aujourd’hui > Journal > Historique
+- menuPanel mobile réordonné de la même manière
+- phase5GlobalGateBar placée dans un details repliable directement sous phase1PrimaryNav
+- summary du details en style noticeTitle
+- gatebar desktop : 1 ligne / 3 colonnes quand le details est ouvert
+- phase5StatusBar desktop : 1 ligne / 6 colonnes
+- phase5StatusBar injectée après le details gatebar, plus avant celui-ci
+- mobile conservé : nav masquée, gatebar hors flux, statusbar compacte

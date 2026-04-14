@@ -1,0 +1,5193 @@
+/* ======================================================
+   14) VIZ — FLOWVIZ
+   ====================================================== */
+.flowviz{
+  display:grid;
+  gap:.6rem;
+}
+.flowviz .flowgrid{
+  display:grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap:.8rem;
+}
+@media (max-width: 980px){
+  .flowviz .flowgrid{ grid-template-columns:1fr; }
+}
+.flowviz .kv{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap:.35rem .8rem;
+  align-items:center;
+}
+.flowviz .kv b{ font-weight:700; }
+.flowviz .muted{ opacity:.85; }
+.flowviz .barRow{
+  display:grid;
+  grid-template-columns: 110px 1fr 70px;
+  gap:.5rem;
+  align-items:center;
+}
+.flowviz .bar{
+  height:12px;
+  border-radius:999px;
+  background: rgba(255,255,255,.08);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+}
+.flowviz .bar > i{
+  display:block;
+  height:100%;
+  width:0%;
+  background: rgba(255,255,255,.35);
+}
+.flowviz .pill{
+  font-size:.92rem;
+  background: rgba(255,255,255,.06);
+  white-space:nowrap;
+}
+.flowviz .warn{
+  border-color: rgba(255,208,92,.28);
+  background: rgba(255,208,92,.10);
+}
+.flowviz .ok{
+  border-color: rgba(123,255,176,.22);
+  background: rgba(123,255,176,.10);
+}
+
+/* Compromis : forcer l'alignement à gauche (override du style global) */
+#compromiseBox, 
+#compromiseBox table,
+#compromiseBox th,
+#compromiseBox td{
+  text-align: left !important;
+}
+/* Compromis : restaurer les puces et l’alignement */
+#compromiseBox ul{
+  list-style: disc;
+  padding-left: 1.1rem;
+  margin-left: 0;
+  text-align: left;
+}
+
+#compromiseBox li{
+  text-align: left;
+}
+
+
+/* --- Carb repères : panneau explicatif (UI) --- */
+.calcPanel{border:1px dashed #d9d9d9;border-radius:12px;padding:.55rem .65rem;background:rgba(0,0,0,.02)}
+.calcRow{display:flex;justify-content:space-between;gap:.75rem;align-items:baseline;margin:.15rem 0}
+.calcLabel{color:#555;font-size:.88rem}
+.calcValue{font-variant-numeric:tabular-nums}
+#carbCalcCapSrc{margin-left:.35rem}
+
+
+/* =========================
+   Diabète — UX journal sérieux
+   ========================= */
+
+.acc--mini > summary.noticeTitle{
+  font-size:.95rem;
+  padding:.45rem .65rem;
+}
+
+.miniChart{ margin-top:.65rem;
+  padding:.6rem .65rem;
+  background: rgba(0,0,0,.10);
+  border-color: rgba(255,255,255,.08);
+}
+.miniChartCard{ margin-top:.75rem; }
+
+.miniChartHead{ display:flex; align-items:baseline; justify-content:space-between; gap:.65rem; }
+.miniChartTitle{ font-weight:700; }
+.miniChartWrap{ width:100%; overflow:hidden; border-radius: 12px; margin-top:.45rem; }
+#diabMiniChart{ width:100%; height:140px; display:block; }
+
+@media (max-width: 520px){
+  #diabMiniChart{ height: 160px; }
+  .miniChartHead{ flex-direction:column; align-items:flex-start; }
+}
+
+
+
+/* ======================================================
+   PHASE 0 — CADRAGE UX / CARTOGRAPHIE (shell 4 espaces)
+   ====================================================== */
+.phase0Hero{
+  display:grid;
+  grid-template-columns: 1.3fr .9fr;
+  gap:12px;
+  align-items:start;
+}
+.phase0Hero .phase0Intro{
+  min-height:100%;
+}
+.phase0Badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  padding:.35rem .65rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  font-size:.78rem;
+  color:var(--muted);
+}
+.phase0Kicker{
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:.76rem;
+  color:var(--accent2);
+  font-weight:800;
+  margin-bottom:.55rem;
+}
+.phase0Title{
+  margin:0 0 .45rem;
+  font-size:1.3rem;
+}
+.phase0Lead{
+  color:var(--muted);
+  margin:0;
+}
+.phase0ActionGrid,
+.phase0SectionGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.phase0ActionCard,
+.phase0SectionCard{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  border-radius:16px;
+  padding:12px;
+}
+.phase0ActionCard h3,
+.phase0SectionCard h3{
+  margin:0 0 .35rem;
+}
+.phase0ActionCard p,
+.phase0SectionCard p{
+  margin:.25rem 0 0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.phase0ActionRow{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.phase0Subnav{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:12px 0 14px;
+}
+.phase0Subnav button{
+  border-radius:999px;
+  padding:.55rem .9rem;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+}
+.phase0SectionWrap{
+  margin-top:14px;
+}
+.phase0SectionWrap > .phase0BlockHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin:0 0 10px;
+}
+.phase0SectionWrap > .phase0BlockHead h2{
+  margin:0;
+}
+.phase0SectionWrap > .phase0BlockHead p{
+  margin:.15rem 0 0;
+  color:var(--muted);
+}
+.phase0Stack > * + *{
+  margin-top:12px;
+}
+.legacy-host{
+  display:none !important;
+}
+.phase0Shell .notice.notice--warn{
+  margin-top:0;
+}
+.phase0Shell .card:first-child,
+.phase0Shell details.notice:first-child{
+  margin-top:0;
+}
+@media (max-width: 900px){
+  .phase0Hero,
+  .phase0ActionGrid,
+  .phase0SectionGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+/* ======================================================
+   PHASE 1 — STRUCTURE D’ÉCRAN / HIÉRARCHIE VISUELLE
+   ====================================================== */
+.phase1PrimaryNav{
+  position:sticky;
+  top:74px;
+  z-index:980;
+  margin:14px 0 16px;
+  padding:12px;
+  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(18,24,44,.88), rgba(18,24,44,.72));
+}
+.phase1PrimaryNav__head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.phase1PrimaryNav__title{
+  font-size:.9rem;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.phase1PrimaryNav__hint{
+  color:var(--muted);
+  font-size:.85rem;
+}
+.phase1PrimaryNav__tabs{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.phase1PrimaryNav .tabBtn{
+  width:100%;
+  min-width:0;
+  padding:.85rem .95rem;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.2rem;
+  text-align:left;
+  cursor:pointer;
+}
+.phase1PrimaryNav .tabBtn strong{ font-size:.95rem; }
+.phase1PrimaryNav .tabBtn span{ color:var(--muted); font-size:.8rem; }
+.phase1PrimaryNav .tabBtn.is-active{
+  background: linear-gradient(135deg, rgba(124,92,255,.24), rgba(45,212,191,.12));
+  border-color: rgba(124,92,255,.55);
+  box-shadow: 0 14px 36px rgba(5,8,18,.26);
+}
+.phase1PulseGrid,
+.phase1ContextGrid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin:14px 0 2px;
+}
+.phase1PulseCard,
+.phase1ContextCard{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.045);
+  border-radius:16px;
+  padding:12px 13px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+.phase1PulseLabel,
+.phase1ContextLabel{
+  font-size:.76rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted2);
+  margin-bottom:.4rem;
+  font-weight:700;
+}
+.phase1PulseValue,
+.phase1ContextValue{
+  font-size:1.03rem;
+  font-weight:800;
+}
+.phase1PulseMeta,
+.phase1ContextMeta{
+  margin-top:.35rem;
+  color:var(--muted);
+  font-size:.84rem;
+}
+.phase1SectionWrap{
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:20px;
+  padding:14px;
+  background:rgba(255,255,255,.035);
+  box-shadow: 0 14px 34px rgba(0,0,0,.12);
+}
+.phase1SectionWrap .phase0BlockHead{
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.phase1SplitNote{
+  margin:0 0 12px;
+  border:1px solid rgba(124,92,255,.22);
+  background:rgba(124,92,255,.08);
+  color:var(--muted);
+  border-radius:14px;
+  padding:10px 12px;
+  font-size:.9rem;
+}
+.phase1BlockTag{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  font-size:.72rem;
+  border-radius:999px;
+  padding:.24rem .55rem;
+  border:1px solid rgba(255,255,255,.12);
+  color:var(--muted);
+  background:rgba(255,255,255,.05);
+}
+.phase1CardHead{
+  margin-bottom:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.phase1CardHead h3{
+  margin:0 0 .25rem;
+  font-size:1rem;
+}
+.phase1CardHead p{
+  margin:0;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.phase1Shell .card,
+.phase1Shell details.acc,
+.phase1Shell details.notice{
+  scroll-margin-top: 140px;
+}
+@media (max-width: 900px){
+  .phase1PrimaryNav{ top:70px; }
+  .phase1PrimaryNav__tabs,
+  .phase1PulseGrid,
+  .phase1ContextGrid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media (max-width: 640px){
+  .phase1PrimaryNav__tabs,
+  .phase1PulseGrid,
+  .phase1ContextGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+/* ======================================================
+   PHASE 2 — COMPOSANTS D’ÉCRAN / DÉCOUPAGE DES BLOCS
+   ====================================================== */
+.phase2Shell .card,
+.phase2Shell details.acc,
+.phase2Shell details.notice{
+  scroll-margin-top: 148px;
+}
+.phase2HeroCard{
+  background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.035));
+  border-radius:22px;
+  padding:18px;
+  box-shadow: 0 18px 44px rgba(0,0,0,.16);
+}
+.phase2HeroTop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.phase2Eyebrow{
+  font-size:.76rem;
+  text-transform:uppercase;
+  letter-spacing:.10em;
+  color:var(--accent2);
+  font-weight:800;
+}
+.phase2Title{
+  margin:.25rem 0 .45rem;
+  font-size:1.55rem;
+  line-height:1.05;
+}
+.phase2TitleRow{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+}
+.phase2TitleRow .phase2Title{
+  margin:.25rem 0 .45rem;
+}
+.phase2TitleRow .info-dot{
+  margin-top:-.05rem;
+}
+.phase2Lead{
+  margin:0;
+  max-width:68ch;
+  color:var(--muted);
+}
+.phase2HeroBadges,
+.phase2JumpRow,
+.phase2ActionRail,
+.phase2InlineActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.phase2HeroBadges{ margin-top:14px; }
+.phase2Chip{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.32rem .68rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.045);
+  color:var(--muted);
+  font-size:.82rem;
+}
+.phase2JumpRow,
+.phase2ActionRail,
+.phase2InlineActions{
+  margin-top:14px;
+}
+.phase2JumpRow button,
+.phase2ActionRail button,
+.phase2InlineActions button{
+  border-radius:14px;
+}
+.phase2Grid{
+  display:grid;
+  gap:14px;
+  margin-top:14px;
+}
+.phase2Grid--today,
+.phase2Grid--history,
+.phase2Grid--settings,
+.phase2Grid--journal{
+  grid-template-columns:minmax(0,1.55fr) minmax(320px,.95fr);
+}
+.phase2MainCol,
+.phase2RailCol{
+  display:grid;
+  gap:14px;
+  align-content:start;
+}
+.phase2Panel{
+  background:rgba(255,255,255,.04);
+  border-radius:20px;
+  padding:14px;
+  box-shadow:0 14px 34px rgba(0,0,0,.12);
+}
+.phase2Panel--subtle{
+  background:rgba(255,255,255,.03);
+}
+.phase2Panel__head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  margin-bottom:12px;
+}
+.phase2Panel__title{
+  margin:0;
+  font-size:1.02rem;
+}
+.phase2Panel__desc{
+  margin:.2rem 0 0;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.phase2Slot > *:first-child{ margin-top:0; }
+.phase2Slot > *:last-child{ margin-bottom:0; }
+.phase2QuickRail{
+  display:grid;
+  gap:14px;
+}
+.phase2ActionList{
+  display:grid;
+  gap:10px;
+}
+.phase2ActionList button{
+  width:100%;
+  justify-content:flex-start;
+}
+.phase2ContextGrid{
+  grid-template-columns:1fr;
+  margin:0;
+}
+.phase2Split2,
+.phase2Split3{
+  display:grid;
+  gap:14px;
+}
+.phase2Split2{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+.phase2Split3{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+.phase2Stack{
+  display:grid;
+  gap:14px;
+}
+.phase2EditHint{
+  color:var(--muted);
+  font-size:.88rem;
+  padding:.7rem .8rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+}
+.phase2MicroHead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.phase2MicroHead h3{
+  margin:0;
+  font-size:.98rem;
+}
+.phase2MicroHead p{
+  margin:.18rem 0 0;
+  color:var(--muted);
+  font-size:.86rem;
+}
+.phase2StickyRail{
+  position:sticky;
+  top:144px;
+}
+.phase2Divider{
+  height:1px;
+  background:rgba(255,255,255,.08);
+  margin:12px 0;
+}
+.phase2CompactNotice{
+  font-size:.85rem;
+  color:var(--muted);
+}
+.phase2HistoryRail{
+  display:grid;
+  gap:14px;
+}
+.phase2SettingsGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.phase2SettingsGrid .phase2Panel:last-child:nth-child(odd){
+  grid-column:1/-1;
+}
+.phase2SectionTag{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.2rem .5rem;
+  border-radius:999px;
+  border:1px solid rgba(124,92,255,.28);
+  background:rgba(124,92,255,.10);
+  color:#ddd3ff;
+  font-size:.74rem;
+  font-weight:700;
+}
+@media (max-width: 980px){
+  .phase2Grid--today,
+  .phase2Grid--history,
+  .phase2Grid--settings,
+  .phase2Grid--journal,
+  .phase2SettingsGrid,
+  .phase2Split2,
+  .phase2Split3{
+    grid-template-columns:1fr;
+  }
+  .phase2StickyRail{ position:static; }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol{
+    order:1;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2MainCol{
+    order:2;
+  }
+}
+@media (max-width: 640px){
+  .phase2HeroCard{ padding:15px; }
+  .phase2Title{ font-size:1.35rem; }
+}
+
+
+.phase3Shell .phase2Panel,
+.phase3Shell .phase2HeroCard{
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+.phase3BodyCard{
+  border:1px solid var(--line);
+  background:var(--card);
+}
+.phase3MiniGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.phase3MiniGrid--3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.phase3MiniGrid .accTile{
+  margin:0;
+}
+.phase3Divider{
+  height:1px;
+  background:var(--line);
+  margin:14px 0;
+}
+.phase3Hint{
+  font-size:.84rem;
+  color:var(--muted);
+  margin:0 0 10px;
+}
+.phase3LegacyNote{
+  font-size:.84rem;
+  color:var(--muted);
+  padding:10px 12px;
+  border:1px dashed var(--line);
+  border-radius:12px;
+  background:rgba(148,163,184,.08);
+  margin-bottom:10px;
+}
+.phase3SlotTight > * + *{
+  margin-top:10px;
+}
+
+.phase4Shell .phase2Panel,
+.phase4Shell .phase2HeroCard{
+  box-shadow:0 14px 34px rgba(0,0,0,.08);
+}
+.phase4Screen{
+  container-type:inline-size;
+}
+.phase4Slot > * + *{
+  margin-top:14px;
+}
+.phase4Slot--tight > * + *{
+  margin-top:10px;
+}
+.phase4Shell .phase2Panel__head{
+  margin-bottom:12px;
+}
+.phase4Shell .phase2CompactNotice,
+.phase4Shell .legacy-host:empty{
+  display:none !important;
+}
+.phase4Shell .phase3LegacyNote{
+  border-left:3px solid var(--accent);
+  background:rgba(0,0,0,.03);
+}
+.phase4Shell .phase2QuickRail,
+.phase4Shell .phase2HistoryRail{
+  gap:14px;
+}
+@media (max-width:900px){
+  .phase3MiniGrid,
+  .phase3MiniGrid--3{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+/* ======================================================
+   PHASE 5 — STABILISATION UX / QA PRODUIT
+   ====================================================== */
+.phase5Shell .phase1PrimaryNav{
+  margin-bottom:12px;
+}
+.phase5GateBar{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:12px 0 12px;
+}
+.phase5GateCard{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  padding:12px 14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.14);
+}
+.phase5GateCard--access[data-state="locked"]{
+  border-color:rgba(124,92,255,.24);
+  background:linear-gradient(180deg, rgba(124,92,255,.08), rgba(255,255,255,.035));
+}
+.phase5GateCard--access[data-state="unlocked"]{
+  border-color:rgba(46,204,113,.18);
+  background:rgba(255,255,255,.032);
+}
+.phase5GateCard--tuto[data-has-tutos="1"]{
+  border-color:rgba(255,209,102,.22);
+  background:linear-gradient(180deg, rgba(255,209,102,.08), rgba(255,255,255,.035));
+}
+.phase5GateCard--tuto[data-has-tutos="0"]{
+  opacity:.84;
+}
+.phase5GateCard--tuto .phase5GateCard__text{
+  display:-webkit-box;
+  -webkit-line-clamp:4;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.phase5TutoModalIntro{
+  color:var(--muted);
+  margin:0 0 12px;
+}
+.phase5TutoModalList{
+  display:grid;
+  gap:12px;
+}
+.phase5TutoCard{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  padding:12px 14px;
+}
+.phase5TutoCard__title{
+  margin:0 0 8px;
+  font-size:1rem;
+  line-height:1.2;
+}
+.phase5TutoCard__body > *:first-child{ margin-top:0; }
+.phase5TutoCard__body > *:last-child{ margin-bottom:0; }
+.phase5GateCard__eyebrow{
+  font-size:.76rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted2);
+  font-weight:800;
+  margin-bottom:8px;
+}
+.phase5GateCard__row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+}
+.phase5GateCard__title{
+  font-size:1rem;
+  font-weight:800;
+  color:var(--text);
+}
+.phase5GateCard__text{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:.88rem;
+  line-height:1.45;
+}
+.phase5GateCard__actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+}
+.phase5GateCard__actions button{
+  min-height:38px;
+  padding:.5rem .82rem;
+}
+.phase5StatusBar{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:12px 0 18px;
+}
+.phase5StatusCard{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  padding:12px 14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.18);
+}
+.phase5StatusLabel{
+  font-size:.78rem;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.phase5StatusValue{
+  font-size:1rem;
+  font-weight:700;
+  color:var(--text);
+}
+.phase5StatusMeta{
+  font-size:.82rem;
+  color:var(--muted2);
+  margin-top:4px;
+}
+.phase5Banner{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  margin:12px 0 18px;
+  background:rgba(45,212,191,.08);
+  border:1px solid rgba(45,212,191,.24);
+  border-radius:16px;
+}
+.phase5Banner__title{
+  font-weight:700;
+  margin-bottom:2px;
+}
+.phase5Banner__text{
+  color:var(--muted);
+  font-size:.9rem;
+}
+.phase5Banner__actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.phase5Banner button,
+.phase5StatusBar button{
+  min-height:38px;
+}
+.phase5EmptyState{
+  margin-top:10px;
+  padding:14px;
+  border:1px dashed rgba(255,255,255,.16);
+  border-radius:14px;
+  background:rgba(255,255,255,.04);
+}
+.phase5EmptyState__title{
+  font-weight:700;
+  margin-bottom:4px;
+}
+.phase5EmptyState__text{
+  color:var(--muted);
+  font-size:.9rem;
+}
+.phase5TargetFlash{
+  animation:phase5TargetPulse 1.2s ease;
+}
+@keyframes phase5TargetPulse{
+  0%{ box-shadow:0 0 0 0 rgba(124,92,255,0); }
+  20%{ box-shadow:0 0 0 3px rgba(124,92,255,.28); }
+  60%{ box-shadow:0 0 0 8px rgba(124,92,255,.10); }
+  100%{ box-shadow:0 0 0 0 rgba(124,92,255,0); }
+}
+.phase5Shell .tabBtn[aria-current="page"]{
+  outline:1px solid rgba(255,255,255,.06);
+}
+@media (min-width: 861px) and (max-width: 1180px){
+  .phase5GateBar{
+    gap:7px;
+    padding:0 8px 8px;
+  }
+  .phase5GateCard{
+    padding:9px 10px;
+    border-radius:13px;
+  }
+  .phase5GateCard__eyebrow{
+    font-size:.68rem;
+  }
+  .phase5GateCard__title{
+    font-size:.86rem;
+  }
+  .phase5GateCard__text{
+    font-size:.75rem;
+    line-height:1.26;
+  }
+  .phase5GateCard__actions button{
+    min-height:34px;
+    padding:.42rem .68rem;
+    font-size:.84rem;
+  }
+}
+
+@media (max-width: 860px){
+  .phase5GateBar{ grid-template-columns:1fr; }
+  .phase5GateCard__row{ grid-template-columns:1fr; align-items:start; }
+  .phase5GateCard__actions{ justify-content:stretch; }
+  .phase5GateCard__actions button{ width:100%; }
+  .phase5StatusBar{ grid-template-columns:1fr 1fr; }
+  .phase5TutoCard{ padding:10px 12px; }
+  .phase5Banner{ flex-direction:column; }
+}
+@media (max-width: 560px){
+  .phase5StatusBar{ grid-template-columns:1fr; }
+}
+
+/* ======================================================
+   PHASE 638 — SETTINGS VISUAL PATCH V1
+   Scope: Réglages uniquement
+   Objectif: calmer la profondeur visuelle, clarifier la hiérarchie,
+   améliorer la lecture desktop/mobile sans toucher au moteur.
+   ====================================================== */
+.phase2Screen[data-tabsection="settings"] .phase2HeroCard{
+  background: linear-gradient(180deg, rgba(255,255,255,.042), rgba(255,255,255,.026));
+  border-color: rgba(255,255,255,.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  padding: 16px;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Title{
+  margin: .18rem 0 .38rem;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Lead{
+  max-width: 62ch;
+  color: rgba(255,255,255,.68);
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2SectionTag{
+  border-color: rgba(124,92,255,.20);
+  background: rgba(124,92,255,.08);
+  color: rgba(221,211,255,.88);
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Grid--settings{
+  grid-template-columns: minmax(0,1.72fr) minmax(260px,.88fr);
+  gap: 12px;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2MainCol,
+.phase2Screen[data-tabsection="settings"] .phase2RailCol,
+.phase2Screen[data-tabsection="settings"] .phase2QuickRail,
+.phase2Screen[data-tabsection="settings"] .phase2SettingsGrid,
+.phase2Screen[data-tabsection="settings"] .phase2Stack{
+  gap: 12px;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Panel{
+  background: rgba(255,255,255,.034);
+  border-color: rgba(255,255,255,.08);
+  box-shadow: 0 8px 22px rgba(0,0,0,.10);
+  padding: 13px;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Panel--subtle{
+  background: rgba(255,255,255,.022);
+  border-color: rgba(255,255,255,.07);
+  box-shadow: none;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Panel__head{
+  margin-bottom: 10px;
+  padding-bottom: 9px;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Panel__title{
+  font-size: 1rem;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Panel__desc{
+  color: rgba(255,255,255,.64);
+  font-size: .88rem;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase1ContextCard{
+  background: rgba(255,255,255,.024);
+  border-color: rgba(255,255,255,.08);
+  box-shadow: none;
+  padding: 11px 12px;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase1ContextLabel{
+  color: rgba(255,255,255,.48);
+}
+
+.phase2Screen[data-tabsection="settings"] .phase1ContextMeta{
+  color: rgba(255,255,255,.60);
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2EditHint{
+  background: rgba(255,255,255,.02);
+  border-color: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.64);
+  padding: .62rem .72rem;
+}
+
+.phase2Screen[data-tabsection="settings"] .calcPanel{
+  border: 1px dashed rgba(255,255,255,.16);
+  border-radius: 12px;
+  padding: .65rem .75rem;
+  background: rgba(255,255,255,.02);
+}
+
+.phase2Screen[data-tabsection="settings"] .calcLabel{
+  color: rgba(255,255,255,.62);
+}
+
+.phase2Screen[data-tabsection="settings"] .calcRow{
+  margin: .18rem 0;
+}
+
+@media (min-width: 1180px){
+  .phase2Screen[data-tabsection="settings"] .phase2Grid--settings{
+    grid-template-columns: minmax(0,1.78fr) minmax(280px,.86fr);
+  }
+}
+
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="settings"] .phase2Grid--settings,
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsGrid{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroCard{
+    padding: 14px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel{
+    padding: 12px;
+  }
+}
+
+/* ======================================================
+   PHASE 638 — SETTINGS LAYOUT PATCH V2
+   Objectif : réduire le tunnel, sortir l’accès et la maintenance
+   du flux principal, rendre le contexte visible plus tôt,
+   exploiter mieux le desktop sans casser le moteur.
+   ====================================================== */
+.phase2Screen[data-tabsection="settings"] .phase2InlineActions--settings{
+  margin-top: 12px;
+}
+.phase2Screen[data-tabsection="settings"] .phase2InlineActions--settings button{
+  min-height: 38px;
+  padding: .5rem .78rem;
+}
+.phase2Screen[data-tabsection="settings"] .phase2Grid--settings{
+  grid-template-columns: minmax(0,1.5fr) minmax(280px,.72fr);
+  grid-template-areas: "main rail";
+  align-items: start;
+}
+.phase2Screen[data-tabsection="settings"] .phase2MainCol{ grid-area: main; }
+.phase2Screen[data-tabsection="settings"] .phase2RailCol{ grid-area: rail; }
+
+.phase2Screen[data-tabsection="settings"] .phase2SettingsGrid--settingsV2{
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  align-items: start;
+  gap: 14px;
+}
+.phase2Screen[data-tabsection="settings"] .settingsPanel--span2{
+  grid-column: 1 / -1;
+}
+.phase2Screen[data-tabsection="settings"] .settingsPanel--access,
+.phase2Screen[data-tabsection="settings"] .settingsPanel--maintenance{
+  align-self: start;
+}
+.phase2Screen[data-tabsection="settings"] .phase2Panel--entry{
+  background: rgba(255,255,255,.026);
+}
+.phase2Screen[data-tabsection="settings"] .settingsEntryGrid{
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+.phase2Screen[data-tabsection="settings"] .settingsEntryStat{
+  min-width: 0;
+}
+.phase2Screen[data-tabsection="settings"] .settingsEntryLabel{
+  font-size: .76rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.46);
+  margin-bottom: .28rem;
+  font-weight: 800;
+}
+.phase2Screen[data-tabsection="settings"] .settingsEntryValue{
+  font-size: 1.04rem;
+  font-weight: 800;
+  color: rgba(255,255,255,.92);
+}
+.phase2Screen[data-tabsection="settings"] .settingsEntryMeta{
+  margin-top: .18rem;
+  color: rgba(255,255,255,.62);
+  font-size: .87rem;
+  line-height: 1.45;
+}
+.phase2Screen[data-tabsection="settings"] .settingsEntryActions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+}
+
+.phase2Screen[data-tabsection="settings"] .phase2Panel--context .phase2Panel__desc{
+  max-width: 34ch;
+}
+.phase2Screen[data-tabsection="settings"] .phase2Panel--context .phase1ContextGrid{
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.modal__panel--settings{
+  width: min(880px, 94vw);
+  max-height: 84vh;
+}
+.modal__panel--settingsCloud{
+  width: min(980px, 95vw);
+}
+.modal__body--settings{
+  padding: .95rem 1rem;
+  white-space: normal;
+}
+.modal__body--settings > .phase2Slot > *:first-child{
+  margin-top: 0;
+}
+.modal__body--settings > .phase2Slot > *:last-child{
+  margin-bottom: 0;
+}
+
+@media (min-width: 1180px){
+  .phase2Screen[data-tabsection="settings"] .phase2Grid--settings{
+    grid-template-columns: minmax(0,1.58fr) minmax(300px,.70fr);
+  }
+}
+
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="settings"] .phase2Grid--settings{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "rail"
+      "main";
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsGrid--settingsV2{
+    grid-template-columns: 1fr;
+  }
+  .phase2Screen[data-tabsection="settings"] .settingsEntryGrid{
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .phase2Screen[data-tabsection="settings"] .settingsEntryActions{
+    justify-content: stretch;
+  }
+  .phase2Screen[data-tabsection="settings"] .settingsEntryActions button{
+    width: 100%;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context .phase1ContextGrid{
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context .phase1ContextMeta{
+    display:none;
+  }
+}
+
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context .phase2Panel__head{
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context .phase1ContextGrid{
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context .phase1ContextCard:last-child{
+    grid-column: 1 / -1;
+  }
+  .modal__panel--settings,
+  .modal__panel--settingsCloud{
+    width: min(94vw, 94vw);
+  }
+}
+
+
+/* ======================================================
+   PHASE 638 — SETTINGS HERO CONTEXT PATCH V4
+   Objectif : intégrer le contexte actif au hero Réglages,
+   supprimer la rail dédiée et ajouter une contextCard “Objectif suivi”.
+   ====================================================== */
+.phase2Screen[data-tabsection="settings"] .phase2HeroCard--settings{
+  display:block;
+}
+.phase2Screen[data-tabsection="settings"] .phase2Panel--contextInHero{
+  margin-top: 14px;
+  padding: 12px;
+  background: rgba(255,255,255,.022);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: none;
+}
+.phase2Screen[data-tabsection="settings"] .phase2Panel--contextInHero .phase2Panel__head{
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+}
+.phase2Screen[data-tabsection="settings"] .phase2Panel--contextInHero .phase2Panel__desc{
+  max-width: 46ch;
+}
+.phase2Screen[data-tabsection="settings"] .phase2ContextGrid--settingsHero{
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 10px;
+  margin: 0;
+}
+.phase2Screen[data-tabsection="settings"] .phase2ContextGrid--settingsHero .phase1ContextCard{
+  min-width: 0;
+}
+.phase2Screen[data-tabsection="settings"] .phase2Grid--settings{
+  grid-template-columns: 1fr;
+  grid-template-areas: "main";
+}
+.phase2Screen[data-tabsection="settings"] .phase2MainCol{
+  width: 100%;
+}
+.phase2Screen[data-tabsection="settings"] .phase2RailCol{
+  display: none;
+}
+@media (max-width: 1100px){
+  .phase2Screen[data-tabsection="settings"] .phase2ContextGrid--settingsHero{
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroCard--settings{
+    padding: 14px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--contextInHero{
+    margin-top: 12px;
+    padding: 10px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2ContextGrid--settingsHero{
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2ContextGrid--settingsHero .phase1ContextMeta{
+    display: none;
+  }
+}
+
+
+/* ======================================================
+   PHASE 638 — SETTINGS HERO CONTEXT FIX V4.1
+   Corrige les collisions avec .phase2Panel--context .phase1ContextGrid
+   Objectif exact :
+   - desktop >= 641px : 4 colonnes sur 1 ligne
+   - mobile <= 640px : 2 colonnes / 2 lignes
+   ====================================================== */
+@media (min-width: 641px){
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context.phase2Panel--contextInHero .phase1ContextGrid.phase2ContextGrid--settingsHero{
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 10px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context.phase2Panel--contextInHero .phase1ContextGrid.phase2ContextGrid--settingsHero .phase1ContextCard{
+    grid-column: auto;
+  }
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context.phase2Panel--contextInHero .phase1ContextGrid.phase2ContextGrid--settingsHero{
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context.phase2Panel--contextInHero .phase1ContextGrid.phase2ContextGrid--settingsHero .phase1ContextCard,
+  .phase2Screen[data-tabsection="settings"] .phase2Panel--context.phase2Panel--contextInHero .phase1ContextGrid.phase2ContextGrid--settingsHero .phase1ContextCard:last-child{
+    grid-column: auto;
+  }
+}
+
+
+/* ======================================================
+   PHASE 5.2 — DESKTOP GATEBAR ACTIONS UNDER TEXT
+   Objectif: en desktop, placer les actions sous les textes
+   et garantir une marge basse homogène.
+   ====================================================== */
+@media (min-width: 861px){
+  .phase5GateCard{
+    display:flex;
+    flex-direction:column;
+    box-sizing:border-box;
+    overflow:hidden;
+  }
+  .phase5GateCard__row{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    min-height:0;
+    height:auto;
+    gap:0;
+    flex:1 1 auto;
+  }
+  .phase5GateCard__body{
+    display:block;
+    min-width:0;
+  }
+  .phase5GateCard__actions{
+    margin-top:auto;
+    padding-top:14px;
+    justify-content:flex-start;
+    align-items:flex-start;
+    min-width:0;
+  }
+  .phase5GateCard__actions button{
+    align-self:flex-start;
+    max-width:100%;
+  }
+}
+
+
+/* ======================================================
+   PHASE 6.1 — SHELL COMPACT / MOBILE-FIRST NAV
+   ====================================================== */
+.phase1PrimaryNav{
+  margin:10px 0 10px;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(14,20,36,.72);
+  box-shadow:0 6px 18px rgba(0,0,0,.10);
+  backdrop-filter: blur(8px);
+}
+.phase1PrimaryNav__head{
+  display:none;
+}
+.phase1PrimaryNav__tabs{
+  margin-top:0;
+  gap:8px;
+}
+.phase1PrimaryNav .tabBtn{
+  padding:.65rem .8rem;
+  border-radius:14px;
+  gap:.15rem;
+}
+.phase1PrimaryNav .tabBtn strong{ font-size:.9rem; }
+.phase1PrimaryNav .tabBtn span{ font-size:.76rem; }
+
+.phase5ShellLine{
+  display:grid;
+  gap:10px;
+  margin:10px 0 14px;
+}
+.phase5ShellLine > *{
+  min-width:0;
+}
+
+.phase5GateDisclosure{
+  margin:0;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  background:rgba(14,20,36,.62);
+  box-shadow:0 6px 18px rgba(0,0,0,.10);
+  overflow:hidden;
+}
+.phase5GateDisclosure[open]{
+  background:rgba(14,20,36,.68);
+}
+.phase5GateSummary{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  padding:.7rem .9rem;
+  margin:0;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+}
+.phase5GateSummary::-webkit-details-marker{ display:none; }
+.phase5GateSummary::after{
+  content:"▾";
+  margin-left:auto;
+  color:var(--muted);
+  font-size:.82rem;
+  transition:transform .18s ease;
+}
+.phase5GateDisclosure[open] .phase5GateSummary::after{
+  transform:rotate(180deg);
+}
+
+.phase5GateBar,
+.phase5StatusBar{
+  margin:0;
+}
+
+.phase5GateBar{
+  gap:8px;
+  padding:0 10px 10px;
+}
+.phase5GateCard{
+  padding:10px 12px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+.phase5GateCard__eyebrow{
+  margin-bottom:6px;
+  font-size:.72rem;
+}
+.phase5GateCard__title{
+  font-size:.94rem;
+  line-height:1.15;
+}
+.phase5GateCard__titleRow{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  min-width:0;
+}
+.phase5GateCard__titleRow .phase5GateCard__title{
+  flex:1 1 auto;
+  min-width:0;
+}
+.phase5GateCard__infoDot{
+  flex:0 0 auto;
+  margin-top:-1px;
+}
+.phase5GateCard__text{
+  font-size:.82rem;
+  line-height:1.35;
+}
+.phase5GateCard__actions button{
+  min-height:36px;
+  padding:.45rem .75rem;
+}
+
+.phase5StatusBar{
+  gap:8px;
+}
+.phase5StatusCard{
+  padding:10px 12px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+.phase5StatusLabel{
+  font-size:.72rem;
+  margin-bottom:3px;
+}
+.phase5StatusValue{
+  font-size:.94rem;
+  line-height:1.15;
+}
+.phase5StatusMeta{
+  font-size:.78rem;
+  margin-top:3px;
+  line-height:1.3;
+}
+
+@media (min-width: 861px){
+  .phase5ShellLine{
+    grid-template-columns:1fr;
+    align-items:start;
+  }
+  .phase5GateDisclosure{
+    display:block;
+  }
+  .phase5GateSummary{
+    cursor:default;
+  }
+  .phase5GateSummary::after{
+    opacity:.0;
+    pointer-events:none;
+  }
+  .phase5GateBar{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+  .phase5GateCard{
+    min-width:0;
+  }
+  .phase5GateCard__title{
+    font-size:.9rem;
+  }
+  .phase5GateCard__text{
+    font-size:.78rem;
+    line-height:1.3;
+  }
+  .phase5GateCard__actions{
+    padding-top:12px;
+  }
+  .phase5GateCard__actions button{
+    font-size:.88rem;
+  }
+  .phase5StatusBar{
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:8px;
+  }
+  .phase5StatusCard{
+    padding:9px 10px;
+  }
+  .phase5StatusLabel{
+    font-size:.7rem;
+  }
+  .phase5StatusValue{
+    font-size:.9rem;
+  }
+  .phase5StatusMeta{
+    font-size:.74rem;
+    line-height:1.25;
+  }
+}
+
+@media (max-width: 860px){
+  .phase5ShellLine{
+    margin:8px 0 12px;
+  }
+  .phase5StatusBar{
+    grid-template-columns:1fr 1fr;
+  }
+  .phase5StatusCard{
+    padding:9px 10px;
+  }
+}
+
+@media ((hover: none) or (pointer: coarse)){
+  .phase1PrimaryNav{
+    display:none !important;
+  }
+  .phase5GateDisclosure{
+    display:none !important;
+  }
+}
+
+@media ((hover: hover) and (pointer: fine)){
+  .phase1PrimaryNav{
+    display:grid !important;
+  }
+  .phase5GateDisclosure{
+    display:block !important;
+  }
+  .phase5GateSummary{
+    display:flex;
+  }
+}
+
+@media (max-width: 560px){
+  .phase5StatusBar{
+    grid-template-columns:1fr 1fr;
+  }
+  .phase5StatusValue{
+    font-size:.92rem;
+  }
+  .phase5StatusMeta{
+    font-size:.76rem;
+  }
+}
+
+
+
+/* ======================================================
+   V6.8 — TODAY HERO QUICK NAV
+   Objectif : remplacer les gros boutons du hero Aujourd’hui
+   par une navigation rapide alignée sur Réglages.
+   ====================================================== */
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0,1fr));
+  gap: 10px;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn{
+  min-width: 0;
+  min-height: 56px;
+  padding: .72rem .8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-content: flex-start;
+  text-align: left;
+  gap: .18rem;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn strong{
+  display: block;
+  width: 100%;
+  font-size: .98rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn span{
+  display: -webkit-box;
+  width: 100%;
+  font-size: .8rem;
+  line-height: 1.2;
+  color: rgba(255,255,255,.68);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn:hover,
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn:focus-visible{
+  transform: translateY(-1px);
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+  }
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn{
+    min-height: 54px;
+    padding: .62rem .64rem;
+    border-radius: 14px;
+  }
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn strong{
+    font-size: .9rem;
+  }
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn span{
+    font-size: .72rem;
+  }
+}
+
+
+
+/* ======================================================
+   V6.60 — HISTORY SCREEN REFOCUS
+   Objectif :
+   - séparer lecture locale et correction cross-screen
+   - intégrer le contexte actif dans le hero
+   - supprimer la rail "Contexte" redondante
+   - densifier l’écran Historique sans relancer le moteur
+   ====================================================== */
+.phase2Screen[data-tabsection="history"] .phase2HeroCard--history{
+  display:block;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history{
+  min-width:0;
+  min-height:56px;
+  padding:.72rem .8rem;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  align-content:flex-start;
+  text-align:left;
+  gap:.18rem;
+  border-radius:16px;
+  overflow:hidden;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history strong{
+  display:block;
+  width:100%;
+  font-size:.98rem;
+  line-height:1.1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history span{
+  display:-webkit-box;
+  width:100%;
+  font-size:.8rem;
+  line-height:1.2;
+  color:rgba(255,255,255,.68);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history:hover,
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history:focus-visible{
+  transform:translateY(-1px);
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history[disabled],
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history.is-disabled{
+  opacity:.52;
+  transform:none !important;
+  cursor:not-allowed;
+  filter:saturate(.55);
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history[disabled] span,
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history.is-disabled span{
+  color:rgba(255,255,255,.46);
+}
+.phase2Screen[data-tabsection="history"] .phase2Panel--contextInHeroHistory{
+  margin-top:14px;
+  padding:12px;
+  background:rgba(255,255,255,.022);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:none;
+}
+.phase2Screen[data-tabsection="history"] .phase2Panel--contextInHeroHistory .phase2Panel__head{
+  margin-bottom:10px;
+  padding-bottom:8px;
+}
+.phase2Screen[data-tabsection="history"] .phase2Panel--contextInHeroHistory .phase2Panel__desc{
+  max-width:54ch;
+}
+.phase2Screen[data-tabsection="history"] .phase2ContextGrid--historyHero{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:0;
+}
+.phase2Screen[data-tabsection="history"] .phase2ContextGrid--historyHero .phase1ContextCard{
+  min-width:0;
+}
+.phase2Screen[data-tabsection="history"] .phase2Grid--history{
+  grid-template-columns:minmax(0,1.35fr) minmax(320px,.95fr);
+}
+.phase2Screen[data-tabsection="history"] .phase2HistoryRail{
+  gap:12px;
+}
+.phase2Screen[data-tabsection="history"] .phase2Panel{
+  padding:13px;
+}
+.phase2Screen[data-tabsection="history"] .phase2Panel__head{
+  margin-bottom:10px;
+  padding-bottom:8px;
+}
+.phase2Screen[data-tabsection="history"] .phase2Panel__desc{
+  max-width:58ch;
+}
+.phase2Screen[data-tabsection="history"] .phase2HistoryPanel .phase4Slot > *:first-child{
+  margin-top:0;
+}
+.phase2Screen[data-tabsection="history"] .phase2HistoryPanel .phase4Slot > *:last-child{
+  margin-bottom:0;
+}
+@media (max-width: 980px){
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="history"] .phase2HeroCard--history{
+    padding:14px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history{
+    min-height:54px;
+    padding:.62rem .64rem;
+    border-radius:14px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history strong{
+    font-size:.9rem;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history span{
+    font-size:.72rem;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2Panel--contextInHeroHistory{
+    margin-top:12px;
+    padding:10px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2ContextGrid--historyHero{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2ContextGrid--historyHero .phase1ContextMeta{
+    display:none;
+  }
+}
+
+/* ======================================================
+   V6.4 — SETTINGS HERO QUICK NAV
+   Objectif : gabarit verrouillé et identique aux autres écrans
+   de phase 2 : desktop en grille 6 colonnes, mobile en 3 colonnes.
+   ====================================================== */
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings{
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0,1fr));
+  gap: 10px;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
+  min-width: 0;
+  min-height: 56px;
+  padding: .72rem .8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-content: flex-start;
+  text-align: left;
+  gap: .18rem;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings strong{
+  display: block;
+  width: 100%;
+  font-size: .98rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings span{
+  display: -webkit-box;
+  width: 100%;
+  font-size: .8rem;
+  line-height: 1.2;
+  color: rgba(255,255,255,.68);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings:hover,
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings:focus-visible{
+  transform: translateY(-1px);
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings{
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
+    min-height: 54px;
+    padding: .62rem .64rem;
+    border-radius: 14px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings strong{
+    font-size: .9rem;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings span{
+    font-size: .72rem;
+  }
+}
+
+
+/* ======================================================
+   V6.14 — JOURNAL HERO QUICK NAV ALIGNÉ SUR RÉGLAGES
+   Objectif : remplacer la rangée inline du Journal par des
+   cartes d'accès rapide de même langage visuel que Réglages.
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal{
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0,1fr));
+  gap: 10px;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal{
+  min-width: 0;
+  min-height: 56px;
+  padding: .72rem .8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-content: flex-start;
+  text-align: left;
+  gap: .18rem;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal strong{
+  display: block;
+  width: 100%;
+  font-size: .98rem;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal span{
+  display: -webkit-box;
+  width: 100%;
+  font-size: .8rem;
+  line-height: 1.2;
+  color: rgba(255,255,255,.68);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal:hover,
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal:focus-visible{
+  transform: translateY(-1px);
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal.is-active{
+  background:linear-gradient(135deg, rgba(124,92,255,.22), rgba(45,212,191,.10));
+  border-color:rgba(124,92,255,.44);
+  box-shadow:0 8px 22px rgba(5,8,18,.18);
+}
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal{
+    grid-template-columns: repeat(6, minmax(0,1fr));
+  }
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal{
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 8px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal{
+    min-height: 54px;
+    padding: .62rem .64rem;
+    border-radius: 14px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal strong{
+    font-size: .9rem;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal span{
+    font-size: .72rem;
+  }
+}
+
+
+/* ======================================================
+   V6.6 — SETTINGS MOBILE FLOATING JUMP BUBBLE
+   Objectif : remplacer la jumpbar sticky par une bulle flottante
+   mobile-only, déployable depuis le côté de l'écran.
+   ====================================================== */
+.phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat,
+.phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat,
+.phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat,
+.phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat{
+  display:none;
+}
+
+.phase2Screen[data-tabsection="settings"] #settingsJumpFloatPanel[hidden],
+.phase2Screen[data-tabsection="today"] #todayJumpFloatPanel[hidden],
+.phase2Screen[data-tabsection="journalEntry"] #journalJumpFloatPanel[hidden],
+.phase2Screen[data-tabsection="history"] #historyJumpFloatPanel[hidden]{
+  display:none !important;
+}
+
+@media (max-width: 860px){
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat{
+    position:fixed;
+    right:10px;
+    top:calc(var(--appbar-h, 72px) + 8px);
+    z-index:986;
+    display:block;
+    opacity:0;
+    pointer-events:none;
+    transform:translate3d(18px,0,0);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat.is-visible,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat.is-visible,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat.is-visible,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat.is-visible{
+    opacity:1;
+    pointer-events:auto;
+    transform:translate3d(0,0,0);
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__toggle{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.10);
+    background:linear-gradient(180deg, rgba(16,22,40,.94), rgba(16,22,40,.84));
+    color:var(--text);
+    border-radius:999px;
+    min-height:42px;
+    padding:.62rem .82rem;
+    font-weight:800;
+    font-size:.84rem;
+    letter-spacing:.01em;
+    box-shadow:0 10px 24px rgba(0,0,0,.18);
+    cursor:pointer;
+    backdrop-filter:blur(10px);
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__panel,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__panel,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__panel,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__panel{
+    position:absolute;
+    right:0;
+    top:calc(100% + 8px);
+    width:min(168px, 56vw);
+    display:grid;
+    gap:8px;
+    padding:8px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:16px;
+    background:linear-gradient(180deg, rgba(16,22,40,.96), rgba(16,22,40,.88));
+    box-shadow:0 14px 30px rgba(0,0,0,.22);
+    backdrop-filter:blur(12px);
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__btn,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__btn,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__btn,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__btn{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.045);
+    color:var(--text);
+    border-radius:12px;
+    min-height:38px;
+    padding:.54rem .66rem;
+    font-weight:800;
+    font-size:.84rem;
+    line-height:1.08;
+    text-align:left;
+    cursor:pointer;
+    transition:background .16s ease,border-color .16s ease,transform .16s ease;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__btn:hover,
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__btn:focus-visible,
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__toggle:hover,
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__toggle:focus-visible,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__btn:hover,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__btn:focus-visible,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__toggle:hover,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__toggle:focus-visible,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__btn:hover,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__btn:focus-visible,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__toggle:hover,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__toggle:focus-visible,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__btn:hover,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__btn:focus-visible,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__toggle:hover,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__toggle:focus-visible{
+    background:rgba(255,255,255,.065);
+    border-color:rgba(124,92,255,.30);
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__btn.is-active,
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat.is-open .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__btn.is-active,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat.is-open .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__btn.is-active,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat.is-open .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__btn.is-active,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat.is-open .phase2SettingsJumpFloat__toggle{
+    background:linear-gradient(135deg, rgba(124,92,255,.22), rgba(45,212,191,.10));
+    border-color:rgba(124,92,255,.44);
+    box-shadow:0 8px 22px rgba(5,8,18,.18);
+  }
+}
+
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat{
+    right:8px;
+    top:calc(var(--appbar-h, 68px) + 8px);
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__toggle,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__toggle{
+    min-height:40px;
+    padding:.56rem .76rem;
+    font-size:.82rem;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__panel,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__panel,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__panel,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__panel{
+    width:min(156px, 58vw);
+    gap:7px;
+    padding:7px;
+    border-radius:14px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2SettingsJumpFloat__btn,
+  .phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__btn,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2SettingsJumpFloat__btn,
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__btn{
+    min-height:36px;
+    padding:.48rem .58rem;
+    border-radius:11px;
+    font-size:.81rem;
+  }
+}
+
+
+/* ======================================================
+   PHASE 641 — TODAY DESKTOP HORIZONTAL COMPOSITION
+   Scope: Aujourd'hui desktop uniquement
+   Objectif: conserver le mobile, densifier le desktop,
+   rapprocher lecture, synthèse et raccourcis.
+   ====================================================== */
+@media (min-width: 981px){
+  .tabSection.is-active.phase2Screen[data-tabsection="today"]{
+    display:grid;
+    grid-template-columns:minmax(0,1.28fr) minmax(320px,.92fr);
+    gap:14px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2HeroCard{
+    grid-column:1 / -1;
+    grid-row:1;
+    margin:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase5Banner{
+    grid-column:1;
+    grid-row:2;
+    margin:0;
+    align-self:stretch;
+    height:100%;
+    box-sizing:border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today{
+    display:contents;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol,
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol > .phase2StickyRail,
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol > .phase2StickyRail > .phase2QuickRail{
+    display:contents;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol .phase2QuickRail > .phase2Panel:nth-child(1){
+    grid-column:2;
+    grid-row:2;
+    align-self:stretch;
+    height:100%;
+    box-sizing:border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol .phase2QuickRail > .phase2Panel:nth-child(2){
+    grid-column:1 / -1;
+    grid-row:3;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2MainCol{
+    grid-column:1 / -1;
+    grid-row:4;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol .phase2QuickRail > .phase2Panel:nth-child(1) .phase2ActionList{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol .phase2QuickRail > .phase2Panel:nth-child(1) .phase2ActionList button{
+    height:100%;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel{
+    display:grid;
+    grid-template-columns:minmax(240px,.68fr) minmax(0,1.32fr);
+    gap:14px 16px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase2Panel__head{
+    grid-column:1 / -1;
+    margin-bottom:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-column:1;
+    grid-row:2 / span 2;
+    grid-template-columns:1fr;
+    margin:0;
+    align-self:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot{
+    display:contents;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot > details.notice{
+    grid-column:1 / -1;
+    grid-row:2;
+    margin:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot > #out{
+    grid-column:2;
+    grid-row:3;
+    margin:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot > *{
+    margin:0;
+    min-width:0;
+  }
+}
+
+
+/* ======================================================
+   PHASE 644 — TODAY MOBILE CARD DENSITY
+   Objectif : compacter les cartes en mobile sans toucher
+   au desktop, et maintenir les phase1PulseCard sur 2 colonnes.
+   ====================================================== */
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="today"] .phase2Panel{
+    padding:12px;
+    border-radius:18px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2Panel__head{
+    gap:10px;
+    padding-bottom:8px;
+    margin-bottom:10px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2Panel__title{
+    font-size:.98rem;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2Panel__desc{
+    font-size:.86rem;
+    line-height:1.35;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin:10px 0 0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase1PulseCard{
+    min-width:0;
+    padding:10px 11px;
+    border-radius:14px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase1PulseLabel{
+    font-size:.68rem;
+    letter-spacing:.06em;
+    margin-bottom:.28rem;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase1PulseValue{
+    font-size:.96rem;
+    line-height:1.14;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase1PulseMeta{
+    margin-top:.28rem;
+    font-size:.77rem;
+    line-height:1.28;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot > *,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot > *{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] #miniSummaryGoalCard,
+  .phase2Screen[data-tabsection="today"] #miniSummaryRepasCard{
+    padding:12px;
+    border-radius:16px;
+  }
+
+  .phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:first-of-type,
+  .phase2Screen[data-tabsection="today"] #miniSummaryRepasCard > .row:first-of-type{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    align-items:end;
+  }
+
+  .phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:first-of-type > div,
+  .phase2Screen[data-tabsection="today"] #miniSummaryRepasCard > .row:first-of-type > div{
+    min-width:0 !important;
+  }
+
+  .phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:last-of-type,
+  .phase2Screen[data-tabsection="today"] #miniSummaryRepasCard > .row:last-of-type{
+    justify-content:stretch !important;
+  }
+
+  .phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:last-of-type button,
+  .phase2Screen[data-tabsection="today"] #miniSummaryRepasCard > .row:last-of-type button{
+    width:100%;
+  }
+}
+
+
+/* ======================================================
+   PHASE 645 — TODAY MOBILE OVERFLOW FIX
+   Objectif : empêcher les cartes cockpit Aujourd'hui de
+   sortir du cadre en mobile, sans toucher au desktop.
+   ====================================================== */
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="today"] .phase2Panel,
+  .phase2Screen[data-tabsection="today"] .phase2Panel--subtle,
+  .phase2Screen[data-tabsection="today"] .card,
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot > *,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot > *,
+  .phase2Screen[data-tabsection="today"] #out{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2RailCol,
+  .phase2Screen[data-tabsection="today"] .phase2MainCol,
+  .phase2Screen[data-tabsection="today"] .phase2QuickRail,
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2Panel__head,
+  .phase2Screen[data-tabsection="today"] .phase2MicroHead{
+    align-items:stretch;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2Panel__head > div,
+  .phase2Screen[data-tabsection="today"] .phase2MicroHead > div{
+    min-width:0;
+    flex:1 1 auto;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2Panel__desc,
+  .phase2Screen[data-tabsection="today"] .phase2MicroHead p,
+  .phase2Screen[data-tabsection="today"] .phase1PulseMeta{
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2SectionTag{
+    align-self:flex-start;
+    max-width:100%;
+    flex-shrink:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot .phase2MicroHead,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot .phase2MicroHead{
+    gap:8px;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot .row,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot .row,
+  .phase2Screen[data-tabsection="today"] #out .row{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot .row > div,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot .row > div,
+  .phase2Screen[data-tabsection="today"] #out .row > div{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot input,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot input,
+  .phase2Screen[data-tabsection="today"] #out input,
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot select,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot select,
+  .phase2Screen[data-tabsection="today"] #out select,
+  .phase2Screen[data-tabsection="today"] #todayQuickSlot button,
+  .phase2Screen[data-tabsection="today"] #todayMainSlot button,
+  .phase2Screen[data-tabsection="today"] #out button{
+    max-width:100%;
+    box-sizing:border-box;
+  }
+}
+
+
+/* ======================================================
+   V6.15 — JOURNAL LAYOUT COHÉRENT DESKTOP + MOBILE
+   Objectif : contenir les cartes du Journal, supprimer les
+   chevauchements repas/contexte/mesures et adapter les panels
+   au mobile sans toucher au moteur métier.
+   ====================================================== */
+/* ======================================================
+   PHASE 646 — TODAY REFOCUS / COCKPIT SOBRE
+   Objectif :
+   - supprimer les doublons d’action et de repères
+   - recentrer le cockpit sur lecture + reste du jour
+   - densifier la colonne état sans relancer le moteur
+   ====================================================== */
+.phase2Screen[data-tabsection="today"] > .phase5Banner{
+  display:none !important;
+}
+.phase2Screen[data-tabsection="today"] #miniSummaryRepasCard,
+.phase2Screen[data-tabsection="today"] #todayMainSlot > details.notice{
+  display:none !important;
+}
+.phase2Screen[data-tabsection="today"] .phase2QuickRail{
+  gap:12px;
+}
+.phase2Screen[data-tabsection="today"] #todayQuickSlot{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+.phase2Screen[data-tabsection="today"] #miniSummaryGoalCard{
+  padding:12px;
+  border-radius:16px;
+}
+.phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:first-of-type{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  align-items:end;
+}
+.phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:first-of-type > div{
+  min-width:0 !important;
+}
+.phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:last-of-type{
+  justify-content:stretch !important;
+}
+.phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:last-of-type button{
+  width:100%;
+}
+.phase2Screen[data-tabsection="today"] .phase1PulseCard{
+  box-shadow:none;
+}
+@media (min-width: 981px){
+  .tabSection.is-active.phase2Screen[data-tabsection="today"]{
+    display:block;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2HeroCard{
+    margin:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol{
+    order:1;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2MainCol{
+    order:2;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol,
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol > .phase2StickyRail,
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol > .phase2StickyRail > .phase2QuickRail{
+    display:block;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol .phase2QuickRail > .phase2Panel:nth-child(1){
+    width:100%;
+    align-self:start;
+    height:auto;
+    box-sizing:border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel{
+    display:grid;
+    grid-template-columns:minmax(320px,.92fr) minmax(0,1.08fr);
+    gap:14px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase2Panel__head{
+    grid-column:1 / -1;
+    margin-bottom:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-column:1;
+    grid-row:2;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin:0;
+    align-self:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot{
+    grid-column:2;
+    grid-row:2;
+    display:block;
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid > .phase1PulseCard{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid > .phase1PulseCard:nth-child(1){ grid-column:1; }
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid > .phase1PulseCard:nth-child(2){ grid-column:2; }
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid > .phase1PulseCard:nth-child(3){ grid-column:3; }
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid > .phase1PulseCard:nth-child(4){ grid-column:4; }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot > #out{
+    margin:0;
+  }
+}
+
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="today"] .phase2Panel{
+    padding:12px;
+    border-radius:18px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin:10px 0 0;
+  }
+}
+
+@media (max-width: 560px){
+  .phase2Screen[data-tabsection="today"] #miniSummaryGoalCard > .row:first-of-type,
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+.phase2Screen[data-tabsection="journalEntry"] .phase2Grid--journal{
+  grid-template-columns:minmax(0,1.34fr) minmax(300px,.9fr);
+  align-items:start;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2MainCol,
+.phase2Screen[data-tabsection="journalEntry"] .phase2RailCol,
+.phase2Screen[data-tabsection="journalEntry"] .phase2Panel,
+.phase2Screen[data-tabsection="journalEntry"] .phase2Slot,
+.phase2Screen[data-tabsection="journalEntry"] .phase2Slot > *,
+.phase2Screen[data-tabsection="journalEntry"] .card,
+.phase2Screen[data-tabsection="journalEntry"] .grid,
+.phase2Screen[data-tabsection="journalEntry"] .grid > *,
+.phase2Screen[data-tabsection="journalEntry"] .row,
+.phase2Screen[data-tabsection="journalEntry"] .row > div{
+  min-width:0;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2Panel{
+  overflow:hidden;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot > *,
+.phase2Screen[data-tabsection="journalEntry"] #journalActivitySlot > *,
+.phase2Screen[data-tabsection="journalEntry"] #journalSleepSlot > *,
+.phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot > *,
+.phase2Screen[data-tabsection="journalEntry"] #journalDiabSlot > *{
+  width:100%;
+  max-width:100%;
+  margin:0;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalActivitySlot > .card,
+.phase2Screen[data-tabsection="journalEntry"] #journalSleepSlot > .card{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalActivitySlot .btn-wide,
+.phase2Screen[data-tabsection="journalEntry"] #journalSleepSlot .btn-wide{
+  margin-top:12px;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepCard .sleepCardHead{
+  align-items:flex-start !important;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalNoteCard{
+  padding:.85rem .9rem;
+  border-radius:16px;
+  border:1px solid rgba(124,92,255,.24);
+  background:rgba(124,92,255,.10);
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalSleepMeta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.45rem;
+  margin-top:.7rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalSleepMeta span{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.24rem .55rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.18);
+  color:rgba(255,255,255,.92);
+  font-size:.82rem;
+  line-height:1.2;
+}
+.phase2Screen[data-tabsection="journalEntry"] #mealsTableWrap{
+  display:block;
+  width:100%;
+  overflow:auto;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .accGrid,
+.phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .accGrid3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .accTile,
+.phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .phase1ContextCard{
+  min-width:0;
+}
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2Panel{
+    padding:12px;
+    border-radius:18px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2Slot > .card{
+    padding:12px;
+    border-radius:18px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot .row,
+  .phase2Screen[data-tabsection="journalEntry"] #journalActivitySlot .row,
+  .phase2Screen[data-tabsection="journalEntry"] #journalSleepSlot .row,
+  .phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .row,
+  .phase2Screen[data-tabsection="journalEntry"] #journalDiabSlot .row{
+    align-items:stretch !important;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot .row > div,
+  .phase2Screen[data-tabsection="journalEntry"] #journalActivitySlot .row > div,
+  .phase2Screen[data-tabsection="journalEntry"] #journalSleepSlot .row > div,
+  .phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .row > div,
+  .phase2Screen[data-tabsection="journalEntry"] #journalDiabSlot .row > div{
+    flex:1 1 100%;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .accGrid,
+  .phase2Screen[data-tabsection="journalEntry"] #journalMetricsSlot .accGrid3{
+    grid-template-columns:1fr;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalSleepMeta{
+    flex-direction:column;
+    align-items:stretch;
+  }
+}
+
+
+/* ======================================================
+   V6.16 — JOURNAL SIMPLIFICATION CONTEXTE + ORDER + MODES
+   Objectif : supprimer le contexte redondant, garder un rail
+   cohérent (mesures + diabète), remettre les modes repas en 2
+   boutons distincts, et alléger le résumé sommeil.
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] .phase2MealModeRow{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  align-items:stretch !important;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2MealModeBtn{
+  width:100%;
+  min-width:0;
+  min-height:46px;
+  padding:.72rem .8rem;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.045);
+  color:var(--text);
+  font-weight:800;
+  font-size:.94rem;
+  line-height:1.08;
+  text-align:center;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2MealModeBtn:hover,
+.phase2Screen[data-tabsection="journalEntry"] .phase2MealModeBtn:focus-visible{
+  transform:translateY(-1px);
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2MealModeBtn.is-active{
+  border-color:rgba(124,92,255,.34);
+  background:linear-gradient(180deg, rgba(124,92,255,.24), rgba(124,92,255,.14));
+  color:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.12);
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary{
+  display:block;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary .muted{
+  margin-top:0;
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2MealModeRow{
+    gap:8px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2MealModeBtn{
+    min-height:44px;
+    padding:.66rem .64rem;
+    font-size:.88rem;
+  }
+}
+
+/* ======================================================
+   V6.17 — JOURNAL MOBILE SINGLE-COLUMN READ ORDER
+   Objectif : en mobile, empêcher Repas de rester en colonne
+   à côté de Mesures du jour. Le flux doit lire plein écran :
+   Repas -> Activité -> Sommeil -> Poids -> Diabète.
+   ====================================================== */
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2Grid--journal{
+    grid-template-columns:1fr;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2MainCol{
+    order:1;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2RailCol{
+    order:2;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2StickyRail,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2QuickRail{
+    display:grid;
+    gap:14px;
+  }
+}
+
+/* ======================================================
+   PHASE 6.5.1 — JOURNAL / MESURES DU JOUR
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] .phase2QuickRail > .phase2Panel:first-child > .phase2MicroHead{
+  margin-bottom:12px;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2QuickRail > .phase2Panel:first-child > .phase2MicroHead .phase2SectionTag{
+  display:none !important;
+}
+.phase2Screen[data-tabsection="journalEntry"] #phase3BodyMetricsCard > .phase2MicroHead,
+.phase2Screen[data-tabsection="journalEntry"] #phase3BodyMetricsCard > .phase2SectionTag{
+  display:none !important;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase3MiniGrid{
+  grid-template-columns:1fr;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase3MiniGrid--3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:stretch;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase3MiniGrid--3 .accTile{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase3MiniGrid--3 .accTile input{
+  margin-top:auto;
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase3MiniGrid--3{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase3MiniGrid--3 .accTile{
+    padding:12px 10px;
+  }
+}
+
+/* ======================================================
+   V6.18 — JOURNAL DESKTOP READ ORDER ALIGNMENT
+   Objectif : en desktop, suivre un ordre de lecture cohérent
+   avec le mobile : Repas en colonne principale, Diabète sous
+   Repas, Activité et Sommeil empilés à droite, Mesures sous eux.
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] .phase2Grid--journal{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-areas:
+    "meals meals"
+    "activity sleep"
+    "diabetes diabetes"
+    "metrics metrics";
+  align-items:start;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel,
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel > .phase2Slot,
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel > .phase2Slot > *{
+  min-width:0;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--meals{ grid-area:meals; }
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--activity{ grid-area:activity; }
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--sleep{ grid-area:sleep; }
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--metrics{ grid-area:metrics; }
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes{ grid-area:diabetes; }
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--metrics > .phase2MicroHead{
+  margin-bottom:12px;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--metrics > .phase2MicroHead .phase2SectionTag{
+  display:none !important;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--activity > .phase2Slot > .card,
+.phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--sleep > .phase2Slot > .card{
+  height:100%;
+}
+
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2Grid--journal{
+    grid-template-columns:1fr;
+    grid-template-areas:none;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--meals,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--activity,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--sleep,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--metrics,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes{
+    grid-area:auto;
+  }
+}
+
+
+/* ======================================================
+   V6.15 — JOURNAL HERO ACTIVE STATE + REPAS INFO CAPSULES
+   Objectif : éviter l'état actif permanent du quicknav Journal
+   au sommet de l'écran et transformer dietNote / carbGuardExplain
+   en capsules autonomes propres dans le panel Repas du Journal.
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #dietNote,
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #carbGuardExplain{
+  display:block;
+  width:100%;
+  margin:.35rem 0 0;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(124,92,255,.22);
+  background:rgba(124,92,255,.08);
+  color:rgba(255,255,255,.78);
+  font-size:.9rem;
+  line-height:1.35;
+  box-sizing:border-box;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #carbGuardExplain{
+  margin-top:.55rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #dietNote + #mealName,
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #carbGuardExplain + #dietNote,
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #dietNote + .row,
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #carbGuardExplain + .row{
+  margin-top:.65rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal.is-active{
+  color:var(--text);
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #dietNote,
+  .phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #carbGuardExplain{
+    padding:9px 10px;
+    border-radius:12px;
+    font-size:.84rem;
+  }
+}
+
+
+/* ======================================================
+   V6.19 — JOURNAL DIET NOTE CLEANUP + DESKTOP DIABETES
+   ALIGNMENT + DESKTOP READ ORDER MATCHING MOBILE
+   Objectif : supprimer visuellement carbGuardExplain devenu
+   redondant, remettre Mesures avant Diabète en desktop et
+   réaligner proprement les champs diabète en desktop.
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] .phase2Grid--journal{
+  grid-template-areas:
+    "meals meals"
+    "activity sleep"
+    "metrics metrics"
+    "diabetes diabetes";
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #carbGuardExplain,
+.phase2Screen[data-tabsection="journalEntry"] #carbGuardExplain{
+  display:none !important;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #dietNote{
+  margin-top:.45rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #dietNote + #mealName,
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot #dietNote + .row{
+  margin-top:.7rem;
+}
+
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:14px;
+    align-items:start;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card{
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card > h2,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card > p.muted{
+    margin-left:0;
+    margin-right:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card label{
+    display:block;
+    min-height:2.35em;
+    line-height:1.22;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card input,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card select,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card button{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row{
+    margin-top:.55rem;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row{
+    display:grid;
+    gap:12px;
+    align-items:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row:first-of-type{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row:nth-of-type(2){
+    grid-template-columns:minmax(0, .9fr) minmax(0, .9fr) minmax(0, 1.45fr);
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row > div,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row > div{
+    min-width:0 !important;
+    flex:none !important;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes #diab_dayKpis{
+    display:block;
+    width:100%;
+    margin:.5rem 0 .65rem;
+    align-self:auto !important;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes #diab_dayNote{
+    margin:.15rem 0 .8rem;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type{
+    display:grid;
+    grid-template-columns:minmax(0, 1.15fr) minmax(0, .95fr) minmax(0, 1fr) minmax(0, .9fr);
+    gap:12px;
+    align-items:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > .row{
+    display:contents;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2){
+    display:grid;
+    grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr);
+    gap:12px;
+    align-items:start;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(1){
+    grid-column:1;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(2){
+    grid-column:2;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(3){
+    grid-column:1;
+    align-self:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(4){
+    grid-column:2;
+    align-self:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(3) > button,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(4) > button{
+    width:100%;
+  }
+}
+
+/* ======================================================
+   V6.57 — DIABÈTE DESKTOP REVERT TO PREVIOUS LAYOUT
+   Objectif : reproduire l'affichage desktop "avant" du module
+   diabète : carte journée structurée 2/1/2/1 et carte glycémies
+   structurée KPI + 2x2 + note + labo + boutons.
+   ====================================================== */
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:14px;
+    align-items:stretch;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card > h2,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card > p.muted{
+    margin-left:0;
+    margin-right:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card label{
+    display:block;
+    min-height:0;
+    line-height:1.22;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card input,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card select,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card button{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card > .row{
+    margin-top:.55rem;
+  }
+
+  /* Carte gauche — Journée */
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row{
+    display:grid;
+    gap:12px;
+    align-items:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row:first-of-type{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row:first-of-type > div:nth-child(3){
+    grid-column:1 / -1;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row:nth-of-type(2){
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:first-child > .row:nth-of-type(2) > div:nth-child(3){
+    grid-column:1 / -1;
+  }
+
+  /* Carte droite — Glycémies */
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes #diab_dayKpis{
+    display:block;
+    width:100%;
+    margin:.5rem 0 .65rem;
+    align-self:auto !important;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes #diab_dayNote{
+    display:block;
+    width:100%;
+    margin:.15rem 0 .8rem;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:12px;
+    align-items:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > .row{
+    display:contents;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > div,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div{
+    min-width:0 !important;
+    flex:none !important;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2){
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:12px;
+    align-items:start;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(1),
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(2){
+    grid-column:1 / -1;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(3){
+    grid-column:1;
+    align-self:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(4){
+    grid-column:2;
+    align-self:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(3) > button,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(4) > button{
+    width:100%;
+  }
+}
+
+
+/* ======================================================
+   V6.58 — DIABÈTE DESKTOP (GLYCÉMIES) REVERT EXACT
+   Objectif : reproduire le rendu "avant" de la carte
+   glycémies en desktop :
+   - Valeur + Unité sur une ligne
+   - Moment + Heure sur une ligne
+   - Note pleine largeur
+   - Labo pleine largeur
+   - Boutons sur une ligne
+   ====================================================== */
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2){
+    display:block;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type{
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "value unit"
+      "moment time";
+    gap:12px;
+    align-items:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > div:first-child{
+    grid-area:value;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > .row{
+    grid-area:unit;
+    display:block !important;
+    min-width:0;
+    margin:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > div:nth-of-type(3){
+    grid-area:moment;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > div:nth-of-type(4){
+    grid-area:time;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:first-of-type > input.hidden{
+    display:none !important;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2){
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "note note"
+      "labo labo"
+      "add clear";
+    gap:12px;
+    align-items:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(1){
+    grid-area:note;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(2){
+    grid-area:labo;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(2) details{
+    width:100%;
+    margin-top:0 !important;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(3){
+    grid-area:add;
+    min-width:0;
+    align-self:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(4){
+    grid-area:clear;
+    min-width:0;
+    align-self:end;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(3) > button,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(2) > div:nth-child(4) > button{
+    width:100%;
+  }
+}
+
+/* ======================================================
+   V6.59 — DIABÈTE DESKTOP (GLYCÉMIES) FINAL FIX
+   Le second bloc .row de la carte glycémies est le 3e DIV
+   direct (le KPI compte comme 1er DIV). On cible donc
+   explicitement le bon row pour :
+   - Note pleine largeur
+   - Labo pleine largeur
+   - Ajouter/Vider sur une ligne 2 colonnes
+   ====================================================== */
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3){
+    display:grid !important;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "note note"
+      "labo labo"
+      "add clear";
+    gap:12px;
+    align-items:end;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(1){
+    grid-area:note;
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(1) input{
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(2){
+    grid-area:labo;
+    min-width:0;
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(2) details,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(2) summary{
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(3){
+    grid-area:add;
+    min-width:0;
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(4){
+    grid-area:clear;
+    min-width:0;
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(3) > button,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes .grid > .card:nth-child(2) > .row:nth-of-type(3) > div:nth-child(4) > button{
+    width:100%;
+    display:block;
+  }
+}
+
+/* ======================================================
+   V6.60 — JOURNAL MOBILE STACK HARD FIX
+   Objectif : neutraliser définitivement tout retour à une
+   composition en colonnes sur mobile. Le Journal doit lire
+   en pile pleine largeur : Repas -> Activité -> Sommeil ->
+   Mesures -> Diabète.
+   ====================================================== */
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2Grid.phase2Grid--journal{
+    display:flex !important;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    flex:0 0 auto;
+  }
+
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--meals{ order:1; }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--activity{ order:2; }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--sleep{ order:3; }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--metrics{ order:4; }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2JournalPanel--diabetes{ order:5; }
+}
+
+/* ======================================================
+   V6.61 — HISTORY SCREEN CLEAN COMPOSITION
+   Objectif :
+   - remplacer le contexte hero masqué par un contexte compact réel
+   - garder l’écran en lecture verticale au niveau page
+   - nettoyer l’en-tête calendrier sans placeholders vides
+   - préserver le quicknav existant et le JS métier
+   ====================================================== */
+
+.phase2Screen[data-tabsection="history"] .phase2Grid--history{
+  grid-template-columns:1fr !important;
+}
+.phase2Screen[data-tabsection="history"] .phase2MainCol{
+  order:1 !important;
+}
+.phase2Screen[data-tabsection="history"] .phase2RailCol{
+  order:2 !important;
+}
+.phase2Screen[data-tabsection="history"] .phase2HistoryRail{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.phase2Screen[data-tabsection="history"] #historyV2Card{
+  overflow:hidden;
+}
+.phase2Screen[data-tabsection="history"] #historyV2Card .historyV2Head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(220px,280px);
+  gap:10px;
+  align-items:end;
+}
+.phase2Screen[data-tabsection="history"] #historyV2Card .historyMonthNav{
+  min-width:0;
+}
+.phase2Screen[data-tabsection="history"] #historyV2Card .historyDatePick{
+  min-width:0;
+  width:100%;
+  max-width:280px;
+  justify-self:end;
+}
+.phase2Screen[data-tabsection="history"] #historyV2Card .historyDatePick input[type="date"]{
+  width:100%;
+}
+.phase2Screen[data-tabsection="history"] #historyV2Card .historyV2Layout{
+  margin-top:12px;
+}
+
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="history"] .phase2Grid--history{
+    grid-template-columns:1fr !important;
+  }
+  .phase2Screen[data-tabsection="history"] #historyV2Card .historyV2Head{
+    grid-template-columns:1fr;
+    align-items:stretch;
+  }
+  .phase2Screen[data-tabsection="history"] #historyV2Card .historyDatePick{
+    max-width:none;
+    justify-self:stretch;
+  }
+}
+
+/* ======================================================
+   HISTORIQUE — séparation suivi santé / historique diabète
+   ====================================================== */
+.phase2Screen[data-tabsection="history"] .phase2HistoryPanel--diab .phase2Slot > *:first-child,
+.phase2Screen[data-tabsection="history"] .phase2HistoryPanel--health .phase2Slot > *:first-child{
+  margin-top:0;
+}
+.phase2Screen[data-tabsection="history"] #accDiabHistoryFull.historyDiabAcc{
+  margin-top:0;
+  border-color:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+}
+.phase2Screen[data-tabsection="history"] #accDiabHistoryFull > summary{
+  padding:12px 14px;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabAcc__meta{
+  margin-left:auto;
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.02em;
+  color:rgba(255,255,255,.58);
+}
+.phase2Screen[data-tabsection="history"] .historyDiabAccBody{
+  display:grid;
+  gap:12px;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabIntro{
+  margin:0;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabVisual{
+  display:grid;
+  gap:12px;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabToolbar{
+  display:grid;
+  grid-template-columns:minmax(180px,220px) auto;
+  gap:10px;
+  align-items:end;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabToolbarField,
+.phase2Screen[data-tabsection="history"] .historyDiabToolbarActions{
+  min-width:0;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabToolbarActions{
+  display:flex;
+  justify-content:flex-end;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabToolbarActions > button{
+  width:auto;
+  min-width:160px;
+}
+.phase2Screen[data-tabsection="history"] .diabChartAcc--history{
+  margin-top:0;
+  background:rgba(0,0,0,.12);
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTableWrap{
+  min-width:0;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTableShell{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:rgba(0,0,0,.12);
+  overflow:hidden;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTableHead{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.02);
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTableEyebrow{
+  font-size:.73rem;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.54);
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTableTitle{
+  margin-top:3px;
+  font-size:.96rem;
+  font-weight:900;
+  color:var(--text);
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTableUnit{
+  font-size:.78rem;
+  font-weight:800;
+  color:rgba(255,255,255,.62);
+  white-space:nowrap;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTableWrapInner{
+  margin-top:0;
+  border:none;
+  background:transparent;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTable{
+  width:100%;
+  border-collapse:collapse;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTable th,
+.phase2Screen[data-tabsection="history"] .historyDiabTable td{
+  padding:10px 12px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  vertical-align:top;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTable thead th{
+  position:sticky;
+  top:0;
+  z-index:1;
+  background:rgba(19,24,39,.96);
+  font-size:.78rem;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTable tbody tr:last-child td{
+  border-bottom:none;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTable td:last-child,
+.phase2Screen[data-tabsection="history"] .historyDiabTable th:last-child{
+  text-align:center;
+}
+.phase2Screen[data-tabsection="history"] .historyDiabTable button[data-action="diab-day-del"]{
+  min-width:34px;
+  min-height:34px;
+  padding:.35rem .5rem;
+  border-radius:10px;
+}
+@media (max-width: 820px){
+  .phase2Screen[data-tabsection="history"] .historyDiabToolbar{
+    grid-template-columns:1fr;
+  }
+  .phase2Screen[data-tabsection="history"] .historyDiabToolbarActions{
+    justify-content:stretch;
+  }
+  .phase2Screen[data-tabsection="history"] .historyDiabToolbarActions > button{
+    width:100%;
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="history"] .historyDiabTableHead{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .phase2Screen[data-tabsection="history"] .historyDiabTableUnit{
+    white-space:normal;
+  }
+}
+
+
+/* ======================================================
+   V6.62 — SHELL AVAILABILITY MATRIX
+   Objectif :
+   - garder les quicknav visibles
+   - les rendre inaccessibles quand le panneau cible n’existe pas dans l’état courant
+   - masquer les phase2Panel structurellement vides selon mode / diabète
+   ====================================================== */
+.phase2HeroQuickNav__btn.is-disabled,
+.phase2SettingsJumpFloat__btn.is-disabled,
+.phase2ActionList > button.is-disabled,
+.phase5Banner__actions > button.is-disabled{
+  opacity:.46;
+  filter:saturate(.62);
+  cursor:not-allowed;
+  box-shadow:none;
+}
+.phase2HeroQuickNav__btn.is-disabled strong,
+.phase2SettingsJumpFloat__btn.is-disabled,
+.phase2ActionList > button.is-disabled,
+.phase5Banner__actions > button.is-disabled{
+  color:rgba(255,255,255,.72);
+}
+.phase2HeroQuickNav__btn.is-disabled span{
+  color:rgba(255,255,255,.46);
+}
+.phase2HeroQuickNav__btn.is-disabled:focus-visible,
+.phase2SettingsJumpFloat__btn.is-disabled:focus-visible,
+.phase2ActionList > button.is-disabled:focus-visible,
+.phase5Banner__actions > button.is-disabled:focus-visible{
+  outline:none;
+}
+.phase2JournalPanel.hidden,
+.phase2HistoryPanel.hidden{
+  display:none !important;
+}
+
+
+/* ======================================================
+   PHASE 647 — TODAY HERO + READING LAYOUT ALIGNMENT
+   Objectif :
+   - aligner le hero quick nav Aujourd’hui sur le gabarit des autres pages
+   - remettre les phase1PulseCard en lecture horizontale
+   - placer la lecture consolidée sous la pulse grid
+   ====================================================== */
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today{
+  min-width:0;
+  min-height:56px;
+  padding:.72rem .8rem;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+  align-content:flex-start;
+  text-align:left;
+  gap:.18rem;
+  border-radius:16px;
+  overflow:hidden;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today strong{
+  display:block;
+  width:100%;
+  font-size:.98rem;
+  line-height:1.1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today span{
+  display:-webkit-box;
+  width:100%;
+  font-size:.8rem;
+  line-height:1.2;
+  color:rgba(255,255,255,.68);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today:hover,
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today:focus-visible{
+  transform:translateY(-1px);
+}
+
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase2Panel__head{
+    grid-column:1;
+    grid-row:1;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-column:1;
+    grid-row:2;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+    margin:0;
+    align-self:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot{
+    grid-column:1;
+    grid-row:3;
+    display:block;
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot > #out{
+    margin:0;
+  }
+}
+
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today{
+    min-height:54px;
+    padding:.62rem .64rem;
+    border-radius:14px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today strong{
+    font-size:.9rem;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today span{
+    font-size:.72rem;
+  }
+}
+
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin:10px 0 0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot{
+    display:block;
+  }
+}
+
+
+/* ======================================================
+   PHASE 648 — TODAY HERO WIDTH + PULSEGRID ALIGNMENT
+   Objectif :
+   - faire porter la quicknav Today sur toute la largeur de la hero card
+   - remettre les 6 phase1PulseCard sur 1 ligne desktop
+   - conserver 2 colonnes mobile avec la lecture consolidée dessous
+   ====================================================== */
+.phase2Screen[data-tabsection="today"] .phase2HeroCard--today{
+  display:block;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroCard--today .phase2HeroQuickNav--today{
+  width:100%;
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroCard--today .phase2HeroQuickNav__btn--today{
+  width:100%;
+  min-width:0;
+}
+
+@media (min-width: 981px){
+  .tabSection.is-active.phase2Screen[data-tabsection="today"]{
+    display:block;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol,
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol > .phase2StickyRail,
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol > .phase2StickyRail > .phase2QuickRail{
+    display:block;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol{
+    order:1;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2MainCol{
+    order:2;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2RailCol .phase2QuickRail > .phase2Panel:nth-child(1){
+    width:100%;
+    height:auto;
+    box-sizing:border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase2Panel__head{
+    grid-column:1;
+    grid-row:1;
+    margin-bottom:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-column:1;
+    grid-row:2;
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:10px;
+    margin:0;
+    align-self:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot{
+    grid-column:1;
+    grid-row:3;
+    display:block;
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot > #out{
+    margin:0;
+  }
+}
+
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > .phase1PulseGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin:0;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel > #todayMainSlot{
+    display:block;
+    min-width:0;
+  }
+}
+
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroCard--today .phase2HeroQuickNav--today{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+  }
+}
+
+/* ======================================================
+   TODAY cockpit — quicknav targets + compact summary merge
+   ====================================================== */
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  width:100%;
+  gap:10px;
+}
+
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNavNote{
+  margin:8px 0 0;
+  color:rgba(255,255,255,.62);
+  font-size:.78rem;
+  line-height:1.25;
+}
+
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--cross strong{
+  letter-spacing:.01em;
+}
+
+.phase2Screen[data-tabsection="today"] .phase2Grid--today{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+}
+
+.phase2Screen[data-tabsection="today"] .phase2Grid--today > .phase2MainCol,
+.phase2Screen[data-tabsection="today"] .phase2Grid--today > .phase2MainCol > .phase2Panel{
+  min-width:0;
+}
+
+.phase2Screen[data-tabsection="today"] #todayReadingPanel,
+.phase2Screen[data-tabsection="today"] #out,
+.phase2Screen[data-tabsection="today"] .phase2JournalPanel--meals,
+.phase2Screen[data-tabsection="today"] .phase2JournalPanel--activity,
+.phase2Screen[data-tabsection="today"] .phase2JournalPanel--sleep,
+.phase2Screen[data-tabsection="today"] .settingsPanel--goals{
+  scroll-margin-top:calc(var(--appbar-h,72px) + 18px);
+}
+
+.phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+  margin:0;
+  align-items:stretch;
+}
+
+.phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard{
+  min-width:0;
+  grid-column:auto !important;
+  grid-row:auto !important;
+}
+
+.phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard--goalSummary{
+  grid-column:1 / span 2;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount{
+  margin-top:2px;
+  min-width:0;
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard{
+  margin:0;
+  padding:0;
+  border:0;
+  background:none;
+  box-shadow:none;
+  min-width:0;
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard > h3,
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard > .phase2MicroHead,
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard > .row:last-child{
+  display:none !important;
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard > .row:first-of-type{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px 16px;
+  align-items:start;
+  margin:0;
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard > .row:first-of-type > div{
+  min-width:0 !important;
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard label{
+  display:block;
+  margin:0 0 2px;
+  font-size:11px;
+  line-height:1.25;
+  color:rgba(255,255,255,.62);
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard input{
+  display:block;
+  width:auto;
+  min-height:0;
+  padding:0;
+  border:0;
+  background:none;
+  box-shadow:none;
+  border-radius:0;
+  color:rgba(255,255,255,.96);
+  font-size:.96rem;
+  font-weight:800;
+  line-height:1.14;
+  pointer-events:none;
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard input:focus{
+  outline:none;
+  box-shadow:none;
+}
+
+.phase2Screen[data-tabsection="today"] #todayMainSlot{
+  margin-top:8px;
+}
+
+.phase2Screen[data-tabsection="today"] #todayMainSlot > #out{
+  margin-top:0;
+}
+
+@media (max-width: 860px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard--goalSummary{
+    grid-column:1 / -1;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard > .row:first-of-type{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+/* ======================================================
+   TODAY final — pulsegrid same-row desktop + jumpfloat cues
+   ====================================================== */
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid{
+    display:grid !important;
+    grid-template-columns:repeat(6, minmax(0, 1fr)) !important;
+    grid-auto-flow:row !important;
+    gap:10px !important;
+    align-items:stretch !important;
+    margin:0 !important;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard,
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard--goalSummary{
+    grid-row:1 !important;
+    min-width:0;
+    align-self:stretch;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard--goalSummary{
+    grid-column:1 / span 2 !important;
+  }
+
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard:nth-child(2){ grid-column:3 !important; }
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard:nth-child(3){ grid-column:4 !important; }
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard:nth-child(4){ grid-column:5 !important; }
+  .phase2Screen[data-tabsection="today"] #todayReadingPanel > .phase1PulseGrid > .phase1PulseCard:nth-child(5){ grid-column:6 !important; }
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard label{
+  font-size:.76rem !important;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:none;
+  color:var(--muted2);
+}
+
+.phase2Screen[data-tabsection="today"] .phase1PulseSummaryMount > #miniSummaryGoalCard input{
+  font-size:1.03rem !important;
+  font-weight:800 !important;
+  line-height:1.14 !important;
+}
+
+.phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__note{
+  margin-top:6px;
+  font-size:.72rem;
+  line-height:1.25;
+  color:rgba(255,255,255,.62);
+}
+
+/* ======================================================
+   V6.60.1 — JOURNAL SLEEP SUMMARY + DURATION SPLIT FIXES
+   Cible : finition sobre sans toucher au moteur.
+   - structure de résumé sommeil stable
+   - score cohérent sur 100
+   - colonnes durée sport/sommeil repliables en mobile
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] .durationSplitGrid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:.5rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary{
+  display:block;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary .sleepSummaryTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary #sleepSummaryDur{
+  line-height:1;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary #sleepSummaryScore{
+  white-space:nowrap;
+  margin-top:0;
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] .durationSplitGrid{
+    grid-template-columns:1fr;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #sleepSummary .sleepSummaryTop{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:.3rem;
+  }
+}
+
+
+/* ======================================================
+   PHASE 6.60 — HERO CROSS-SCREEN NORMALIZATION
+   Scope : desktop uniquement
+   Objectif :
+   - aligner l'écart visuel status bar -> hero sur la référence Today
+   - verrouiller une hauteur commune des quick nav hero sur la référence History
+   ====================================================== */
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="today"] > .phase2HeroCard,
+  .phase2Screen[data-tabsection="journalEntry"] > .phase2HeroCard,
+  .phase2Screen[data-tabsection="history"] > .phase2HeroCard,
+  .phase2Screen[data-tabsection="settings"] > .phase2HeroCard{
+    margin-top: 9.6px;
+  }
+
+  /* Réglages était compacté à 16px, ce qui créait un décalage visuel
+     avec Today / Journal / History malgré un margin-top identique. */
+  .phase2Screen[data-tabsection="settings"] > .phase2HeroCard{
+    padding: 18px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings{
+    align-items: stretch;
+    grid-auto-rows: 56px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn{
+    height: 100%;
+    min-height: 56px;
+    box-sizing: border-box;
+  }
+}
+
+
+/* ======================================================
+   PHASE 6.61 — HERO QUICKNAV TEXT VISIBILITY NORMALIZATION
+   Scope : desktop uniquement
+   Objectif :
+   - reprendre un même schéma de lisibilité interne sur les 4 pages
+   - réduire l'effet de texte “mangé” par les marges latérales
+   - augmenter de 5px la hauteur commune des quicknav hero
+   ====================================================== */
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings{
+    grid-auto-rows: 61px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn{
+    min-height: 61px;
+    height: 100%;
+    padding: 9px 10px 8px;
+    gap: 2px;
+    box-sizing: border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn strong{
+    line-height: 1.06;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn span{
+    line-height: 1.16;
+  }
+}
+
+
+/* ======================================================
+   PHASE 6.62 — HERO QUICKNAV HEIGHT + TEXT POSITION LOCK
+   Scope : desktop + mobile
+   Objectif :
+   - porter la hauteur desktop commune à 68px
+   - figer aussi la hauteur et la position interne en mobile
+   - unifier le placement du titre et du sous-texte sur les 4 pages
+   ====================================================== */
+@media (min-width: 981px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings{
+    grid-auto-rows: 68px;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn{
+    min-height: 68px;
+    height: 68px;
+    padding: 10px 11px 9px;
+    gap: 3px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    box-sizing: border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn strong{
+    min-height: 1.08em;
+    line-height: 1.08;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn span{
+    min-height: 2.28em;
+    line-height: 1.14;
+  }
+}
+
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings{
+    grid-auto-rows: 64px;
+    align-items: stretch;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn{
+    min-height: 64px;
+    height: 64px;
+    padding: 8px 9px 7px;
+    gap: 2px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    box-sizing: border-box;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn strong,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn strong{
+    width: 100%;
+    min-height: 1.06em;
+    line-height: 1.06;
+    font-size: .9rem;
+  }
+
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history > .phase2HeroQuickNav__btn span,
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn span{
+    width: 100%;
+    min-height: 2.16em;
+    line-height: 1.12;
+    font-size: .72rem;
+  }
+}
+
+/* ======================================================
+   PHASE 6.60 — Sleep panel finish pass
+   Scope: Journal > Sommeil
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] .sleepRangeGrid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:.5rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] .sleepEditorMainRow{
+  align-items:flex-start;
+}
+.phase2Screen[data-tabsection="journalEntry"] .sleepScoreRow{
+  display:block;
+}
+.phase2Screen[data-tabsection="journalEntry"] .sleepScoreRow > div{
+  width:100%;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepScore{
+  width:100%;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepBed,
+.phase2Screen[data-tabsection="journalEntry"] #sleepWake,
+.phase2Screen[data-tabsection="journalEntry"] #sleepHh,
+.phase2Screen[data-tabsection="journalEntry"] #sleepMm{
+  width:100%;
+  min-width:0;
+  color:#fffffb;
+  -webkit-text-fill-color:#fffffb;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepBed,
+.phase2Screen[data-tabsection="journalEntry"] #sleepWake{
+  //padding-right:2rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary{
+  display:block;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary .sleepSummaryTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  flex-wrap:nowrap;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary .sleepSummaryMetaRight{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.5rem;
+  flex:0 0 auto;
+  min-width:max-content;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary #sleepSummaryDur,
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary #sleepSummaryScore{
+  white-space:nowrap;
+}
+.phase2Screen[data-tabsection="journalEntry"] #btnSleepDelete{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:44px;
+  height:28px;
+  padding:7.2px 9.6px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  background:rgba(255,255,255,.03);
+  color:#fffffb;
+  line-height:1;
+  box-sizing:border-box;
+  position:static;
+  margin:0;
+  flex:0 0 auto;
+}
+.phase2Screen[data-tabsection="journalEntry"] #btnSleepDelete:hover{
+  background:rgba(255,255,255,.06);
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummaryRange{
+  white-space:nowrap;
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] .sleepRangeGrid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #sleepSummary .sleepSummaryTop{
+    flex-direction:row;
+    align-items:center;
+    gap:.5rem;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #sleepSummaryRange{
+    white-space:normal;
+  }
+}
+
+
+/* ======================================================
+   PHASE 6.60 — Sleep empty state visibility
+   Scope: Journal > Sommeil
+   ====================================================== */
+.phase2Screen[data-tabsection="journalEntry"] #sleepEmptyNote{
+  display:block;
+  margin-top:10px;
+  color:rgba(255,255,255,.72);
+  font-size:.92rem;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepEmptyNote.is-hidden{
+  display:none !important;
+}
+.phase2Screen[data-tabsection="journalEntry"] #sleepSummary.is-hidden{
+  display:none !important;
+}
+
+/* ======================================================
+   PHASE 6.6.3 — BINARY PROFILE READINESS
+   ====================================================== */
+.phase5GateCard--access[data-profile="missing"]{
+  border-color:rgba(255,184,77,.28);
+  background:linear-gradient(180deg, rgba(255,184,77,.10), rgba(255,255,255,.035));
+}
+.phase5GateCard--access[data-profile="ready"]{
+  border-color:rgba(46,204,113,.22);
+}
+.phase5BinaryState{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.45rem .55rem;
+  margin-top:10px;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(7,13,27,.34);
+}
+.phase5BinaryState__dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  flex:0 0 auto;
+  background:rgba(255,184,77,.95);
+  box-shadow:0 0 0 4px rgba(255,184,77,.16);
+}
+.phase5BinaryState__label{
+  font-size:.86rem;
+  color:var(--text);
+}
+.phase5BinaryState__meta{
+  font-size:.8rem;
+  color:var(--muted);
+}
+.phase5BinaryState[data-binary="ready"]{
+  border-color:rgba(46,204,113,.18);
+  background:rgba(46,204,113,.08);
+}
+.phase5BinaryState[data-binary="ready"] .phase5BinaryState__dot{
+  background:rgba(46,204,113,.95);
+  box-shadow:0 0 0 4px rgba(46,204,113,.14);
+}
+.phase2BinaryPanel{
+  margin:0 0 12px;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+}
+.phase2BinaryPanel[data-binary="missing"]{
+  border-color:rgba(255,184,77,.28);
+  background:linear-gradient(180deg, rgba(255,184,77,.08), rgba(255,255,255,.035));
+}
+.phase2BinaryPanel[data-binary="ready"]{
+  border-color:rgba(46,204,113,.20);
+  background:linear-gradient(180deg, rgba(46,204,113,.08), rgba(255,255,255,.03));
+}
+.phase2BinaryPanel__row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:start;
+}
+.phase2BinaryPanel__eyebrow{
+  font-size:.74rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--muted2);
+  margin-bottom:6px;
+}
+.phase2BinaryPanel__title{
+  font-size:1rem;
+  font-weight:800;
+  color:var(--text);
+}
+.phase2BinaryPanel__text{
+  margin-top:4px;
+  font-size:.88rem;
+  line-height:1.45;
+  color:var(--muted);
+}
+.phase2BinaryPanel__badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  padding:.35rem .7rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  font-size:.8rem;
+  font-weight:800;
+  color:var(--text);
+  background:rgba(7,13,27,.34);
+  white-space:nowrap;
+}
+
+
+/* gate keeps base access-app behavior; quicknav readiness styling preserved below */
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
+  gap:.22rem;
+  justify-content:flex-start;
+  align-items:flex-start;
+  min-height:84px;
+  padding:.84rem .96rem .82rem;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state{
+  display:block;
+  width:100%;
+  max-width:100%;
+  margin-top:3px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:none;
+  color:var(--muted2);
+  font-size:.74rem;
+  font-weight:400;
+  line-height:1.25;
+  letter-spacing:0;
+  white-space:normal;
+  text-align:left;
+  overflow:visible;
+  text-overflow:clip;
+  -webkit-line-clamp:unset;
+  line-clamp:unset;
+  overflow-wrap:anywhere;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state strong{
+  font-weight:700;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings[data-ready="ready"]{
+  border-color:rgba(46,204,113,.24);
+  box-shadow:inset 0 0 0 1px rgba(46,204,113,.08);
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings[data-ready="ready"] .phase2HeroQuickNav__state{
+  color:rgba(255,255,255,.78);
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings[data-ready="missing"]{
+  border-color:rgba(255,184,77,.24);
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings[data-ready="missing"] .phase2HeroQuickNav__state{
+  color:rgba(255,240,211,.78);
+}
+@media (max-width: 860px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
+    min-height:86px;
+    padding:.78rem .86rem .8rem;
+    gap:.18rem;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings strong{
+    font-size:.92rem;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state{
+    margin-top:3px;
+    font-size:.74rem;
+    line-height:1.25;
+  }
+}
+
+
+/* ======================================================
+   PHASE 6.63 — PASSE VISUELLE CIBLÉE
+   Scope : Réglages + Journal
+   Objectif : verrouiller la densité des hero quicknav
+   sans toucher à la structure, au JS ou aux ancrages.
+   ====================================================== */
+
+/* ---- Passe 1 cumulée : Réglages ---- */
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
+  min-height:68px;
+  padding:10px 14px 9px;
+  gap:4px;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings strong{
+  margin:0;
+  line-height:1.08;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state{
+  margin-top:1px;
+  font-size:.74rem;
+  line-height:1.25;
+  font-weight:400;
+  opacity:.85;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state strong{
+  font-weight:600;
+}
+@media (max-width: 860px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
+    min-height:64px;
+    padding:8px 9px 7px;
+    gap:2px;
+  }
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state{
+    margin-top:1px;
+    font-size:.74rem;
+    line-height:1.22;
+  }
+}
+
+/* ---- Passe 2 : Journal ---- */
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal{
+  margin-top:12px;
+  gap:9px;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal{
+  gap:2px;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal strong{
+  font-size:.94rem;
+  line-height:1.08;
+}
+.phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal span{
+  font-size:.74rem;
+  line-height:1.25;
+  color:var(--muted2);
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav--journal{
+    margin-top:10px;
+    gap:8px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal strong{
+    font-size:.9rem;
+    line-height:1.06;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .phase2HeroQuickNav__btn--journal span{
+    font-size:.72rem;
+    line-height:1.12;
+  }
+}
+
+
+/* ---- Passe 3 : Historique / Analyse ---- */
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history{
+  margin-top:12px;
+  gap:9px;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history{
+  min-height:56px;
+  padding:10px 12px 9px;
+  gap:2px;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history strong{
+  font-size:.94rem;
+  line-height:1.08;
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history span{
+  font-size:.74rem;
+  line-height:1.25;
+  color:var(--muted2);
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history[disabled],
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history.is-disabled{
+  opacity:.58;
+  filter:saturate(.58);
+}
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history[disabled] span,
+.phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history.is-disabled span{
+  color:rgba(255,255,255,.42);
+}
+@media (max-width: 860px){
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__toggle{
+    min-height:40px;
+    padding:.58rem .78rem;
+    font-size:.82rem;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__panel{
+    width:min(172px, 58vw);
+    gap:7px;
+    padding:7px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2SettingsJumpFloat__btn{
+    min-height:36px;
+    padding:.5rem .62rem;
+    font-size:.82rem;
+    line-height:1.06;
+  }
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav--history{
+    margin-top:10px;
+    gap:8px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history{
+    min-height:54px;
+    padding:9px 9px 8px;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history strong{
+    font-size:.9rem;
+    line-height:1.06;
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HeroQuickNav__btn--history span{
+    font-size:.72rem;
+    line-height:1.12;
+  }
+}
+
+
+/* ---- Passe 4 : Pilotage ---- */
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+  margin-top:12px;
+  gap:9px;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today{
+  min-height:56px;
+  padding:10px 12px 9px;
+  gap:2px;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today strong{
+  font-size:.94rem;
+  line-height:1.08;
+}
+.phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today span{
+  font-size:.74rem;
+  line-height:1.25;
+  color:var(--muted2);
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav--today{
+    margin-top:10px;
+    gap:8px;
+  }
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today{
+    min-height:54px;
+    padding:9px 9px 8px;
+  }
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today strong{
+    font-size:.9rem;
+    line-height:1.06;
+  }
+  .phase2Screen[data-tabsection="today"] .phase2HeroQuickNav__btn--today span{
+    font-size:.72rem;
+    line-height:1.12;
+  }
+}
+
+
+/* ======================================================
+   V6.33 — JOURNAL MOBILE NOISE REDUCTION
+   Objectif : alléger le Journal mobile sans toucher au moteur.
+   ====================================================== */
+.phase2PanelTitleRow{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+}
+.phase2PanelTitleRow .phase2Panel__title{
+  margin-bottom:0;
+}
+.phase2PanelTitleRow .info-dot{
+  margin-top:-.05rem;
+}
+.phase2DietNoteDisclosure{
+  margin:.35rem 0 0;
+  border:1px solid rgba(124,92,255,.22);
+  border-radius:14px;
+  background:rgba(124,92,255,.08);
+  overflow:hidden;
+}
+.phase2DietNoteDisclosure__summary{
+  cursor:pointer;
+  list-style:none;
+  padding:10px 12px;
+  color:rgba(255,255,255,.92);
+  font-size:.9rem;
+  line-height:1.3;
+  font-weight:800;
+}
+.phase2DietNoteDisclosure__summary::-webkit-details-marker{ display:none; }
+.phase2DietNoteDisclosure__summary::after{
+  content:'▾';
+  float:right;
+  opacity:.75;
+}
+.phase2DietNoteDisclosure[open] .phase2DietNoteDisclosure__summary::after{
+  content:'▴';
+}
+.phase2DietNoteDisclosure__body{
+  padding:0 12px 10px;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot .phase2DietNoteDisclosure #dietNote{
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:rgba(255,255,255,.78);
+  font-size:.9rem;
+  line-height:1.35;
+}
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot .phase2DietNoteDisclosure + .row,
+.phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot .phase2DietNoteDisclosure + #mealName{
+  margin-top:.65rem;
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="journalEntry"] #mealPanelManual > .row.mt-04{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:12px;
+    align-items:start;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #mealPanelManual > .row.mt-04 > div{
+    min-width:0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #mealPanelManual > .row.mt-04 input{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  .phase2DietNoteDisclosure{
+    border-radius:12px;
+  }
+  .phase2DietNoteDisclosure__summary{
+    padding:9px 10px;
+    font-size:.84rem;
+  }
+  .phase2DietNoteDisclosure__body{
+    padding:0 10px 9px;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #journalMealsSlot .phase2DietNoteDisclosure #dietNote{
+    font-size:.84rem;
+  }
+}
+
+
+/* ======================================================
+   PASSE 8 — HISTORIQUE / SUIVI SANTÉ
+   ====================================================== */
+.phase2Screen[data-tabsection="history"] .phase2HistoryPanel--health .phase3LegacyNote{
+  display:none !important;
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="history"] .phase2HistoryPanel--health #phase3BodyCompGrid,
+  .phase2Screen[data-tabsection="history"] .phase2HistoryPanel--health .phase3MiniGrid--3{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .phase2Screen[data-tabsection="history"] .phase2HistoryPanel--health #phase3BodyCompGrid .accTile,
+  .phase2Screen[data-tabsection="history"] .phase2HistoryPanel--health .phase3MiniGrid--3 .accTile{
+    min-width:0;
+  }
+}
+
+
+/* ======================================================
+   PASSE 9 — HISTORIQUE MOBILE / ACCORDÉONS TENDANCE
+   ====================================================== */
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="history"] #accTrendExpert .accGrid,
+  .phase2Screen[data-tabsection="history"] #accHistAdvanced .accGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .phase2Screen[data-tabsection="history"] #accTrendExpert .accTile,
+  .phase2Screen[data-tabsection="history"] #accHistAdvanced .accTile{
+    min-width:0;
+  }
+}
+
+
+/* ======================================================
+   PASSE 10 — HISTORIQUE MOBILE / LABELS AVG7 COMPACTS
+   ====================================================== */
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="history"] #accTrendExpert .accTile label,
+  .phase2Screen[data-tabsection="history"] #accHistAdvanced .accTile label,
+  .phase2Screen[data-tabsection="history"] #accTrendExpert .accTile .muted.tiny,
+  .phase2Screen[data-tabsection="history"] #accHistAdvanced .accTile .muted.tiny{
+    display:block;
+    width:100%;
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}
+
+
+/* ---- Passe ciblée : Réglages mobile / grilles 2 colonnes ---- */
+@media (max-width: 680px){
+  .phase2Screen[data-tabsection="settings"] .settingsRow{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:.7rem;
+    align-items:end;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow > div{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--users > .self-end{
+    align-self:stretch;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow input,
+  .phase2Screen[data-tabsection="settings"] .settingsRow select,
+  .phase2Screen[data-tabsection="settings"] .settingsRow button{
+    width:100%;
+  }
+}
+
+
+
+
+
+/* ---- Passe ciblée : settingsGoalsSlot — hiérarchie visuelle cadrage glucidique ---- */
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardHead{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  gap:.12rem .9rem;
+  margin-top:.55rem;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardHead__note,
+.phase2Screen[data-tabsection="settings"] .settingsCarbOptionsPanel__note{
+  margin:0;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardHead__note{
+  flex:1 1 100%;
+  padding-left:1.45rem;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbOptionsPanel{
+  padding:1rem;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbOptionsPanel__title{
+  margin:0;
+  font-size:1rem;
+  line-height:1.2;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbOptionsToggleRow{
+  margin-top:.45rem;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardToggle,
+.phase2Screen[data-tabsection="settings"] .settingsCarbLowToggle{
+  display:inline-grid !important;
+  grid-template-columns:auto minmax(0,max-content) auto;
+  align-items:center !important;
+  justify-content:flex-start;
+  width:auto;
+  max-width:100%;
+  min-width:0;
+  min-height:0;
+  gap:.3rem;
+  padding:.02rem 0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardToggle{
+  color:var(--text);
+  font-weight:700;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbLowToggle{
+  color:var(--text);
+  font-weight:600;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardToggle > span:nth-of-type(1),
+.phase2Screen[data-tabsection="settings"] .settingsCarbLowToggle > span:nth-of-type(1){
+  min-width:0;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardToggle > span:nth-of-type(1){
+  font-size:.98rem;
+  line-height:1.2;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbLowToggle > span:nth-of-type(1){
+  font-size:.95rem;
+  line-height:1.2;
+}
+
+.phase2Screen[data-tabsection="settings"] #carbGuardBox{
+  padding:.15rem 0 0;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardHead + #carbGuardBox{
+  margin-top:.3rem !important;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbOptionsToggleRow + #lowCarbBox{
+  margin-top:.45rem !important;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbOptionsPanel #lowCarbBox,
+.phase2Screen[data-tabsection="settings"] .settingsCarbOptionsPanel #diabPanelInRepas{
+  margin-top:.8rem;
+}
+
+@media (max-width: 860px){
+  .phase2Screen[data-tabsection="settings"] .settingsCarbGuardHead{
+    display:block;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsCarbGuardHead__note{
+    padding-left:0;
+    margin-top:.12rem;
+  }
+}
+
+/* ---- Passe visuelle ciblée : settingsGoalsSlot — harmoniser les hints de plage ---- */
+.phase2Screen[data-tabsection="settings"] #protRangeHint,
+.phase2Screen[data-tabsection="settings"] #fatRangeHint,
+.phase2Screen[data-tabsection="settings"] #protRangeHint.phaseEllipsisTapTarget,
+.phase2Screen[data-tabsection="settings"] #fatRangeHint.phaseEllipsisTapTarget{
+  margin-top:.25rem;
+  font-size:.92rem;
+  color:var(--muted);
+}
+
+/* ---- Passe ciblée : Réglages mobile / macros compacts + ellipsis ---- */
+@media (max-width: 680px){
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:.7rem;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros > div{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros input,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros select{
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macrosSecondary > #fatPerKgBox[hidden]{
+    display:none !important;
+  }
+
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:.7rem;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox > div,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox > div{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox input,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox select,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox input,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox select{
+    width:100%;
+  }
+
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox select.phaseEllipsisTapTarget{
+    min-width:0;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros .muted.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #protRangeHint.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #fatRangeHint.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbGoalHelp.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #lowCarbHelp.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbCalcStatus.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbCalcCapKg.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros #carbCalcCapSrc.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox .muted.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox .muted.phaseEllipsisTapTarget{
+    display:flex;
+    align-items:center;
+    gap:.42rem;
+    min-width:0;
+    max-width:100%;
+  }
+
+
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox label.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox .muted.phaseEllipsisTapTarget,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox .muted.phaseEllipsisTapTarget{
+    overflow:hidden;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .phaseEllipsisTap__text,
+  .phase2Screen[data-tabsection="settings"] .phaseEllipsisTap__content{
+    display:block;
+    min-width:0;
+    flex:1 1 auto;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .phase2Screen[data-tabsection="settings"] label.phaseEllipsisTapTarget .info-dot{
+    flex:0 0 auto;
+  }
+}
+
+.phaseEllipsisTapPopover{
+  position:fixed;
+  z-index:9999;
+  max-width:min(320px, calc(100vw - 16px));
+  padding:.55rem .7rem;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(22,24,30,.98);
+  color:#f5f7fb;
+  box-shadow:0 12px 28px rgba(0,0,0,.34);
+  font-size:.82rem;
+  line-height:1.35;
+  word-break:break-word;
+  pointer-events:none;
+}
+
+.phaseEllipsisTapPopover[hidden]{
+  display:none !important;
+}
+
+/* ---- Passe D3 : Pilotage — supprimer le gap desktop superflu au-dessus du panel ---- */
+@media (min-width: 981px){
+  .tabSection.is-active.phase2Screen[data-tabsection="today"]{
+    display:block;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+    margin-top:14px;
+    align-items:start;
+  }
+
+  .phase2Screen[data-tabsection="today"] > .phase2Grid--today > .phase2MainCol{
+    grid-column:auto !important;
+    grid-row:auto !important;
+  }
+}
+
+
+/* ---- Passe visuelle ciblée : settingsGoalsSlot — cadrage glucidique ---- */
+.phase2Screen[data-tabsection="settings"] .settingsCarbModesRow{
+  align-items:stretch;
+  gap:.7rem;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbToggle{
+  min-height:44px;
+  width:100%;
+  padding:.72rem .85rem;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.03);
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbToggle--primary{
+  border-color:rgba(255,255,255,.18);
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  font-weight:700;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbToggle--secondary{
+  color:var(--muted);
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbToggle input{
+  flex:0 0 auto;
+}
+
+.phase2Screen[data-tabsection="settings"] .settingsCarbGuardToggle input,
+.phase2Screen[data-tabsection="settings"] .settingsCarbLowToggle input{
+  margin:0;
+}
+
+@media (min-width: 681px){
+  .phase2Screen[data-tabsection="settings"] .settingsCarbModesRow{
+    display:grid;
+    grid-template-columns:minmax(0,1.2fr) minmax(0,.95fr);
+  }
+}
+
+@media (max-width: 680px){
+  .phase2Screen[data-tabsection="settings"] .settingsCarbModesRow{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsCarbModePrimary{
+    order:1;
+  }
+
+  .phase2Screen[data-tabsection="settings"] .settingsCarbModeSecondary{
+    order:2;
+  }
+}
+
+
+/* ---- Passe locale : Pilotage — masquer les spinbuttons natifs sans toucher au global ---- */
+.phase2Screen[data-tabsection="today"] input[type="number"]::-webkit-outer-spin-button,
+.phase2Screen[data-tabsection="today"] input[type="number"]::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.phase2Screen[data-tabsection="today"] input[type="number"]{
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+
+/* Compromis — éviter l'écrasement du tableau sur petits écrans */
+#compromiseBox table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+#compromiseBox th{
+  width:220px;
+  vertical-align:top;
+  padding:.22rem .75rem .22rem 0;
+}
+#compromiseBox td{
+  min-width:0;
+  vertical-align:top;
+  padding:.22rem 0;
+}
+#compromiseBox td,
+#compromiseBox th,
+#compromiseBox li{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+
+@media (max-width: 680px){
+  #compromiseBox{
+    padding:.65rem .7rem;
+  }
+  #compromiseBox table,
+  #compromiseBox tbody{
+    display:block;
+    width:100%;
+  }
+  #compromiseBox tr{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    gap:.2rem .65rem;
+    padding:.42rem 0;
+    border-top:1px dashed rgba(0,0,0,.10);
+  }
+  #compromiseBox tr:first-child{
+    border-top:0;
+    padding-top:0;
+  }
+  #compromiseBox th,
+  #compromiseBox td{
+    display:block;
+    width:auto !important;
+    margin:0;
+    padding:0;
+  }
+  #compromiseBox th{
+    flex:0 1 11.5rem;
+    min-width:9.5rem;
+  }
+  #compromiseBox td{
+    flex:1 1 16rem;
+  }
+  #compromiseBox ul{
+    margin:.15rem 0 .05rem;
+  }
+}
+
+@media (max-width: 460px){
+  #compromiseBox tr{
+    gap:.18rem 0;
+  }
+  #compromiseBox th,
+  #compromiseBox td{
+    flex:1 1 100%;
+  }
+  #compromiseBox th{
+    min-width:0;
+  }
+}
+
+
+/* ---- Passe ciblée : info-dot Lexique + bouton recalcul Réglages ---- */
+.phase5GateCard--help .phase5GateCard__titleRow{
+  align-items:flex-start;
+}
+
+.phase2Screen[data-tabsection="settings"] #calcSpendBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:auto;
+  max-width:100%;
+  min-height:40px;
+  padding:.55rem .95rem;
+  white-space:nowrap;
+}
+
+@media (max-width: 680px){
+  .phase2Screen[data-tabsection="settings"] #calcSpendBtn{
+    width:100%;
+    white-space:normal;
+  }
+}

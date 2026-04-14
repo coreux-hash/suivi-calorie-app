@@ -1,0 +1,8 @@
+Analyse du problème quicknav Réglages
+
+1. Les boutons du hero étaient bien branchés.
+2. Le handler utilisait scrollIntoView({block:'start'}).
+3. Avec la topbar fixe + la navigation sticky, la cible arrivait sous le shell.
+4. Le correctif CSS scroll-margin-top précédent était statique et n'a pas réglé le cas réel.
+5. Correction retenue : calcul JS de l'offset réel du shell, puis window.scrollTo() vers le panel visé.
+6. Le bloc CSS scroll-margin-top a été retiré pour éviter les compensations concurrentes.

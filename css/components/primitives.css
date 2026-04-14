@@ -1,0 +1,151 @@
+/* ======================================================
+   3) PRIMITIVES — CARDS / BUTTONS / FORMS / CHIPS
+   ====================================================== */
+.card{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  margin: .9rem 0;
+  width:100%;
+  min-width:0;
+}
+
+label{
+  display:block;
+  font-size:.92rem;
+  margin:.2rem 0 .25rem;
+  color: rgba(255,255,255,.82);
+  font-weight:650;
+}
+
+input,
+select,
+button,
+textarea{
+  width:100%;
+  padding:.55rem .6rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.16);
+  color: var(--text);
+  font-size:.98rem;
+  outline:none;
+}
+
+input::placeholder,
+textarea::placeholder{ color: rgba(255,255,255,.45); }
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible{
+  border-color: rgba(124,92,255,.55);
+  box-shadow: 0 0 0 4px rgba(124,92,255,.20);
+}
+
+button{
+  border:1px solid rgba(255,255,255,.18);
+  background: linear-gradient(135deg, rgba(124,92,255,.35), rgba(124,92,255,.15));
+  cursor:pointer;
+  font-weight:750;
+}
+button:hover{ filter: brightness(1.05); }
+
+.btn-danger{
+  border-color: rgba(255,255,255,.10);
+  background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.08));
+}
+.btn-mini{
+  padding:.28rem .55rem;
+  border-radius: 12px;
+  width:auto;
+}
+.btn-wide{ width:100%; border-radius:14px; }
+.btn-icon{ padding:.45rem .6rem; line-height:1; }
+.btn-ghost{
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.03);
+  color: var(--muted);
+  font-weight:800;
+}
+.btn-ghost:hover{ background: rgba(255,255,255,.06); color: var(--text); }
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.2rem .55rem;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:999px;
+  background: rgba(0,0,0,.18);
+  color: rgba(255,255,255,.90);
+  font-size:.85rem;
+  max-width:100%;
+}
+.pill b{ font-weight:800; }
+.pill .muted{ white-space:nowrap; }
+.pill.ok{ background: var(--ok); border-color: var(--ok-b); }
+.pill.warn{ background: var(--warn); border-color: var(--warn-b); }
+.pill.bad{ background: var(--bad); border-color: var(--bad-b); }
+.pill.diab{ background: rgba(150,90,220,.22); border-color: rgba(200,150,255,.22); }
+
+.chipRow{ display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.15rem; }
+.chip{
+  display:inline-flex;
+  align-items:center;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.18);
+  color: rgba(240,245,255,.92);
+  padding:.42rem .65rem;
+  border-radius: 999px;
+  font-size:.92rem;
+  line-height:1;
+  cursor:pointer;
+  user-select:none;
+}
+.chip:hover{ background: rgba(255,255,255,.06); }
+.chip.is-selected{
+  border-color: rgba(87, 255, 162, .35);
+  box-shadow: 0 0 0 3px rgba(87, 255, 162, .10);
+  background: rgba(87, 255, 162, .10);
+}
+
+.seg{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  padding:6px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.05);
+  width: fit-content;
+}
+.seg button{
+  width:auto;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  font-weight:800;
+  border-radius:14px;
+  padding:.45rem .65rem;
+  cursor:pointer;
+  line-height:1;
+}
+.seg button:hover{ background: rgba(255,255,255,.08); }
+.seg button.is-active{
+  background: linear-gradient(135deg, rgba(124,92,255,.32), rgba(45,212,191,.20));
+  border-color: rgba(255,255,255,.26);
+}
+
+.surface-card,
+.sideCard,
+.sportEditor,
+.sleepSummary,
+.miniChart,
+.phase2Panel,
+.phase2HeroCard{
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+}

@@ -1,0 +1,4 @@
+Origine: css/screens/flowviz.css
+Patche: css/screens/flowviz.css
+Action: remplacer uniquement ce fichier.
+Correctif: ajout de scroll-margin-top sur .settingsPanel pour compenser le shell sticky (topbar + nav + gate/status).

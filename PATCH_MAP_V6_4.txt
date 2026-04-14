@@ -1,0 +1,21 @@
+V6.4 — SETTINGS HERO QUICK NAV
+
+Fichier d’origine -> fichier patché -> action à faire
+
+1) index.html
+Origine : index.html
+Patché  : index.html
+Action  : remplacer le fichier complet.
+Effet   : ajout de 3 boutons d’appel rapides dans le hero Réglages : Profils, Montre, Objectifs.
+
+2) css/screens/flowviz.css
+Origine : css/screens/flowviz.css
+Patché  : css/screens/flowviz.css
+Action  : remplacer le fichier complet.
+Effet   : layout hero quick nav en 1 ligne / 3 colonnes sur desktop et mobile, style tabBtn compact.
+
+3) js/legacy/legacy-app-init.js
+Origine : js/legacy/legacy-app-init.js
+Patché  : js/legacy/legacy-app-init.js
+Action  : remplacer le fichier complet.
+Effet   : scroll fluide vers les 3 panels Réglages correspondants.

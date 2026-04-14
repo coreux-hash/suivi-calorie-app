@@ -1,0 +1,15 @@
+index.html → phase638_settings_mobile_sticky_v6_5/index.html → remplacer le fichier complet
+- ajout d'une sous-navigation mobile sticky propre à Réglages, entre le hero et les panels
+- conservation des 3 gros boutons du hero
+- suppression de la classe tabBtn sur les boutons du hero pour éviter toute collision avec la navigation primaire
+
+css/screens/flowviz.css → phase638_settings_mobile_sticky_v6_5/css/screens/flowviz.css → remplacer le fichier complet
+- ajout du style .phase2SettingsJumpBar mobile only
+- 3 colonnes compactes sticky sous l'appbar
+- état actif visuel sur la section courante
+- aucun changement desktop
+
+js/legacy/legacy-app-init.js → phase638_settings_mobile_sticky_v6_5/js/legacy/legacy-app-init.js → remplacer le fichier complet
+- scroll vers les panneaux Réglages avec offset réel du shell
+- activation visuelle des boutons de section
+- synchronisation active au scroll pour hero + sous-nav sticky

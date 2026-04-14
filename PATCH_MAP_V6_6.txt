@@ -1,0 +1,21 @@
+V6.6 — SETTINGS MOBILE FLOATING JUMP BUBBLE
+
+Fichier d’origine -> fichier corrigé -> action à faire
+
+1) index.html
+Origine : index.html
+Corrigé : index.html
+Action : remplacer le fichier complet.
+Changement : suppression de la jumpbar sticky mobile et ajout d’une bulle flottante mobile-only avec toggle + panneau 3 actions.
+
+2) js/legacy/legacy-app-init.js
+Origine : js/legacy/legacy-app-init.js
+Corrigé : js/legacy/legacy-app-init.js
+Action : remplacer le fichier complet.
+Changement : gestion ouverture/fermeture de la bulle, apparition après dépassement du hero, fermeture au clic externe, fermeture après sélection d’une section, maintien du scroll offset réel.
+
+3) css/screens/flowviz.css
+Origine : css/screens/flowviz.css
+Corrigé : css/screens/flowviz.css
+Action : remplacer le fichier complet.
+Changement : suppression du bloc sticky V6.5 et remplacement par une bulle flottante mobile-only ancrée côté droit bas, avec panneau dépliable.

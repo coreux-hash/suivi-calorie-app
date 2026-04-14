@@ -1,0 +1,7 @@
+Phase 6.38 — split legacy-engine-compute.js into domain files:
+- legacy-watch-ui.js
+- legacy-engine-core.js
+- legacy-app-init.js
+- legacy-carb-patches.js
+- legacy-compromise-ui.js
+legacy-engine-compute.js kept as archive, no longer loaded by index.html.

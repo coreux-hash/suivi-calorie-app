@@ -1,0 +1,4 @@
+Phase 6.35
+- Extraction du dernier gros script inline historique vers js/legacy/legacy-inline-main.js
+- HTML désormais sans bloc <script> inline principal
+- Ordre de chargement conservé: legacy-inline-main -> shell observers -> compat-ui -> cloud-refresh -> cloud-sync -> phase6-bootstrap

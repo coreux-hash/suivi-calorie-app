@@ -1,0 +1,13 @@
+Phase 6.36 — scission de legacy-inline-main.js par domaines.
+
+Nouveaux fichiers :
+- js/legacy/legacy-core-runtime.js
+- js/legacy/legacy-profiles-settings.js
+- js/legacy/legacy-meals-body.js
+- js/legacy/legacy-history.js
+- js/legacy/legacy-sport-sleep.js
+- js/legacy/legacy-diabetes.js
+- js/legacy/legacy-engine-compute.js
+
+Le HTML ne charge plus legacy-inline-main.js.
+Le fichier legacy-inline-main.js est conservé comme archive de transition.

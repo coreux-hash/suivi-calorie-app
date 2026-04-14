@@ -1,0 +1,11 @@
+V6.6.2 — SETTINGS FLOAT PANEL CLOSED BY DEFAULT
+
+Fichiers modifiés
+1. css/screens/flowviz.css
+   - Ajout d'une règle explicite : #settingsJumpFloatPanel[hidden]{display:none!important;}
+   - Garantit que le panneau n'apparaisse jamais sans clic.
+
+2. js/legacy/legacy-app-init.js
+   - Fermeture forcée du panneau à l'initialisation.
+   - Fermeture forcée après la première synchronisation d'état.
+   - Le bouton Sections reste seul visible tant qu'aucun clic n'ouvre le panneau.

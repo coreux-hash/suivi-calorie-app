@@ -1,0 +1,4 @@
+Phase 6.32
+- Extracted cloud post-merge refresh queue to js/legacy/legacy-cloud-refresh.js
+- Split CSS into physical files under css/base, css/layout, css/components, css/screens, css/utils
+- Reordered legacy scripts so compat-ui loads before cloud-sync and bootstrap remains last.

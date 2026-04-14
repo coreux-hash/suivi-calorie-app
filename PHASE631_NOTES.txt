@@ -1,0 +1,1 @@
+Phase 6.31: extracted legacy compat UI/helpers to js/legacy/legacy-compat-ui.js and kept thin wrappers inline for safe load-order compatibility.

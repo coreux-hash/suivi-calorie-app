@@ -1,0 +1,50 @@
+V6.1 — SHELL COMPACT / MOBILE-FIRST NAV
+
+Fichier d’origine -> fichier patché -> action à faire
+
+1) index.html
+Origine : index.html
+Patché  : index.html
+Action  : remplacer le fichier complet.
+Effet   :
+- menu mobile enrichi en vraie navigation + accès transverses
+- ajout du wrapper #phase5ShellLine
+- phase5GlobalGateBar gardée dans le DOM mais prête à sortir du flux mobile
+
+2) css/layout/shell.css
+Origine : css/layout/shell.css
+Patché  : css/layout/shell.css
+Action  : remplacer le fichier complet.
+Effet   :
+- groupes dans le menuPanel
+- styles pour les actions transverses du menu mobile
+- menuBtn exploité comme vraie navigation mobile
+
+3) css/screens/flowviz.css
+Origine : css/screens/flowviz.css
+Patché  : css/screens/flowviz.css
+Action  : remplacer le fichier complet.
+Effet   :
+- phase1PrimaryNav masquée en mobile
+- phase1PrimaryNav allégée en desktop
+- phase5GlobalGateBar retirée du flux normal en mobile (masquée)
+- phase5StatusBar compactée
+- phase5GlobalGateBar et phase5StatusBar visuellement posées sur une même ligne compacte en desktop
+
+4) js/legacy/legacy-app-init.js
+Origine : js/legacy/legacy-app-init.js
+Patché  : js/legacy/legacy-app-init.js
+Action  : remplacer le fichier complet.
+Effet   :
+- branche les accès transverses depuis le menu mobile
+- met à jour le libellé Conditions d’accès dans le menu selon l’état verrouillé/déverrouillé
+- referme le menu après ouverture des modales
+
+5) js/legacy/legacy-shell-observers.js
+Origine : js/legacy/legacy-shell-observers.js
+Patché  : js/legacy/legacy-shell-observers.js
+Action  : remplacer le fichier complet.
+Effet   :
+- injecte phase5StatusBar dans #phase5ShellLine
+- garde phase5StatusBar et phase5GlobalGateBar séparées dans le DOM
+- les place sur la même ligne compacte en desktop via le wrapper

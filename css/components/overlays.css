@@ -1,0 +1,162 @@
+/* ======================================================
+   12) TOOLTIP PINNÉ (JS)
+   ====================================================== */
+.kpi-info{
+  margin-left:.35rem;
+  font-weight:900;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;height:22px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.18);
+}
+
+.pinned-tip{
+  position:fixed;
+  z-index:9999;
+  display:none;
+  width:min(360px, 92vw);
+  max-height:70vh;
+  overflow:auto;
+  white-space:pre-wrap;
+  background:#0b0f1a;
+  color:#fff;
+  border-radius:14px;
+  padding:.7rem .8rem;
+  font-size:.92rem;
+  line-height:1.25;
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.pinned-tip__head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:.6rem;
+  margin-bottom:.4rem;
+  font-weight:900;
+}
+
+.pinned-tip__close{
+  width:auto;
+  min-width:auto;
+  padding:.2rem .45rem;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  cursor:pointer;
+}
+
+/* ======================================================
+   13) CGU LOCK
+   ====================================================== */
+.tabBtn.is-disabled, .menuItem.is-disabled{
+  opacity:.45;
+  pointer-events:none;
+}
+
+
+.info-dot{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  font-size:13px;
+  line-height:1;
+  margin-left:.35rem;
+  color:rgba(255,255,255,.92);
+  background: rgba(0,0,0,.18);
+  cursor:pointer;
+  user-select:none;
+}
+
+.tip{ position:relative; }
+.tip::after{
+  content: attr(data-tip);
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom: calc(100% + 10px);
+  width: min(340px, 90vw);
+  white-space: pre-wrap;
+  background:#0b0f1a;
+  color:#fff;
+  border-radius:14px;
+  padding:.7rem .8rem;
+  font-size:.92rem;
+  line-height:1.25;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:9999;
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.12);
+}
+.tip::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom: calc(100% + 4px);
+  border:6px solid transparent;
+  border-top-color:#0b0f1a;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:9999;
+}
+.tip:hover::after, .tip:hover::before,
+.tip:focus::after, .tip:focus::before,
+.tip:focus-visible::after, .tip:focus-visible::before{
+  opacity:1;
+  visibility:visible;
+}
+
+.modal{ display:none; }
+.modal.is-open{ display:block; }
+.modal__backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:9998; }
+.modal__panel{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(560px, 92vw);
+  max-height:78vh;
+  overflow:auto;
+  background: rgba(12,16,28,.92);
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.14);
+  z-index:9999;
+  box-shadow: 0 20px 75px rgba(0,0,0,.55);
+}
+.modal__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.6rem;
+  padding:.85rem .9rem;
+  border-bottom:1px solid rgba(255,255,255,.10);
+}
+.modal__title{ font-weight:900; }
+.modal__close{ width:auto; min-width:auto; padding:.35rem .55rem; border-radius:12px; }
+.modal__body{
+  padding:.85rem .9rem;
+  white-space:pre-wrap;
+  line-height:1.35;
+  font-size:.98rem;
+  color: rgba(255,255,255,.90);
+}
+.modal__foot{
+  padding:.75rem .9rem;
+  border-top:1px solid rgba(255,255,255,.10);
+  display:flex;
+  justify-content:flex-end;
+}

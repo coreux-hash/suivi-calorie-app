@@ -1,0 +1,14 @@
+/* ======================================================
+   8) SECTIONS / MODES / VISIBILITÉ
+   ====================================================== */
+.tabSection{ display:none; }
+.tabSection.is-active{ display:block; }
+
+[data-um="sport"], [data-um="expert"]{ display:none; }
+body[data-usemode="sport"] [data-um="sport"]{ display:block; }
+body[data-usemode="expert"] [data-um="sport"],
+body[data-usemode="expert"] [data-um="expert"]{ display:block; }
+
+details summary::-webkit-details-marker{ display:none; }
+details summary:before{ content:"▸ "; display:inline-block; margin-right:.2rem; }
+details[open] summary:before{ content:"▾ "; }

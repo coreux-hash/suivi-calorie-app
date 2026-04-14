@@ -1,0 +1,22 @@
+PHASE 6.29 — AUDIT JS/LEGACY
+
+Audit effectué :
+1. Vérification de l'ordre de chargement des scripts externes.
+2. Vérification syntaxique de tous les fichiers JS externes via node --check.
+3. Vérification syntaxique du script inline principal extrait du HTML.
+4. Contrôle des coutures bootstrap/core/boundaries/render/flows/features.
+
+Corrections intégrées :
+- fermeture correcte du script inline principal avant chargement des scripts externes ;
+- bootstrap rendu défensif pour la résolution de $ et isoToday ;
+- package cohérent avec tous les fichiers attendus dans la bonne arborescence.
+
+Ordre de chargement attendu :
+1. js/phase6/phase6-core.js
+2. js/phase6/phase6-boundaries.js
+3. js/phase6/phase6-render.js
+4. js/phase6/phase6-flows.js
+5. js/phase6/phase6-features.js
+6. js/legacy/legacy-storage-days.js
+7. js/legacy/legacy-shell-observers.js
+8. js/phase6/phase6-bootstrap.js

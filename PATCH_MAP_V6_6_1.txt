@@ -1,0 +1,12 @@
+Fichier d’origine -> fichier corrigé -> action à faire
+
+1) css/screens/flowviz.css
+Remplacer le fichier complet.
+- La bulle n'est plus ancrée en bas à droite.
+- Le bouton Sections est placé sous l'appbar, à droite.
+- Le panneau s'ouvre sous le bouton, plus au-dessus.
+
+2) js/legacy/legacy-app-init.js
+Remplacer le fichier complet.
+- Synchronise la variable CSS --appbar-h avec la hauteur réelle de .appbar.
+- Garde le comportement d'apparition/fermeture existant.

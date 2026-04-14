@@ -1,0 +1,4 @@
+Phase 6.30
+- Extracted legacy cloud sync/auth block to js/legacy/legacy-cloud-sync.js
+- Preserved historical globals: handleMagicLinkCallback, setCloudStatus, cloudGetUser, buildLocalSnapshot, writeSnapshotToLocal, mergeSnapshots, cloudPull, cloudPush, cloudSync, cloudLoginWithEmail, cloudLogout
+- Prepared css folder skeleton: css/base, css/layout, css/components, css/screens, css/utils

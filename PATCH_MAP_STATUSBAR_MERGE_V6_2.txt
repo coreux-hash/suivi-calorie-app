@@ -1,0 +1,23 @@
+Fichier d’origine → fichier patché → action à faire
+
+1) index.html
+Origine : index.html
+Patché : index.html
+Action : remplacer le fichier complet.
+- Supprime le panneau "Contexte actif" du hero Réglages.
+- Réglages garde seulement le hero puis les panels métier.
+
+2) js/legacy/legacy-shell-observers.js
+Origine : js/legacy/legacy-shell-observers.js
+Patché : js/legacy/legacy-shell-observers.js
+Action : remplacer le fichier complet.
+- Ajoute "Compromis choisi" et "Objectif suivi" dans phase5StatusBar.
+- Alimente leurs phase5StatusValue / phase5StatusMeta.
+- Ne rend plus les anciennes contextCards Réglages.
+
+3) css/screens/flowviz.css
+Origine : css/screens/flowviz.css
+Patché : css/screens/flowviz.css
+Action : remplacer le fichier complet.
+- Passe phase5StatusBar à 6 cartes : desktop 3 colonnes × 2 lignes, mobile 2 colonnes × 3 lignes.
+- Ne touche pas à la gatebar ni aux autres zones.

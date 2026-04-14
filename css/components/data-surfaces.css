@@ -1,0 +1,595 @@
+/* ======================================================
+   4) TABLES / WRAPPERS
+   ====================================================== */
+.meals-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; max-width:100%; }
+.meals-wrap table.wide-table{
+  width: max-content;
+  min-width: 600px;
+  table-layout: fixed;
+}
+
+/* colonnes wide-table */
+.meals-wrap table.wide-table th:nth-child(1),
+.meals-wrap table.wide-table td:nth-child(1){ width: 70px; }
+
+.meals-wrap table.wide-table th:nth-child(2),
+.meals-wrap table.wide-table td:nth-child(2){ width: 50px; }
+
+.meals-wrap table.wide-table th:nth-child(3),
+.meals-wrap table.wide-table td:nth-child(3),
+.meals-wrap table.wide-table th:nth-child(4),
+.meals-wrap table.wide-table td:nth-child(4),
+.meals-wrap table.wide-table th:nth-child(5),
+.meals-wrap table.wide-table td:nth-child(5){ width: 50px; }
+
+.meals-wrap table.wide-table th:nth-child(6),
+.meals-wrap table.wide-table td:nth-child(6){ width: 20px; }
+
+.meals-wrap th, .meals-wrap td{ white-space: nowrap; }
+.meals-wrap td{ min-width:0; }
+.meals-wrap td input{ width:100%; min-width:0; box-sizing:border-box; }
+
+/* Historique */
+.history-table{ table-layout: fixed; }
+
+/* colonnes history-table */
+.history-table th:nth-child(1),
+.history-table td:nth-child(1){ width: 110px; }
+
+.history-table th:nth-child(2),
+.history-table td:nth-child(2){ width: 80px; }
+
+.history-table th:nth-child(3),
+.history-table td:nth-child(3){ width: 90px; }
+
+.history-table th:nth-child(4),
+.history-table td:nth-child(4){ width: 120px; }
+
+.history-table th:nth-child(5),
+.history-table td:nth-child(5){ width: 160px; }
+
+.history-table th:nth-child(6),
+.history-table td:nth-child(6){ width: 90px; }
+
+.history-table th:nth-child(7),
+.history-table td:nth-child(7){ width: 100px; }
+
+.history-table th:nth-child(8),
+.history-table td:nth-child(8){ width: 70px; }
+
+.history-table th:nth-child(9),
+.history-table td:nth-child(9){ width: 90px; }
+
+/* ======================================================
+   HISTORIQUE V2 — CALENDRIER + SIDEBAR
+   ====================================================== */
+.historyV2Head{ align-items:flex-end; justify-content:space-between; gap:.6rem; flex-wrap:wrap; }
+.historyMonthNav{ display:flex; align-items:center; gap:.5rem; }
+#histMonth{
+  width: 160px; min-width: 140px;
+  padding:.5rem .65rem; border-radius: 12px;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+}
+.historyDatePick{ min-width: 190px; }
+.historyDatePick input[type="date"]{ width:100%; }
+.historyV2Layout{ display:grid; grid-template-columns: 1.35fr .85fr; gap: 12px; align-items:start; }
+.histCalendarWrap{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: 16px;
+  padding: 10px;
+}
+.histCalendarDow{
+  display:grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 4px 8px;
+  color: var(--muted);
+  font-weight:800;
+  font-size:.78rem;
+}
+.histCalendarGrid{ display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.calDay{
+  position:relative;
+  min-height: 0;
+  aspect-ratio: 1 / 1.05; /* quasi-carré (un peu plus haut) */
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  padding: 10px;
+  cursor:pointer;
+  text-align:left;
+  color: var(--text);
+}
+
+/* Nolio-like strict (Option B) : pas de KPI dans les cases.
+   - archivé : fond léger
+   - filled : halo vert (box-shadow, ne change pas la géométrie) */
+.calDay.is-past{ background: rgba(255,255,255,.04); }
+.calDay.is-filled{
+  box-shadow:
+    0 0 0 1px rgba(90,220,170,.28),
+    0 0 22px rgba(90,220,170,.14);
+}
+
+/* Calendrier : point sur chaque jour (graphisme unique) */
+.calDay{ position:relative; }
+.calDay::after{
+  content:"";
+  position:absolute;
+  top:10px; right:10px;
+  width:9.6px; height:9.6px;
+  border-radius:999px;
+  background: rgba(255,255,255,.22);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.25);
+  opacity:.55;
+}
+.calDay.is-filled::after{
+  background: rgba(90,220,170,.95);
+  opacity:1;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 0 10px rgba(90,220,170,.35);
+}
+
+.calDay:hover{ background: rgba(255,255,255,.06); }
+.calDay:active{ transform: translateY(1px); }
+.calDay.is-out{ opacity:.45; }
+.calDay.is-selected{
+  outline: 2px solid rgba(124,92,255,.45);
+  box-shadow: 0 0 0 5px rgba(124,92,255,.12);
+}
+.calDay.is-empty{
+  cursor: default;
+  opacity: .65;
+}
+.calDay.is-empty:hover{ background: rgba(0,0,0,.12); }
+@media (max-width: 560px){
+  .histCalendarWrap{ padding: 8px; }
+  .histCalendarGrid{ gap: 6px; }
+  .histCalendarDow{ gap: 6px; font-size:.75rem; }
+  .calDay{ padding: 6px; border-radius: 12px; min-height: 0; aspect-ratio: 1 / 1; }
+  .calNum{ font-size:.85rem; }
+}
+.calNum{ font-weight:900; font-size:.95rem; opacity:.92; }
+
+
+.histSidebar{ display:block; }
+
+/* Nolio-like strict: lisibilité du mois d'abord (cellules quasi carrées + sidebar scroll) */
+.histCalendarWrap{ display:flex; flex-direction:column; }
+.histCalendarGrid{ align-content:start; }
+.histSidebar{
+  position: sticky;
+  top: 12px;
+  overflow: auto;
+  padding-right: 4px;
+}
+@media (max-width: 880px){
+  .histSidebar{ position: static; max-height: none; overflow: visible; padding-right: 0; }
+}
+
+.histSideStack{ display:flex; flex-direction:column; gap:10px; }
+.sideCard{
+  background: rgba(255,255,255,.05);
+  padding: 12px;
+}
+
+.kpiSportList{ display:flex; flex-direction:column; gap:6px; }
+.kpiSportRow{ display:flex; justify-content:space-between; gap:10px; padding:6px 8px; border-radius:12px; border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.10); }
+.kpiSportType{ font-weight:900; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 58%; }
+.kpiSportMeta{ color: var(--muted); font-weight:800; white-space:nowrap; }
+@media (max-width:560px){
+  .kpiSportType{ max-width: 52%; }
+}
+
+.sideCard h3{ margin:0 0 .35rem 0; font-size:.95rem; }
+.sideBig{ font-size: 1.55rem; font-weight: 950; letter-spacing: .2px; }
+.sideRow{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:baseline; }
+.sideRow .muted{ font-size:.9rem; }
+.sideTitleRow{ display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+.diabCard{ background: rgba(110,60,160,.18); border-color: rgba(200,150,255,.16); }
+
+.sr-only{
+  position:absolute; width:1px;height:1px; padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0); border:0;
+}
+
+/* Sport sessions list */
+.is-hidden{ display:none !important; }
+
+
+.sportEditor, .sleepEditor{ background: rgba(0,0,0,.10); padding: 12px; }
+.sleepSummary{ background: rgba(255,255,255,.04); padding: 12px; }
+.sleepSummaryTop{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.sleepSummaryRange{ margin-top:.45rem; font-weight:950; letter-spacing:.2px; }
+
+.sportSessionsList{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.sportSessionRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+}
+.sportSessionRow .left{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.sportSessionRow .title{ font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sportSessionRow .meta{ color: var(--muted); font-size:.9rem; }
+
+.sportSessionRow .right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+.loadBar{
+  width: 84px;
+  height: 10px;
+  border-radius: 999px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  overflow:hidden;
+}
+.loadBar i{
+  display:block;
+  height:100%;
+  background: rgba(90,220,170,.55);
+}
+.loadPct{
+  font-weight:900;
+  color: var(--muted);
+  min-width: 38px;
+  text-align:right;
+}
+
+/* Mobile: buttons full width in sport/sleep cards */
+@media (max-width: 560px){
+  #sportCard .row button,
+  #sleepCard .row button,
+  #sportCard .btn-wide{
+    width:100%;
+  }
+  .sportSessionRow{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .sportSessionRow .right{
+    justify-content:space-between;
+  }
+  .loadBar{ width: 100%; flex:1; }
+  .loadPct{ min-width: 44px; text-align:right; }
+}
+
+/* ======================================================
+   HISTORIQUE — REDUCTION DU BRUIT (accordéons)
+   ====================================================== */
+.acc{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: 16px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.acc > summary{
+  list-style:none;
+  cursor:pointer;
+  user-select:none;
+  padding: 12px 12px;
+  font-weight: 950;
+  color: var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.acc > summary::-webkit-details-marker{ display:none; }
+.acc > summary:after{
+  content: "▾";
+  opacity:.75;
+  font-weight: 900;
+}
+.acc[open] > summary:after{ content:"▴"; }
+.accBody{
+  padding: 12px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.accGrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+}
+.accGrid3{
+  grid-template-columns: repeat(3, minmax(0,1fr));
+}
+.accTile{
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.10);
+  border-radius: 14px;
+  padding: 10px;
+}
+.accTile label{ display:block; font-weight:900; margin-bottom:6px; }
+.accSubTitle{
+  margin: 10px 0 8px;
+  font-weight: 950;
+  opacity:.9;
+}
+.tiny{ font-size:.85rem; }
+@media (max-width: 520px){
+  .accGrid{ grid-template-columns: 1fr; }
+  .accGrid3{ grid-template-columns: 1fr; }
+  .acc > summary{ padding: 11px 12px; }
+}
+
+/* Responsive history layout */
+@media (max-width: 880px){
+  .historyV2Layout{ grid-template-columns: 1fr; }
+  .histSidebar{ position: static; max-height: none; overflow: visible; padding-right: 0; }
+}
+
+@media (max-width: 560px){
+  .historyV2Head{ flex-direction:column; align-items:stretch; gap:.5rem; }
+  .historyMonthNav{ width:100%; justify-content:space-between; }
+  #histMonth{ width:100%; min-width:0; }
+  .historyDatePick{ width:100%; min-width:0; }
+  .historyDatePick input[type="date"]{ width:100%; }
+  .historyV2Head .self-end{ width:100%; }
+  .historyV2Head button,
+  #btnDiabHistRefresh{ width:100%; }
+
+  .histCalendarWrap{ padding:8px; border-radius:14px; }
+  .histCalendarDow{ gap:6px; padding:0 2px 6px; font-size:.72rem; }
+  .histCalendarGrid{ gap:6px; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .historyV2Layout > *{ min-width:0; }
+  #histSidebar, .histCalendarWrap{ max-width:100%; }
+
+  .calDay{
+    min-width:0;
+    min-height:64px;
+    padding:8px;
+    border-radius:12px;
+    aspect-ratio: 1 / 1;
+  }
+  .calNum{ font-size:.88rem; }
+  .calLine1 .k{ font-size:.86rem; }
+  .calLine2{ font-size:.78rem; }
+  .calEmpty{ padding:6px 7px; border-radius:11px; font-size:.78rem; }
+
+  .pill{ padding:5px 7px; border-radius:11px; font-size:.76rem; }
+  .calDay .pill:nth-of-type(2){ display:none; }
+
+  #diabHistoryBody .row{ flex-wrap:wrap; }
+  #diabHistoryBody input[type="date"]{ width:100%; }
+
+  #diab_daysHistory_suivi,
+  #diabHistoryTableWrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; width:100%; max-width:100%; }
+  #diab_daysHistory_suivi table,
+  #diabHistoryTableWrap table{ min-width:760px; }
+  #diab_daysHistory_suivi th,
+  #diab_daysHistory_suivi td,
+  #diabHistoryTableWrap th,
+  #diabHistoryTableWrap td{ white-space:nowrap; }
+
+  .histSideStack{ gap:8px; }
+  .sideCard{ padding:10px; border-radius:14px; }
+  .sideBig{ font-size:1.35rem; }
+  .sideRow{ gap:8px 10px; }
+  .sideRow .muted{ font-size:.86rem; }
+}
+
+/* ======================================================
+   HISTORIQUE V2 — STYLE "NOLIO-LIKE" (jours vides / remplis)
+   Objectif : cases compactes, cartes colorées, vides discrets.
+   ====================================================== */
+.calDay{
+  min-height: 0;
+  padding: 8px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:6px;
+}
+.calNum{
+  font-weight:950;
+  font-size:.92rem;
+  opacity:.92;
+}
+.calEmpty{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:auto;
+  padding: 5px 6px;
+  border-radius: 12px;
+  border:1px dashed rgba(255,255,255,.14);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.65);
+  font-weight:850;
+}
+.calLine1{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px;
+  font-weight:950;
+}
+.calLine1 .k{ font-size:.92rem; }
+.calLine1 .d{ font-size:.86rem; opacity:.9; }
+.calLine2{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:850;
+  font-size:.78rem;
+  opacity:.92;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.calIcon{ opacity:.9; }
+.calSub{ opacity:.82; font-weight:800; }
+
+/* table-wrap (défini 2 fois dans ton CSS : on le garde tel quel) */
+.table-wrap{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  width:100%;
+  border-radius: 16px;
+}
+
+table{width:100%;border-collapse:collapse;margin-top:.5rem;background: rgba(0,0,0,.12)}
+th,td{
+  border:1px solid rgba(255,255,255,.10);
+  padding:.55rem;
+  text-align:center
+}
+th{
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.88);
+}
+.td-left{text-align:left}
+
+/* Table scroll générique */
+.table-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  width:100%;
+  max-width:100%;
+}
+.table-scroll table{
+  min-width:720px;
+  table-layout:fixed;
+}
+.table-scroll th,
+.table-scroll td{ white-space:nowrap; }
+.table-scroll td{ min-width:0; }
+.table-scroll td input{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* ======================================================
+   6) NOTICE / WARN BLOCKS
+   ====================================================== */
+.notice{
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.12);
+  padding:.75rem .85rem;
+  background: rgba(255,255,255,.06);
+  margin:.6rem 0;
+}
+.notice--warn{background: var(--warn); border-color: var(--warn-b)}
+.notice--ok{background: var(--ok); border-color: var(--ok-b)}
+.notice--bad{background: var(--bad); border-color: var(--bad-b)}
+.noticeTitle{font-weight:850;margin-bottom:.25rem}
+.notice p{margin:.25rem 0;color: rgba(255,255,255,.88)}
+.notice ul{margin:.35rem 0 0; padding-left:1.1rem; color: rgba(255,255,255,.85)}
+.notice li{margin:.15rem 0}
+
+/* Bonus lisibilité messages 7j */
+.notice p{ margin: 0 0 .35rem 0; }
+.notice ul{ margin: .2rem 0 0 1.1rem; padding: 0; }
+.notice ul li{ margin-bottom: .25rem; }
+
+
+
+/* Notice compacte déroulante — visible sur tous les espaces */
+details.notice.notice--compact{
+  padding:.7rem .9rem;
+}
+details.notice.notice--compact > summary{
+  list-style:none;
+  cursor:pointer;
+}
+details.notice.notice--compact > summary::-webkit-details-marker{
+  display:none;
+}
+.noticeCompactSummary::marker{
+  content:"";
+}
+.noticeCompactSummary::before{
+  content:none !important;
+  display:none !important;
+}
+.noticeCompactHead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.75rem;
+}
+.noticeCompactHead .noticeTitle{
+  margin:0;
+}
+.noticeCompactToggle{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  font-size:.78rem;
+  font-weight:800;
+  color:rgba(255,255,255,.84);
+  white-space:nowrap;
+}
+.noticeCompactToggle::before{
+  content:"▾";
+  font-size:.78rem;
+  line-height:1;
+}
+.noticeCompactToggle__open{
+  display:none;
+}
+.noticeCompactPreview{
+  display:grid;
+  gap:.22rem;
+  margin-top:.35rem;
+  padding-right:1.35rem;
+}
+.noticeCompactPreview p,
+.noticeCompactBody p{
+  margin:0;
+}
+.noticeCompactBody{
+  display:none;
+  margin-top:.35rem;
+}
+details.notice.notice--compact[open] .noticeCompactToggle::before{
+  content:"▴";
+}
+details.notice.notice--compact[open] .noticeCompactToggle__closed,
+details.notice.notice--compact[open] .noticeCompactPreview{
+  display:none;
+}
+details.notice.notice--compact[open] .noticeCompactToggle__open{
+  display:inline;
+}
+details.notice.notice--compact[open] .noticeCompactBody{
+  display:block;
+}
+@media (max-width: 640px){
+  details.notice.notice--compact{
+    padding:.65rem .8rem;
+  }
+  .noticeCompactHead{
+    gap:.55rem;
+  }
+  .noticeCompactToggle{
+    font-size:.72rem;
+  }
+  .noticeCompactPreview{
+    gap:.18rem;
+    padding-right:0;
+  }
+}

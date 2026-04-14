@@ -1,0 +1,20 @@
+PATCH — ESPACE 4 / RÉGLAGES
+
+Périmètre : wording, labels, aides, titres et microcopy de l'espace Réglages.
+
+Fichiers modifiés :
+- index.html
+- js/legacy/legacy-inline-main.js
+- js/legacy/legacy-compat-ui.js
+- js/legacy/legacy-engine-core.js
+- js/legacy/legacy-engine-compute.js
+
+Aucun changement :
+- logique métier
+- moteur de calcul
+- mappings
+- événements
+- IDs
+- structure responsive
+
+Aucun patch CSS nécessaire sur cette passe.
