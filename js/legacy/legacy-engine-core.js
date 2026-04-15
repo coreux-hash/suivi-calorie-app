@@ -256,8 +256,27 @@ function compute(saveToJournal = true, scrollToResults = false) {
     carbCapGPerKg = Math.max(0, toNum($("carbCapGPerKg").value));  // 0 = off
     ratioCP       = Math.max(0, toNum($("ratioCP").value));        // 0 = off
 
-    const ratioCPApplied       = (!lowCarbEnabled && ratioCP > 0) ? ratioCP : 0; // ratio libre ou objectif (si repères ON), ignoré en low-carb
-        carbCapGPerKgApplied = carbGuardEnabled ? carbCapGPerKg : 0; // g/kg seulement quand repères ON
+    let ratioCPApplied       = (!lowCarbEnabled && ratioCP > 0) ? ratioCP : 0; // ratio libre ou objectif (si repères ON), ignoré en low-carb
+    carbCapGPerKgApplied = carbGuardEnabled ? carbCapGPerKg : 0; // g/kg seulement quand repères ON
+
+    const ratioPolicy = (typeof window !== 'undefined' && window.__TrainingLoadMatrix && typeof window.__TrainingLoadMatrix.getRuntimeRatioPolicy === 'function')
+      ? window.__TrainingLoadMatrix.getRuntimeRatioPolicy({
+          compromiseId: $("compromiseSelect")?.value || '',
+          carbGoal: $("carbGoal")?.value || '',
+          ratioCP,
+          targetP,
+          weightKg: w,
+          carbGuardEnabled,
+          lowCarbEnabled
+        })
+      : null;
+
+    if (ratioPolicy && ratioPolicy.mode === 'off') {
+      ratioCPApplied = 0;
+    } else if (ratioPolicy && ratioPolicy.mode === 'soft') {
+      const eff = Math.max(0, toNum(ratioPolicy.effectiveRatio));
+      if (eff > 0) ratioCPApplied = Math.max(ratioCPApplied || 0, eff);
+    }
 
     if (carbCapGPerKgApplied > 0) capFromGkg = carbCapGPerKgApplied * w;
 

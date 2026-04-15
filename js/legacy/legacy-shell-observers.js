@@ -607,11 +607,13 @@ function phase5NormalizeTutorialKey(title){
   if (/Profil/i.test(txt)) return 'profile';
   if (/Objectif/i.test(txt)) return 'goal';
   if (/Dépense|Depense|Montre/i.test(txt)) return 'spend';
+  if (/Charge d’activité et compromis|Charge d'activit[eé] et compromis/i.test(txt)) return 'activity_load';
   if (/Repères glucides|Cadrage glucidique|Glucides/i.test(txt)) return 'carbs';
   if (/Repas/i.test(txt)) return 'meals';
   if (/Synthèse/i.test(txt)) return 'summary';
+  if (/Charge récente et réglages|Charge recente et reglages/i.test(txt)) return 'history_activity_load';
   if (/Lecture des tendances|Historique/i.test(txt)) return 'history';
-  if (/Diabète/i.test(txt)) return 'diabetes';
+  if (/Diabète|Diabete/i.test(txt)) return 'diabetes';
   if (/Cloud/i.test(txt)) return 'cloud';
   if (/Lexicon|Lexique/i.test(txt)) return 'lexicon';
   return txt.toLowerCase();
@@ -620,8 +622,8 @@ function phase5TutorialSpaceMap(){
   return {
     today:['summary'],
     journalEntry:['meals','carbs'],
-    history:['history'],
-    settings:['profile','goal','spend']
+    history:['history','history_activity_load'],
+    settings:['profile','goal','spend','activity_load']
   };
 }
 function phase5CollectTutorialSources(){

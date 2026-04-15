@@ -419,6 +419,24 @@
     </div>
   </details>
 
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Charge récente et réglages</summary>
+  <div class="muted mt-025">
+    Le système adapte certains compromis nutritionnels en fonction de ton volume d’activité récent.<br/>
+    <br/>
+    Pour que les recommandations soient cohérentes :<br/>
+    ajoute idéalement 7 jours d’activité<br/>
+    les activités peuvent être saisies rétroactivement<br/>
+    seules les 7 dernières journées influencent les réglages<br/>
+    <br/>
+    Plus ton historique reflète ta pratique réelle, plus les compromis seront adaptés.<br/>
+    <br/>
+    Exemple :<br/>
+    faible volume → priorité au contrôle énergétique<br/>
+    volume élevé → priorité au soutien de la performance et de la récupération
+  </div>
+</details>
+
 </section>
 
 <section class="tabSection phase2Screen phase4Screen" data-tabsection="settings">
@@ -442,7 +460,11 @@
         <strong>Objectifs</strong>
         <span class="phase2HeroQuickNav__state" id="settingsQuickStatusGoals">Preset + cible · à compléter</span>
       </button>
-    </div>
+      <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="goals" data-ready="missing" type="button" id="settingsQuickLoadBtn">
+        <strong>Sport</strong>
+        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusLoad">Charge récente · à compléter</span>
+      </button>
+      </div>
   </div>
 
 
@@ -452,6 +474,8 @@
       <button class="phase2SettingsJumpFloat__btn" data-settings-jump="profile" type="button">Profils</button>
       <button class="phase2SettingsJumpFloat__btn" data-settings-jump="watch" type="button">Montre</button>
       <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Objectifs</button>
+    <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Charge</button>
+    <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Charge</button>
     </div>
   </div>
 
@@ -848,6 +872,17 @@
   </div>
 </details>
 
+<details class="notice notice--ok mt-06" open>
+  <summary class="noticeTitle">Mini-tuto — Charge d’activité et compromis</summary>
+  <div class="muted mt-025">
+    <b>Des réglages qui s’adaptent à ton activité</b><br/>
+    Les recommandations évoluent automatiquement selon ton volume d’activité récent.<br/>
+    Plus la charge sportive augmente, plus l’équilibre nutritionnel s’ajuste pour soutenir l’énergie disponible, la récupération et la performance.<br/>
+    Le système analyse les 7 derniers jours d’activité pour déterminer le niveau de charge (L0 → L4) et adapter certains paramètres comme le ratio glucides/protéines.<br/>
+    Pour un réglage optimal, ajoute environ 7 jours d’activité récente.<br/>
+    Tu peux enregistrer des séances passées afin que les recommandations correspondent à ta pratique réelle.
+  </div>
+</details>
 
 <div class="card">
 <h2>Réglages des macros</h2>
@@ -861,14 +896,20 @@
      (sans boutons, sans modal)
      ========================================================= -->
 <div class="card panel-subtle">
-  <h2>Compromis optimal</h2>
+  <h2>Compromis optimal <span aria-label="Informations — niveaux de charge" class="info-dot" role="button" tabindex="0" data-modalhtml="<div><b>Tableau niveaux de charge</b></div><table><thead><tr><th>niveau</th><th>heures sport / semaine</th><th>lecture produit</th></tr></thead><tbody><tr><td><b>L0</b></td><td>0 à &lt; 3 h</td><td>faible charge</td></tr><tr><td><b>L1</b></td><td>3 à &lt; 5 h</td><td>charge modérée</td></tr><tr><td><b>L2</b></td><td>5 à &lt; 8 h</td><td>charge sportive réelle</td></tr><tr><td><b>L3</b></td><td>8 à &lt; 10 h</td><td>charge élevée</td></tr><tr><td><b>L4</b></td><td>≥ 10 h</td><td>charge très élevée / bloc perf</td></tr></tbody></table><div class='muted mt-025'>Ce niveau permet d’adapter automatiquement certains compromis nutritionnels.</div>">ℹ️</span></h2>
   <p class="muted">
     Choisis un compromis : un résumé s’affiche. Le détail est repliable si tu veux comprendre.
   </p>
 
   <div class="row">
     <div>
-      <label for="compromiseSelect">Choisir un compromis</label>
+      <label for="compromiseSelect">Choisir un compromis <span aria-label="Informations — icônes compromis" class="info-dot" role="button" tabindex="0" data-modaltext="Lecture des indicateurs
+
+⚠ indique qu’un compromis reste possible mais peut être moins adapté à ton volume d’entraînement actuel.
+
+⛔ indique qu’un compromis est peu cohérent avec ta charge sportive et risque de limiter la performance ou la récupération.
+
+Ces indications permettent de garder une cohérence entre ton objectif, ton niveau d’activité et l’équilibre nutritionnel recommandé.">ℹ️</span></label>
       <select id="compromiseSelect">
         <option value="">— Sélectionner —</option>
         <option value="eq_global">Équilibre global (base santé / stabilité)</option>
@@ -988,14 +1029,18 @@ Si les glucides sont limités, les lipides peuvent augmenter pour compenser." ro
   <div>
     <label>
       Ratio glucides/protéines
-      <span aria-label="Informations — Ratio C/P" class="info-dot" data-modaltext="Comment le ratio est utilisé: Il fixe une relation maximale entre glucides et protéines.
-Repères glucidiques OFF : Tu fixes ton ratio C/P pour te donner un repère (ça n’impose rien automatiquement).
-Repères glucidiques ON : le ratio devient une limite glucides,
-et l’app ajuste le reste pour rester sur la cible kcal." role="button" tabindex="0">ℹ️</span>
+      <span aria-label="Informations — Ratio C/P" class="info-dot" data-modaltext="Comment le ratio est utilisé : il fixe une relation maximale entre glucides et protéines.
+Repères glucidiques OFF : tu fixes ton ratio C/P pour te donner un repère (ça n’impose rien automatiquement).
+Repères glucidiques ON : le ratio devient une limite glucides, et l’app ajuste le reste pour rester sur la cible kcal.
+
+Selon ton activité récente, le ratio glucides/protéines peut :
+ON → équilibrer les macros pour la recomposition ou le contrôle énergétique
+SOFT → devenir plus souple pour soutenir la récupération
+OFF → s’effacer lorsque la performance nécessite davantage d’énergie" role="button" tabindex="0">ℹ️</span>
     </label>
     <input id="ratioCP" max="2.0" min="0.0" step="0.1" type="number" inputmode="decimal" value="0"/>
     <input aria-hidden="true" class="hidden" disabled="" id="ratioCPText" type="text" value="--"/>
-    <div class="muted 0-25" style="margin-top:.25rem">
+    <div id="ratioCPExample" class="muted 0-25" style="margin-top:.25rem">
       Exemple : 1.0 = autant de glucides que de protéines.
     </div>
   </div>
@@ -2581,6 +2626,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 <script src="./js/legacy/legacy-compat-ui.js"></script>
 <script src="./js/legacy/legacy-carb-patches.js"></script>
 <script src="./js/legacy/legacy-compromise-ui.js"></script>
+<script src="./js/legacy/legacy-training-load-matrix.js"></script>
 <script src="./js/legacy/legacy-cloud-refresh.js"></script>
 <script src="./js/legacy/legacy-cloud-sync.js"></script>
 <script src="./js/phase6/phase6-bootstrap.js"></script>

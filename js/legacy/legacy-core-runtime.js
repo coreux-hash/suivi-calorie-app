@@ -223,9 +223,10 @@ function initPinnedTips(){
     const dot = e.target?.closest?.(".info-dot");
     if (!dot) return;
     e.preventDefault();
+    const html = dot.getAttribute("data-modalhtml") || "";
     const txt = dot.getAttribute("data-modaltext") || dot.getAttribute("data-help") || "";
-    if (!txt) return;
-    try { openWatchInfoModal(txt); } catch(err) { console.warn("info-dot modal failed", err); }
+    if (!html && !txt) return;
+    try { openWatchInfoModal(html ? { html } : txt); } catch(err) { console.warn("info-dot modal failed", err); }
   });
 
   // 2) Assure l'existence de l'élément d'explication des repères glucidiques
@@ -248,6 +249,9 @@ function initPinnedTips(){
       /* PATCH v17.1 — ergonomie info-dots + zone explicative repères */
       .info-dot{ cursor:pointer; }
       #carbGuardExplain{ opacity:.92; }
+      #watchInfoBody table{ width:100%; border-collapse:collapse; color:inherit; }
+      #watchInfoBody th,#watchInfoBody td{ border-bottom:1px solid rgba(255,255,255,.14); padding:.45rem .35rem; text-align:left; vertical-align:top; }
+      #watchInfoBody th{ font-weight:700; }
     `,
     apply(){
       if (document.getElementById("patchStyle")) return;

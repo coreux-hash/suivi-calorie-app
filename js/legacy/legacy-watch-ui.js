@@ -3,11 +3,15 @@ function isSportOrExpert(){
   const m = document.body.getAttribute("data-usemode");
   return (m === "sport" || m === "expert");
 }
-function openWatchInfoModal(text){
+function openWatchInfoModal(content){
   const modal = $("watchInfoModal");
   const body  = $("watchInfoBody");
   if (!modal || !body) return;
-  body.textContent = text || "Aucune information.";
+  if (content && typeof content === 'object' && content.html) {
+    body.innerHTML = content.html;
+  } else {
+    body.textContent = content || "Aucune information.";
+  }
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
 }
