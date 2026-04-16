@@ -700,9 +700,7 @@ function formatMacroBalance(macros){
         })();
 
     const list = (arr)=> `<ul class="muted" style="margin:.25rem 0 .25rem 1.1rem">${arr.map(x=>`<li>${_esc(x)}</li>`).join("")}</ul>`;
-    const customDelete = c.isCustom && c.customId
-      ? `<button type="button" data-delete-custom-compromise="${_esc(c.customId)}" title="Supprimer ce compromis personnalisé" aria-label="Supprimer ce compromis personnalisé" style="margin-left:.5rem;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:inherit;border-radius:999px;padding:.12rem .42rem;font-size:.82rem;line-height:1;cursor:pointer;opacity:.82;vertical-align:middle">🗑</button>`
-      : '';
+    const customDelete = '';
 
     return `
       <div style="margin-bottom:.35rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><div><b>${_esc(c.title)}</b> <span class="muted">— ${_esc(c.phase)}</span>${customDelete}</div></div>
