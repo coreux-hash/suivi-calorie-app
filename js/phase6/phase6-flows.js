@@ -137,9 +137,9 @@
         const date = AppState.setActiveDate(options.forceToday !== false ? isoToday() : AppState.getActiveDate());
 
         safeCall(applyBrandPreset, $('watchBrand')?.value, true);
-        if ($('carbGoal')) safeCall(initCarbGuardsUI);
 
         const profile = RenderCoordinator.renderProfileContext();
+        if ($('carbGoal')) safeCall(initCarbGuardsUI);
         const accepted = safeCall(isTermsAccepted);
         if ($('ackTerms')) $('ackTerms').checked = !!accepted;
         safeCall(setAppLocked, !accepted);

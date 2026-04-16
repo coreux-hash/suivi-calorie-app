@@ -155,7 +155,7 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
         window.__CompromiseUI?.refresh?.({ openOnChange:false });
         normalizeCarbCapIntegerStep?.();
         ensureCarbGoalDefaultOption?.();
-        if ($("carbGoal")) { updateCarbGoalOptions(false, true); ensureCarbGoalDefaultOption?.(); updateCarbSteps(); lockCarbControls(); syncCarbGuardsFromUI(); }
+        if ($("carbGoal")) { updateCarbGoalOptions(true, false); ensureCarbGoalDefaultOption?.(); updateCarbSteps(); lockCarbControls(); syncCarbGuardsFromUI(); }
         if (typeof window.syncCarbUiZone === 'function') window.syncCarbUiZone({ reason:'profile-load', refreshGoalOptions:false, keepGoalValue:true, closeHelp:true });
         window.__CompromiseUI?.syncSelectionFromSettings?.({ keepCurrentIfUnmatched:true, openOnChange:false });
         if (typeof updateFatFloorUI === 'function') updateFatFloorUI();
