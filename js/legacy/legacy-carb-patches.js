@@ -221,11 +221,11 @@
     const m = (mode === "sport" || mode === "expert") ? mode : "simple";
 
     if (m === "sport") {
-      el.textContent = "Mode sportif : tu peux ajuster plus finement (marge d’erreur, charge, ratio...). Lis surtout la tendance 7 jours.";
+      el.textContent = "Mode sportif : équilibre entre charge et récupération.";
     } else if (m === "expert") {
-      el.textContent = "Mode expert : la valeur du jour peut varier. Lis surtout la tendance sur 7 jours.";
+      el.textContent = "Mode expert : priorité à l’analyse sur 7 jours.";
     } else {
-      el.textContent = "Mode simple : vise la régularité sur 7 jours. Affichage allégé, sans pression au quotidien.";
+      el.textContent = "Mode simple : priorité à la régularité sur 7 jours.";
     }
   };
 

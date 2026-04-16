@@ -559,7 +559,7 @@ function phase4StabilizePanels(){
   const tag = document.querySelector('.phase1BlockTag');
   if (tag) tag.textContent = 'Phase 4 — stabilisation finale';
   const settingsLead = $('phase2HeroInfoSettings');
-  if (settingsLead) settingsLead.dataset.modaltext = 'Les accès globaux vivent avant les espaces et expliquent immédiatement le verrouillage éventuel ; Réglages reste focalisé sur le paramétrage métier.';
+  if (settingsLead) settingsLead.dataset.modaltext = 'Les accès globaux gèrent les conditions d’accès.\nRéglages concerne uniquement le paramétrage.';
 }
 function phase4Refresh(){
   phase4NormalizeShellClasses();
@@ -657,7 +657,7 @@ function phase5SyncCloudInfoDot(){
   const dot = $('phase5GateCloudInfo');
   if (!dot) return;
   const item = phase5GetTutorialByKey('cloud');
-  dot.dataset.modaltext = item?.bodyText || 'Cloud, import/export JSON et opérations sensibles, accessibles depuis tous les espaces.';
+  dot.dataset.modaltext = item?.bodyText || 'Sauvegarde et import/export des données.';
   dot.setAttribute('aria-hidden', item ? 'false' : 'true');
   dot.style.display = item ? '' : 'none';
 }
@@ -665,7 +665,7 @@ function phase5SyncLexiconInfoDot(){
   const dot = $('phase5GateLexiconInfo');
   if (!dot) return;
   const item = phase5GetTutorialByKey('lexicon');
-  dot.dataset.modaltext = item?.bodyText || 'Définitions et repères d’usage accessibles à tout moment.';
+  dot.dataset.modaltext = item?.bodyText || 'Définitions et repères accessibles à tout moment.';
   dot.setAttribute('aria-hidden', item ? 'false' : 'true');
   dot.style.display = item ? '' : 'none';
 }
@@ -854,7 +854,7 @@ function phase5StabilizeCopy(){
   const historyLead = $('phase2HeroInfoHistory');
   if (historyLead) historyLead.dataset.modaltext = 'Lecture et compréhension stabilisées. On choisit une date, on relit une journée, puis on repart vers Journal seulement pour corriger.';
   const settingsLead = $('phase2HeroInfoSettings');
-  if (settingsLead) settingsLead.dataset.modaltext = 'Les accès globaux vivent avant les espaces et expliquent immédiatement le verrouillage éventuel ; Réglages reste focalisé sur le paramétrage métier.';
+  if (settingsLead) settingsLead.dataset.modaltext = 'Les accès globaux gèrent les conditions d’accès.\nRéglages concerne uniquement le paramétrage.';
 }
 function phase5ExposeQa(){
   window.phase5QA = function(){

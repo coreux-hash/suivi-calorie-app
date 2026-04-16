@@ -109,9 +109,9 @@ const txt = $("diabQuickRecoText");
         } else if (!guardOn){
           parts.push("Pour encadrer la journée, active l’option Repères dans « Repères glucidiques ».");
         } else {
-          parts.push("Low-carb et/ou Repères sont actifs : ajuste les paramètres dans « Repères glucidiques » si besoin.");
+          parts.push("Options actives : ajustement possible dans « Repères glucidiques ».");
         }
-        parts.push("Ces options restent facultatives et n’affectent pas l’historique si tu ne les touches pas.");
+        parts.push("Ces options sont facultatives et n’affectent pas l’historique.");
         txt.textContent = parts.join(" ");
       }
     }

@@ -773,7 +773,7 @@ function formatMacroBalance(macros){
 
       if (!c){
         const neutral = buildNeutralCompromiseState();
-        if (summary) summary.innerHTML = '<b>Aucun compromis actif</b> · Le compromis précédent n’est plus respecté.';
+        if (summary) summary.innerHTML = '<b>Aucun compromis actif</b>.';
         box.innerHTML = render(neutral);
         prevKey = key;
         return key;

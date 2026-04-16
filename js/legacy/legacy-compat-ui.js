@@ -106,14 +106,14 @@
     const el = $("positioningText");
     if (!el) return;
     if (mode === "sport") {
-      el.textContent = "Mode sportif : vise un déficit tenable. Charge + déficit trop élevés = fatigue et performance en baisse.";
+      el.textContent = "Mode sportif : équilibre entre charge et récupération.";
       return;
     }
     if (mode === "expert") {
-      el.textContent = "Mode expert : la valeur du jour peut varier. Lis surtout la tendance sur 7 jours.";
+      el.textContent = "Mode expert : priorité à l’analyse sur 7 jours.";
       return;
     }
-    el.textContent = "Mode simple : vise la régularité sur 7 jours. Affichage allégé, sans pression au quotidien.";
+    el.textContent = "Mode simple : priorité à la régularité sur 7 jours.";
   }
 
   function applyUseMode(mode) {

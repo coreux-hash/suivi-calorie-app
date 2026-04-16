@@ -40,7 +40,7 @@ function updateCarbCalcPanel(ctx){
     if (srcEl) srcEl.textContent = " (low-carb)";
     stEl.textContent = lowCarbImpossible
       ? "Low-carb impossible à cette cible : lipides au plancher, glucides remontés pour respecter les calories."
-      : "Low-carb : glucides fixés, les lipides s’ajustent pour tenir la cible kcal.";
+      : "Low-carb : glucides plafonnés, lipides ajustés.";
     return;
   }
 

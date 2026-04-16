@@ -115,7 +115,7 @@
           <div class="phase5GateCard__title">Sauvegarde / synchronisation</div>
           <span aria-label="Informations — Sauvegarde / synchronisation" class="info-dot phase5GateCard__infoDot" id="phase5GateCloudInfo" role="button" tabindex="0" data-modaltext="">ℹ️</span>
         </div>
-        <div class="phase5GateCard__text">Cloud, import/export JSON et opérations sensibles, accessibles depuis tous les espaces.</div>
+        <div class="phase5GateCard__text">Sauvegarde et import/export des données.</div>
       </div>
       <div class="phase5GateCard__actions">
         <button class="btn-ghost" id="btnGlobalOpenCloudModal" type="button">Ouvrir</button>
@@ -144,7 +144,7 @@
           <div class="phase5GateCard__title">Aide et lexique</div>
           <span aria-label="Informations — Aide et lexique" class="info-dot phase5GateCard__infoDot" id="phase5GateLexiconInfo" role="button" tabindex="0" data-modaltext="">ℹ️</span>
         </div>
-        <div class="phase5GateCard__text">Définitions et repères d’usage accessibles à tout moment.</div>
+        <div class="phase5GateCard__text">Définitions et repères accessibles à tout moment.</div>
       </div>
       <div class="phase5GateCard__actions">
         <button class="btn-ghost" id="btnGlobalOpenHelpModal" type="button">Afficher</button>
@@ -444,7 +444,7 @@
     <div class="phase2HeroTop">
       <div>
         <div class="phase2Eyebrow">Cadre de calcul</div>
-        <div class="phase2TitleRow"><h1 class="phase2Title">Réglages</h1><span aria-label="Informations — Réglages" class="info-dot" id="phase2HeroInfoSettings" role="button" tabindex="0" data-modaltext="Les accès globaux vivent avant les espaces et expliquent immédiatement le verrouillage éventuel ; Réglages reste focalisé sur le paramétrage métier.">ℹ️</span></div>
+        <div class="phase2TitleRow"><h1 class="phase2Title">Réglages</h1><span aria-label="Informations — Réglages" class="info-dot" id="phase2HeroInfoSettings" role="button" tabindex="0" data-modaltext="Les accès globaux gèrent les conditions d’accès.&#10;Réglages concerne uniquement le paramétrage.">ℹ️</span></div>
       </div>
     </div>
     <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--settings" aria-label="Accès rapide aux panneaux de réglages">
@@ -487,7 +487,7 @@
           <div class="phase2Panel__head">
             <div>
               <h2 class="phase2Panel__title">Profils et préférences</h2>
-              <p class="phase2Panel__desc">Base de calcul, profils locaux, informations utilisateur et densité d’usage.</p>
+              <p class="phase2Panel__desc">Base utilisateur et mode d’affichage.</p>
             </div>
           </div>
           <div class="phase2Slot phase4Slot" id="settingsProfileSlot"></div>
@@ -497,7 +497,7 @@
           <div class="phase2Panel__head">
             <div>
               <h2 class="phase2Panel__title">Montre et dépense</h2>
-              <p class="phase2Panel__desc">Source de dépense quotidienne et hypothèses de prudence associées.</p>
+              <p class="phase2Panel__desc">Estimation de la dépense énergétique.</p>
             </div>
           </div>
           <div class="phase2Slot phase4Slot" id="settingsWatchSlot"></div>
@@ -507,7 +507,7 @@
           <div class="phase2Panel__head">
             <div>
               <h2 class="phase2Panel__title">Objectifs et hypothèses de calcul</h2>
-              <p class="phase2Panel__desc">Preset nutritionnel, cible et paramètres avancés. C’est le cœur métier, donc il garde la largeur utile.</p>
+              <p class="phase2Panel__desc">Objectif nutritionnel, cible et paramètres avancés.</p>
             </div>
           </div>
           <div class="phase2Slot phase4Slot" id="settingsGoalsSlot"></div>
@@ -673,20 +673,18 @@
 <details class="notice notice--ok mt-06" open>
   <summary class="noticeTitle">Mini-tuto — Profil</summary>
   <div class="muted mt-025">
-    <b>But :</b> définir la base des calculs.<br/>
-    Sexe, âge, taille et poids servent à estimer les besoins physiologiques.<br/>
-    Chaque utilisateur possède des données séparées.<br/>
-    Modifier ces informations ajuste automatiquement les repères.
+    Définir la base des calculs.<br/>
+    Sexe, âge, taille et poids servent aux repères physiologiques.<br/>
+    Chaque utilisateur conserve ses données séparées.
   </div>
 </details>
 
 <details class="notice notice--ok mt-06" open>
   <summary class="noticeTitle">Mini-tuto — Dépense</summary>
   <div class="muted mt-025">
-    <b>But :</b> ajuster l’énergie selon l’activité réelle.<br/>
-    La montre fournit une estimation des calories brûlées.<br/>
-    Une marge d’incertitude évite une précision trompeuse.<br/>
-    La cohérence sur plusieurs jours compte plus qu’une valeur exacte.
+    Ajuster l’énergie à partir de l’activité réelle.<br/>
+    La montre fournit une estimation.<br/>
+    La cohérence sur plusieurs jours reste prioritaire.
   </div>
 </details>
 
@@ -705,13 +703,13 @@
 <option value="expert">Expert</option>
 </select>
 <div class="muted mt-025">
-          Ce que tu vois, change! Pas les calculs.
+          Modifie l’affichage, pas les calculs.
         </div>
 </div>
 <div>
 <label>Rappel rapide (selon mode)</label>
 <div class="muted mt-015" id="positioningText">
-          Simple : Objectif : être régulier sur la semaine.
+          Mode simple : priorité à la régularité sur 7 jours.
         </div>
 </div>
 </div>
@@ -735,7 +733,7 @@
 </div>
 </div>
 <p class="muted">
-      Chaque utilisateur garde ses données séparées sur ce navigateur (repas + jours + poids).
+      Chaque utilisateur conserve ses données séparément sur ce navigateur.
     </p>
 </div>
 <div class="card settingsCardInfos">
@@ -801,7 +799,7 @@
 <option value="fitbit">Fitbit / Google</option>
 </select>
 <div class="muted mt-025">
-            La montre donne une <b>estimation</b>, pas une valeur exacte.
+            Valeur estimée par la montre.
           </div>
 </div>
 <!-- Sport+Expert : référence preset (info) -->
@@ -826,7 +824,7 @@
 <label>Incertitude (en %)</label>
 <input id="errPct" min="0" step="1" type="number" value="10"/>
 <p class="muted m-015-0">
-            Marge utilisée pour corriger l’estimation de la montre. C’est un <b>repère</b>. Pas une valeur exacte.
+            Marge de prudence appliquée à l’estimation.
           </p>
 </div>
 </div>
@@ -842,7 +840,7 @@
 </div>
 </div>
 <p class="muted m-02-0">
-        La dépense utilisée est ajustée selon ce choix.
+        Ajuste la dépense retenue.
       </p>
 <div class="row mt-035">
 <div class="self-end">
@@ -850,7 +848,7 @@
 </div>
 </div>
 <p class="muted" data-um="sport" id="watchNote">
-        L’important n’est pas le chiffre du jour, mais la cohérence sur plusieurs jours.
+        Priorité à la cohérence sur plusieurs jours.
       </p>
 </div>
 </div>
@@ -863,32 +861,26 @@
 <details class="notice notice--ok mt-06" open>
   <summary class="noticeTitle">Mini-tuto — Objectif</summary>
   <div class="muted mt-025">
-    <b>But :</b> définir l’orientation nutritionnelle.<br/>
-    Le régime structure la répartition protéines / lipides / glucides.<br/>
-    L’objectif (%) ajuste le niveau énergétique global.<br/>
-    Les protéines servent de base journalière.<br/>
-    Les lipides minimum assurent un équilibre physiologique.<br/>
-    Les glucides s’adaptent selon l’objectif choisi.
+    Définir l’orientation nutritionnelle.<br/>
+    Le régime structure la répartition protéines, lipides et glucides.<br/>
+    L’objectif ajuste le niveau énergétique global.
   </div>
 </details>
 
 <details class="notice notice--ok mt-06" open>
   <summary class="noticeTitle">Mini-tuto — Charge d’activité et compromis</summary>
   <div class="muted mt-025">
-    <b>Des réglages qui s’adaptent à ton activité</b><br/>
-    Les recommandations évoluent automatiquement selon ton volume d’activité récent.<br/>
-    Plus la charge sportive augmente, plus l’équilibre nutritionnel s’ajuste pour soutenir l’énergie disponible, la récupération et la performance.<br/>
-    Le système analyse les 7 derniers jours d’activité pour déterminer le niveau de charge (L0 → L4) et adapter certains paramètres comme le ratio glucides/protéines.<br/>
-    Pour un réglage optimal, ajoute environ 7 jours d’activité récente.<br/>
-    Tu peux enregistrer des séances passées afin que les recommandations correspondent à ta pratique réelle.
+    Réglages adaptés à l’activité récente.<br/>
+    Le système analyse les 7 derniers jours pour ajuster certains repères nutritionnels.<br/>
+    Une charge plus élevée peut modifier le ratio glucides/protéines ou les recommandations énergétiques.<br/>
+    Ajoute environ 7 jours d’activité pour un réglage représentatif.
   </div>
 </details>
 
 <div class="card">
 <h2>Réglages des macros</h2>
 <p class="muted">
-      Ici, tu définis <b>comment ton énergie est répartie</b>.
-      Certains champs sont à remplir, d’autres se calculent automatiquement.
+      Répartition protéines, lipides et glucides.
     </p>
 
 <!-- =========================================================
@@ -898,7 +890,7 @@
 <div class="card panel-subtle">
   <h2>Compromis optimal <span aria-label="Informations — niveaux de charge" class="info-dot" role="button" tabindex="0" data-modalhtml="<div><b>Tableau niveaux de charge</b></div><table><thead><tr><th>niveau</th><th>heures sport / semaine</th><th>lecture produit</th></tr></thead><tbody><tr><td><b>L0</b></td><td>0 à &lt; 3 h</td><td>faible charge</td></tr><tr><td><b>L1</b></td><td>3 à &lt; 5 h</td><td>charge modérée</td></tr><tr><td><b>L2</b></td><td>5 à &lt; 8 h</td><td>charge sportive réelle</td></tr><tr><td><b>L3</b></td><td>8 à &lt; 10 h</td><td>charge élevée</td></tr><tr><td><b>L4</b></td><td>≥ 10 h</td><td>charge très élevée / bloc perf</td></tr></tbody></table><div class='muted mt-025'>Ce niveau permet d’adapter automatiquement certains compromis nutritionnels.</div>">ℹ️</span></h2>
   <p class="muted">
-    Choisis un compromis : un résumé s’affiche. Le détail est repliable si tu veux comprendre.
+    Sélectionne un compromis pour adapter les repères.
   </p>
 
   <div class="row">
@@ -925,7 +917,7 @@ Ces indications permettent de garder une cohérence entre ton objectif, ton nive
         <option value="endurance_comp">Performance compétition (carb-loading)</option>
       </select>
       <p class="muted mt-025">
-        Astuce : si tu hésites, commence par <b>Équilibre global</b> (base) ou <b>Sèche progressive</b> (perte de gras).
+        Suggestion : <b>Équilibre global</b> ou <b>Sèche progressive</b>.
       </p>
     </div>
   </div>
@@ -1058,7 +1050,7 @@ L’app les ajuste automatiquement pour rester cohérente avec :
       <input disabled="" id="carbAutoHint" value="Plafond glucidique : —"/>
 
       <div class="muted mt-025">
-        Calculés automatiquement pour équilibrer la journée après les protéines et le plancher lipides
+        Calcul automatique selon protéines et lipides minimum.
       </div>
 
       <!-- ✅ Détails glucides en déroulant (ID carbCalcPanel conservé) -->
@@ -1091,17 +1083,15 @@ L’app les ajuste automatiquement pour rester cohérente avec :
   <details class="notice notice--ok mt-06" open>
     <summary class="noticeTitle">Mini-tuto — Cadrage glucidique</summary>
     <div class="muted mt-025">
-      <b>But :</b> comprendre le rôle des glucides dans l’équilibre.<br/>
-      Les repères glucidiques accompagnent un maintien ou un déficit modéré.<br/>
-      Le low-carb applique une contrainte plus forte sur les glucides.<br/>
-      Le repère journalier reste visible pour garder un point de référence.
+      Repères glucidiques pour guider l’équilibre quotidien.<br/>
+      Low-carb applique une contrainte plus forte.
     </div>
   </details>
 
   <div class="muted">
     <h3 class="h3">Repères glucides</h3>
     <p class="muted">
-      Le repère glucidique agit sur les glucides ajustés et leur détail de calcul. Objectif + plafond restent séparées en dessous pour cadrer les glucides ajustés.
+      Objectif et plafond cadrent les glucides ajustés.
     </p>
 
     <div class="settingsCarbGuardHead mt-04">
@@ -1156,7 +1146,7 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
         </div>
 
         <div class="muted" style="margin-top:.25rem">
-          Limite <b>maximale de glucides</b> utilisée quand les repères glucides sont activés.
+          Limite maximale utilisée si repères actifs.
         </div>
       </div>
     </div>
@@ -1164,7 +1154,7 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
     <div class="card panel-subtle settingsCarbOptionsPanel mt-06">
       <div class="settingsCarbOptionsPanel__head">
         <h4 class="settingsCarbOptionsPanel__title">Options avancées</h4>
-        <p class="muted settingsCarbOptionsPanel__note">Low-carb et diabète restent séparés pour des usages plus spécifiques.</p>
+        <p class="muted settingsCarbOptionsPanel__note">Options spécifiques : low-carb et diabète.</p>
       </div>
 
       <div class="settingsCarbOptionsToggleRow mt-04">
@@ -1182,7 +1172,7 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
             <option value="moderate">Low-Carb modéré (1,5–2,0 g/kg/j)</option>
             <option value="strict">Low-Carb strict (0,5–1,0 g/kg/j)</option>
           </select>
-          <div class="muted" style="margin-top:.25rem">Choisis le niveau, puis un palier (g/kg/j).</div>
+          <div class="muted" style="margin-top:.25rem">Sélectionne un niveau puis un palier.</div>
         </div>
         <div>
           <label>Palier low-carb (g/kg/j)</label>
@@ -1203,14 +1193,14 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
             </summary>
 
             <div class="muted mt-025">
-              Vue rapide pendant l’encodage : glucides du jour + dernière glycémie (informatif).
+              Affichage rapide : glucides du jour et dernière glycémie.
             </div>
 
             <div class="row mt-04">
               <div>
                 <label>Glucides du jour (g)</label>
                 <input disabled="" id="diabQuickCarbG" value="-"/>
-                <div class="muted" style="margin-top:.25rem">Total des glucides encodés aujourd’hui.</div>
+                <div class="muted" style="margin-top:.25rem">Total des glucides du jour.</div>
               </div>
 
               <div>
@@ -1220,7 +1210,7 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
 Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ️</span>
                 </label>
                 <input disabled="" id="diabQuickLastG" value="-"/>
-                <div class="muted" style="margin-top:.25rem">Valeur saisie dans le journal Diabète.</div>
+                <div class="muted" style="margin-top:.25rem">Valeur saisie dans le Journal diabète.</div>
               </div>
             </div>
 

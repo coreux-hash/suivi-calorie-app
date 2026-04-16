@@ -2210,9 +2210,9 @@ const txt = $("diabQuickRecoText");
         } else if (!guardOn){
           parts.push("Pour encadrer la journée, active l’option Repères dans « Repères glucidiques ».");
         } else {
-          parts.push("Low-carb et/ou Repères sont actifs : ajuste les paramètres dans « Repères glucidiques » si besoin.");
+          parts.push("Options actives : ajustement possible dans « Repères glucidiques ».");
         }
-        parts.push("Ces options restent facultatives et n’affectent pas l’historique si tu ne les touches pas.");
+        parts.push("Ces options sont facultatives et n’affectent pas l’historique.");
         txt.textContent = parts.join(" ");
       }
     }
@@ -3205,7 +3205,7 @@ function updateCarbCalcPanel(ctx){
     if (srcEl) srcEl.textContent = " (low-carb)";
     stEl.textContent = lowCarbImpossible
       ? "Low-carb impossible à cette cible : lipides au plancher, glucides remontés pour respecter les calories."
-      : "Low-carb : glucides fixés, les lipides s’ajustent pour tenir la cible kcal.";
+      : "Low-carb : glucides plafonnés, lipides ajustés.";
     return;
   }
 
@@ -4400,11 +4400,11 @@ function initApp(){
     const m = (mode === "sport" || mode === "expert") ? mode : "simple";
 
     if (m === "sport") {
-      el.textContent = "Mode sportif : tu peux ajuster plus finement la cible, la charge et le ratio. Lis surtout la tendance sur 7 jours.";
+      el.textContent = "Mode sportif : équilibre entre charge et récupération.";
     } else if (m === "expert") {
       el.textContent = "Mode Expert : la valeur du jour peut varier. Lis surtout la tendance sur 7 jours.";
     } else {
-      el.textContent = "Mode simple : vise la régularité sur 7 jours. Affichage allégé, sans pression au quotidien.";
+      el.textContent = "Mode simple : priorité à la régularité sur 7 jours.";
     }
     try { phase660ApplyLexicalHierarchy(); } catch(e){}
   };
