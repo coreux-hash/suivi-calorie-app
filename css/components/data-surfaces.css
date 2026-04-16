@@ -234,6 +234,18 @@
   gap:10px;
   flex-shrink:0;
 }
+.sportSessionRow .actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+.sportSessionRow .actions .btn-icon,
+.sportSessionRow .actions .btn-ghost.btn-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
 .loadBar{
   width: 84px;
   height: 10px;
@@ -266,7 +278,29 @@
     align-items:stretch;
   }
   .sportSessionRow .right{
-    justify-content:space-between;
+    display:grid;
+    grid-template-columns: 44px minmax(0,1fr) auto;
+    align-items:center;
+    gap:10px;
+    width:100%;
+  }
+  .sportSessionRow .actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:8px;
+    width:auto;
+    flex:0 0 auto;
+  }
+  .sportSessionRow .actions .btn-icon,
+  .sportSessionRow .actions .btn-ghost.btn-icon{
+    width:34px;
+    min-width:34px;
+    height:34px;
+    padding:0;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
   }
   .loadBar{ width: 100%; flex:1; }
   .loadPct{ min-width: 44px; text-align:right; }

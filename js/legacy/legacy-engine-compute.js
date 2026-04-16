@@ -893,6 +893,7 @@ $("btnSleepSave")?.addEventListener("click", () => {
 
 // Sport : multi-séances (journal empilable)
 $("btnSportAdd")?.addEventListener("click", () => {
+  try{ clearSportInputs(); }catch(e){}
   sportUI_setEditor(true);
 });
 $("btnSportSave")?.addEventListener("click", () => {
@@ -902,6 +903,13 @@ $("btnSportSave")?.addEventListener("click", () => {
 
 // Suppression séance (event delegation)
 $("sportSessionsList")?.addEventListener("click", (ev) => {
+  const editBtn = ev.target?.closest?.("[data-sportedit]");
+  if (editBtn){
+    const d = getSelectedDate();
+    const id = editBtn.getAttribute("data-sportedit") || "";
+    try{ editSportSession(d, id); }catch(e){}
+    return;
+  }
   const btn = ev.target?.closest?.("[data-sportdel]");
   if (!btn) return;
   const d = getSelectedDate();

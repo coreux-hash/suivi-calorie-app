@@ -1686,6 +1686,40 @@ function getSportSleepForDay(dateStr){
   };
 }
 
+function getSportEditingSessionId(){
+  return String(window.__sportEditingSessionId || "");
+}
+
+function setSportEditingSessionId(id){
+  window.__sportEditingSessionId = String(id || "");
+  const btn = $("btnSportSave");
+  if (btn) btn.textContent = window.__sportEditingSessionId ? "Mettre à jour" : "Enregistrer";
+}
+
+function resetSportEditorState(){
+  setSportEditingSessionId("");
+}
+
+function fillSportInputsFromSession(session){
+  const mins = Math.max(0, toNum(session?.minutes) || 0);
+  const hh = Math.floor(mins / 60);
+  const mm = mins % 60;
+  if ($("sportType")) $("sportType").value = String(session?.type || "");
+  if ($("sportHh")) $("sportHh").value = String(hh);
+  if ($("sportMm")) $("sportMm").value = String(mm);
+  if ($("sportMin")) $("sportMin").value = mins;
+  if ($("sportKcal")) $("sportKcal").value = Math.max(0, toNum(session?.kcal) || 0);
+}
+
+function editSportSession(dateStr, sessionId){
+  const sessions = getSportSessionsForDay(dateStr);
+  const session = sessions.find(s => String(s.id||"") === String(sessionId||""));
+  if (!session) return;
+  setSportEditingSessionId(session.id);
+  fillSportInputsFromSession(session);
+  sportUI_setEditor(true);
+}
+
 function loadSportSleepIntoUI(dateStr){
   const d = getDay(dateStr) || { date: dateStr };
 
@@ -1695,6 +1729,7 @@ function loadSportSleepIntoUI(dateStr){
   if ($("sportMm")) $("sportMm").value = 0;
   if ($("sportKcal")) $("sportKcal").value = 0;
   if ($("sportType")) $("sportType").value = "";
+  resetSportEditorState();
 
   // Liste des séances déjà sauvegardées
   renderSportSessionsList(dateStr);
@@ -1810,9 +1845,12 @@ function renderSportSessionsList(dateStr){
           <div class="meta">${Math.round(s.minutes||0)} min · ${Math.round(s.kcal||0)} kcal</div>
         </div>
         <div class="right">
-          <div class="loadBar" aria-hidden="true"><i style="width:${p.toFixed(0)}%"></i></div>
           <div class="loadPct">${p.toFixed(0)}%</div>
-          <button type="button" class="btn-ghost btn-icon" title="Supprimer" data-sportdel="${escapeHtml(s.id)}">✕</button>
+          <div class="loadBar" aria-hidden="true"><i style="width:${p.toFixed(0)}%"></i></div>
+          <div class="actions">
+            <button type="button" class="btn-ghost btn-icon" title="Modifier" aria-label="Modifier" data-sportedit="${escapeHtml(s.id)}">✎</button>
+            <button type="button" class="btn-ghost btn-icon" title="Supprimer" aria-label="Supprimer" data-sportdel="${escapeHtml(s.id)}">✕</button>
+          </div>
         </div>
       </div>
     `;
@@ -1821,8 +1859,11 @@ function renderSportSessionsList(dateStr){
 
 function clearSportInputs(){
   if ($("sportMin")) $("sportMin").value = 0;
+  if ($("sportHh")) $("sportHh").value = 0;
+  if ($("sportMm")) $("sportMm").value = 0;
   if ($("sportKcal")) $("sportKcal").value = 0;
   if ($("sportType")) $("sportType").value = "";
+  resetSportEditorState();
 }
 
 function addSportSessionFromInputs(dateStr){
@@ -1836,8 +1877,25 @@ function addSportSessionFromInputs(dateStr){
   const existing = getDay(dateStr) || { date: dateStr };
   const sessions = Array.isArray(existing.sportSessions) ? existing.sportSessions.slice() : [];
 
-  const id = "s_" + Math.random().toString(36).slice(2,10) + "_" + Date.now().toString(36);
-  sessions.push({ id, type, minutes, kcal, createdAt: new Date().toISOString() });
+  const editingId = getSportEditingSessionId();
+  if (editingId){
+    const idx = sessions.findIndex(s => String(s?.id||"") === editingId);
+    if (idx >= 0){
+      sessions[idx] = {
+        ...sessions[idx],
+        type,
+        minutes,
+        kcal,
+        updatedAt: new Date().toISOString()
+      };
+    } else {
+      const id = "s_" + Math.random().toString(36).slice(2,10) + "_" + Date.now().toString(36);
+      sessions.push({ id, type, minutes, kcal, createdAt: new Date().toISOString() });
+    }
+  } else {
+    const id = "s_" + Math.random().toString(36).slice(2,10) + "_" + Date.now().toString(36);
+    sessions.push({ id, type, minutes, kcal, createdAt: new Date().toISOString() });
+  }
 
   const agg = computeSportAggregateFromSessions(sessions);
 
@@ -1876,6 +1934,7 @@ function deleteSportSession(dateStr, sessionId){
     updatedAt: new Date().toISOString()
   };
   upsertDay(dayObj);
+  if (String(getSportEditingSessionId() || "") === String(sessionId || "")) clearSportInputs();
 
   renderSportSessionsList(dateStr);
   renderSportSleep7d(dateStr);
@@ -4027,6 +4086,7 @@ $("btnSleepSave")?.addEventListener("click", () => {
 
 // Sport : multi-séances (journal empilable)
 $("btnSportAdd")?.addEventListener("click", () => {
+  try{ clearSportInputs(); }catch(e){}
   sportUI_setEditor(true);
 });
 $("btnSportSave")?.addEventListener("click", () => {
@@ -4036,6 +4096,13 @@ $("btnSportSave")?.addEventListener("click", () => {
 
 // Suppression séance (event delegation)
 $("sportSessionsList")?.addEventListener("click", (ev) => {
+  const editBtn = ev.target?.closest?.("[data-sportedit]");
+  if (editBtn){
+    const d = getSelectedDate();
+    const id = editBtn.getAttribute("data-sportedit") || "";
+    try{ editSportSession(d, id); }catch(e){}
+    return;
+  }
   const btn = ev.target?.closest?.("[data-sportdel]");
   if (!btn) return;
   const d = getSelectedDate();
