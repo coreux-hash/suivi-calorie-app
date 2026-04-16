@@ -1140,6 +1140,15 @@ function initPhaseEllipsisTapSettings(){
 function initPhase5Shell(){
   if (window.__phase5ShellInit) return;
   window.__phase5ShellInit = true;
+  let phase5RefreshTimer = null;
+  function schedulePhase5Refresh(delay = 60){
+    try{ clearTimeout(phase5RefreshTimer); }catch(e){}
+    phase5RefreshTimer = setTimeout(()=>{
+      phase5Refresh();
+      setTimeout(phase2SyncHistoryQuickNavState, 25);
+    }, Math.max(0, Number(delay) || 0));
+  }
+  window.phase5RequestRefresh = schedulePhase5Refresh;
   phase5Refresh();
   phase5SyncGateDisclosureMode(true);
   phase5WireButtons();
@@ -1154,15 +1163,24 @@ function initPhase5Shell(){
   });
 
   ['dayDate','profileSelect','useMode','diabEnabled','montre','histMonth'].forEach(id => {
-    $(id)?.addEventListener('change', ()=> {
-      setTimeout(phase5Refresh, 30);
-      setTimeout(phase2SyncHistoryQuickNavState, 40);
-    });
-    $(id)?.addEventListener('input', ()=> {
-      setTimeout(phase5Refresh, 30);
-      setTimeout(phase2SyncHistoryQuickNavState, 40);
-    });
+    $(id)?.addEventListener('change', ()=> schedulePhase5Refresh(30));
+    $(id)?.addEventListener('input', ()=> schedulePhase5Refresh(30));
   });
+
+  ['settingsGoalsSlot','settingsWatchSlot','settingsProfileSlot'].forEach(id => {
+    const root = $(id);
+    if (!root) return;
+    root.addEventListener('change', ()=> schedulePhase5Refresh(90), true);
+    root.addEventListener('input', ()=> schedulePhase5Refresh(90), true);
+    root.addEventListener('click', (e)=>{
+      const t = e?.target;
+      if (!t) return;
+      if (t.closest?.('[data-compromise],[data-compromise-select],[data-sportedit],[data-sportdel]')) return;
+      if (t.matches?.('button,summary,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-icon,.chip,.segBtn')) schedulePhase5Refresh(120);
+    }, true);
+  });
+
+  document.addEventListener('phase5:refresh-request', (e)=> schedulePhase5Refresh(e?.detail?.delay || 60));
   window.addEventListener('resize', ()=> { setTimeout(phase2SyncHistoryQuickNavState, 40); setTimeout(()=> phase5SyncGateDisclosureMode(false), 20); });
 }
 
