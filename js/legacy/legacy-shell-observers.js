@@ -100,7 +100,7 @@ function phase1DecorateCards(){
     if (body && !body.querySelector('.phase1SplitNote')){
       const note = document.createElement('div');
       note.className = 'phase1SplitNote';
-      note.innerHTML = '<b>À retenir :</b> tu saisis ton poids et ta composition dans le Journal. Ici, tu relis les repères associés à la journée active et la tendance 7 jours.';
+      note.innerHTML = '<b>À retenir :</b> poids et composition se saisissent dans le Journal.';
       body.prepend(note);
     }
     const weightLabel = adv.querySelector('label[for="morningWeight"], #morningWeight')?.closest?.('.accTile')?.querySelector('label');
@@ -115,7 +115,7 @@ function phase1DecorateCards(){
   if (sport && !sport.querySelector('.phase1SplitNote')){
     const note = document.createElement('div');
     note.className = 'phase1SplitNote';
-    note.textContent = 'Ce bloc est maintenant considéré comme de la saisie du jour. L’historique sport vit dans l’espace Historique / Analyse.';
+    note.textContent = 'Saisie du jour. Analyse dans Historique.';
     const anchor = sport.querySelector('#sportSessionsList') || sport.firstElementChild?.nextElementSibling;
     if (anchor) sport.insertBefore(note, anchor);
   }
@@ -123,7 +123,7 @@ function phase1DecorateCards(){
   if (sleep && !sleep.querySelector('.phase1SplitNote')){
     const note = document.createElement('div');
     note.className = 'phase1SplitNote';
-    note.textContent = 'Le sommeil reste éditable uniquement ici. La lecture de cohérence multi-jours est déportée dans l’Historique.';
+    note.textContent = 'Saisie du jour. Analyse dans Historique.';
     const anchor = sleep.querySelector('#sleepSummary') || sleep.firstElementChild?.nextElementSibling;
     if (anchor) sleep.insertBefore(note, anchor);
   }
@@ -290,6 +290,7 @@ function phase6GetShellAvailabilityMap(){
       profile:true,
       watch:true,
       goals:true,
+      load:true,
     },
     today:{
       meal:true,
@@ -352,6 +353,7 @@ function phase6SyncShellQuickNav(){
     profile:'profile',
     watch:'watch',
     goals:'goals',
+    load:'load',
   };
   document.querySelectorAll('[data-settings-jump]').forEach(btn => {
     const key = btn.getAttribute('data-settings-jump');
@@ -473,7 +475,7 @@ function phase3SplitBodyMetrics(){
   }
 
   const summary = histAdvanced.querySelector('summary');
-  if (summary) summary.textContent = 'Analyse poids / IMC / tendance 7 jours';
+  if (summary) summary.textContent = 'Poids / IMC / tendance';
 
   histAdvanced.querySelector('.phase3LegacyNote')?.remove();
 }

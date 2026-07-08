@@ -48,27 +48,7 @@
 
         if (meals.length === 0) {
 
-  wrap.innerHTML = `
-    <div class="meals-wrap">
-       <table class="wide-table">
-        <thead>
-          <tr>
-            <th class="text-left">Repas</th>
-            <th>kcal</th>
-            <th>P</th>
-            <th>G</th>
-            <th>L</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="6" class="muted">Aucun repas ajouté pour l’instant.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  `;
+  wrap.innerHTML = `<div class="uxEmptyState">Aucun repas ajouté.</div>`;
   syncEatenFromMeals(dateStr);
   return;
 }
@@ -83,12 +63,12 @@
               <tbody>
                 ${meals.map(m => `
                   <tr data-mealid="${m.id}">
-                    <td class="td-left"><input data-field="name" value="${escapeHtml(m.name)}" /></td>
-                    <td><input data-field="k" type="number" min="0" step="1" value="${round(m.k,0)}" /></td>
-                    <td><input data-field="p" type="number" min="0" step="0.1" value="${round(m.p,1)}" /></td>
-                    <td><input data-field="c" type="number" min="0" step="0.1" value="${round(m.c,1)}" /></td>
-                    <td><input data-field="f" type="number" min="0" step="0.1" value="${round(m.f,1)}" /></td>
-                    <td><button class="btn-mini btn-danger" data-action="del" type="button">🗑️</button></td>
+                    <td class="td-left" data-label="Repas"><input data-field="name" value="${escapeHtml(m.name)}" /></td>
+                    <td data-label="kcal"><input data-field="k" type="number" min="0" step="1" value="${round(m.k,0)}" /></td>
+                    <td data-label="P"><input data-field="p" type="number" min="0" step="0.1" value="${round(m.p,1)}" /></td>
+                    <td data-label="G"><input data-field="c" type="number" min="0" step="0.1" value="${round(m.c,1)}" /></td>
+                    <td data-label="L"><input data-field="f" type="number" min="0" step="0.1" value="${round(m.f,1)}" /></td>
+                    <td data-label="Actions"><button class="btn-mini btn-danger" data-action="del" type="button">🗑️</button></td>
                   </tr>
                 `).join("")}
               </tbody>

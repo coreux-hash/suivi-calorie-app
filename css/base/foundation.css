@@ -76,6 +76,10 @@ textarea{
   min-height:140px;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   font-size:.85rem;
+  white-space:pre;
+  overflow-x:auto;
+  resize:vertical;
+  tab-size:2;
 }
 
 

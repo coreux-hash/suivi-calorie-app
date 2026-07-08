@@ -1,13 +1,23 @@
 {
-  "name": "Suivi calories & macros",
-  "short_name": "Suivi calories",
-  "start_url": "/suivi-calorie-app/",
-  "scope": "/suivi-calorie-app/",
+  "name": "Suivi Calorie App",
+  "short_name": "SuiviCalorie",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
-    { "src": "/suivi-calorie-app/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/suivi-calorie-app/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

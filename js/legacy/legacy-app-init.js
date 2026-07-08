@@ -1,11 +1,113 @@
 /* Extracted from legacy-engine-compute.js — wireEvents + initApp */
 
+let phase6LastFocusedBeforeModal = null;
+const phase6ManagedModalIds = [
+  'pilotagePlanModal',
+  'termsGateModal',
+  'settingsCloudModal',
+  'settingsHelpModal',
+  'settingsTutoModal'
+];
+const phase6ModalFocusableSelector = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])'
+].join(',');
+
+function phase6GetFocusableInModal(modal){
+  if (!modal) return [];
+  return Array.from(modal.querySelectorAll(phase6ModalFocusableSelector))
+    .filter(el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length));
+}
+
+function phase6RefreshModalScrollLock(){
+  const hasOpenManagedModal = phase6ManagedModalIds.some(id => $(id)?.classList.contains('is-open'));
+  document.body?.classList.toggle('phase6ModalLock', hasOpenManagedModal);
+}
+
+function phase6FocusModal(modal){
+  if (!modal) return;
+  const target = phase6GetFocusableInModal(modal)[0] || modal.querySelector('[role="dialog"]') || modal;
+  try{ target.focus({ preventScroll:true }); }catch(e){ try{ target.focus(); }catch(err){} }
+}
+
 function phase6ToggleModal(id, open){
   const modal = $(id);
   if (!modal) return;
-  modal.classList.toggle('is-open', !!open);
-  modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+  const wantsOpen = !!open;
+  const wasOpen = modal.classList.contains('is-open');
+
+  if (wantsOpen && !wasOpen) {
+    phase6LastFocusedBeforeModal = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  }
+
+  modal.classList.toggle('is-open', wantsOpen);
+  modal.setAttribute('aria-hidden', wantsOpen ? 'false' : 'true');
+  phase6RefreshModalScrollLock();
+
+  if (wantsOpen) {
+    window.setTimeout(() => phase6FocusModal(modal), 0);
+    return;
+  }
+
+  if (wasOpen && phase6LastFocusedBeforeModal && document.contains(phase6LastFocusedBeforeModal)) {
+    const focusTarget = phase6LastFocusedBeforeModal;
+    phase6LastFocusedBeforeModal = null;
+    window.setTimeout(() => {
+      try{ focusTarget.focus({ preventScroll:true }); }catch(e){ try{ focusTarget.focus(); }catch(err){} }
+    }, 0);
+  }
 }
+
+function phase6GetTopOpenModal(){
+  const openModals = Array.from(document.querySelectorAll('.modal.is-open'));
+  return openModals.length ? openModals[openModals.length - 1] : null;
+}
+
+function phase6CloseTopModal(){
+  const modal = phase6GetTopOpenModal();
+  if (!modal) return false;
+  if (modal.id === 'pilotagePlanModal') closePilotagePlanModal();
+  else if (modal.id === 'termsGateModal') closeTermsGateModal();
+  else if (modal.id === 'settingsCloudModal') closeSettingsCloudModal();
+  else if (modal.id === 'settingsHelpModal') closeSettingsHelpModal();
+  else if (modal.id === 'settingsTutoModal') closeSettingsTutoModal();
+  else if (modal.id === 'watchInfoModal' && typeof closeWatchInfoModal === 'function') closeWatchInfoModal();
+  else {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    phase6RefreshModalScrollLock();
+  }
+  return true;
+}
+
+function phase6TrapModalFocus(e){
+  if (e.key !== 'Tab') return;
+  const modal = phase6GetTopOpenModal();
+  if (!modal) return;
+  const focusable = phase6GetFocusableInModal(modal);
+  const panel = modal.querySelector('[role="dialog"]') || modal;
+  if (!focusable.length) {
+    e.preventDefault();
+    try{ panel.focus({ preventScroll:true }); }catch(err){ try{ panel.focus(); }catch(ignore){} }
+    return;
+  }
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+}
+
+function openPilotagePlanModal(){ phase6ToggleModal('pilotagePlanModal', true); }
+function closePilotagePlanModal(){ phase6ToggleModal('pilotagePlanModal', false); }
 function openTermsGateModal(){ phase6ToggleModal('termsGateModal', true); }
 function closeTermsGateModal(){ phase6ToggleModal('termsGateModal', false); }
 function openSettingsCloudModal(){ phase6ToggleModal('settingsCloudModal', true); }
@@ -238,6 +340,7 @@ $("btnOpenCloudModalInline")?.addEventListener("click", openSettingsCloudModal);
 $("btnGlobalOpenCloudModal")?.addEventListener("click", openSettingsCloudModal);
 $("btnGlobalOpenHelpModal")?.addEventListener("click", openSettingsHelpModal);
 $("btnGlobalOpenTutoModal")?.addEventListener("click", openSettingsTutoModal);
+$("btnMenuOpenPilotagePlan")?.addEventListener("click", () => { openPilotagePlanModal(); try{ closeMenu(); }catch(e){} });
 $("btnMenuOpenTermsGate")?.addEventListener("click", () => { openTermsGateModal(); try{ closeMenu(); }catch(e){} });
 $("btnMenuOpenCloudModal")?.addEventListener("click", () => { openSettingsCloudModal(); try{ closeMenu(); }catch(e){} });
 $("btnMenuOpenTutoModal")?.addEventListener("click", () => { openSettingsTutoModal(); try{ closeMenu(); }catch(e){} });
@@ -258,7 +361,11 @@ function phase6GetSettingsJumpTarget(key){
       ? document.querySelector('.settingsPanel--watch')
       : key === 'goals'
         ? document.querySelector('.settingsPanel--goals')
-        : null;
+        : key === 'compromise'
+          ? document.querySelector('#settingsMacrosAnchor') || document.querySelector('#settingsCompromiseCard') || document.querySelector('.settingsPanel--goals')
+          : key === 'load'
+            ? document.querySelector('#settingsLoadAnchor') || document.querySelector('#compromiseSummary') || document.querySelector('.settingsPanel--goals')
+            : null;
   if (!target || target.classList.contains('hidden')) return null;
   return target;
 }
@@ -361,6 +468,7 @@ function phase6BindSettingsJumpNav(){
     { key:'profile', el: document.querySelector('.settingsPanel--profile') },
     { key:'watch', el: document.querySelector('.settingsPanel--watch') },
     { key:'goals', el: document.querySelector('.settingsPanel--goals') },
+    { key:'compromise', el: document.querySelector('#settingsMacrosAnchor') },
   ].filter(item => item.el);
 
   if (!panels.length) return;
@@ -753,6 +861,8 @@ function phase6BindHistoryJumpNav(){
 
 phase6BindHistoryJumpNav();
 
+$("pilotagePlanClose")?.addEventListener("click", closePilotagePlanModal);
+$("pilotagePlanFootClose")?.addEventListener("click", closePilotagePlanModal);
 $("termsGateClose")?.addEventListener("click", closeTermsGateModal);
 $("termsGateFootClose")?.addEventListener("click", closeTermsGateModal);
 $("settingsCloudClose")?.addEventListener("click", closeSettingsCloudModal);
@@ -761,6 +871,7 @@ $("settingsHelpClose")?.addEventListener("click", closeSettingsHelpModal);
 $("settingsHelpFootClose")?.addEventListener("click", closeSettingsHelpModal);
 $("settingsTutoClose")?.addEventListener("click", closeSettingsTutoModal);
 $("settingsTutoFootClose")?.addEventListener("click", closeSettingsTutoModal);
+document.querySelector("#pilotagePlanModal .modal__backdrop")?.addEventListener("click", closePilotagePlanModal);
 document.querySelector("#termsGateModal .modal__backdrop")?.addEventListener("click", closeTermsGateModal);
 document.querySelector("#settingsCloudModal .modal__backdrop")?.addEventListener("click", closeSettingsCloudModal);
 document.querySelector("#settingsHelpModal .modal__backdrop")?.addEventListener("click", closeSettingsHelpModal);
@@ -936,10 +1047,9 @@ window.addEventListener("diab:carbs-pushed", (e) => {
     openWatchInfoModal($("watchProfileInfo").getAttribute("data-modaltext") || "");
   });
   document.addEventListener("keydown", (e) => {
+    phase6TrapModalFocus(e);
     if (e.key !== "Escape") return;
-    closeWatchInfoModal();
-    closeTermsGateModal();
-    closeSettingsCloudModal();
+    if (phase6CloseTopModal()) e.preventDefault();
   });
   $("watchInfoClose")?.addEventListener("click", closeWatchInfoModal);
   $("watchInfoOk")?.addEventListener("click", closeWatchInfoModal);

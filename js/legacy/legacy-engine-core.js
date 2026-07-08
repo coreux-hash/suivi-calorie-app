@@ -354,6 +354,8 @@ if (scrollToResults && (activeTab === "goal" || activeTab === "repas")) {
 
 
   const kpis = $("kpis");
+  const todayExpertKpis = $("todayExpertKpis");
+  if (todayExpertKpis) todayExpertKpis.innerHTML = "";
   if (kpis) {
     kpis.innerHTML = "";
 
@@ -389,30 +391,12 @@ groupBmr.style.flex = "1 1 100%";
 groupBmr.style.width = "100%";
 
 const bmrText =
-`Pourquoi ?
-Le métabolisme de base correspond à l’énergie minimale dépensée au repos
-(respiration, organes, température…).
-
-Comment l’utiliser ?
-• Ce n’est PAS ta dépense du jour.
-• Ta dépense réelle est toujours plus élevée (activité, digestion, mouvements).
-• Ici, c’est un repère : un objectif trop bas par rapport à ton quotidien peut entraîner fatigue ou baisse de performance.
-
-Exemple
-BMR ≈ ${round(bmr,0)} kcal. Même une journée “calme” dépasse généralement cette valeur.`;
+`Repère de dépense minimale au repos. Ce n’est pas ta dépense du jour.`;
 
 const deltaBmr = round(targetKcal - bmr, 0);
 const deltaSign = deltaBmr > 0 ? "+" : "";
 const deltaText =
-`Lecture
-Cible du jour − BMR.
-
-Interprétation
-• Si c’est très bas / négatif : ta cible est proche (ou sous) ton métabolisme de base → prudence.
-• Si c’est positif : ta cible laisse une marge au-dessus du BMR (activité, digestion, etc.).
-
-Valeur
-${round(targetKcal,0)} − ${round(bmr,0)} = ${deltaSign}${deltaBmr} kcal`;
+`Écart entre cible et métabolisme de base. À lire comme un repère de prudence.`;
 
 // 1) BMR
 groupBmr.appendChild(
@@ -430,7 +414,9 @@ groupBmr.appendChild(
   )
 );
 
-kpis.appendChild(groupBmr);
+const expertKpis = todayExpertKpis || $("todayExpertKpis");
+if (expertKpis) expertKpis.appendChild(groupBmr);
+else kpis.appendChild(groupBmr);
 }
 
   // ============================================================

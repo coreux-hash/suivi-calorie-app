@@ -18,6 +18,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
 <meta content="#ffffff" name="theme-color"/>
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png"/>
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png"/>
+<link rel="apple-touch-icon" sizes="192x192" href="./icons/icon-192.png"/>
+<link rel="manifest" href="./manifest.webmanifest"/>
 </head>
 <body>
 <!-- Appbar -->
@@ -29,8 +33,8 @@
           ☰
         </button>
 <div class="brandText">
-<div class="brandTitle">Suivi quotidien • calories / activité / sommeil</div>
-<div class="brandSub">Phase 2 • composants d’écran • découpage des blocs • socle métier inchangé</div>
+<div class="brandTitle">Suivi quotidien</div>
+<div class="brandSub">Calories • activité • sommeil</div>
 </div>
 <!-- Panneau dropdown -->
 <div aria-label="Pages" class="menuPanel" id="menuPanel" role="menu">
@@ -40,6 +44,10 @@
 <button class="menuItem" data-tab="journalEntry" role="menuitem" type="button">Journal</button>
 <button class="menuItem" data-tab="history" role="menuitem" type="button">Historique / Analyse</button>
 <button class="menuItem" data-tab="settings" role="menuitem" type="button">Réglages</button>
+</div>
+<div class="menuGroup menuGroup--planAccess">
+<div class="menuGroupLabel">Plan d’accès</div>
+<button class="menuActionItem menuActionItem--planAccess" id="btnMenuOpenPilotagePlan" role="menuitem" type="button">Comprendre l’application</button>
 </div>
 <div class="menuGroup menuGroup--tools">
 <div class="menuGroupLabel">Accès transverses</div>
@@ -54,33 +62,19 @@
 </div><!-- /appbar -->
 <div class="container">
 <!-- Visible sur toutes les pages -->
-<details class="notice notice--warn notice--compact mt-06" id="globalQuickNotice">
-<summary class="noticeCompactSummary">
-<div class="noticeCompactHead">
-<div class="noticeTitle">Bon à savoir</div>
-<div class="noticeCompactToggle" aria-hidden="true">
-<span class="noticeCompactToggle__closed">Voir plus</span>
-<span class="noticeCompactToggle__open">Réduire</span>
-</div>
-</div>
-<div class="noticeCompactPreview" aria-hidden="true">
-<p>• <b>La montre reste une estimation.</b></p>
-<p>• <b>Boire fait partie de l’équilibre alimentaire.</b></p>
-</div>
-</summary>
-<div class="noticeCompactBody">
-<p>• Tu saisis tes données, l’application calcule des <b>repères</b>. <b>La montre reste une estimation</b>. Cette application ne remplace pas un avis médical.</p>
-<p>• <b>Boire fait partie de l’équilibre alimentaire</b>. Une hydratation suffisante influence l’énergie, la digestion et la lecture des signaux de faim.</p>
-</div>
-</details>
+<section class="notice notice--warn mt-06" id="globalQuickNotice" aria-labelledby="globalQuickNoticeTitle">
+<div class="noticeTitle" id="globalQuickNoticeTitle">Bon à savoir</div>
+<p>• Les valeurs sont des <b>repères</b>. <b>La montre reste une estimation</b>.</p>
+<p>• <b>Boire fait partie de l’équilibre alimentaire</b>.</p>
+</section>
 
 <div class="card phase1PrimaryNav mt-06">
   <div class="phase1PrimaryNav__head">
     <div>
-      <div class="phase1PrimaryNav__title">Navigation produit — 4 espaces</div>
-      <div class="phase1PrimaryNav__hint">Phase 4 : les wrappers de compatibilité tombent, les panneaux finaux se resserrent et seuls les ancrages encore utiles au JS restent en place.</div>
+      <div class="phase1PrimaryNav__title">Navigation</div>
+      <div class="phase1PrimaryNav__hint">Comprendre, saisir, relire, paramétrer.</div>
     </div>
-    <span class="phase1BlockTag">Phase 4 — stabilisation finale</span>
+    <span class="phase1BlockTag">Cockpit</span>
   </div>
   <div class="phase1PrimaryNav__tabs">
     <button class="tabBtn is-active" data-tab="today" type="button"><strong>Pilotage</strong><span>Lire l’état du jour</span></button>
@@ -163,33 +157,33 @@
     <div class="phase2HeroTop">
       <div>
         <div class="phase2Eyebrow">Cockpit quotidien</div>
-        <div class="phase2TitleRow"><h1 class="phase2Title">Pilotage</h1><span aria-label="Informations — Pilotage" class="info-dot" id="phase2HeroInfoToday" role="button" tabindex="0" data-modaltext="Écran de lecture immédiate. La journée se lit ici ; la saisie repart dans le Journal ; l’analyse détaillée sort vers Historique.">ℹ️</span></div>
+        <div class="phase2TitleRow"><h1 class="phase2Title">Pilotage</h1><span aria-label="Informations — Pilotage" class="info-dot" id="phase2HeroInfoToday" role="button" tabindex="0" data-modaltext="Lecture immédiate du jour. La saisie reste dans Journal ; l’analyse dans Historique.">ℹ️</span></div>
       </div>
     </div>
     <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--today" aria-label="Accès rapide aux actions du jour">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today" data-today-jump="reading" id="btnTodayQuickReading" type="button">
-        <strong>Lecture du jour</strong>
+        <strong>Jour</strong>
         <span>état opérationnel</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today" data-today-jump="summary" id="btnTodayQuickSummary" type="button">
-        <strong>Lecture consolidée</strong>
-        <span>objectif + consommé + reste</span>
+        <strong>Consolidé</strong>
+        <span>objectif + reste</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="meals" id="btnTodayQuickMeal" type="button">
         <strong>Repas *</strong>
-        <span>ajouter + corriger</span>
+        <span>saisie</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="activity" id="btnTodayQuickSport" type="button">
         <strong>Activité *</strong>
-        <span>saisie du jour</span>
+        <span>saisie</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="sleep" id="btnTodayQuickSleep" type="button">
         <strong>Sommeil *</strong>
-        <span>corriger la nuit</span>
+        <span>saisie</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="settings" id="btnTodayQuickSettings" type="button">
         <strong>Réglages *</strong>
-        <span>base + objectifs</span>
+        <span>paramètres</span>
       </button>
     </div>
     <div class="phase2HeroQuickNavNote">* ouvre un autre espace de l’application.</div>
@@ -198,8 +192,8 @@
   <div class="phase2SettingsJumpFloat phase2SettingsJumpFloat--today" aria-label="Navigation rapide Pilotage mobile">
     <button class="phase2SettingsJumpFloat__toggle" id="todayJumpFloatToggle" type="button" aria-expanded="false" aria-controls="todayJumpFloatPanel">Sections</button>
     <div class="phase2SettingsJumpFloat__panel" id="todayJumpFloatPanel" hidden>
-      <button class="phase2SettingsJumpFloat__btn" data-today-jump="reading" id="btnTodayQuickReadingFloat" type="button">Lecture du jour</button>
-      <button class="phase2SettingsJumpFloat__btn" data-today-jump="summary" id="btnTodayQuickSummaryFloat" type="button">Lecture consolidée</button>
+      <button class="phase2SettingsJumpFloat__btn" data-today-jump="reading" id="btnTodayQuickReadingFloat" type="button">Jour</button>
+      <button class="phase2SettingsJumpFloat__btn" data-today-jump="summary" id="btnTodayQuickSummaryFloat" type="button">Consolidé</button>
       <button class="phase2SettingsJumpFloat__btn" data-today-jump="meals" id="btnTodayQuickMealFloat" type="button">Repas *</button>
       <button class="phase2SettingsJumpFloat__btn" data-today-jump="activity" id="btnTodayQuickSportFloat" type="button">Activité *</button>
       <button class="phase2SettingsJumpFloat__btn" data-today-jump="sleep" id="btnTodayQuickSleepFloat" type="button">Sommeil *</button>
@@ -210,11 +204,45 @@
 
   <div class="phase2Grid phase2Grid--today">
     <div class="phase2MainCol">
+      <div class="phase2Panel playfulCockpitPanel" id="playfulCockpitPanel" aria-labelledby="playfulCockpitTitle">
+        <div class="phase2Panel__head playfulCockpitPanel__head">
+          <div>
+            <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulCockpitTitle">Cockpit du jour</h2><span aria-label="Informations — Cockpit du jour" class="info-dot" id="playfulCockpitInfo" role="button" tabindex="0" data-modaltext="Cette zone résume ta journée. Elle ne change rien à tes données.">ℹ️</span></div>
+            <p class="phase2Panel__desc">Lecture rapide de la journée active.</p>
+          </div>
+          <span class="playfulStatePill" id="playfulStatePill"><span class="playfulStateDot" id="playfulStateDot" aria-hidden="true"></span><span id="playfulStateLabel">À renseigner</span></span>
+        </div>
+
+        <div class="playfulCockpitGrid">
+          <div class="playfulInstrument playfulInstrument--missions">
+            <div class="playfulInstrument__label">Missions du jour</div>
+            <div class="playfulMissions" id="playfulMissionsList" aria-label="Missions du jour"></div>
+            <div class="playfulInstrument__meta" id="playfulMissionsCount">0/5 complétées</div>
+          </div>
+
+          <div class="playfulInstrument playfulInstrument--rhythm">
+            <div class="playfulInstrument__label">Rythme</div>
+            <div class="playfulRhythm" id="playfulRhythmSegments" aria-label="Rythme hebdomadaire"></div>
+            <div class="playfulInstrument__meta" id="playfulRhythmLabel">0/7 jours renseignés</div>
+          </div>
+        </div>
+
+        <div class="playfulNextBadgeMini" id="playfulNextBadgeMini" aria-label="Prochain badge">
+          <span class="playfulNextBadgeMini__icon" id="playfulNextBadgeIconMini" aria-hidden="true">🏅</span>
+          <span class="playfulNextBadgeMini__copy">
+            <span>Prochain badge</span>
+            <strong id="playfulNextBadgeTitleMini">À découvrir</strong>
+            <small id="playfulNextBadgeDescMini">Complète une mission pour lancer le parcours.</small>
+          </span>
+          <span class="playfulNextBadgeMini__progress" id="playfulNextBadgeProgressMini">0/1</span>
+        </div>
+      </div>
+
       <div class="phase2Panel" id="todayReadingPanel">
         <div class="phase2Panel__head">
           <div>
             <h2 class="phase2Panel__title">Lecture du jour</h2>
-            <p class="phase2Panel__desc">État opérationnel du jour puis lecture consolidée. Le contexte transverse reste dans la barre de statut.</p>
+            <p class="phase2Panel__desc">Décision du jour, puis détail si nécessaire.</p>
           </div>
         </div>
         <div class="phase1PulseGrid">
@@ -238,7 +266,7 @@
     <div class="phase2HeroTop">
       <div>
         <div class="phase2Eyebrow">Saisie / correction</div>
-        <div class="phase2TitleRow"><h1 class="phase2Title">Journal</h1><span aria-label="Informations — Journal" class="info-dot" id="phase2HeroInfoJournal" role="button" tabindex="0" data-modaltext="Une journée = une seule zone de saisie. Repas, activité, sommeil, métriques quotidiennes et module diabète se corrigent ici.">ℹ️</span></div>
+        <div class="phase2TitleRow"><h1 class="phase2Title">Journal</h1><span aria-label="Informations — Journal" class="info-dot" id="phase2HeroInfoJournal" role="button" tabindex="0" data-modaltext="Saisie de la journée active. Les analyses restent dans Historique.">ℹ️</span></div>
       </div>
     </div>
     <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--journal" aria-label="Accès rapide aux panneaux du Journal">
@@ -274,6 +302,17 @@
       <button class="phase2SettingsJumpFloat__btn" data-journal-jump="metrics" type="button">Poids / composition</button>
       <button class="phase2SettingsJumpFloat__btn" data-journal-jump="diabetes" type="button">Diabète</button>
     </div>
+  </div>
+
+  <div class="phase2Panel phase2Panel--subtle playfulJournalPanel" id="playfulJournalPanel" aria-labelledby="playfulJournalTitle">
+    <div class="phase2MicroHead">
+      <div>
+        <div class="phase2PanelTitleRow"><h3 id="playfulJournalTitle">Missions du jour</h3><span aria-label="Informations — Missions du jour" class="info-dot" id="playfulJournalInfo" role="button" tabindex="0" data-modaltext="Ces repères indiquent ce qui est déjà rempli aujourd’hui. Ils ne modifient rien.">ℹ️</span></div>
+        <p>Lecture rapide de ce qui est déjà renseigné pour la date active.</p>
+      </div>
+      <span class="phase2SectionTag" id="playfulJournalCount">0/5</span>
+    </div>
+    <div class="playfulMissions playfulMissions--compact" id="playfulJournalMissions"></div>
   </div>
 
   <div class="phase2Grid phase2Grid--journal">
@@ -364,6 +403,47 @@
     </div>
   </div>
 
+  <div class="phase2Panel phase2HistoryPanel playfulTrajectoryPanel" id="playfulTrajectoryPanel" aria-labelledby="playfulTrajectoryTitle">
+    <div class="phase2Panel__head">
+      <div>
+        <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulTrajectoryTitle">Trajectoire — semaine</h2><span aria-label="Informations — Trajectoire semaine" class="info-dot" id="playfulTrajectoryInfo" role="button" tabindex="0" data-modaltext="Cette zone compte les jours vraiment renseignés de la semaine. Rater un jour ne remet rien à zéro.">ℹ️</span></div>
+        <p class="phase2Panel__desc">Résumé simple de la semaine enregistrée.</p>
+      </div>
+    </div>
+    <div class="playfulTrajectoryList" id="playfulTrajectoryList">
+      <div class="playfulTrajectoryRow"><span>Jours renseignés</span><strong id="playfulTrajectoryDays">0/7</strong></div>
+      <div class="playfulTrajectoryRow"><span>Protéines cadrées</span><strong id="playfulTrajectoryProteins">—</strong></div>
+      <div class="playfulTrajectoryRow"><span>Apport proche cible</span><strong id="playfulTrajectoryEnergy">—</strong></div>
+      <div class="playfulTrajectoryRow"><span>Activité prise en compte</span><strong id="playfulTrajectoryActivity">—</strong></div>
+    </div>
+  </div>
+
+  <div class="phase2Panel phase2HistoryPanel playfulBadgesPanel" id="playfulBadgesPanel" aria-labelledby="playfulBadgesTitle">
+    <div class="phase2Panel__head playfulBadgesPanel__head">
+      <div>
+        <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulBadgesTitle">Badges</h2><span aria-label="Informations — Badges" class="info-dot" id="playfulBadgesInfo" role="button" tabindex="0" data-modaltext="Les badges suivent ta progression à partir des jours enregistrés. Ils encouragent le suivi, pas la restriction.">ℹ️</span></div>
+        <p class="phase2Panel__desc">Missions, rythme et repères transformés en progression ludique.</p>
+      </div>
+    </div>
+
+    <div class="playfulBadgesHero" id="playfulBadgesHero" aria-label="Prochain badge">
+      <div class="playfulBadgeRing" id="playfulBadgeRing" aria-hidden="true"><span id="playfulBadgeRingText">0/1</span></div>
+      <div class="playfulBadgesHero__copy">
+        <span class="playfulBadgesEyebrow">Prochain badge</span>
+        <h3 id="playfulNextBadgeTitle">À découvrir</h3>
+        <p id="playfulNextBadgeDescription">Complète une mission pour lancer le parcours.</p>
+      </div>
+    </div>
+
+    <details class="playfulBadgesDisclosure" id="playfulBadgesDisclosure">
+      <summary class="playfulBadgesDisclosure__summary">
+        <span class="playfulBadgesDisclosure__title">Tous les badges</span>
+        <span class="playfulBadgesDisclosure__meta" id="playfulBadgesGridSummary">Voir la progression complète</span>
+      </summary>
+      <div class="playfulBadgesGrid" id="playfulBadgesGrid" aria-label="Badges du parcours"></div>
+    </details>
+  </div>
+
   <div class="phase2Grid phase2Grid--history">
     <div class="phase2MainCol">
       <div class="phase2Panel phase2HistoryPanel phase2HistoryPanel--main" id="historyMainPanel">
@@ -409,31 +489,17 @@
       </div>
     </aside>
   </div>
-  <details class="notice notice--ok mt-06" open>
+  <details class="notice notice--ok mt-06">
     <summary class="noticeTitle">Mini-tuto — Lecture des tendances</summary>
     <div class="muted mt-025">
-      <b>But :</b> observer l’évolution dans le temps.<br/>
-      Comparer plusieurs journées permet d’identifier des régularités.<br/>
-      Les tendances sont plus utiles que les valeurs isolées.<br/>
-      L’historique aide à ajuster progressivement les habitudes.
+      Comparer plusieurs journées pour repérer les tendances utiles.
     </div>
   </details>
 
-<details class="notice notice--ok mt-06" open>
+<details class="notice notice--ok mt-06">
   <summary class="noticeTitle">Mini-tuto — Charge récente et réglages</summary>
   <div class="muted mt-025">
-    Le système adapte certains compromis nutritionnels en fonction de ton volume d’activité récent.<br/>
-    <br/>
-    Pour que les recommandations soient cohérentes :<br/>
-    ajoute idéalement 7 jours d’activité<br/>
-    les activités peuvent être saisies rétroactivement<br/>
-    seules les 7 dernières journées influencent les réglages<br/>
-    <br/>
-    Plus ton historique reflète ta pratique réelle, plus les compromis seront adaptés.<br/>
-    <br/>
-    Exemple :<br/>
-    faible volume → priorité au contrôle énergétique<br/>
-    volume élevé → priorité au soutien de la performance et de la récupération
+    Charge à confirmer sur 7 jours. Les activités récentes ajustent certains compromis.
   </div>
 </details>
 
@@ -460,7 +526,7 @@
         <strong>Objectifs</strong>
         <span class="phase2HeroQuickNav__state" id="settingsQuickStatusGoals">Preset + cible · à compléter</span>
       </button>
-      <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="goals" data-ready="missing" type="button" id="settingsQuickLoadBtn">
+      <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="load" data-ready="missing" type="button" id="settingsQuickLoadBtn">
         <strong>Sport</strong>
         <span class="phase2HeroQuickNav__state" id="settingsQuickStatusLoad">Charge récente · à compléter</span>
       </button>
@@ -474,8 +540,7 @@
       <button class="phase2SettingsJumpFloat__btn" data-settings-jump="profile" type="button">Profils</button>
       <button class="phase2SettingsJumpFloat__btn" data-settings-jump="watch" type="button">Montre</button>
       <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Objectifs</button>
-    <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Charge</button>
-    <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Charge</button>
+    <button class="phase2SettingsJumpFloat__btn" data-settings-jump="compromise" type="button">Compromis</button>
     </div>
   </div>
 
@@ -516,6 +581,120 @@
     </div>
   </div>
 </section>
+
+<div aria-hidden="true" class="modal" id="pilotagePlanModal">
+  <div class="modal__backdrop" data-close="1"></div>
+  <div aria-labelledby="pilotagePlanTitle" aria-describedby="pilotagePlanLead" aria-modal="true" class="modal__panel modal__panel--settings modal__panel--pilotagePlan" role="dialog" tabindex="-1">
+    <div class="modal__head">
+      <div>
+        <div class="modal__title" id="pilotagePlanTitle">Plan de pilotage</div>
+        <div class="pilotagePlan__kicker">Logique globale · lecture métier · repères d’usage</div>
+      </div>
+      <button aria-label="Fermer" class="modal__close" id="pilotagePlanClose" type="button">✕</button>
+    </div>
+    <div class="modal__body modal__body--settings pilotagePlan">
+      <p class="pilotagePlan__lead" id="pilotagePlanLead">
+        Cette couche explique comment lire l’application avant d’agir. Elle ne remplace ni les info-dots, ni le détail expert, ni les conditions d’accès : elle donne la carte globale du produit.
+      </p>
+
+      <section class="pilotagePlan__section pilotagePlan__section--role" aria-labelledby="pilotagePlanRoleTitle">
+        <h3 id="pilotagePlanRoleTitle">Rôle du produit</h3>
+        <p>
+          L’application sert à transformer une journée réelle — alimentation, activité, sommeil, objectifs et signaux de santé — en repères de pilotage. Le but n’est pas de juger la journée, mais d’aider à décider quoi corriger, quoi surveiller et quoi conserver.
+        </p>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanSpacesTitle">
+        <h3 id="pilotagePlanSpacesTitle">Les 4 espaces</h3>
+        <div class="pilotagePlanSpaces">
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Lire</div>
+            <h4>Pilotage</h4>
+            <p>État du jour, objectif, reste à consommer, signaux utiles et accès rapides.</p>
+          </article>
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Saisir</div>
+            <h4>Journal</h4>
+            <p>Repas, activité, sommeil, métriques et corrections de la journée active.</p>
+          </article>
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Comprendre</div>
+            <h4>Historique / Analyse</h4>
+            <p>Relecture par date, tendances, écarts et signaux qui demandent du recul.</p>
+          </article>
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Paramétrer</div>
+            <h4>Réglages</h4>
+            <p>Profil, montre, objectifs, compromis, accès, sauvegarde et cadre de calcul.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanFlowTitle">
+        <h3 id="pilotagePlanFlowTitle">Flux métier</h3>
+        <ol class="pilotagePlanFlow">
+          <li><span>1</span><div><strong>Cadre</strong><p>Conditions lues, profil exploitable, montre et objectif configurés.</p></div></li>
+          <li><span>2</span><div><strong>Saisie</strong><p>Journal de la journée active : repas, activité, sommeil et données utiles.</p></div></li>
+          <li><span>3</span><div><strong>Calcul</strong><p>Le moteur consolide les apports, la dépense, les objectifs et les compromis.</p></div></li>
+          <li><span>4</span><div><strong>Pilotage</strong><p>Lecture opérationnelle : reste, équilibre, alertes faibles et orientation.</p></div></li>
+          <li><span>5</span><div><strong>Recul</strong><p>L’historique sert à comprendre les écarts ; les corrections se font dans le Journal.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanIntentTitle">
+        <h3 id="pilotagePlanIntentTitle">Orientation par intention</h3>
+        <div class="pilotagePlanIntentGrid">
+          <div><strong>Je veux savoir où j’en suis</strong><span>Pilotage.</span></div>
+          <div><strong>Je veux ajouter ou corriger</strong><span>Journal.</span></div>
+          <div><strong>Je veux comprendre une variation</strong><span>Historique / Analyse.</span></div>
+          <div><strong>Je veux changer le cadre</strong><span>Réglages.</span></div>
+        </div>
+      </section>
+
+      <section class="pilotagePlan__section pilotagePlan__section--split" aria-labelledby="pilotagePlanDataTitle">
+        <div>
+          <h3 id="pilotagePlanDataTitle">Données qui alimentent le moteur</h3>
+          <ul class="pilotagePlanList">
+            <li>profil : sexe, âge, taille, poids ;</li>
+            <li>objectif et compromis nutritionnel ;</li>
+            <li>dépense estimée par montre ;</li>
+            <li>repas, activité, sommeil et métriques du jour ;</li>
+            <li>données santé/diabète quand le module est activé.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Niveaux de lecture</h3>
+          <ul class="pilotagePlanList">
+            <li><strong>Lecture immédiate</strong> : décision rapide du jour.</li>
+            <li><strong>Détail expert</strong> : logique de calcul et arbitrages.</li>
+            <li><strong>Historique</strong> : recul multi-jours et tendances.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="pilotagePlan__section pilotagePlan__section--warning" aria-labelledby="pilotagePlanHealthTitle">
+        <h3 id="pilotagePlanHealthTitle">Santé / diabète</h3>
+        <p>
+          Les données santé sont des repères de contexte. Elles peuvent aider à relier alimentation, activité, sommeil ou stress, mais elles ne constituent pas un avis médical, un diagnostic ou une prescription.
+        </p>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanHelpTitle">
+        <h3 id="pilotagePlanHelpTitle">Différence avec les aides existantes</h3>
+        <div class="pilotagePlanHelpGrid">
+          <div><strong>Plan de pilotage</strong><span>Logique globale.</span></div>
+          <div><strong>Info-dots</strong><span>Définition courte.</span></div>
+          <div><strong>Détail expert</strong><span>Calcul et arbitrage.</span></div>
+          <div><strong>Mini-tutos</strong><span>Aide contextuelle.</span></div>
+          <div><strong>Conditions</strong><span>Limites et responsabilité.</span></div>
+        </div>
+      </section>
+    </div>
+    <div class="modal__foot">
+      <button class="btn-ghost" id="pilotagePlanFootClose" type="button">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <div aria-hidden="true" class="modal" id="termsGateModal">
   <div class="modal__backdrop" data-close="1"></div>
@@ -670,21 +849,17 @@
      ========================= -->
 <section class="tabSection" data-tabsection="dash">
 
-<details class="notice notice--ok mt-06" open>
+<details class="notice notice--ok mt-06">
   <summary class="noticeTitle">Mini-tuto — Profil</summary>
   <div class="muted mt-025">
-    Définir la base des calculs.<br/>
-    Sexe, âge, taille et poids servent aux repères physiologiques.<br/>
-    Chaque utilisateur conserve ses données séparées.
+    Base des calculs : profil, poids de référence et préférences.
   </div>
 </details>
 
-<details class="notice notice--ok mt-06" open>
+<details class="notice notice--ok mt-06">
   <summary class="noticeTitle">Mini-tuto — Dépense</summary>
   <div class="muted mt-025">
-    Ajuster l’énergie à partir de l’activité réelle.<br/>
-    La montre fournit une estimation.<br/>
-    La cohérence sur plusieurs jours reste prioritaire.
+    Dépense retenue à partir de la montre et d’une marge de prudence.
   </div>
 </details>
 
@@ -713,6 +888,7 @@
         </div>
 </div>
 </div>
+  </details>
 </div>
 <div class="card settingsCardUsers">
 <h2>Utilisateurs</h2>
@@ -858,22 +1034,17 @@
      ========================= -->
 <section class="tabSection" data-tabsection="goal">
 
-<details class="notice notice--ok mt-06" open>
+<details class="notice notice--ok mt-06">
   <summary class="noticeTitle">Mini-tuto — Objectif</summary>
   <div class="muted mt-025">
-    Définir l’orientation nutritionnelle.<br/>
-    Le régime structure la répartition protéines, lipides et glucides.<br/>
-    L’objectif ajuste le niveau énergétique global.
+    Orientation nutritionnelle : régime, cible énergétique et compromis.
   </div>
 </details>
 
-<details class="notice notice--ok mt-06" open>
+<details class="notice notice--ok mt-06" id="settingsLoadAnchor">
   <summary class="noticeTitle">Mini-tuto — Charge d’activité et compromis</summary>
   <div class="muted mt-025">
-    Réglages adaptés à l’activité récente.<br/>
-    Le système analyse les 7 derniers jours pour ajuster certains repères nutritionnels.<br/>
-    Une charge plus élevée peut modifier le ratio glucides/protéines ou les recommandations énergétiques.<br/>
-    Ajoute environ 7 jours d’activité pour un réglage représentatif.
+    Charge récente sur 7 jours. Données insuffisantes = réglage moins stable.
   </div>
 </details>
 
@@ -887,21 +1058,15 @@
      COMPROMIS OPTIMAUX — menu déroulant + fiche sous le menu
      (sans boutons, sans modal)
      ========================================================= -->
-<div class="card panel-subtle">
-  <h2>Compromis optimal <span aria-label="Informations — niveaux de charge" class="info-dot" role="button" tabindex="0" data-modalhtml="<div><b>Tableau niveaux de charge</b></div><table><thead><tr><th>niveau</th><th>heures sport / semaine</th><th>lecture produit</th></tr></thead><tbody><tr><td><b>L0</b></td><td>0 à &lt; 3 h</td><td>faible charge</td></tr><tr><td><b>L1</b></td><td>3 à &lt; 5 h</td><td>charge modérée</td></tr><tr><td><b>L2</b></td><td>5 à &lt; 8 h</td><td>charge sportive réelle</td></tr><tr><td><b>L3</b></td><td>8 à &lt; 10 h</td><td>charge élevée</td></tr><tr><td><b>L4</b></td><td>≥ 10 h</td><td>charge très élevée / bloc perf</td></tr></tbody></table><div class='muted mt-025'>Ce niveau permet d’adapter automatiquement certains compromis nutritionnels.</div>">ℹ️</span></h2>
+<div class="card panel-subtle uxDecisionCard" id="settingsCompromiseCard">
+  <h2>Compromis choisi <span aria-label="Informations — niveaux de charge" class="info-dot" role="button" tabindex="0" data-modaltext="Le niveau de charge adapte le compromis. Les seuils complets sont dans le détail expert.">ℹ️</span></h2>
   <p class="muted">
-    Sélectionne un compromis pour adapter les repères.
+    Décision nutritionnelle, repère conseillé et compatibilité avec la charge.
   </p>
 
   <div class="row">
     <div>
-      <label for="compromiseSelect">Choisir un compromis <span aria-label="Informations — icônes compromis" class="info-dot" role="button" tabindex="0" data-modaltext="Lecture des indicateurs
-
-⚠ indique qu’un compromis reste possible mais peut être moins adapté à ton volume d’entraînement actuel.
-
-⛔ indique qu’un compromis est peu cohérent avec ta charge sportive et risque de limiter la performance ou la récupération.
-
-Ces indications permettent de garder une cohérence entre ton objectif, ton niveau d’activité et l’équilibre nutritionnel recommandé.">ℹ️</span></label>
+      <label for="compromiseSelect">Choisir un compromis <span aria-label="Informations — icônes compromis" class="info-dot" role="button" tabindex="0" data-modaltext="⚠ = possible avec vigilance. ⛔ = peu cohérent avec la charge actuelle.">ℹ️</span></label>
       <select id="compromiseSelect">
         <option value="">— Sélectionner —</option>
         <option value="eq_global">Équilibre global (base santé / stabilité)</option>
@@ -925,7 +1090,7 @@ Ces indications permettent de garder une cohérence entre ton objectif, ton nive
   <div class="muted mt-025" id="compromiseSummary">Sélectionne un compromis pour voir le résumé.</div>
 
   <details id="compromiseDetails" class="mt-025">
-    <summary class="muted" style="cursor:pointer; user-select:none">Voir le détail</summary>
+    <summary class="muted" style="cursor:pointer; user-select:none">Tableau du compromis</summary>
     <div id="compromiseBox" class="calcPanel mt-025" aria-live="polite">
       <div class="muted">Sélectionne un compromis pour afficher la fiche.</div>
     </div>
@@ -941,18 +1106,11 @@ Ces indications permettent de garder une cohérence entre ton objectif, ton nive
      ========================================================= -->
 
 <!-- Régime + objectif -->
-<div class="row settingsRow settingsRow--macros">
+<div class="row settingsRow settingsRow--macros" id="settingsMacrosAnchor">
   <div>
     <label>
       Type de régime
-      <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Choisis une structure de base, tu pourras ajuster ensuite.
-Elle fixe des repères automatiques (protéines, lipides minimum, glucides).
-Repères :
-• Standard : 85%
-• Agressif : 75%
-• Recomp : 92%
-• Maintien : 100%
-• Endurance : 95%" role="button" tabindex="0">ℹ️</span>
+      <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Structure de base utilisée pour proposer les repères automatiques." role="button" tabindex="0">ℹ️</span>
     </label>
     <select id="dietMode">
       <option selected="" value="none">— Choisir un régime —</option>
@@ -968,9 +1126,7 @@ Repères :
   <div>
     <label>
       Cible énergétique (%)
-      <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Equilibre = 100%.
-Diminues = tu manges un peu moins que ta dépense.
-Augmentes = cas particuliers (ex. recharge, endurance)." role="button" tabindex="0">ℹ️</span>
+      <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="100% = équilibre. Moins = déficit. Plus = cas spécifique." role="button" tabindex="0">ℹ️</span>
     </label>
     <input id="goalPct" max="130" min="60" step="1" type="number" inputmode="numeric" value="0"/>
     <div class="muted mt-025">
@@ -984,10 +1140,7 @@ Augmentes = cas particuliers (ex. recharge, endurance)." role="button" tabindex=
   <div>
     <label>
       Protéines (g/kg)
-      <span aria-label="Informations — Protéines" class="info-dot" data-modaltext="Elles servent de base stable dans les calculs.
-• Elles sont fixées en premier.
-• Elles ne varient pas selon les calories restantes.
-Le reste de l’énergie est réparti autour de ce socle." role="button" tabindex="0">ℹ️</span>
+      <span aria-label="Informations — Protéines" class="info-dot" data-modaltext="Socle fixe du calcul. Le reste de l’énergie s’ajuste autour." role="button" tabindex="0">ℹ️</span>
     </label>
     <input id="protPerKg" min="0" step="0.1" type="number" inputmode="decimal" value="0.0"/>
     <div id="protRangeHint">Plage protéines : —</div>
@@ -1005,14 +1158,7 @@ Le reste de l’énergie est réparti autour de ce socle." role="button" tabinde
   <div>
     <label>
       Plancher lipides (g/kg)
-      <span aria-label="Informations — Plancher lipides" class="info-dot" data-modaltext="Pourquoi un minimum
-
-Les lipides jouent un rôle fonctionnel essentiel.
-L’app impose donc un plancher de sécurité :
-• pour éviter des journées trop basses,
-• et maintenir une répartition cohérente.
-
-Si les glucides sont limités, les lipides peuvent augmenter pour compenser." role="button" tabindex="0">ℹ️</span>
+      <span aria-label="Informations — Plancher lipides" class="info-dot" data-modaltext="Minimum de sécurité. Si les glucides baissent, les lipides peuvent compenser." role="button" tabindex="0">ℹ️</span>
     </label>
     <input id="fatFloorGPerKg" max="1.0" min="0.6" step="0.1" type="number" inputmode="decimal" value="0"/>
     <div id="fatRangeHint">Plage lipides : —</div>
@@ -1021,14 +1167,7 @@ Si les glucides sont limités, les lipides peuvent augmenter pour compenser." ro
   <div>
     <label>
       Ratio glucides/protéines
-      <span aria-label="Informations — Ratio C/P" class="info-dot" data-modaltext="Comment le ratio est utilisé : il fixe une relation maximale entre glucides et protéines.
-Repères glucidiques OFF : tu fixes ton ratio C/P pour te donner un repère (ça n’impose rien automatiquement).
-Repères glucidiques ON : le ratio devient une limite glucides, et l’app ajuste le reste pour rester sur la cible kcal.
-
-Selon ton activité récente, le ratio glucides/protéines peut :
-ON → équilibrer les macros pour la recomposition ou le contrôle énergétique
-SOFT → devenir plus souple pour soutenir la récupération
-OFF → s’effacer lorsque la performance nécessite davantage d’énergie" role="button" tabindex="0">ℹ️</span>
+      <span aria-label="Informations — Ratio C/P" class="info-dot" data-modaltext="Repère maximal entre glucides et protéines. La charge récente peut l’activer, l’assouplir ou l’ignorer." role="button" tabindex="0">ℹ️</span>
     </label>
     <input id="ratioCP" max="2.0" min="0.0" step="0.1" type="number" inputmode="decimal" value="0"/>
     <input aria-hidden="true" class="hidden" disabled="" id="ratioCPText" type="text" value="--"/>
@@ -1041,11 +1180,7 @@ OFF → s’effacer lorsque la performance nécessite davantage d’énergie" ro
     <div id="carbAutoBox">
       <label>
         Glucides calculés
-        <span aria-label="Informations — Glucides calculés" class="info-dot" data-modaltext="Les glucides servent à équilibrer la journée.
-L’app les ajuste automatiquement pour rester cohérente avec :
-• tes protéines sont fixées (priorité).
-• Un minimum de lipides est garanti (sécurité).
-• Le reste de l’énergie va aux glucides" role="button" tabindex="0">ℹ️</span>
+        <span aria-label="Informations — Glucides calculés" class="info-dot" data-modaltext="Valeur ajustée après protéines, lipides minimum et cible énergétique." role="button" tabindex="0">ℹ️</span>
       </label>
       <input disabled="" id="carbAutoHint" value="Plafond glucidique : —"/>
 
@@ -1078,13 +1213,12 @@ L’app les ajuste automatiquement pour rester cohérente avec :
 <!-- =========================================================
      REPÈRES GLUCIDIQUES (panel) + DIABÈTE RAPIDE SOUS LES REPÈRES
      ========================================================= -->
-<div class="card panel-subtle">
+<div class="card panel-subtle uxCarbPanel">
 
-  <details class="notice notice--ok mt-06" open>
+  <details class="notice notice--ok mt-06">
     <summary class="noticeTitle">Mini-tuto — Cadrage glucidique</summary>
     <div class="muted mt-025">
-      Repères glucidiques pour guider l’équilibre quotidien.<br/>
-      Low-carb applique une contrainte plus forte.
+      Repères glucidiques : objectif + plafond. Low-carb applique une contrainte plus forte.
     </div>
   </details>
 
@@ -1098,7 +1232,7 @@ L’app les ajuste automatiquement pour rester cohérente avec :
       <label class="muted settingsCarbToggle settingsCarbToggle--primary settingsCarbGuardToggle" style="display:flex; align-items:center; gap:.55rem; user-select:none">
         <input id="carbGuardEnabled" type="checkbox" checked/>
         <span>Repères glucides</span>
-        <span class="info-dot" role="button" tabindex="0" aria-label="Info repères glucidiques" data-modaltext="Quand activé, le cadrage glucidique fixe un repère (objectif + plafond) pour éviter que les glucides ne dérivent mécaniquement quand la dépense grimpe.">ℹ️</span>
+        <span class="info-dot" role="button" tabindex="0" aria-label="Info repères glucidiques" data-modaltext="Objectif et plafond glucidiques.">ℹ️</span>
       </label>
     </div>
 
@@ -1106,12 +1240,7 @@ L’app les ajuste automatiquement pour rester cohérente avec :
       <div>
         <label>
           Repères glucides (g/kg/j)
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Quand les repères sont désactivés, les glucides s’ajustent librement en fonction des autres choix.
-
-L’app propose des options cohérentes avec le régime choisi.
-
-En mode Personnalisé, tu peux ajuster librement.
-En mode preset, seules les options compatibles sont proposées." role="button" tabindex="0">ℹ️</span>
+          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Repère glucidique proposé par preset." role="button" tabindex="0">ℹ️</span>
         </label>
         <select id="carbGoal">
           <option selected="" value="none">— Choisir un objectif —</option>
@@ -1128,12 +1257,7 @@ En mode preset, seules les options compatibles sont proposées." role="button" t
       <div>
         <label>
           Plafond glucidique (g/kg/j)
-          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Plafond fixe une limite de glucides pour la journée.
-Si elle est atteinte, le reste s’ajuste automatiquement pour rester cohérent.
- 
-Le plafond glucidique fonctionne par paliers de 1,0 g/kg/j, cohérents avec l’objectif glucidique choisi.
- 
-Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer visuellement. Le plafond agit uniquement lorsque ce palier est réellement dépassé." role="button" tabindex="0">ℹ️</span>
+          <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Limite utilisée seulement si le calcul la dépasse." role="button" tabindex="0">ℹ️</span>
         </label>
 
         <div class="row" style="gap:.4rem">
@@ -1152,16 +1276,19 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
     </div>
 
     <div class="card panel-subtle settingsCarbOptionsPanel mt-06">
-      <div class="settingsCarbOptionsPanel__head">
-        <h4 class="settingsCarbOptionsPanel__title">Options avancées</h4>
-        <p class="muted settingsCarbOptionsPanel__note">Options spécifiques : low-carb et diabète.</p>
-      </div>
+      <details class="uxAdvancedDetails" id="settingsAdvancedOptionsDetails">
+        <summary class="settingsCarbOptionsPanel__head">
+          <span>
+            <span class="settingsCarbOptionsPanel__title">Options avancées</span>
+            <span class="muted settingsCarbOptionsPanel__note">Low-carb et diabète.</span>
+          </span>
+        </summary>
 
       <div class="settingsCarbOptionsToggleRow mt-04">
         <label class="muted settingsCarbToggle settingsCarbToggle--secondary settingsCarbLowToggle" style="display:flex; align-items:center; gap:.55rem; user-select:none">
           <input id="lowCarbEnabled" type="checkbox"/>
           <span>Mode low-carb</span>
-          <span class="info-dot" role="button" tabindex="0" aria-label="Info low-carb" data-modaltext="Low-carb : les glucides sont volontairement bas. Les lipides s’ajustent pour compléter la journée.">ℹ️</span>
+          <span class="info-dot" role="button" tabindex="0" aria-label="Info low-carb" data-modaltext="Glucides volontairement bas ; les lipides compensent.">ℹ️</span>
         </label>
       </div>
 
@@ -1188,12 +1315,12 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
         <div style="flex:2;min-width:240px">
           <details class="notice mt-06" id="diabQuickDetails">
             <summary class="noticeTitle" style="display:flex; align-items:center; justify-content:space-between; gap:.75rem">
-              <span>Option diabète — repères glucidiques</span>
+              <span>Diabète — repères</span>
               <span class="pill" id="diabQuickStatus">(désactivé)</span>
             </summary>
 
             <div class="muted mt-025">
-              Affichage rapide : glucides du jour et dernière glycémie.
+              Glucides du jour et dernière glycémie.
             </div>
 
             <div class="row mt-04">
@@ -1206,11 +1333,10 @@ Tant que le palier n'est pas atteint, le calcul automatique peut ne pas changer 
               <div>
                 <label>
                   Dernière glycémie
-                  <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Ce champ est informatif.
-Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ️</span>
+                  <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Champ informatif, sans interprétation médicale." role="button" tabindex="0">ℹ️</span>
                 </label>
                 <input disabled="" id="diabQuickLastG" value="-"/>
-                <div class="muted" style="margin-top:.25rem">Valeur saisie dans le Journal diabète.</div>
+                <div class="muted" style="margin-top:.25rem">Dernière valeur saisie.</div>
               </div>
             </div>
 
@@ -1231,6 +1357,7 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
     </div>
     <!-- /Diabète rapide -->
 
+      </details>
     </div><!-- /.settingsCarbOptionsPanel -->
 
   </div><!-- /muted -->
@@ -1372,7 +1499,7 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
   </div>
 </div>
 <div class="row mt-04" id="mealsTableWrap"></div>
-<p class="muted mt-05">Tu peux modifier une cellule directement. Les totaux se mettent à jour automatiquement.</p>
+<p class="muted mt-05">Modification directe possible. Les totaux se mettent à jour.</p>
 <div class="row" style="justify-content:flex-end; margin-top:.35rem">
   <button class="btn-danger btn-ghost" id="btnClearMeals" type="button">Vider la journée</button>
 </div>
@@ -1417,13 +1544,9 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
      ========================= -->
 <section class="tabSection" data-tabsection="synth">
 
-<details class="notice notice--ok mt-06" open>
+<details class="notice notice--ok mt-06">
   <summary class="noticeTitle">Mini-tuto — Synthèse</summary>
-  <div class="muted mt-025">
-    <b>But :</b> comprendre l’état nutritionnel du jour.<br/>
-    La synthèse affiche : cible, consommé, reste.<br/>
-    Les détails avancés sont disponibles en mode expert.
-  </div>
+  <div class="muted mt-025">Cible, consommé, reste. Le calcul détaillé reste replié.</div>
 </details>
 
 <!-- ✅ Mount point : Résultats (unique) -->
@@ -1432,10 +1555,10 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 
 <!-- ✅ Résultats (unique, monté dynamiquement dans synth via JS) -->
 
-<div class="card hidden" id="out">
-<h2>Résultats</h2>
+<div class="card hidden uxDecisionPanel" id="out">
+<h2>Lecture consolidée</h2>
 <div class="card panel-subtle">
-<h3 class="h3">Déjà consommé aujourd'hui</h3>
+<h3 class="h3">Déjà consommé</h3>
 <div class="row mt-04">
 <div>
 <label>Calories (kcal)</label>
@@ -1456,21 +1579,25 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 </div>
 </div>
 <div class="kpi" id="kpis"></div>
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th></th><th>kcal</th><th>Protéines (g)</th><th>Glucides (g)</th><th>Lipides (g)</th>
-</tr>
-</thead>
-<tbody>
-<tr><th>Objectif du jour</th><td id="tK"></td><td id="tP"></td><td id="tC"></td><td id="tF"></td></tr>
-<tr><th>Déjà consommé</th><td id="eK"></td><td id="eP2"></td><td id="eC2"></td><td id="eF2"></td></tr>
-<tr><th>Reste à consommer</th><td id="rK"></td><td id="rP"></td><td id="rC"></td><td id="rF"></td></tr>
-</tbody>
-</table>
-</div>
-<p class="muted" id="notes"></p>
+<details class="uxExpertDisclosure mt-06" id="todayMacroExpert">
+  <summary class="noticeTitle">Détail du calcul</summary>
+  <div class="kpi mt-04" id="todayExpertKpis"></div>
+  <div class="table-wrap uxResponsiveTable">
+  <table>
+  <thead>
+  <tr>
+  <th></th><th>kcal</th><th>Protéines (g)</th><th>Glucides (g)</th><th>Lipides (g)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr><th>Objectif du jour</th><td id="tK" data-label="kcal"></td><td id="tP" data-label="Protéines"></td><td id="tC" data-label="Glucides"></td><td id="tF" data-label="Lipides"></td></tr>
+  <tr><th>Déjà consommé</th><td id="eK" data-label="kcal"></td><td id="eP2" data-label="Protéines"></td><td id="eC2" data-label="Glucides"></td><td id="eF2" data-label="Lipides"></td></tr>
+  <tr><th>Reste à consommer</th><td id="rK" data-label="kcal"></td><td id="rP" data-label="Protéines"></td><td id="rC" data-label="Glucides"></td><td id="rF" data-label="Lipides"></td></tr>
+  </tbody>
+  </table>
+  </div>
+  <p class="muted" id="notes"></p>
+</details>
 <!-- VIZ — Où vont les calories ? -->
 <div class="card" id="calFlowCard" data-um="expert">
 <h2>Où vont les calories ?</h2>
@@ -1585,7 +1712,7 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
 <div class="mt-06">
   <details class="acc historyDiabAcc" id="accDiabHistoryFull" open>
     <summary>
-      <span>Historique diabète — mesures</span>
+      <span>Historique diabète</span>
       <span class="historyDiabAcc__meta">Lecture par journée sélectionnée</span>
     </summary>
     <div class="accBody historyDiabAccBody">
@@ -1609,7 +1736,7 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
         </div>
 
         <details class="acc acc--mini diabChartAcc diabChartAcc--history" id="diabHistoryChartAcc">
-          <summary class="noticeTitle">Mini-courbe glycémique — journée sélectionnée</summary>
+          <summary class="noticeTitle">Courbe glycémique</summary>
           <div class="accBody">
             <div id="diabHistoryMiniChartWrap" class="miniChartWrap" aria-label="Mini courbe glycémique de la journée sélectionnée">
               <svg id="diabHistoryMiniChart" viewBox="0 0 640 140" preserveAspectRatio="none" role="img" aria-label="Courbe glycémie historique">
@@ -1625,7 +1752,7 @@ Aucune interprétation médicale n’est faite." role="button" tabindex="0">ℹ�
                 <g id="diabHistoryXAxis"></g>
               </svg>
             </div>
-            <div id="diabHistoryMiniChartEmpty" class="muted tiny" style="display:none;margin-top:.35rem">Aucune glycémie encodée pour cette journée.</div>
+            <div id="diabHistoryMiniChartEmpty" class="muted tiny" style="display:none;margin-top:.35rem">Aucune mesure diabète pour cette journée.</div>
           </div>
         </details>
 
@@ -1995,8 +2122,8 @@ Cette information aide à relire l’historique." role="button" tabindex="0">ℹ
 <input id="diab_gNote" placeholder="ex: stress, repas riche, symptômes…" type="text"/>
 </div>
 <div style="flex:1 1 100%;min-width:100%">
-  <details class="notice mt-06" open>
-        <summary class="noticeTitle">Labo (optionnel)</summary>
+  <details class="notice mt-06">
+        <summary class="noticeTitle">Labo</summary>
 
 
 <div class="row mt-03">
@@ -2033,7 +2160,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 
 </div>
 <details class="acc acc--mini diabChartAcc" id="diabChartAcc">
-  <summary class="noticeTitle">Évolution des glycémies (jour) <span class="muted tiny" style="font-weight:500;margin-left:.5rem">Indication visuelle, non médicale.</span></summary>
+  <summary class="noticeTitle">Courbe glycémique <span class="muted tiny" style="font-weight:500;margin-left:.5rem">Lecture visuelle.</span></summary>
   <div class="miniChartBody">
     <div id="diabMiniChartWrap" class="miniChartWrap" aria-label="Mini courbe glycémique du jour">
     <svg id="diabMiniChart" viewBox="0 0 640 140" preserveAspectRatio="none" role="img" aria-label="Courbe glycémie">
@@ -2051,7 +2178,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
       <g id="diabXAxis"></g>
     </svg>
   </div>
-  <div id="diabMiniChartEmpty" class="muted tiny" style="display:none;margin-top:.35rem">Aucune glycémie encodée pour cette journée.</div>
+  <div id="diabMiniChartEmpty" class="muted tiny" style="display:none;margin-top:.35rem">Aucune mesure diabète pour cette journée.</div>
   </div>
 </details>
 
@@ -2621,6 +2748,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 <script src="./js/legacy/legacy-cloud-sync.js"></script>
 <script src="./js/phase6/phase6-bootstrap.js"></script>
 <script src="./js/legacy/legacy-mobile-discrete-steppers.js"></script>
+<script src="./js/legacy/legacy-playful-tracking.js"></script>
 <section class="card">
 <h2>Sources</h2>
 <p class="muted" style="margin-top:.4rem">

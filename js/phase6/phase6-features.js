@@ -447,6 +447,9 @@
         const date = AppState.setActiveDate(dateStr || AppState.getActiveDate());
         const refresh = RefreshFlows.afterDateChange(date);
         const history = RenderCoordinator.renderHistoryForDate(date, { month: AppState.getHistoryMonth(date) });
+        // Historique -> date active : AppState met #dayDate à jour sans événement DOM.
+        // Phase 5 écoute aussi dayDate, donc on déclenche uniquement son refresh UI.
+        window.phase5RequestRefresh?.(30);
         return { date, refresh, history };
       },
       deleteDay(dateStr){

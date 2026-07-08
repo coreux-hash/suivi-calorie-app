@@ -3712,7 +3712,7 @@
   .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel{
     display:grid;
     grid-template-columns:minmax(0,1fr);
-    gap:12px;
+    //gap:12px;
     align-items:start;
   }
 
@@ -5343,5 +5343,1994 @@
   .phase2Screen .mobileDiscreteStepper__btn[disabled]{
     opacity:.45;
     cursor:default;
+  }
+}
+/* PASS660 — Réglages quicknav : état de charge court + ellipsis stable
+   Important : stateLine/stateSub ne doivent pas être des <span>, car les règles
+   génériques des quicknav ciblent tous les span descendants et créent une ligne
+   fantôme / hauteur parasite dans la tuile Sport. */
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav--settings > .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state{
+  min-height:0;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__stateLine,
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__stateSub{
+  display:block;
+  max-width:100%;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-style:normal;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__stateLine{
+  line-height:1.12;
+}
+.phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__stateSub{
+  margin-top:1px;
+  line-height:1.12;
+  font-weight:600;
+}
+
+/* PASS E — Cockpit analytique silencieux
+   Refonte visuelle cognitive : décision d'abord, détail expert replié.
+   Moteur, calculs, store et IDs existants conservés. */
+.uxDecisionPanel > h2,
+.uxDecisionCard > h2{
+  letter-spacing:-.015em;
+}
+.uxDecisionCard{
+  border-color:rgba(146,127,255,.28);
+  background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
+}
+.uxDecisionCard > .muted,
+.uxCarbPanel > .muted{
+  max-width:none;
+}
+.uxDecisionPanel > .muted,
+.uxDecisionCard > p.muted,
+.uxCarbPanel > .muted > p.muted{
+  max-width:66ch;
+}
+
+/* PASS E — restauration largeur métier :
+   les textes restent en largeur de lecture,
+   les formulaires, diagnostics et sous-panneaux s'étirent en desktop. */
+#compromiseLoadAdvisor,
+.uxDecisionCard #compromiseSummary,
+.uxCarbPanel .settingsCarbGuardHead,
+.uxCarbPanel #carbGuardBox,
+.uxCarbPanel .settingsCarbOptionsPanel{
+  width:100%;
+  max-width:none;
+}
+.uxAdvisorDecision{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.75rem;
+  padding:.62rem .72rem;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  background:rgba(120,102,230,.12);
+}
+.uxAdvisorDecision > b{
+  min-width:0;
+}
+.uxAdvisorDecision > span{
+  text-align:right;
+  color:rgba(235,239,255,.82);
+  font-weight:700;
+}
+.uxExpertDisclosure,
+.uxAdvancedDetails{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  background:rgba(8,14,28,.18);
+  padding:.58rem .68rem;
+}
+.uxExpertDisclosure > summary,
+.uxAdvancedDetails > summary{
+  cursor:pointer;
+  user-select:none;
+  list-style:none;
+}
+.uxExpertDisclosure > summary::-webkit-details-marker,
+.uxAdvancedDetails > summary::-webkit-details-marker{
+  display:none;
+}
+.uxExpertDisclosure > summary::before,
+.uxAdvancedDetails > summary::before{
+  content:'▸';
+  display:inline-block;
+  margin-right:.4rem;
+  transform:translateY(-1px);
+  opacity:.75;
+}
+.uxExpertDisclosure[open] > summary::before,
+.uxAdvancedDetails[open] > summary::before{
+  content:'▾';
+}
+.uxEmptyState{
+  padding:.7rem .8rem;
+  border:1px dashed rgba(255,255,255,.16);
+  border-radius:14px;
+  color:rgba(235,239,255,.72);
+  background:rgba(255,255,255,.035);
+}
+#todayExpertKpis:empty{
+  display:none;
+}
+#todayMacroExpert #notes{
+  margin-bottom:0;
+}
+.settingsCarbOptionsPanel .uxAdvancedDetails{
+  padding:.65rem .75rem;
+}
+.settingsCarbOptionsPanel .uxAdvancedDetails > summary.settingsCarbOptionsPanel__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  margin:0;
+}
+.settingsCarbOptionsPanel .uxAdvancedDetails > summary.settingsCarbOptionsPanel__head::before{
+  flex:0 0 auto;
+}
+.settingsCarbOptionsPanel__title{
+  display:block;
+}
+.settingsCarbOptionsPanel__note{
+  display:block;
+  margin-top:.12rem;
+}
+.diabChartAcc.is-empty .miniChartWrap{
+  display:none;
+}
+.diabChartAcc.is-empty .miniChartBody{
+  padding:.35rem 0 0;
+}
+
+@media (max-width:680px){
+  .brandTitle{
+    line-height:1.05;
+  }
+  .brandSub{
+    line-height:1.2;
+  }
+  .phase1PrimaryNav__head,
+  .phase5ShellLine{
+    display:none;
+  }
+  .phase2Panel__desc,
+  .phase1PulseMeta,
+  .settingsCarbOptionsPanel__note{
+    font-size:.88rem;
+    line-height:1.25;
+  }
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macrosSecondary,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:.72rem;
+  }
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macros > div,
+  .phase2Screen[data-tabsection="settings"] .settingsRow--macrosSecondary > div,
+  .phase2Screen[data-tabsection="settings"] #carbGuardBox > div,
+  .phase2Screen[data-tabsection="settings"] #lowCarbBox > div{
+    min-width:0 !important;
+    width:100%;
+  }
+  .phase2Screen[data-tabsection="settings"] #compromiseBox table,
+  .phase2Screen[data-tabsection="settings"] #compromiseBox thead,
+  .phase2Screen[data-tabsection="settings"] #compromiseBox tbody,
+  .phase2Screen[data-tabsection="settings"] #compromiseBox tr,
+  .phase2Screen[data-tabsection="settings"] #compromiseBox th,
+  .phase2Screen[data-tabsection="settings"] #compromiseBox td{
+    display:block;
+    width:100%;
+  }
+  .phase2Screen[data-tabsection="settings"] #compromiseBox tr{
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:12px;
+    padding:.5rem .6rem;
+    margin:.45rem 0;
+    background:rgba(255,255,255,.025);
+  }
+  .phase2Screen[data-tabsection="settings"] #compromiseBox th,
+  .phase2Screen[data-tabsection="settings"] #compromiseBox td{
+    border:0;
+    padding:.2rem 0;
+    text-align:left;
+  }
+  .uxAdvisorDecision{
+    display:block;
+  }
+  .uxAdvisorDecision > span{
+    display:block;
+    margin-top:.25rem;
+    text-align:left;
+  }
+  .uxResponsiveTable table,
+  .uxResponsiveTable thead,
+  .uxResponsiveTable tbody,
+  .uxResponsiveTable tr,
+  .uxResponsiveTable th,
+  .uxResponsiveTable td{
+    display:block;
+    width:100%;
+  }
+  .uxResponsiveTable thead{
+    display:none;
+  }
+  .uxResponsiveTable tr{
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;
+    padding:.62rem .7rem;
+    margin:.55rem 0;
+    background:rgba(255,255,255,.035);
+  }
+  .uxResponsiveTable th{
+    border:0;
+    padding:.1rem 0 .45rem;
+    text-align:left;
+    font-size:1rem;
+  }
+  .uxResponsiveTable td{
+    border:0;
+    padding:.2rem 0;
+    display:flex;
+    justify-content:space-between;
+    gap:1rem;
+    text-align:right;
+  }
+  .uxResponsiveTable td::before{
+    content:attr(data-label);
+    color:rgba(235,239,255,.72);
+    text-align:left;
+  }
+  .meals-wrap table,
+  .meals-wrap thead,
+  .meals-wrap tbody,
+  .meals-wrap tr,
+  .meals-wrap td,
+  .meals-wrap th{
+    display:block;
+    width:100%;
+  }
+  .meals-wrap thead{
+    display:none;
+  }
+  .meals-wrap tr{
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;
+    padding:.62rem .7rem;
+    margin:.55rem 0;
+    background:rgba(255,255,255,.035);
+  }
+  .meals-wrap td{
+    border:0;
+    padding:.28rem 0;
+    display:grid;
+    grid-template-columns:5.5rem 1fr;
+    gap:.55rem;
+    align-items:center;
+  }
+  .meals-wrap td::before{
+    content:attr(data-label);
+    color:rgba(235,239,255,.72);
+    font-size:.88rem;
+  }
+  .meals-wrap td input{
+    min-width:0;
+  }
+  #diab_glucoseTableWrap .table-wrap table,
+  #diab_glucoseTableWrap .table-wrap thead,
+  #diab_glucoseTableWrap .table-wrap tbody,
+  #diab_glucoseTableWrap .table-wrap tr,
+  #diab_glucoseTableWrap .table-wrap td,
+  #diab_glucoseTableWrap .table-wrap th{
+    display:block;
+    width:100%;
+  }
+  #diab_glucoseTableWrap .table-wrap thead{
+    display:none;
+  }
+  #diab_glucoseTableWrap .table-wrap tr{
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;
+    padding:.62rem .7rem;
+    margin:.55rem 0;
+    background:rgba(255,255,255,.035);
+  }
+  #diab_glucoseTableWrap .table-wrap td{
+    border:0;
+    padding:.28rem 0;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] #diabBlocksWrap,
+  section[data-tabsection="diab"] #diabBlocksWrap{
+    display:none;
+  }
+  .phase2Screen[data-tabsection="journalEntry"] .row > div[style*="min-width:260px"],
+  section[data-tabsection="diab"] .row > div[style*="min-width:260px"]{
+    min-width:0 !important;
+  }
+  .phase2SettingsJumpFloat__panel{
+    max-width:min(11.5rem, calc(100vw - 3rem));
+  }
+}
+
+/* ======================================================
+   PLAN DE PILOTAGE — modale transverse globale
+   Objectif : accès burger dédié “Plan d’accès”, sans cinquième espace principal
+   ni carte inline dans les accès transverses.
+   ====================================================== */
+body.phase6ModalLock{
+  overflow:hidden;
+}
+
+.menuActionItem--planAccess{
+  font-weight:850;
+}
+
+.modal__panel--pilotagePlan{
+  width:min(1040px, 95vw);
+  max-height:86vh;
+}
+
+.modal__panel--pilotagePlan:focus{
+  outline:none;
+}
+
+.pilotagePlan__kicker{
+  margin-top:3px;
+  color:var(--muted2);
+  font-size:.78rem;
+  line-height:1.25;
+  font-weight:650;
+}
+
+.pilotagePlan{
+  display:grid;
+  gap:14px;
+}
+
+.pilotagePlan__lead{
+  margin:0;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.88);
+  line-height:1.45;
+}
+
+.pilotagePlan__section{
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.032);
+}
+
+.pilotagePlan__section h3{
+  margin:0 0 10px;
+  font-size:1rem;
+  line-height:1.2;
+  font-weight:900;
+  color:var(--text);
+}
+
+.pilotagePlan__section h4{
+  margin:3px 0 6px;
+  font-size:.98rem;
+  line-height:1.2;
+  color:var(--text);
+}
+
+.pilotagePlan__section p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.pilotagePlan__section--role{
+  border-color:rgba(124,92,255,.20);
+  background:linear-gradient(180deg, rgba(124,92,255,.075), rgba(255,255,255,.032));
+}
+
+.pilotagePlan__section--warning{
+  border-color:rgba(255,209,102,.20);
+  background:linear-gradient(180deg, rgba(255,209,102,.075), rgba(255,255,255,.032));
+}
+
+.pilotagePlan__section--split{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.pilotagePlanSpaces,
+.pilotagePlanIntentGrid,
+.pilotagePlanHelpGrid{
+  display:grid;
+  gap:10px;
+}
+
+.pilotagePlanSpaces{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.pilotagePlanIntentGrid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.pilotagePlanHelpGrid{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+
+.pilotagePlanCard,
+.pilotagePlanIntentGrid > div,
+.pilotagePlanHelpGrid > div{
+  min-width:0;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(7,13,27,.28);
+}
+
+.pilotagePlanCard__eyebrow{
+  color:var(--muted2);
+  font-size:.72rem;
+  line-height:1.15;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-weight:850;
+}
+
+.pilotagePlanCard p,
+.pilotagePlanIntentGrid span,
+.pilotagePlanHelpGrid span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:.86rem;
+  line-height:1.38;
+}
+
+.pilotagePlanIntentGrid strong,
+.pilotagePlanHelpGrid strong{
+  display:block;
+  color:var(--text);
+  font-size:.9rem;
+  line-height:1.22;
+}
+
+.pilotagePlanFlow{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.pilotagePlanFlow li{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:9px;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(7,13,27,.30);
+}
+
+.pilotagePlanFlow li > span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  background:rgba(124,92,255,.20);
+  color:rgba(255,255,255,.92);
+  font-size:.78rem;
+  font-weight:900;
+}
+
+.pilotagePlanFlow strong{
+  display:block;
+  color:var(--text);
+  font-size:.9rem;
+  line-height:1.2;
+}
+
+.pilotagePlanFlow p{
+  margin-top:4px;
+  font-size:.84rem;
+  line-height:1.35;
+}
+
+.pilotagePlanList{
+  margin:0;
+  padding-left:1.1rem;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.pilotagePlanList li + li{
+  margin-top:3px;
+}
+
+@media (max-width: 1180px){
+  .pilotagePlanSpaces,
+  .pilotagePlanIntentGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .pilotagePlanFlow,
+  .pilotagePlanHelpGrid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media (max-width: 720px){
+  .modal__panel--pilotagePlan{
+    width:94vw;
+    max-height:88vh;
+  }
+  .pilotagePlan{
+    gap:10px;
+  }
+  .pilotagePlan__lead,
+  .pilotagePlan__section{
+    padding:11px 12px;
+    border-radius:14px;
+  }
+  .pilotagePlanSpaces,
+  .pilotagePlanIntentGrid,
+  .pilotagePlanHelpGrid,
+  .pilotagePlanFlow,
+  .pilotagePlan__section--split{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* ======================================================
+   EXPERIMENT — Refonte visuelle "cockpit lambda" 
+   Scope : skin UI uniquement. Moteur / calculs / JS non modifiés.
+   ====================================================== */
+:root{
+  --bg:#080c16;
+  --panel:rgba(255,255,255,.075);
+  --panel2:rgba(255,255,255,.052);
+  --border:rgba(255,255,255,.115);
+  --text:rgba(255,255,255,.94);
+  --muted:rgba(255,255,255,.72);
+  --muted2:rgba(255,255,255,.52);
+  --shadow:0 24px 70px rgba(0,0,0,.32);
+  --radius:20px;
+  --accent:#8b7cff;
+  --accent2:#38d5c6;
+  --ux-surface:#111827;
+  --ux-surface-2:#151c2d;
+  --ux-surface-3:#1a2236;
+  --ux-border:rgba(194,205,255,.14);
+  --ux-border-strong:rgba(194,205,255,.22);
+  --ux-soft:rgba(139,124,255,.12);
+  --ux-soft-2:rgba(56,213,198,.10);
+  --ux-warn:rgba(255,209,102,.14);
+  --ux-warn-border:rgba(255,209,102,.34);
+  --ux-radius-lg:24px;
+  --ux-radius-md:18px;
+  --ux-radius-sm:14px;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  color:var(--text);
+  background:
+    radial-gradient(920px 540px at 18% 0%, rgba(139,124,255,.17), transparent 62%),
+    radial-gradient(760px 520px at 88% 8%, rgba(56,213,198,.115), transparent 58%),
+    linear-gradient(180deg, #080c16 0%, #0a1020 42%, #080c16 100%);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+.container{
+  max-width:1180px;
+  padding-left:18px;
+  padding-right:18px;
+}
+
+/* Appbar : vraie barre produit, moins décorative */
+.appbar{
+  background:rgba(7,12,24,.86);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  box-shadow:0 10px 34px rgba(0,0,0,.26);
+}
+
+.appbar__inner{
+  min-height:64px;
+  max-width:1180px;
+}
+
+.logoDot{
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(135deg, rgba(139,124,255,.95), rgba(56,213,198,.80));
+  box-shadow:0 10px 26px rgba(0,0,0,.34);
+}
+
+.brandTitle{
+  font-size:1rem;
+  letter-spacing:-.015em;
+}
+
+.brandSub{
+  color:rgba(255,255,255,.66);
+  font-size:.77rem;
+}
+
+/* Menu burger : groupes plus lisibles */
+.menuPanel{
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(10,15,29,.94);
+  box-shadow:0 26px 70px rgba(0,0,0,.48);
+  backdrop-filter:blur(18px);
+}
+
+.menuGroup + .menuGroup{
+  border-top:1px solid rgba(255,255,255,.07);
+  margin-top:9px;
+  padding-top:10px;
+}
+
+.menuGroupLabel{
+  color:rgba(255,255,255,.48);
+  font-size:.70rem;
+  letter-spacing:.08em;
+  font-weight:900;
+}
+
+.menuItem,
+.menuActionItem{
+  min-height:40px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.045);
+  color:rgba(255,255,255,.88);
+}
+
+.menuItem:hover,
+.menuActionItem:hover,
+.menuItem:focus-visible,
+.menuActionItem:focus-visible{
+  border-color:rgba(139,124,255,.42);
+  background:linear-gradient(135deg, rgba(139,124,255,.18), rgba(56,213,198,.08));
+}
+
+.menuItem.is-active{
+  border-color:rgba(139,124,255,.48);
+  background:linear-gradient(135deg, rgba(139,124,255,.26), rgba(56,213,198,.12));
+}
+
+.menuActionItem--planAccess{
+  border-color:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.045);
+}
+
+/* Bandeau Bon à savoir : rappel fixe, non interactif */
+#globalQuickNotice.notice--warn{
+  position:relative;
+  padding:15px 18px 15px 18px;
+  border-radius:22px;
+  border:1px solid var(--ux-warn-border);
+  background:linear-gradient(135deg, rgba(255,209,102,.13), rgba(56,213,198,.055));
+  box-shadow:0 14px 34px rgba(0,0,0,.18);
+}
+
+#globalQuickNotice.notice--warn::before{
+  content:"";
+  position:absolute;
+  inset:12px auto 12px 0;
+  width:4px;
+  border-radius:999px;
+  background:rgba(255,209,102,.70);
+}
+
+#globalQuickNotice .noticeTitle{
+  font-size:.98rem;
+  letter-spacing:-.012em;
+  margin-bottom:8px;
+}
+
+#globalQuickNotice p{
+  margin:3px 0;
+  color:rgba(255,255,255,.85);
+  line-height:1.35;
+}
+
+/* Cartes et panneaux : structure métier unifiée */
+.card,
+details.acc,
+details.notice,
+.phase1PrimaryNav,
+.phase2HeroCard,
+.phase2Panel,
+.phase5GateDisclosure,
+.phase5GateCard,
+.settingsPanel,
+.uxDecisionCard,
+.uxDecisionPanel,
+.uxCarbPanel,
+.settingsCarbOptionsPanel,
+.settingsCarbGuardHead,
+.phase1PulseCard,
+.phase1ContextCard,
+.accTile,
+.calcPanel,
+.diab-panel,
+.miniChart{
+  border:1px solid var(--ux-border);
+  background:linear-gradient(180deg, rgba(255,255,255,.072), rgba(255,255,255,.045));
+  box-shadow:0 16px 42px rgba(0,0,0,.18);
+}
+
+.card,
+.phase2HeroCard,
+.phase2Panel,
+.phase5GateDisclosure,
+.settingsPanel,
+.uxDecisionCard,
+.uxDecisionPanel,
+.uxCarbPanel{
+  border-radius:var(--ux-radius-lg);
+}
+
+details.acc,
+details.notice,
+.phase5GateCard,
+.settingsCarbOptionsPanel,
+.settingsCarbGuardHead,
+.accTile,
+.calcPanel,
+.diab-panel,
+.miniChart{
+  border-radius:var(--ux-radius-md);
+}
+
+.phase2Panel,
+.settingsPanel,
+.uxDecisionCard,
+.uxDecisionPanel,
+.uxCarbPanel{
+  padding:18px;
+}
+
+/* Navigation principale : plus simple, cockpit */
+.phase1PrimaryNav{
+  top:76px;
+  padding:10px;
+  border-radius:24px;
+  background:rgba(12,18,34,.80);
+  backdrop-filter:blur(18px);
+}
+
+.phase1PrimaryNav__head{
+  display:none;
+}
+
+.phase1PrimaryNav__tabs{
+  margin-top:0;
+  gap:8px;
+}
+
+.phase1PrimaryNav .tabBtn{
+  min-height:62px;
+  border-radius:18px;
+  padding:12px 14px;
+  border-color:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.036);
+  transition:transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.phase1PrimaryNav .tabBtn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);
+}
+
+.phase1PrimaryNav .tabBtn.is-active{
+  border-color:rgba(139,124,255,.58);
+  background:linear-gradient(135deg, rgba(139,124,255,.31), rgba(56,213,198,.12));
+  box-shadow:0 16px 38px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.phase1PrimaryNav .tabBtn strong{
+  font-size:1rem;
+  letter-spacing:-.015em;
+}
+
+.phase1PrimaryNav .tabBtn span{
+  color:rgba(255,255,255,.62);
+  font-size:.78rem;
+}
+
+/* Accès transverses : utilitaire, visuellement secondaire */
+.phase5ShellLine{
+  margin-top:16px;
+}
+
+.phase5GateDisclosure{
+  padding:12px;
+  background:rgba(10,16,30,.54);
+}
+
+.phase5GateSummary{
+  padding:0 4px 10px;
+  color:rgba(255,255,255,.88);
+}
+
+.phase5GateBar{
+  gap:10px;
+}
+
+.phase5GateCard{
+  padding:14px;
+  background:rgba(255,255,255,.038);
+  box-shadow:none;
+}
+
+.phase5GateCard__eyebrow{
+  color:rgba(255,255,255,.47);
+  letter-spacing:.075em;
+}
+
+.phase5GateCard__title{
+  letter-spacing:-.01em;
+}
+
+/* Héros de page : lisibilité lambda + repères métier */
+.phase2HeroCard{
+  position:relative;
+  padding:22px;
+  overflow:hidden;
+  background:
+    linear-gradient(135deg, rgba(139,124,255,.15), rgba(56,213,198,.065) 48%, rgba(255,255,255,.045));
+}
+
+.phase2HeroCard::before{
+  content:"";
+  position:absolute;
+  inset:18px auto 18px 0;
+  width:5px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(139,124,255,.95), rgba(56,213,198,.80));
+}
+
+.phase2Eyebrow{
+  color:rgba(56,213,198,.90);
+  font-size:.72rem;
+  letter-spacing:.11em;
+}
+
+.phase2Title{
+  font-size:clamp(1.42rem, 2.6vw, 2rem);
+  letter-spacing:-.035em;
+}
+
+.phase2Lead,
+.phase2Panel__desc{
+  color:rgba(255,255,255,.69);
+}
+
+.phase2HeroQuickNav{
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(8,13,26,.28);
+  padding:8px;
+}
+
+.phase2HeroQuickNav__btn{
+  border-radius:15px;
+}
+
+/* Titres de panneaux : hiérarchie plus nette */
+.phase2Panel__head,
+.phase2MicroHead,
+.phase1CardHead{
+  border-bottom-color:rgba(255,255,255,.075);
+}
+
+.phase2Panel__title,
+.phase2MicroHead h3,
+.settingsPanel h2,
+.settingsPanel h3,
+.uxDecisionCard h2,
+.uxDecisionPanel h2,
+.uxCarbPanel h2,
+.noticeTitle{
+  letter-spacing:-.022em;
+}
+
+.phase2Panel__title,
+.phase2MicroHead h3{
+  font-size:1.08rem;
+}
+
+/* Info-dots : conservés mais mieux intégrés */
+.info-dot{
+  width:24px;
+  height:24px;
+  min-width:24px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(118,174,255,.46);
+  background:linear-gradient(180deg, rgba(65,139,255,.34), rgba(65,139,255,.16));
+  color:#dbeaff;
+  box-shadow:0 8px 18px rgba(0,0,0,.22);
+  font-size:0;
+  vertical-align:middle;
+}
+
+.info-dot::before{
+  content:"i";
+  font-size:.82rem;
+  line-height:1;
+  font-weight:900;
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.info-dot:hover,
+.info-dot:focus-visible{
+  border-color:rgba(143,190,255,.78);
+  background:linear-gradient(180deg, rgba(65,139,255,.50), rgba(65,139,255,.24));
+  outline:none;
+}
+
+/* Boutons : action claire, pas de bruit */
+button,
+.btn,
+.btn-ghost,
+.btn-mini,
+.btn-icon,
+.phase2MealModeBtn{
+  transition:transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.btn,
+button.btn,
+.phase2MealModeBtn.is-active{
+  border-radius:14px;
+  border:1px solid rgba(139,124,255,.42);
+  background:linear-gradient(135deg, rgba(139,124,255,.34), rgba(56,213,198,.14));
+  color:rgba(255,255,255,.96);
+  box-shadow:0 12px 28px rgba(0,0,0,.22);
+}
+
+.btn-ghost,
+.btn-mini,
+.btn-icon,
+.phase2MealModeBtn{
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.042);
+  color:rgba(255,255,255,.88);
+}
+
+.btn:hover,
+.btn-ghost:hover,
+.btn-mini:hover,
+.btn-icon:hover,
+.phase2MealModeBtn:hover,
+button:hover{
+  transform:translateY(-1px);
+}
+
+.btn-ghost:hover,
+.btn-mini:hover,
+.btn-icon:hover,
+.phase2MealModeBtn:hover{
+  border-color:rgba(139,124,255,.38);
+  background:rgba(139,124,255,.12);
+}
+
+button:focus-visible,
+.btn:focus-visible,
+.btn-ghost:focus-visible,
+.btn-mini:focus-visible,
+.btn-icon:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible{
+  outline:2px solid rgba(56,213,198,.72);
+  outline-offset:2px;
+}
+
+/* Formulaires : plus lisibles, plus proches app métier */
+input,
+select,
+textarea{
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(7,12,24,.56);
+  color:rgba(255,255,255,.94);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+select{
+  min-height:46px;
+  padding:.62rem .78rem;
+}
+
+textarea{
+  padding:.72rem .82rem;
+}
+
+label,
+.settingsRow label,
+.phase2Panel label,
+.uxDecisionCard label,
+.uxCarbPanel label{
+  color:rgba(255,255,255,.88);
+  font-weight:760;
+}
+
+/* KPI / données : meilleure lecture tabulaire */
+.kpi,
+.phase1PulseCard,
+.phase1ContextCard,
+.uxResponsiveTable,
+.table-wrap{
+  background:rgba(7,12,24,.30);
+}
+
+.kpi b,
+.phase1PulseValue,
+.phase1ContextValue,
+.calcValue{
+  font-variant-numeric:tabular-nums;
+}
+
+.pill,
+.phase2Chip,
+.phase1BlockTag,
+.phase2SectionTag{
+  border-color:rgba(255,255,255,.115);
+  background:rgba(255,255,255,.048);
+}
+
+/* Compromis + repères glucides : blocs métiers en pleine largeur */
+.uxDecisionCard,
+.uxCarbPanel{
+  background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.046));
+}
+
+#compromiseSummary,
+#compromiseLoadAdvisor,
+.settingsCarbGuardHead,
+#carbGuardBox,
+.settingsCarbOptionsPanel{
+  width:100%;
+  max-width:none;
+}
+
+.uxDecisionPanel,
+.settingsCarbOptionsPanel,
+.settingsCarbGuardHead{
+  background:rgba(7,12,24,.24);
+}
+
+.settingsCarbToggle,
+.settingsCarbOptionsToggleRow{
+  border-radius:16px;
+  background:rgba(255,255,255,.04);
+}
+
+/* Détails / accordéons : moins lourds, plus prévisibles */
+details > summary{
+  cursor:pointer;
+}
+
+details.acc,
+details.notice{
+  padding:12px 14px;
+}
+
+details.acc > summary,
+details.notice > summary{
+  border-radius:14px;
+}
+
+.uxExpertDisclosure{
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.034);
+}
+
+/* Modales : meilleure profondeur + lecture */
+.modal__panel{
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg, rgba(16,23,40,.98), rgba(10,15,29,.98));
+  box-shadow:0 32px 90px rgba(0,0,0,.56);
+}
+
+.modal__head{
+  border-bottom-color:rgba(255,255,255,.08);
+}
+
+.modal__title{
+  letter-spacing:-.025em;
+}
+
+.modal__close{
+  border-radius:13px;
+}
+
+/* Plan de pilotage : page d’orientation, pas simple aide */
+.pilotagePlan__lead,
+.pilotagePlan__section,
+.pilotagePlanCard,
+.pilotagePlanIntentGrid > div,
+.pilotagePlanHelpGrid > div,
+.pilotagePlanFlow li{
+  border-color:rgba(255,255,255,.105);
+  background:rgba(255,255,255,.045);
+}
+
+.pilotagePlan__section--role{
+  background:linear-gradient(135deg, rgba(139,124,255,.13), rgba(255,255,255,.045));
+}
+
+/* Menu flottant mobile réglages : moins intrusif */
+.phase2SettingsJumpFloat{
+  filter:drop-shadow(0 18px 34px rgba(0,0,0,.35));
+}
+
+.phase2SettingsJumpFloat__toggle{
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(135deg, rgba(139,124,255,.45), rgba(56,213,198,.15));
+}
+
+.phase2SettingsJumpFloat__panel{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(9,14,27,.94);
+  backdrop-filter:blur(18px);
+}
+
+.phase2SettingsJumpFloat__btn{
+  border-radius:13px;
+}
+
+.phase2SettingsJumpFloat__btn.is-active{
+  border-color:rgba(139,124,255,.55);
+  background:linear-gradient(135deg, rgba(139,124,255,.26), rgba(56,213,198,.10));
+}
+
+/* Tables et zones scrollables */
+.table-wrap,
+.uxResponsiveTable,
+.historyDiabTableWrap{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.10);
+  overflow:auto;
+}
+
+table{
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+th{
+  color:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.045);
+}
+
+td,
+th{
+  border-bottom-color:rgba(255,255,255,.075);
+}
+
+/* Mobile : moins de masse, plus de respiration */
+@media (max-width: 760px){
+  .container{
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:72px;
+  }
+
+  .appbar__inner{
+    min-height:60px;
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .logoDot{
+    width:38px;
+    height:38px;
+    border-radius:13px;
+  }
+
+  .brandTitle{ font-size:.96rem; }
+  .brandSub{ font-size:.72rem; }
+
+  #globalQuickNotice.notice--warn{
+    padding:13px 14px 13px 16px;
+    border-radius:19px;
+  }
+
+  #globalQuickNotice .noticeTitle{
+    margin-bottom:6px;
+  }
+
+  .phase1PrimaryNav{
+    top:66px;
+    padding:8px;
+    border-radius:20px;
+  }
+
+  .phase1PrimaryNav__tabs{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+
+  .phase1PrimaryNav .tabBtn{
+    min-height:56px;
+    padding:10px 11px;
+    border-radius:15px;
+  }
+
+  .phase1PrimaryNav .tabBtn strong{ font-size:.92rem; }
+  .phase1PrimaryNav .tabBtn span{ font-size:.72rem; }
+
+  .phase2HeroCard,
+  .phase2Panel,
+  .settingsPanel,
+  .uxDecisionCard,
+  .uxDecisionPanel,
+  .uxCarbPanel{
+    padding:15px;
+    border-radius:21px;
+  }
+
+  .phase2HeroCard::before{
+    inset:14px auto 14px 0;
+  }
+
+  .phase2Title{
+    font-size:1.42rem;
+  }
+
+  .phase2Grid,
+  .phase2MainCol,
+  .phase2RailCol,
+  .phase2SettingsGrid{
+    gap:12px;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select{
+    min-height:44px;
+  }
+
+  .menuPanel{
+    width:min(92vw, 304px);
+    border-radius:18px;
+  }
+
+  .phase5GateDisclosure{
+    padding:10px;
+    border-radius:20px;
+  }
+
+  .phase5GateCard{
+    padding:12px;
+  }
+}
+
+@media (max-width: 430px){
+  .phase1PrimaryNav__tabs{
+    grid-template-columns:1fr;
+  }
+
+  .phase1PrimaryNav .tabBtn{
+    min-height:50px;
+  }
+
+  .phase2HeroQuickNav{
+    padding:7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    transition:none !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+/* ============================================================
+   Phase ludique A2 — Épuration cockpit lecture-seule
+   ------------------------------------------------------------
+   Surface de motivation fonctionnelle : missions, rythme,
+   trajectoire. Aucun calcul moteur ni écriture de données.
+   ============================================================ */
+.playfulCockpitPanel,
+.playfulJournalPanel,
+.playfulTrajectoryPanel{
+  position:relative;
+  overflow:hidden;
+}
+.playfulCockpitPanel{
+  border-color:rgba(45,212,191,.18);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(45,212,191,.12), transparent 32%),
+    linear-gradient(135deg, rgba(19,31,52,.86), rgba(17,23,39,.94));
+}
+.playfulCockpitPanel::before,
+.playfulJournalPanel::before,
+.playfulTrajectoryPanel::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  opacity:.9;
+  pointer-events:none;
+}
+.playfulCockpitPanel::before{
+  background:linear-gradient(180deg, var(--accent), var(--accent2));
+}
+.playfulCockpitPanel__head{
+  align-items:flex-start;
+  gap:14px;
+}
+.playfulStatePill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:34px;
+  padding:7px 12px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  color:var(--text);
+  font-weight:850;
+  white-space:nowrap;
+}
+.playfulStateDot{
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.45);
+  box-shadow:0 0 0 4px rgba(255,255,255,.06);
+}
+.playfulCockpitPanel[data-tone="ok"] .playfulStateDot,
+.playfulStatePill[data-tone="ok"] .playfulStateDot{
+  background:#2ecc71;
+  box-shadow:0 0 0 4px rgba(46,204,113,.14);
+}
+.playfulCockpitPanel[data-tone="warn"] .playfulStateDot,
+.playfulStatePill[data-tone="warn"] .playfulStateDot{
+  background:#f1c40f;
+  box-shadow:0 0 0 4px rgba(241,196,15,.14);
+}
+.playfulCockpitPanel[data-tone="watch"] .playfulStateDot,
+.playfulStatePill[data-tone="watch"] .playfulStateDot{
+  background:#f39c12;
+  box-shadow:0 0 0 4px rgba(243,156,18,.14);
+}
+.playfulCockpitGrid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:12px;
+  //margin-top:12px;
+}
+.playfulInstrument{
+  min-width:0;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:18px;
+  background:rgba(255,255,255,.045);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.playfulInstrument__label{
+  color:var(--muted);
+  font-size:.74rem;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.playfulInstrument__meta{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:.92rem;
+  line-height:1.35;
+}
+.playfulRhythm{
+  display:grid;
+  grid-template-columns:repeat(7, minmax(12px, 1fr));
+  gap:6px;
+  margin-top:12px;
+}
+.playfulRhythm__seg{
+  display:block;
+  min-height:12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.105);
+  border:1px solid rgba(255,255,255,.095);
+}
+.playfulRhythm__seg.is-filled{
+  background:linear-gradient(135deg, var(--accent), var(--accent2));
+  border-color:rgba(45,212,191,.35);
+  box-shadow:0 0 0 1px rgba(45,212,191,.06), 0 8px 20px rgba(45,212,191,.08);
+}
+.playfulMissions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.playfulMission{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:30px;
+  padding:6px 10px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  color:var(--muted);
+  font-size:.88rem;
+  font-weight:850;
+}
+.playfulMission.is-done{
+  color:var(--text);
+  border-color:rgba(45,212,191,.26);
+  background:rgba(45,212,191,.095);
+}
+.playfulJournalPanel{
+  margin-top:12px;
+  margin-bottom:0;
+  border-color:rgba(45,212,191,.14);
+}
+.playfulJournalPanel::before{
+  background:linear-gradient(180deg, var(--accent2), var(--accent));
+}
+.playfulJournalPanel .phase2MicroHead{
+  margin-bottom:10px;
+}
+.playfulJournalPanel .phase2PanelTitleRow{
+  justify-content:flex-start;
+}
+.playfulMissions--compact{
+  margin-top:0;
+}
+.playfulTrajectoryPanel{
+  margin:0 0 14px;
+  border-color:rgba(124,92,255,.18);
+  background:linear-gradient(135deg, rgba(124,92,255,.10), rgba(18,26,43,.92));
+}
+.playfulTrajectoryPanel::before{
+  background:linear-gradient(180deg, var(--accent), var(--accent2));
+}
+.playfulTrajectoryList{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:10px;
+}
+.playfulTrajectoryRow{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:6px;
+  min-height:72px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:15px;
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+}
+.playfulTrajectoryRow span{
+  font-size:.82rem;
+  font-weight:850;
+  line-height:1.2;
+}
+.playfulTrajectoryRow strong{
+  color:var(--text);
+  font-size:1.08rem;
+  font-weight:950;
+  white-space:nowrap;
+}
+
+@media (max-width: 980px){
+  .playfulTrajectoryList{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px){
+  .playfulCockpitPanel__head{
+    flex-direction:column;
+  }
+  .playfulStatePill{
+    align-self:flex-start;
+  }
+  .playfulCockpitGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 560px){
+  .playfulTrajectoryList{
+    grid-template-columns:1fr;
+  }
+}
+
+/* ============================================================
+   Phase ludique A4 — Validation UI desktop / mobile
+   ------------------------------------------------------------
+   Ajustements de surface uniquement : trajectoire mobile 2×2,
+   KPI consolidés desktop sur une même ligne, pill historique
+   compacte dans la sidecard énergie.
+   ============================================================ */
+
+/* Historique mobile : conserver une lecture 2 colonnes / 2 lignes. */
+@media (max-width: 560px){
+  .playfulTrajectoryList{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:8px;
+  }
+  .playfulTrajectoryRow{
+    min-height:66px;
+    padding:10px;
+  }
+  .playfulTrajectoryRow span{
+    font-size:.76rem;
+  }
+  .playfulTrajectoryRow strong{
+    font-size:1rem;
+  }
+}
+
+/* Lecture consolidée desktop : régime + énergie sur une ligne. */
+@media (min-width: 900px){
+  #kpis{
+    display:grid;
+    grid-template-columns:minmax(260px, .9fr) minmax(420px, 1.55fr);
+    gap:12px;
+    align-items:stretch;
+  }
+  #kpis .kpis-group{
+    margin:0;
+  }
+  #kpis .kpis-group-diet,
+  #kpis .kpis-group-energy{
+    min-width:0;
+  }
+  #kpis .kpis-group-diet{
+    padding-bottom:0;
+    border-bottom:0;
+  }
+  #kpis .kpis-group[data-um="expert"]{
+    grid-column:1 / -1;
+  }
+}
+
+@media (max-width: 899px){
+  #kpis{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  #kpis .kpis-group{
+    margin:0;
+  }
+}
+
+/* Historique : la pill objectif dans la sidecard énergie reste compacte. */
+.histSideStack .sideCard > .kpi{
+  display:inline-flex;
+  align-items:center;
+  width:auto;
+  max-width:100%;
+  margin:.55rem 0 0;
+  padding:0;
+  gap:0;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.histSideStack .sideCard > .kpi .pill{
+  width:auto;
+  max-width:100%;
+  min-height:28px;
+  padding:4px 9px;
+  background:rgba(7,12,24,.26);
+  border-color:rgba(255,255,255,.14);
+}
+.histSideStack .sideCard > .kpi .pill .mini,
+.histSideStack .sideCard > .kpi .pill .muted{
+  min-width:0;
+  white-space:nowrap;
+}
+
+/* ============================================================
+   Phase ludique A5 — Badges de parcours lecture-seule
+   ------------------------------------------------------------
+   Façade ludique en badges, logique de progression type missions.
+   Calcul dérivé uniquement des jours enregistrés.
+   ============================================================ */
+.playfulBadgesPanel,
+.playfulNextBadgeMini{
+  position:relative;
+}
+.playfulBadgesPanel{
+  margin:0 0 14px;
+  overflow:hidden;
+  border-color:rgba(45,212,191,.16);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(45,212,191,.10), transparent 30%),
+    linear-gradient(135deg, rgba(15,23,42,.94), rgba(18,26,43,.94));
+}
+.playfulBadgesPanel::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:linear-gradient(180deg, var(--accent2), var(--accent));
+  opacity:.9;
+  pointer-events:none;
+}
+.playfulNextBadgeMini{
+  display:grid;
+  grid-template-columns:auto minmax(0, 1fr) auto;
+  align-items:center;
+  gap:12px;
+  margin-top:14px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:18px;
+  background:rgba(255,255,255,.045);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.playfulNextBadgeMini__icon{
+  display:grid;
+  place-items:center;
+  width:46px;
+  height:46px;
+  border-radius:999px;
+  border:1px solid rgba(45,212,191,.25);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.22), transparent 30%),
+    linear-gradient(135deg, rgba(124,92,255,.24), rgba(45,212,191,.16));
+  box-shadow:0 12px 28px rgba(0,0,0,.22);
+  font-size:1.25rem;
+}
+.playfulNextBadgeMini__copy{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  gap:2px;
+}
+.playfulNextBadgeMini__copy span{
+  color:var(--muted);
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.playfulNextBadgeMini__copy strong{
+  color:var(--text);
+  font-size:1rem;
+  font-weight:950;
+  line-height:1.1;
+}
+.playfulNextBadgeMini__copy small{
+  color:var(--muted);
+  font-size:.84rem;
+  line-height:1.25;
+}
+.playfulNextBadgeMini__progress{
+  justify-self:end;
+  min-width:48px;
+  padding:6px 9px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:999px;
+  background:rgba(7,12,24,.22);
+  color:var(--text);
+  font-weight:900;
+  text-align:center;
+  white-space:nowrap;
+}
+.playfulBadgesHero{
+  display:grid;
+  grid-template-columns:auto minmax(0, 1fr);
+  gap:18px;
+  align-items:center;
+  margin-top:4px;
+  padding:16px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:22px;
+  background:rgba(255,255,255,.045);
+}
+.playfulBadgeRing{
+  --badge-progress:0%;
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:82px;
+  height:82px;
+  border-radius:999px;
+  background:conic-gradient(var(--accent2) var(--badge-progress), rgba(255,255,255,.10) 0);
+  box-shadow:0 16px 36px rgba(0,0,0,.24);
+}
+.playfulBadgeRing::after{
+  content:"";
+  position:absolute;
+  inset:10px;
+  border-radius:inherit;
+  background:linear-gradient(135deg, rgba(19,31,52,.98), rgba(17,23,39,.98));
+  border:1px solid rgba(255,255,255,.08);
+}
+.playfulBadgeRing span{
+  position:relative;
+  z-index:1;
+  color:var(--text);
+  font-weight:950;
+  font-size:.95rem;
+}
+.playfulBadgesEyebrow{
+  color:var(--accent2);
+  font-size:.74rem;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.playfulBadgesHero__copy h3{
+  margin:.18rem 0 .2rem;
+  color:var(--text);
+  font-size:1.25rem;
+  line-height:1.12;
+}
+.playfulBadgesHero__copy p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.35;
+}
+.playfulBadgesGrid{
+  display:grid;
+  grid-template-columns:repeat(6, minmax(92px, 1fr));
+  gap:16px 12px;
+  margin-top:18px;
+}
+.playfulBadgeCard{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+  padding:12px 7px 10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  background:rgba(255,255,255,.035);
+  text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.playfulBadgeCard__icon{
+  --badge-card-progress:0%;
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:64px;
+  height:64px;
+  border-radius:999px;
+  background:
+    radial-gradient(circle at center, rgba(17,23,39,.98) 0 56%, transparent 57%),
+    conic-gradient(var(--accent2) var(--badge-card-progress), rgba(255,255,255,.10) 0);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 14px 26px rgba(0,0,0,.20);
+}
+.playfulBadgeCard__icon > span:first-child{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  color:var(--text);
+  font-size:1.05rem;
+  font-weight:950;
+}
+.playfulBadgeCard__lock,
+.playfulBadgeCard__check{
+  position:absolute;
+  z-index:2;
+  right:-3px;
+  bottom:-2px;
+  display:grid;
+  place-items:center;
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(7,12,24,.92);
+  font-size:.78rem;
+  line-height:1;
+}
+.playfulBadgeCard__check{
+  background:rgba(45,212,191,.22);
+  color:var(--text);
+}
+.playfulBadgeCard strong{
+  color:var(--text);
+  font-size:.88rem;
+  font-weight:950;
+  line-height:1.12;
+  min-height:2.1em;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.playfulBadgeCard small{
+  color:var(--muted);
+  font-weight:850;
+}
+.playfulBadgeCard.is-locked{
+  opacity:.66;
+}
+.playfulBadgeCard.is-locked .playfulBadgeCard__icon{
+  filter:saturate(.62);
+}
+.playfulBadgeCard.is-unlocked{
+  border-color:rgba(45,212,191,.22);
+  background:linear-gradient(135deg, rgba(45,212,191,.075), rgba(124,92,255,.055));
+}
+
+@media (max-width: 1180px){
+  .playfulBadgesGrid{
+    grid-template-columns:repeat(4, minmax(92px, 1fr));
+  }
+}
+@media (max-width: 780px){
+  .playfulBadgesGrid{
+    grid-template-columns:repeat(3, minmax(84px, 1fr));
+    gap:14px 9px;
+  }
+  .playfulBadgesHero{
+    grid-template-columns:1fr;
+    justify-items:start;
+  }
+  .playfulNextBadgeMini{
+    grid-template-columns:auto minmax(0,1fr);
+  }
+  .playfulNextBadgeMini__progress{
+    grid-column:1 / -1;
+    justify-self:start;
+  }
+}
+@media (max-width: 430px){
+  .playfulBadgesGrid{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
+  .playfulBadgeCard{
+    padding:10px 5px 9px;
+  }
+  .playfulBadgeCard__icon{
+    width:56px;
+    height:56px;
+  }
+  .playfulBadgeCard__icon > span:first-child{
+    width:38px;
+    height:38px;
+    font-size:.92rem;
+  }
+  .playfulBadgeCard strong{
+    font-size:.78rem;
+  }
+  .playfulBadgeCard small{
+    font-size:.78rem;
+  }
+}
+
+
+/* ============================================================
+   Phase ludique A6 — Badges repliables + respiration historique
+   ------------------------------------------------------------
+   Réduction du bruit visuel : le prochain badge reste visible,
+   la grille complète passe dans un accordéon natif.
+   ============================================================ */
+.playfulTrajectoryPanel{
+  margin:14px 0 14px;
+}
+.playfulBadgesDisclosure{
+  margin-top:14px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:20px;
+  background:rgba(255,255,255,.032);
+  overflow:hidden;
+}
+.playfulBadgesDisclosure__summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:48px;
+  padding:12px 14px;
+  cursor:pointer;
+  user-select:none;
+  list-style:none;
+}
+.playfulBadgesDisclosure__summary::-webkit-details-marker{
+  display:none;
+}
+.playfulBadgesDisclosure__summary::before{
+  content:"▸";
+  display:inline-grid;
+  place-items:center;
+  width:18px;
+  color:var(--muted);
+  transform:translateY(-1px);
+  transition:transform .18s ease, color .18s ease;
+}
+.playfulBadgesDisclosure[open] .playfulBadgesDisclosure__summary::before{
+  transform:rotate(90deg) translateX(1px);
+  color:var(--accent2);
+}
+.playfulBadgesDisclosure__title{
+  flex:1 1 auto;
+  color:var(--text);
+  font-weight:950;
+  line-height:1.1;
+}
+.playfulBadgesDisclosure__meta{
+  flex:0 0 auto;
+  max-width:45%;
+  color:var(--muted);
+  font-size:.82rem;
+  font-weight:850;
+  line-height:1.2;
+  text-align:right;
+}
+.playfulBadgesDisclosure .playfulBadgesGrid{
+  margin-top:0;
+  padding:0 12px 14px;
+}
+.playfulBadgesDisclosure[open] .playfulBadgesDisclosure__summary{
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+@media (max-width: 560px){
+  .playfulTrajectoryPanel{
+    margin-top:12px;
+  }
+  .playfulBadgesDisclosure__summary{
+    align-items:flex-start;
+    gap:8px;
+  }
+  .playfulBadgesDisclosure__meta{
+    max-width:52%;
+    font-size:.76rem;
+  }
+  .playfulBadgesDisclosure .playfulBadgesGrid{
+    padding:0 8px 12px;
   }
 }

@@ -538,7 +538,7 @@ function diab_renderGlucoseTable(dateStr){
   if (!wrap) return;
 
   if (items.length === 0){
-    wrap.innerHTML = `<p class="muted">Aucune glycémie encodée pour cette journée.</p>`;
+    wrap.innerHTML = `<div class="uxEmptyState">Aucune mesure diabète pour cette journée.</div>`;
     return;
   }
 
@@ -656,9 +656,11 @@ function diab_renderMiniChart(dateStr){
       dots.innerHTML = "";
       xAxis.innerHTML = "";
       empty.style.display = "block";
+      svg.closest?.('.diabChartAcc')?.classList.add('is-empty');
       return;
     }
     empty.style.display = "none";
+    svg.closest?.('.diabChartAcc')?.classList.remove('is-empty');
 
     const hasTime = ptsRaw.some(p => /^\d{2}:\d{2}$/.test(p.time));
     const toMin = (hhmm) => {
