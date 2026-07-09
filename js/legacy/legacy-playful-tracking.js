@@ -391,7 +391,8 @@
       const label = b.unlocked ? 'Débloqué' : 'À débloquer';
       const pct = Math.max(0, Math.min(100, b.pct || 0));
       const lock = b.unlocked ? '<span class="playfulBadgeCard__check" aria-hidden="true">✓</span>' : '<span class="playfulBadgeCard__lock" aria-hidden="true">🔒</span>';
-      return `<article class="playfulBadgeCard${cls}" title="${esc(b.description)}" aria-label="${esc(b.label)} — ${label}">
+      const cardAria = esc(`${b.label} — ${label} : ${b.description} (${b.current}/${b.target})`);
+      return `<article class="playfulBadgeCard${cls}" title="${esc(b.description)}" aria-label="${cardAria}">
         <div class="playfulBadgeCard__icon" style="--badge-card-progress:${pct}%"><span>${esc(b.icon || '🏅')}</span>${lock}</div>
         <strong>${esc(b.label)}</strong>
         <small>${esc(b.current)}/${esc(b.target)}</small>
@@ -404,7 +405,9 @@
     target.innerHTML = missions.map(m => {
       const cls = m.done ? ' is-done' : '';
       const icon = m.done ? '✓' : '○';
-      return `<span class="playfulMission${cls}" title="${esc(m.detail)}"><span aria-hidden="true">${icon}</span>${esc(m.label)}</span>`;
+      const state = m.done ? 'complété' : 'à compléter';
+      const aria = esc(`${m.label} : ${m.detail} (${state})`);
+      return `<span class="playfulMission${cls}" role="img" aria-label="${aria}" title="${esc(m.detail)}"><span aria-hidden="true">${icon}</span>${esc(m.label)}</span>`;
     }).join('');
   }
   function renderSegments(target, rhythm){

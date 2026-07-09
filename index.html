@@ -204,11 +204,31 @@
 
   <div class="phase2Grid phase2Grid--today">
     <div class="phase2MainCol">
+      <div class="phase2Panel" id="todayReadingPanel">
+        <div class="phase2Panel__head">
+          <div>
+            <h2 class="phase2Panel__title">Lecture du jour</h2>
+            <p class="phase2Panel__desc">Décision du jour, puis détail si nécessaire.</p>
+          </div>
+        </div>
+        <div class="phase1PulseGrid">
+          <div class="phase1PulseCard phase1PulseCard--goalSummary">
+            <div class="phase1PulseLabel">Reste à consommer</div>
+            <div class="phase1PulseSummaryMount" id="todayGoalSummarySlot"></div>
+          </div>
+          <div class="phase1PulseCard"><div class="phase1PulseLabel">Repas</div><div class="phase1PulseValue" id="p1TodayMeals">—</div><div class="phase1PulseMeta">Repas saisis pour la journée active.</div></div>
+          <div class="phase1PulseCard"><div class="phase1PulseLabel">Activité</div><div class="phase1PulseValue" id="p1TodaySport">—</div><div class="phase1PulseMeta">Résumé des séances enregistrées.</div></div>
+          <div class="phase1PulseCard"><div class="phase1PulseLabel">Sommeil</div><div class="phase1PulseValue" id="p1TodaySleep">—</div><div class="phase1PulseMeta">Dernière nuit liée à la date active.</div></div>
+          <div class="phase1PulseCard"><div class="phase1PulseLabel">Dépense ajustée</div><div class="phase1PulseValue" id="p1TodaySpend">—</div><div class="phase1PulseMeta">Valeur réellement utilisée par le moteur.</div></div>
+        </div>
+        <div class="phase2Slot phase4Slot mt-06" id="todayMainSlot"></div>
+      </div>
+
       <div class="phase2Panel playfulCockpitPanel" id="playfulCockpitPanel" aria-labelledby="playfulCockpitTitle">
         <div class="phase2Panel__head playfulCockpitPanel__head">
           <div>
-            <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulCockpitTitle">Cockpit du jour</h2><span aria-label="Informations — Cockpit du jour" class="info-dot" id="playfulCockpitInfo" role="button" tabindex="0" data-modaltext="Cette zone résume ta journée. Elle ne change rien à tes données.">ℹ️</span></div>
-            <p class="phase2Panel__desc">Lecture rapide de la journée active.</p>
+            <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulCockpitTitle">Progression du jour</h2><span aria-label="Informations — Progression du jour" class="info-dot" id="playfulCockpitInfo" role="button" tabindex="0" data-modaltext="Cette zone résume ta journée. Elle ne change rien à tes données.">ℹ️</span></div>
+            <p class="phase2Panel__desc">Repères rapides de la journée active.</p>
           </div>
           <span class="playfulStatePill" id="playfulStatePill"><span class="playfulStateDot" id="playfulStateDot" aria-hidden="true"></span><span id="playfulStateLabel">À renseigner</span></span>
         </div>
@@ -236,26 +256,6 @@
           </span>
           <span class="playfulNextBadgeMini__progress" id="playfulNextBadgeProgressMini">0/1</span>
         </div>
-      </div>
-
-      <div class="phase2Panel" id="todayReadingPanel">
-        <div class="phase2Panel__head">
-          <div>
-            <h2 class="phase2Panel__title">Lecture du jour</h2>
-            <p class="phase2Panel__desc">Décision du jour, puis détail si nécessaire.</p>
-          </div>
-        </div>
-        <div class="phase1PulseGrid">
-          <div class="phase1PulseCard phase1PulseCard--goalSummary">
-            <div class="phase1PulseLabel">Reste à consommer</div>
-            <div class="phase1PulseSummaryMount" id="todayGoalSummarySlot"></div>
-          </div>
-          <div class="phase1PulseCard"><div class="phase1PulseLabel">Repas</div><div class="phase1PulseValue" id="p1TodayMeals">—</div><div class="phase1PulseMeta">Repas saisis pour la journée active.</div></div>
-          <div class="phase1PulseCard"><div class="phase1PulseLabel">Activité</div><div class="phase1PulseValue" id="p1TodaySport">—</div><div class="phase1PulseMeta">Résumé des séances enregistrées.</div></div>
-          <div class="phase1PulseCard"><div class="phase1PulseLabel">Sommeil</div><div class="phase1PulseValue" id="p1TodaySleep">—</div><div class="phase1PulseMeta">Dernière nuit liée à la date active.</div></div>
-          <div class="phase1PulseCard"><div class="phase1PulseLabel">Dépense ajustée</div><div class="phase1PulseValue" id="p1TodaySpend">—</div><div class="phase1PulseMeta">Valeur réellement utilisée par le moteur.</div></div>
-        </div>
-        <div class="phase2Slot phase4Slot mt-06" id="todayMainSlot"></div>
       </div>
     </div>
   </div>
