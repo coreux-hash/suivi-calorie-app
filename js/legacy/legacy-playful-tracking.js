@@ -163,11 +163,11 @@
         signal:'La journée existe. Vérifie les objectifs pour obtenir une lecture plus claire.'
       };
     }
-    if (d.hasActivity && kRatio != null && kRatio < ENERGY_LOW && pRatio != null && pRatio < PROTEIN_OK_MIN){
+    if (d.hasActivity && kRatio != null && kRatio < ENERGY_LOW){
       return {
         key:'recovery_attention', tone:'warn', label:'À surveiller',
-        summary:'Activité présente avec apports bas.',
-        signal:'Activité présente et apports bas : vérifie que la récupération suit.'
+        summary:'Activité présente avec apport bas.',
+        signal:'Activité présente et apport bas : vérifie que la récupération suit.'
       };
     }
     if (pRatio != null && pRatio < PROTEIN_OK_MIN){
