@@ -7446,3 +7446,20 @@ th{
     padding-right:8px;
   }
 }
+
+/* ============================================================
+   Sauvegarde : deux méthodes symétriques (transfert / compte email)
+   ============================================================ */
+.syncSummaryHint{
+  color:var(--muted2);
+  font-weight:400;
+  font-size:.86em;
+}
+
+/* Les deux méthodes partagent le même retrait et la même respiration */
+#cloudCard > details > summary{
+  padding:2px 0;
+}
+#cloudCard #cloudStatus{
+  font-size:.9rem;
+}

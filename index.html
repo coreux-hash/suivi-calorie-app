@@ -2228,48 +2228,12 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 </details>
 
 <div class="card" id="cloudCard">
-<h2>Compte &amp; synchronisation (optionnelle)</h2>
+<h2>Sauvegarde de tes données</h2>
 <p class="muted">
       Tu restes toujours propriétaire de tes données.
       Aucune sauvegarde n’est automatique.
     </p>
-<div class="row cloudActions">
-<div class="minw240-flex2">
-<label>Email (optionnel)</label>
-<input id="cloudEmail" placeholder="ex: toi@email.com" type="email"/>
-<div class="muted mt-025">
-          Sans email, les données restent stockées uniquement sur cet appareil.
-        </div>
-</div>
-<div class="self-end">
-<button id="btnCloudLogin" type="button">Recevoir un lien</button>
-</div>
-<div class="self-end">
-<button id="btnCloudLogout" type="button">Se déconnecter</button>
-</div>
-</div>
-<div class="row mt-03 cloudActions cloudActions--trio">
-<div class="self-end">
-<button id="btnCloudPull" type="button">Récupérer depuis le cloud</button>
-</div>
-<div class="self-end">
-<button id="btnCloudPush" type="button">Sauvegarder vers le cloud</button>
-</div>
-<div class="self-end">
-<button id="btnCloudSync" type="button">Synchroniser automatiquement</button>
-</div>
-</div>
-<p class="muted mt-045" id="cloudStatus">Statut : non connecté</p>
-<details class="mt-04">
-<summary class="muted cursor-pointer">Comment ça marche</summary>
-<div class="muted mt-04">
-        Sans email : tout reste en local.<br/>
-        Avec email : tu peux sauvegarder ou récupérer tes données.<br/>
-        La synchronisation est toujours manuelle ou déclenchée par toi.
-      </div>
-</details>
-<!-- Transfert manuel (offline) — visible pour tous : seul chemin fonctionnel en file:// -->
-<details class="mt-06 syncTransfer">
+<details class="mt-05 syncTransfer" id="syncTransferBlock">
 <summary class="muted cursor-pointer">Transfert manuel entre appareils (hors ligne)</summary>
 <div class="syncTransfer__lead muted mt-04">
 <span>Transfère tes journées et tes réglages d’un appareil à l’autre, sans compte ni réseau.</span>
@@ -2313,6 +2277,44 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 <button class="btn-danger" data-um="expert" id="btnClearDays" type="button">Tout effacer (profil)</button>
 </div>
 </details>
+</details>
+<details class="mt-05 syncAccount" id="cloudAccountBlock">
+<summary class="muted cursor-pointer">Compte &amp; synchronisation par email (en ligne)<span class="syncSummaryHint" id="cloudAvailabilityHint"></span></summary>
+<div class="row cloudActions">
+<div class="minw240-flex2">
+<label>Email (optionnel)</label>
+<input id="cloudEmail" placeholder="ex: toi@email.com" type="email"/>
+<div class="muted mt-025">
+          Sans email, les données restent stockées uniquement sur cet appareil.
+        </div>
+</div>
+<div class="self-end">
+<button id="btnCloudLogin" type="button">Recevoir un lien</button>
+</div>
+<div class="self-end">
+<button id="btnCloudLogout" type="button">Se déconnecter</button>
+</div>
+</div>
+<div class="row mt-03 cloudActions cloudActions--trio">
+<div class="self-end">
+<button id="btnCloudPull" type="button">Récupérer depuis le cloud</button>
+</div>
+<div class="self-end">
+<button id="btnCloudPush" type="button">Sauvegarder vers le cloud</button>
+</div>
+<div class="self-end">
+<button id="btnCloudSync" type="button">Synchroniser automatiquement</button>
+</div>
+</div>
+<p class="muted mt-045" id="cloudStatus">Statut : non connecté</p>
+</details>
+<details class="mt-05">
+<summary class="muted cursor-pointer">Comment ça marche</summary>
+<div class="muted mt-04">
+        Sans email : tout reste en local.<br/>
+        Avec email : tu peux sauvegarder ou récupérer tes données.<br/>
+        La synchronisation est toujours manuelle ou déclenchée par toi.
+      </div>
 </details>
 </div>
 </section>
