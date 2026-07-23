@@ -7463,3 +7463,8 @@ th{
 #cloudCard #cloudStatus{
   font-size:.9rem;
 }
+
+/* MARQUEUR DE VERSION — permet de vérifier d'un coup d'œil quelle feuille est servie.
+   En console : getComputedStyle(document.documentElement).getPropertyValue('--sca-css-build')
+   Doit renvoyer "A8". Si vide ou différent, le navigateur sert une version en cache. */
+:root{ --sca-css-build:"A8"; }
