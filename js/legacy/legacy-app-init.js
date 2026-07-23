@@ -1165,6 +1165,34 @@ $("sportSessionsList")?.addEventListener("click", (ev) => {
     if (ev.target) ev.target.value = "";
   });
 
+  // Sauvegarde : signaler la méthode disponible, sans allonger la modale sur mobile.
+  // En file://, la synchro par email ne peut pas fonctionner (pas d'origine web).
+  (function initBackupBlocksDefault(){
+    const isFile = (window.location?.protocol === "file:");
+    const transfer = $("syncTransferBlock");
+    const account  = $("cloudAccountBlock");
+    const hint     = $("cloudAvailabilityHint");
+    try {
+      // L'indication de disponibilité est toujours posée : elle se lit sans déplier.
+      if (hint) hint.textContent = isFile ? " — nécessite http/https" : "";
+
+      // Sur petit écran, tout reste replié : la modale doit tenir sans défilement inutile.
+      const roomy = window.matchMedia?.("(min-width: 641px)")?.matches ?? true;
+      if (!roomy) {
+        if (transfer) transfer.open = false;
+        if (account)  account.open  = false;
+        return;
+      }
+
+      if (isFile) {
+        if (transfer) transfer.open = true;
+        if (account)  account.open  = false;
+      } else {
+        if (account)  account.open  = true;
+      }
+    } catch (_) {}
+  })();
+
   // Cloud
   $("btnCloudLogin")?.addEventListener("click", () => cloudLoginWithEmail($("cloudEmail")?.value));
   $("btnCloudLogout")?.addEventListener("click", cloudLogout);
