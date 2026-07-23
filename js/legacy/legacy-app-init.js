@@ -1155,6 +1155,16 @@ $("sportSessionsList")?.addEventListener("click", (ev) => {
   $("btnImportDays")?.addEventListener("click", importDays);
   $("btnClearDays")?.addEventListener("click", clearDays);
 
+  // Transfert manuel entre appareils (presse-papier / fichier)
+  $("btnCopyDays")?.addEventListener("click", () => window.copyDaysJson?.());
+  $("btnDownloadDays")?.addEventListener("click", () => window.downloadDaysJson?.());
+  $("btnImportDaysFile")?.addEventListener("click", () => $("daysJsonFile")?.click());
+  $("daysJsonFile")?.addEventListener("change", (ev) => {
+    const file = ev.target?.files?.[0];
+    if (file) window.importDaysFromFile?.(file);
+    if (ev.target) ev.target.value = "";
+  });
+
   // Cloud
   $("btnCloudLogin")?.addEventListener("click", () => cloudLoginWithEmail($("cloudEmail")?.value));
   $("btnCloudLogout")?.addEventListener("click", cloudLogout);
