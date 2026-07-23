@@ -2233,7 +2233,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
       Tu restes toujours propriétaire de tes données.
       Aucune sauvegarde n’est automatique.
     </p>
-<div class="row">
+<div class="row cloudActions">
 <div class="minw240-flex2">
 <label>Email (optionnel)</label>
 <input id="cloudEmail" placeholder="ex: toi@email.com" type="email"/>
@@ -2248,7 +2248,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 <button id="btnCloudLogout" type="button">Se déconnecter</button>
 </div>
 </div>
-<div class="row mt-03">
+<div class="row mt-03 cloudActions cloudActions--trio">
 <div class="self-end">
 <button id="btnCloudPull" type="button">Récupérer depuis le cloud</button>
 </div>
@@ -2269,44 +2269,50 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
       </div>
 </details>
 <!-- Transfert manuel (offline) — visible pour tous : seul chemin fonctionnel en file:// -->
-<details class="mt-06">
+<details class="mt-06 syncTransfer">
 <summary class="muted cursor-pointer">Transfert manuel entre appareils (hors ligne)</summary>
-<div class="muted mt-04">
-        Transfère tes données d’un appareil à l’autre sans compte ni réseau.
-        La sauvegarde contient tes journées et tes réglages du profil actif.
-      </div>
-<div class="muted mt-035">
-        <strong>Sur l’appareil source</strong> : « Télécharger » (recommandé) ou « Copier ».
-        <strong>Sur l’appareil de destination</strong> : « Importer un fichier », ou colle le JSON puis « Importer ».
-      </div>
-<div class="row mt-05">
-<div class="self-end">
-<button id="btnDownloadDays" type="button">Télécharger .json</button>
+<div class="syncTransfer__lead muted mt-04">
+<span>Transfère tes journées et tes réglages d’un appareil à l’autre, sans compte ni réseau.</span>
+<span aria-label="Informations — Transfert manuel entre appareils" class="info-dot" role="button" tabindex="0" data-modaltext="Comment transférer tes données d’un appareil à l’autre, sans compte ni réseau.
+
+SUR L’APPAREIL SOURCE
+• « Télécharger .json » (recommandé) enregistre un fichier de sauvegarde.
+• « Copier » place la sauvegarde dans le presse-papier.
+
+SUR L’APPAREIL DE DESTINATION
+• « Importer un fichier » relit le fichier transféré (AirDrop, mail, dossier partagé).
+• Ou colle le JSON dans la zone JSON, puis « Importer le JSON collé ».
+
+CE QUE CONTIENT LA SAUVEGARDE
+Les journées enregistrées et les réglages du profil actif.
+
+L’IMPORT NE SUPPRIME RIEN
+Aucune journée locale n’est effacée. Si une même date existe des deux côtés, la version la plus récente est conservée et les repas des deux appareils sont réunis. Un résumé s’affiche avant validation.">ℹ️</span>
 </div>
-<div class="self-end">
+<div class="syncTransfer__group">
+<div class="syncTransfer__label">Depuis cet appareil</div>
+<div class="syncTransfer__grid">
+<button id="btnDownloadDays" type="button">Télécharger .json</button>
 <button id="btnCopyDays" type="button">Copier</button>
 </div>
-<div class="self-end">
-<button id="btnExportDays" type="button">Exporter JSON</button>
 </div>
-</div>
-<div class="row mt-04">
-<div class="self-end">
+<div class="syncTransfer__group">
+<div class="syncTransfer__label">Vers cet appareil</div>
+<div class="syncTransfer__grid">
 <button id="btnImportDaysFile" type="button">Importer un fichier…</button>
 <input accept="application/json,.json" hidden="" id="daysJsonFile" type="file"/>
-</div>
-<div class="self-end">
-<button id="btnImportDays" type="button">Importer JSON</button>
-</div>
-<div class="self-end">
-<button class="btn-danger" id="btnClearDays" type="button">Tout effacer (profil)</button>
+<button id="btnImportDays" type="button">Importer le JSON collé</button>
 </div>
 </div>
-<textarea class="mt-055" id="daysJsonBox" placeholder="JSON ici (export/import)…"></textarea>
-<div class="muted mt-035">
-        L’import est non destructif : aucune journée locale n’est supprimée, et si une même date
-        existe des deux côtés, la version la plus récente est conservée. Un résumé est affiché avant validation.
-      </div>
+<div class="syncTransfer__status" id="daysTransferStatus" role="status" aria-live="polite"></div>
+<details class="mt-05" id="daysJsonAdvanced">
+<summary class="muted cursor-pointer">Zone JSON (coller / afficher)</summary>
+<textarea class="mt-04" id="daysJsonBox" placeholder="Colle ici le JSON reçu, puis « Importer le JSON collé »…"></textarea>
+<div class="syncTransfer__grid mt-04">
+<button id="btnExportDays" type="button">Afficher le JSON</button>
+<button class="btn-danger" data-um="expert" id="btnClearDays" type="button">Tout effacer (profil)</button>
+</div>
+</details>
 </details>
 </div>
 </section>
