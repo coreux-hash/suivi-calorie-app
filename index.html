@@ -1493,6 +1493,25 @@
         Les valeurs du repas sont calculées automatiquement à partir du poids. Exemple : 35 g à 420 kcal/100 g → clique sur “Calculer & ajouter”.
       </p>
 </div>
+<!-- Aperçu verrouillé du mode Rapide (affiché aux modes non-expert) -->
+<div class="card panel-subtle hidden mealLocked" id="mealPanelQuickLocked" role="group" aria-label="Rapide /100 g — aperçu verrouillé">
+<div class="mealLocked__head">
+<span class="mealLocked__icon" aria-hidden="true">🔒</span>
+<h3 class="mealLocked__title">Rapide /100 g</h3>
+<span class="mealLocked__badge">Mode expert</span>
+</div>
+<p class="muted mealLocked__desc">
+        Saisis une étiquette (kcal, protéines, glucides, lipides pour 100 g) et un poids : le repas est calculé automatiquement. Idéal pour encoder vite à partir d’un emballage.
+      </p>
+<div class="mealLocked__preview" aria-hidden="true">
+<span class="mealLocked__chip">kcal / 100 g</span>
+<span class="mealLocked__chip">Poids (g)</span>
+<span class="mealLocked__chip">P / 100 g</span>
+<span class="mealLocked__chip">G / 100 g</span>
+<span class="mealLocked__chip">L / 100 g</span>
+</div>
+<p class="muted mealLocked__note">Disponible en mode expert. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+</div>
 <div class="row mealActions">
   <div class="self-end">
     <button id="btnAddMeal" type="button">Ajouter ce repas</button>
@@ -1665,6 +1684,16 @@
 </div>
 </div>
 </div>
+<!-- Aperçu verrouillé : Où vont les calories ? (affiché hors expert) -->
+<div class="modeTeaser" data-teaser="expert" role="group" aria-label="Où vont les calories ? — aperçu verrouillé">
+<div class="modeTeaser__head">
+<span class="modeTeaser__icon" aria-hidden="true">🔒</span>
+<h3 class="modeTeaser__title">Où vont les calories ?</h3>
+<span class="modeTeaser__badge">Mode expert</span>
+</div>
+<p class="muted modeTeaser__desc">Visualise comment tes calories se répartissent entre protéines, lipides et glucides selon tes priorités.</p>
+<p class="muted modeTeaser__note">Disponible en mode expert. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+</div>
 </div><!-- /out -->
 
 
@@ -1808,6 +1837,16 @@
     </div>
   </div>
 </div>
+<!-- Aperçu verrouillé : Sport (affiché hors sportif/expert) -->
+<div class="modeTeaser" data-teaser="sport" role="group" aria-label="Sport — aperçu verrouillé">
+<div class="modeTeaser__head">
+<span class="modeTeaser__icon" aria-hidden="true">🔒</span>
+<h3 class="modeTeaser__title">Sport</h3>
+<span class="modeTeaser__badge">Mode sportif</span>
+</div>
+<p class="muted modeTeaser__desc">Enregistre tes séances et retrouve leur analyse dans l’Historique.</p>
+<p class="muted modeTeaser__note">Disponible en mode sportif. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+</div>
 
 <div class="card mt-06" data-um="sport" id="sleepCard">
   <div class="row sleepCardHead" style="align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap">
@@ -1868,6 +1907,16 @@
       <button id="btnSleepSave" type="button">Enregistrer</button>
     </div>
   </div>
+</div>
+<!-- Aperçu verrouillé : Sommeil (affiché hors sportif/expert) -->
+<div class="modeTeaser" data-teaser="sport" role="group" aria-label="Sommeil — aperçu verrouillé">
+<div class="modeTeaser__head">
+<span class="modeTeaser__icon" aria-hidden="true">🔒</span>
+<h3 class="modeTeaser__title">Sommeil</h3>
+<span class="modeTeaser__badge">Mode sportif</span>
+</div>
+<p class="muted modeTeaser__desc">Suis tes nuits et leur influence sur ta récupération.</p>
+<p class="muted modeTeaser__note">Disponible en mode sportif. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
 </div>
 
 <div class="card" id="historyNoiseCard">
@@ -1979,6 +2028,16 @@
       <div class="muted tiny mt-06" id="trend7Note">-</div>
     </div>
   </details>
+<!-- Aperçu verrouillé : Tendance 7 jours (affiché hors expert) -->
+<div class="modeTeaser" data-teaser="expert" role="group" aria-label="Tendance 7 jours — aperçu verrouillé">
+<div class="modeTeaser__head">
+<span class="modeTeaser__icon" aria-hidden="true">🔒</span>
+<h3 class="modeTeaser__title">Tendance 7 jours</h3>
+<span class="modeTeaser__badge">Mode expert</span>
+</div>
+<p class="muted modeTeaser__desc">Analyse ta tendance sur 7 jours pour lire ton évolution au-delà du jour le jour.</p>
+<p class="muted modeTeaser__note">Disponible en mode expert. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+</div>
 </div>
 
 
