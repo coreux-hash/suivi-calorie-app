@@ -3712,7 +3712,6 @@
   .phase2Screen[data-tabsection="today"] .phase2MainCol > .phase2Panel{
     display:grid;
     grid-template-columns:minmax(0,1fr);
-    //gap:12px;
     align-items:start;
   }
 
@@ -4179,10 +4178,6 @@
   min-width:0;
   color:#fffffb;
   -webkit-text-fill-color:#fffffb;
-}
-.phase2Screen[data-tabsection="journalEntry"] #sleepBed,
-.phase2Screen[data-tabsection="journalEntry"] #sleepWake{
-  //padding-right:2rem;
 }
 .phase2Screen[data-tabsection="journalEntry"] #sleepSummary{
   display:block;
@@ -7467,4 +7462,96 @@ th{
 /* MARQUEUR DE VERSION — permet de vérifier d'un coup d'œil quelle feuille est servie.
    En console : getComputedStyle(document.documentElement).getPropertyValue('--sca-css-build')
    Doit renvoyer "A8". Si vide ou différent, le navigateur sert une version en cache. */
-:root{ --sca-css-build:"A8"; }
+:root{ --sca-css-build:"A9"; }
+
+/* ============================================================
+   Aperçu verrouillé du mode Rapide /100 g (teaser de mode)
+   Montre la fonction sans la rendre utilisable hors mode expert.
+   Garde-fou : jamais affiché en mode expert, même si .hidden est retiré.
+   ============================================================ */
+body[data-usemode="expert"] #mealPanelQuickLocked{ display:none !important; }
+
+.mealLocked{
+  position:relative;
+  border:1px dashed var(--border);
+  background:var(--panel2);
+}
+.mealLocked__head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.mealLocked__icon{ font-size:1.05rem; line-height:1; opacity:.9; }
+.mealLocked__title{ margin:0; }
+.mealLocked__badge{
+  margin-left:auto;
+  font-size:.72rem;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:3px 9px;
+  border-radius:999px;
+  color:var(--text);
+  background:rgba(124,92,255,.16);          /* teinte --accent */
+  border:1px solid rgba(124,92,255,.35);
+}
+.mealLocked__desc{ margin-top:8px; }
+.mealLocked__preview{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:10px;
+  opacity:.55;                               /* champs suggérés, non saisissables */
+  filter:grayscale(.2);
+  pointer-events:none;
+}
+.mealLocked__chip{
+  font-size:.8rem;
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--muted);
+}
+.mealLocked__note{
+  margin-top:8px;
+  font-size:.82rem;
+  color:var(--muted2);
+}
+
+@media (max-width: 640px){
+  .mealLocked__preview{ gap:5px; }
+  .mealLocked__chip{ font-size:.76rem; padding:5px 8px; }
+}
+
+/* ============================================================
+   Teaser de mode générique (fonctions réservées à un mode supérieur)
+   Affiché uniquement quand la fonction réelle est masquée par le mode.
+   Sans action : renvoie l'utilisateur vers Pilotage pour changer de mode.
+   ============================================================ */
+.modeTeaser{
+  display:none;
+  border:1px dashed var(--border);
+  border-radius:var(--radius);
+  background:var(--panel2);
+  padding:1rem;
+  margin-top:.9rem;
+}
+/* fonction "sport" (visible en sport+expert) → teaser en mode simple seulement */
+body[data-usemode="simple"] .modeTeaser[data-teaser="sport"]{ display:block; }
+/* fonction "expert" (visible en expert) → teaser hors expert (simple + sport) */
+body:not([data-usemode="expert"]) .modeTeaser[data-teaser="expert"]{ display:block; }
+
+.modeTeaser__head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.modeTeaser__icon{ font-size:1.05rem; line-height:1; opacity:.9; }
+.modeTeaser__title{ margin:0; }
+.modeTeaser__badge{
+  margin-left:auto;
+  font-size:.72rem; letter-spacing:.04em; text-transform:uppercase;
+  padding:3px 9px; border-radius:999px;
+  color:var(--text);
+  background:rgba(124,92,255,.16);
+  border:1px solid rgba(124,92,255,.35);
+}
+.modeTeaser__desc{ margin-top:8px; }
+.modeTeaser__note{ margin-top:8px; font-size:.82rem; color:var(--muted2); }
