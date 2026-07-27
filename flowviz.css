@@ -7462,7 +7462,7 @@ th{
 /* MARQUEUR DE VERSION — permet de vérifier d'un coup d'œil quelle feuille est servie.
    En console : getComputedStyle(document.documentElement).getPropertyValue('--sca-css-build')
    Doit renvoyer "A8". Si vide ou différent, le navigateur sert une version en cache. */
-:root{ --sca-css-build:"A9"; }
+:root{ --sca-css-build:"A11"; }
 
 /* ============================================================
    Aperçu verrouillé du mode Rapide /100 g (teaser de mode)
@@ -7555,3 +7555,49 @@ body:not([data-usemode="expert"]) .modeTeaser[data-teaser="expert"]{ display:blo
 }
 .modeTeaser__desc{ margin-top:8px; }
 .modeTeaser__note{ margin-top:8px; font-size:.82rem; color:var(--muted2); }
+
+/* ============================================================
+   Repas : « Ajouter ce repas » (champs manuels) n'a pas de sens en
+   mode Rapide /100 g. Le panneau Rapide ajoute via « Calculer & ajouter »,
+   l'aperçu verrouillé n'ajoute rien.
+   Parade CSS indépendante du JS : dès que l'onglet Rapide est actif
+   (#mealModeQuick.is-active — posé par le commutateur), on masque l'action
+   générique. Fonctionne même si legacy-app-init.js n'est pas à jour.
+   ============================================================ */
+body:has(#mealModeQuick.is-active) .mealActions{ display:none !important; }
+
+/* ============================================================
+   A11 — Repas : deux corrections
+   ============================================================ */
+
+/* (2) Le panneau Rapide /100 g (champs réels) ne doit JAMAIS apparaître
+   hors mode expert. Garde CSS indépendant du JS et de l'état de data-um
+   dans index.html : hors expert, il est forcé masqué. En expert, la règle
+   ne s'applique pas et le JS/onglet le gère normalement. */
+body:not([data-usemode="expert"]) #mealPanelQuick{ display:none !important; }
+
+/* (1) Sur mobile, garder le tableau des repas HORIZONTAL (comme desktop),
+   avec défilement, au lieu de l'empilement en cartes verticales illisible.
+   Portée limitée à .meals-wrap (les tableaux diabète/uxResponsive gardent
+   leur mise en page en cartes). .meals-wrap a déjà overflow-x:auto. */
+@media (max-width:680px){
+  .meals-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .meals-wrap table{ display:table; width:auto; min-width:100%; }
+  .meals-wrap thead{ display:table-header-group; }
+  .meals-wrap tbody{ display:table-row-group; }
+  .meals-wrap tr{
+    display:table-row;
+    border:0; border-radius:0; padding:0; margin:0; background:none;
+  }
+  .meals-wrap th,
+  .meals-wrap td{
+    display:table-cell;
+    width:auto;
+    border:0;
+    padding:.35rem .5rem;
+    grid-template-columns:none;          /* annule le grid des cartes */
+    white-space:nowrap;
+  }
+  .meals-wrap td::before{ content:none; }  /* retire les libellés ::before */
+  .meals-wrap td input{ min-width:3.2rem; }
+}

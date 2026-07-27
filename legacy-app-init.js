@@ -1087,6 +1087,7 @@ window.addEventListener("diab:carbs-pushed", (e) => {
     const pM = $("mealPanelManual");
     const pQ = $("mealPanelQuick");
     const pL = $("mealPanelQuickLocked");
+    const aRow = document.querySelector(".mealActions");
 
     if (bM){ bM.classList.toggle("is-active", !isQuick); bM.setAttribute("aria-selected", (!isQuick).toString()); }
     if (bQ){ bQ.classList.toggle("is-active", isQuick);  bQ.setAttribute("aria-selected", (isQuick).toString()); }
@@ -1096,21 +1097,16 @@ window.addEventListener("diab:carbs-pushed", (e) => {
     if (pQ) pQ.classList.toggle("hidden", !(isQuick && expert));
     // Aperçu verrouillé : uniquement en mode Rapide ET hors expert.
     if (pL) pL.classList.toggle("hidden", !(isQuick && !expert));
+    // « Ajouter ce repas » (champs manuels) n'a pas de sens en mode Rapide :
+    // le panneau Rapide ajoute déjà via « Calculer & ajouter », et l'aperçu
+    // verrouillé n'ajoute rien. On masque donc l'action générique en Rapide.
+    if (aRow) aRow.classList.toggle("hidden", isQuick);
   }
   function mealUI_currentMode(){
     return $("mealModeQuick")?.classList.contains("is-active") ? "quick" : "manual";
   }
   $("mealModeManual")?.addEventListener("click", () => mealUI_setMode("manual"));
   $("mealModeQuick")?.addEventListener("click", () => mealUI_setMode("quick"));
-
-  // Débloquer : bascule le mode d'usage en expert via le sélecteur existant
-  // (persiste + applique + resynchronise le panneau repas). Ébauche : ici se
-  // brancherait plus tard une vraie porte de licence.
-  $("btnQuickUnlock")?.addEventListener("click", () => {
-    const sel = $("useMode");
-    if (sel){ sel.value = "expert"; sel.dispatchEvent(new Event("change", { bubbles: true })); }
-    mealUI_setMode("quick");
-  });
 
   // Action unique en mode /100g : calcule puis ajoute le repas
   $("btnQuickAddMeal")?.addEventListener("click", () => {
@@ -1119,6 +1115,7 @@ window.addEventListener("diab:carbs-pushed", (e) => {
   });
 
   // Valeur par défaut : Manuel
+  window.__sca_js_build = "A10";
   mealUI_setMode("manual");
 // Sommeil : édition explicite (1 nuit = 1 enregistrement)
 $("btnSleepEdit")?.addEventListener("click", () => {
