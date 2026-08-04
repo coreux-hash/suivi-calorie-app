@@ -28,6 +28,13 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
           profiles = [{ id: "default", label: "default" }];
           saveProfiles(profiles);
           setActiveProfile("default");
+          try {
+            localStorage.setItem("secheapp.default.loadOnboarding.v1", JSON.stringify({
+              audience: "new",
+              stage: "seed",
+              updatedAt: new Date().toISOString()
+            }));
+          } catch (_) {}
         }
         if (!getActiveProfile()) setActiveProfile(profiles[0].id);
       }
@@ -117,6 +124,7 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
         if (!payload) return;
 
         const has = (k) => Object.prototype.hasOwnProperty.call(payload, k);
+        const hadCompromiseId = has("compromiseId");
 
         if (has("sex") && payload.sex) $("sex").value = payload.sex;
         if (has("age")) $("age").value = payload.age;
@@ -147,17 +155,37 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
         if (has("ratioCP") && $("ratioCP")) $("ratioCP").value = payload.ratioCP ?? 0;
         if (has("lowCarbEnabled") && $("lowCarbEnabled")) $("lowCarbEnabled").checked = !!payload.lowCarbEnabled;
         if (has("lowCarbLevel") && $("lowCarbLevel") && payload.lowCarbLevel) $("lowCarbLevel").value = payload.lowCarbLevel;
-        if (has("compromiseId") && $("compromiseSelect")) {
+        if (hadCompromiseId && $("compromiseSelect")) {
           $("compromiseSelect").dataset.pendingCompromiseId = payload.compromiseId || "";
           window.__CompromiseUI?.reloadCustomCompromises?.({ preferredValue: payload.compromiseId || '' });
           $("compromiseSelect").value = payload.compromiseId || "";
+        } else if ($("compromiseSelect")) {
+          // Évite de conserver visuellement le compromis du profil précédent.
+          $("compromiseSelect").dataset.pendingCompromiseId = "";
+          $("compromiseSelect").value = "";
         }
         window.__CompromiseUI?.refresh?.({ openOnChange:false });
         normalizeCarbCapIntegerStep?.();
         ensureCarbGoalDefaultOption?.();
         if ($("carbGoal")) { updateCarbGoalOptions(true, false); ensureCarbGoalDefaultOption?.(); updateCarbSteps(); lockCarbControls(); syncCarbGuardsFromUI(); }
         if (typeof window.syncCarbUiZone === 'function') window.syncCarbUiZone({ reason:'profile-load', refreshGoalOptions:false, keepGoalValue:true, closeHelp:true });
-        window.__CompromiseUI?.syncSelectionFromSettings?.({ keepCurrentIfUnmatched:true, openOnChange:false });
+        if (hadCompromiseId) {
+          window.__CompromiseUI?.syncSelectionFromSettings?.({ keepCurrentIfUnmatched:true, openOnChange:false });
+        } else {
+          const legacySignatureComplete = ['dietMode','carbGoal','fatFloorGPerKg','lowCarbEnabled']
+            .every(key => has(key));
+          const migratedId = legacySignatureComplete
+            ? (window.__CompromiseUI?.findUniqueExactCompromiseId?.() || '')
+            : '';
+          if (migratedId && $("compromiseSelect")) {
+            $("compromiseSelect").value = migratedId;
+            payload.compromiseId = migratedId;
+            payload.compromiseIdMigratedAt = new Date().toISOString();
+            payload.updatedAt = payload.compromiseIdMigratedAt;
+            try { localStorage.setItem(SETTINGS_KEY(), JSON.stringify(payload)); } catch {}
+          }
+          window.__CompromiseUI?.refresh?.({ openOnChange:false });
+        }
         if (typeof updateFatFloorUI === 'function') updateFatFloorUI();
         if ($("dietMode")) setDietNote($("dietMode").value, false);
         if (typeof lockMacroControls === 'function') {
@@ -186,6 +214,4 @@ try{
 function refreshDietDerivedUI(...args){
   return window.__LegacyCompatUI?.refreshDietDerivedUI?.(...args);
 }
-
-
 

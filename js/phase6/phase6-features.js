@@ -405,14 +405,23 @@
         if (!cleanLabel) return { created:false, reason:'empty-label' };
         const id = slugProfile(cleanLabel) || 'profile';
         const profiles = AppState.getProfiles();
-        if (!profiles.find(p => p.id === id)) {
+        const isNew = !profiles.find(p => p.id === id);
+        if (isNew) {
           profiles.push({ id, label: cleanLabel });
           AppState.saveProfiles(profiles);
+          try {
+            localStorage.setItem(`secheapp.${id}.loadOnboarding.v1`, JSON.stringify({
+              audience:'new',
+              stage:'seed',
+              updatedAt:new Date().toISOString()
+            }));
+            sessionStorage.setItem(`secheapp.${id}.loadOnboarding.v1.newSession`, '1');
+          } catch(_) {}
         }
         AppState.setActiveProfile(id);
         AppState.syncProfileSelect(id);
         const flow = DomainOrchestrator.afterProfileMutation({ reason:'create-profile', forceToday:false });
-        return { created:true, profileId:id, flow };
+        return { created:isNew, profileId:id, flow };
       },
       deleteActive(){
         const active = AppState.getActiveProfile();
@@ -422,6 +431,8 @@
         }
         localStorage.removeItem(AppState.getDaysKey(active));
         localStorage.removeItem(AppState.getSettingsKey(active));
+        localStorage.removeItem(`secheapp.${active}.loadOnboarding.v1`);
+        try { sessionStorage.removeItem(`secheapp.${active}.loadOnboarding.v1.newSession`); } catch(_) {}
         const profiles = AppState.getProfiles().filter(p => p.id !== active);
         AppState.saveProfiles(profiles);
         const next = profiles[0]?.id || 'default';

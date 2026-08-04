@@ -545,6 +545,9 @@ else kpis.appendChild(groupBmr);
   if (saveToJournal) {
     const existing = getDay(dateForDay) || { date: dateForDay };
     const meals    = getMealsForDay(dateForDay);
+    const energyExplicit = window.__scaEnergyExplicitCommitDate === dateForDay
+      ? true
+      : (existing.energyExplicit === true ? true : false);
 
     const dayObj = {
       ...existing,
@@ -553,6 +556,7 @@ else kpis.appendChild(groupBmr);
       watchBrand: $("watchBrand").value,
       montreRaw: montre,
       montreAdjusted,
+      energyExplicit,
       errPct,
       errMode,
 

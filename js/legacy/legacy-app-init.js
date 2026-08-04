@@ -127,14 +127,15 @@ function phase6GetActiveSettingsPayload(){
   }
 }
 
-function phase6ResolveFieldValue(key){
+function phase6ResolveFieldValue(key, options = {}){
   const stored = phase6GetActiveSettingsPayload();
+  if (options.storedOnly) return stored?.[key];
   const el = $(key);
   const domValue = el?.type === 'checkbox' ? !!el.checked : el?.value;
   return domValue != null && String(domValue).trim() !== '' ? domValue : stored?.[key];
 }
 
-function phase6GetProfileReadiness(){
+function phase6GetProfileReadiness(options = {}){
   const fieldMap = [
     { key:'sex', label:'Sexe', ok:(v) => v === 'M' || v === 'F' },
     { key:'age', label:'Âge', ok:(v) => Number(v) > 0 },
@@ -143,7 +144,7 @@ function phase6GetProfileReadiness(){
   ];
   try{
     const fields = fieldMap.map(field => {
-      const value = phase6ResolveFieldValue(field.key);
+      const value = phase6ResolveFieldValue(field.key, options);
       return {
         key: field.key,
         label: field.label,
@@ -174,12 +175,12 @@ function phase6GetProfileReadiness(){
   }
 }
 
-function phase6GetWatchReadiness(){
+function phase6GetWatchReadiness(options = {}){
   const fields = [
     { key:'watchBrand', label:'Marque', ok:(v) => !!String(v || '').trim() },
     { key:'montre', label:'Calories', ok:(v) => Number(v) > 0 }
   ].map(field => {
-    const value = phase6ResolveFieldValue(field.key);
+    const value = phase6ResolveFieldValue(field.key, options);
     return { key:field.key, label:field.label, ready:!!field.ok(value), value };
   });
   const missing = fields.filter(field => !field.ready).map(field => field.label);
@@ -194,8 +195,8 @@ function phase6GetWatchReadiness(){
   };
 }
 
-function phase6GetGoalPresetReadiness(){
-  const value = phase6ResolveFieldValue('dietMode');
+function phase6GetGoalPresetReadiness(options = {}){
+  const value = phase6ResolveFieldValue('dietMode', options);
   const ready = !!String(value || '').trim() && value !== 'none';
   return {
     key:'goals',
@@ -208,11 +209,27 @@ function phase6GetGoalPresetReadiness(){
   };
 }
 
-function phase6GetCalculationFrameReadiness(){
-  const profile = phase6GetProfileReadiness();
-  const watch = phase6GetWatchReadiness();
-  const goals = phase6GetGoalPresetReadiness();
-  const sections = [profile, watch, goals];
+function phase6GetCompromiseReadiness(options = {}){
+  const value = phase6ResolveFieldValue('compromiseId', options)
+    || (!options.storedOnly ? $('compromiseSelect')?.value : '');
+  const ready = !!String(value || '').trim();
+  return {
+    key:'compromise',
+    label:'Compromis',
+    ready,
+    missing: ready ? [] : ['Compromis'],
+    fields:[{ key:'compromiseId', label:'Compromis', ready, value }],
+    completeCount: ready ? 1 : 0,
+    totalCount:1
+  };
+}
+
+function phase6GetCalculationFrameReadiness(options = {}){
+  const profile = phase6GetProfileReadiness(options);
+  const watch = phase6GetWatchReadiness(options);
+  const goals = phase6GetGoalPresetReadiness(options);
+  const compromise = phase6GetCompromiseReadiness(options);
+  const sections = [profile, watch, goals, compromise];
   return {
     ready: sections.every(section => section.ready),
     sections,
@@ -221,19 +238,49 @@ function phase6GetCalculationFrameReadiness(){
   };
 }
 
-function phase6HasUsableProfile(){
-  return !!phase6GetCalculationFrameReadiness().ready;
+function phase6GetSetupState(options = {}){
+  const frame = phase6GetCalculationFrameReadiness(options);
+  const firstIncomplete = frame.sections.find(section => !section.ready) || null;
+  const complete = !firstIncomplete;
+  return {
+    key: complete ? 'complete' : `${firstIncomplete.key}_incomplete`,
+    complete,
+    ready:complete,
+    entryTarget:complete ? 'today' : 'settings',
+    firstIncomplete,
+    sections:frame.sections,
+    readyCount:frame.readyCount,
+    totalCount:frame.totalCount
+  };
+}
+
+function phase6HasUsableProfile(options = {}){
+  return !!phase6GetSetupState(options).complete;
 }
 
 function phase6GetUnlockTarget(){
-  return phase6HasUsableProfile() ? 'today' : 'settings';
+  return phase6GetSetupState().entryTarget;
+}
+
+function phase6GetInitialEntryTarget(){
+  return phase6GetSetupState().entryTarget;
+}
+
+function phase6SyncSetupNudgeUi(options = {}){
+  const setup = options.setup || phase6GetSetupState();
+  const quickNav = document.querySelector('.phase2HeroQuickNav--settings');
+  if (quickNav) quickNav.setAttribute('data-setup-state', setup.key);
+  try{ document.body?.setAttribute('data-setup-state', setup.key); }catch(e){}
+  return setup;
 }
 function phase6SyncSettingsAccessUi(){
   const accepted = !!(typeof isTermsAccepted === 'function' && isTermsAccepted());
-  const frame = phase6GetCalculationFrameReadiness();
+  const setup = phase6GetSetupState();
+  const frame = { ready:setup.complete, sections:setup.sections };
   const profile = frame.sections.find(section => section.key === 'profile') || phase6GetProfileReadiness();
   const watch = frame.sections.find(section => section.key === 'watch') || phase6GetWatchReadiness();
   const goals = frame.sections.find(section => section.key === 'goals') || phase6GetGoalPresetReadiness();
+  const compromise = frame.sections.find(section => section.key === 'compromise') || phase6GetCompromiseReadiness();
   const state = $('settingsAccessState');
   const meta = $('settingsAccessMeta');
   const globalState = $('phase5GateAccessState');
@@ -244,9 +291,11 @@ function phase6SyncSettingsAccessUi(){
   const quickProfile = document.querySelector('.phase2HeroQuickNav__btn--settings[data-settings-jump="profile"]');
   const quickWatch = document.querySelector('.phase2HeroQuickNav__btn--settings[data-settings-jump="watch"]');
   const quickGoals = document.querySelector('.phase2HeroQuickNav__btn--settings[data-settings-jump="goals"]');
+  const quickCompromise = document.querySelector('.phase2HeroQuickNav__btn--settings[data-settings-jump="compromise"]');
   const quickProfileLabel = $('settingsQuickStatusProfile');
   const quickWatchLabel = $('settingsQuickStatusWatch');
   const quickGoalsLabel = $('settingsQuickStatusGoals');
+  const quickCompromiseLabel = $('settingsQuickStatusCompromise');
 
   const missingSections = frame.sections.filter(section => !section.ready).map(section => section.label);
   const missingText = missingSections.length ? missingSections.join(', ') : '';
@@ -258,7 +307,7 @@ function phase6SyncSettingsAccessUi(){
   if (state) state.textContent = accepted ? 'Déverrouillée' : 'Verrouillée';
   if (meta) meta.textContent = accepted
     ? (frame.ready
-        ? 'Conditions acceptées. Profil, montre et preset sont prêts : entrée sur Pilotage.'
+        ? 'Conditions acceptées. Configuration et compromis sont prêts : entrée sur Pilotage.'
         : `Conditions acceptées mais cadre incomplet : complète ${missingText} dans Réglages avant l’usage normal.`)
     : "La lecture et l’acceptation des conditions restent requises avant d’entrer dans l’application.";
 
@@ -271,6 +320,7 @@ function phase6SyncSettingsAccessUi(){
   if (quickProfile) quickProfile.setAttribute('data-ready', profile.ready ? 'ready' : 'missing');
   if (quickWatch) quickWatch.setAttribute('data-ready', watch.ready ? 'ready' : 'missing');
   if (quickGoals) quickGoals.setAttribute('data-ready', goals.ready ? 'ready' : 'missing');
+  if (quickCompromise) quickCompromise.setAttribute('data-ready', compromise.ready ? 'ready' : 'missing');
   if (quickProfileLabel) quickProfileLabel.innerHTML = profile.ready
     ? 'Base + préférences · <strong>prêt</strong>'
     : `Base + préférences · ${profile.completeCount}/${profile.totalCount} requis`;
@@ -280,6 +330,10 @@ function phase6SyncSettingsAccessUi(){
   if (quickGoalsLabel) quickGoalsLabel.innerHTML = goals.ready
     ? 'Preset + cible · <strong>prêt</strong>'
     : 'Preset + cible · preset requis';
+  if (quickCompromiseLabel) quickCompromiseLabel.innerHTML = compromise.ready
+    ? 'Choix nutritionnel · <strong>prêt</strong>'
+    : 'Choix nutritionnel · requis';
+  phase6SyncSetupNudgeUi({ setup });
 }
 function phase6MaybeOpenTermsGateOnLockedApp(){
   const accepted = !!(typeof isTermsAccepted === 'function' && isTermsAccepted());
@@ -320,6 +374,21 @@ function wireEvents(){
     return requirePhase6('SportSleepEntryPoints', methodName)(...args);
   };
 
+  // Les pastilles de charge ouvrent directement le calendrier historique pour
+  // renseigner les activités ou dépenses des sept derniers jours.
+  const openLoadHistoryCalendar = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openTab("history", { delay:0, source:"load-seed-nudge" });
+    window.setTimeout(() => {
+      const calendarButton = $("btnHistoryGoCalendar");
+      if (calendarButton && !calendarButton.disabled) calendarButton.click();
+    }, 40);
+  };
+  ["loadSeedNudge", "pilotageSettingsLoadNudge"].forEach((id) => {
+    $(id)?.addEventListener("click", openLoadHistoryCalendar);
+  });
+
   // CGU
   $("ackTerms")?.addEventListener("change", () => {
     const ok = $("ackTerms").checked;
@@ -346,7 +415,7 @@ $("btnMenuOpenCloudModal")?.addEventListener("click", () => { openSettingsCloudM
 $("btnMenuOpenTutoModal")?.addEventListener("click", () => { openSettingsTutoModal(); try{ closeMenu(); }catch(e){} });
 $("btnMenuOpenHelpModal")?.addEventListener("click", () => { openSettingsHelpModal(); try{ closeMenu(); }catch(e){} });
 
-  ['sex','age','height','weight','watchBrand','montre','dietMode','profileSelect'].forEach(id => {
+  ['sex','age','height','weight','watchBrand','montre','dietMode','compromiseSelect','profileSelect'].forEach(id => {
     $(id)?.addEventListener('change', () => setTimeout(phase6SyncSettingsAccessUi, 30));
     $(id)?.addEventListener('input', () => setTimeout(phase6SyncSettingsAccessUi, 30));
   });
@@ -772,6 +841,8 @@ function phase6GetHistoryJumpButton(key){
       ? $('btnHistoryGoTrend')
       : key === 'health'
         ? $('btnHistoryGoHealth')
+        : key === 'activity'
+          ? $('btnTodayQuickSport')
         : key === 'diab'
           ? $('btnHistoryGoDiab')
           : null;
@@ -1072,7 +1143,20 @@ window.addEventListener("diab:carbs-pushed", (e) => {
   });
 
   // Calcul + scroll
-  $("calcSpendBtn")?.addEventListener("click", () => recompute(true, true));
+  // La dépense (#montre) recalcule automatiquement au changement — remplace
+  // l'ancien bouton « Recalculer l'objectif ». Vaut pour l'édition en réglages
+  // ET pour l'éditeur de Pilotage (qui déclenche un 'change' sur #montre).
+  $("montre")?.addEventListener("change", (event) => {
+    const date = (typeof getSelectedDate === 'function') ? getSelectedDate() : ($('dayDate')?.value || '');
+    if (event.isTrusted || window.__scaEnergyExplicitCommitDate === date) {
+      window.__scaEnergyExplicitCommitDate = date;
+    }
+    try { recompute(true); }
+    catch(_) {}
+    finally {
+      if (window.__scaEnergyExplicitCommitDate === date) window.__scaEnergyExplicitCommitDate = '';
+    }
+  });
 
   // Repas
   $("btnAddMeal")?.addEventListener("click", addMealFromInputs);
@@ -1114,8 +1198,40 @@ window.addEventListener("diab:carbs-pushed", (e) => {
     addMealFromInputs();
   });
 
+  // N°2 — Éditer la dépense énergétique totale du jour depuis Pilotage.
+  // Écrit dans #montre (source unique, champ des réglages) puis déclenche le
+  // recalcul complet via window.compute : réglages, reste à consommer, charge,
+  // compromis — tout s'ajuste comme une édition en réglages. Aucun calcul dupliqué.
+  (function initTodaySpendEditor(){
+    const edit = document.getElementById("todaySpendEdit");
+    if (!edit) return;
+    const getMontre = () => document.getElementById("montre");
+    let syncing = false;
+
+    const mirror = () => { const m = getMontre(); if (m){ syncing = true; m.value = edit.value; syncing = false; } };
+    const commit = () => {
+      const m = getMontre(); if (!m) return;
+      window.__scaEnergyExplicitCommitDate = (typeof getSelectedDate === 'function') ? getSelectedDate() : (document.getElementById('dayDate')?.value || '');
+      syncing = true;
+      m.value = edit.value;
+      m.dispatchEvent(new Event("input",  { bubbles:true }));
+      m.dispatchEvent(new Event("change", { bubbles:true }));
+      syncing = false;
+      // Le recalcul est déclenché par l'écouteur global sur #montre ('change').
+    };
+    const pull = () => { if (syncing) return; const m = getMontre(); if (m) edit.value = m.value; };
+
+    edit.addEventListener("input",  mirror);
+    edit.addEventListener("change", commit);
+    const m0 = getMontre();
+    if (m0){ m0.addEventListener("input", pull); m0.addEventListener("change", pull); }
+    document.getElementById("dayDate")?.addEventListener("change", () => setTimeout(pull, 60));
+    setTimeout(pull, 0);
+    setTimeout(pull, 250);
+  })();
+
   // Valeur par défaut : Manuel
-  window.__sca_js_build = "A10";
+  window.__sca_js_build = "A16";
   mealUI_setMode("manual");
 // Sommeil : édition explicite (1 nuit = 1 enregistrement)
 $("btnSleepEdit")?.addEventListener("click", () => {

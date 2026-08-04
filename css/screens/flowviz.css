@@ -3744,7 +3744,7 @@
   gap:10px;
 }
 
-.phase2Screen[data-tabsection="today"] .phase2HeroQuickNavNote{
+.phase2HeroQuickNavNote{
   margin:8px 0 0;
   color:rgba(255,255,255,.62);
   font-size:.78rem;
@@ -3928,7 +3928,7 @@
   line-height:1.14 !important;
 }
 
-.phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat__note{
+.phase2SettingsJumpFloat__note{
   margin-top:6px;
   font-size:.72rem;
   line-height:1.25;
@@ -7462,7 +7462,7 @@ th{
 /* MARQUEUR DE VERSION — permet de vérifier d'un coup d'œil quelle feuille est servie.
    En console : getComputedStyle(document.documentElement).getPropertyValue('--sca-css-build')
    Doit renvoyer "A8". Si vide ou différent, le navigateur sert une version en cache. */
-:root{ --sca-css-build:"A11"; }
+:root{ --sca-css-build:"A17"; }
 
 /* ============================================================
    Aperçu verrouillé du mode Rapide /100 g (teaser de mode)
@@ -7600,4 +7600,163 @@ body:not([data-usemode="expert"]) #mealPanelQuick{ display:none !important; }
   }
   .meals-wrap td::before{ content:none; }  /* retire les libellés ::before */
   .meals-wrap td input{ min-width:3.2rem; }
+}
+
+/* ============================================================
+   A13 — Éditeur de dépense fondu dans une phase1PulseCard (N°2)
+   L'input adopte l'allure d'une valeur de pulse card ; la carte
+   suit le même comportement responsive que les autres.
+   ============================================================ */
+.phase1PulseValueInput{
+  width:100%;
+  min-width:0;
+  margin-top:.1rem;
+  padding:.3rem .45rem;
+  font-size:1.03rem;
+  font-weight:800;
+  color:var(--text);
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border);
+  border-radius:10px;
+  -moz-appearance:textfield;
+}
+.phase1PulseValueInput:focus{
+  outline:none;
+  border-color:var(--accent);
+  background:rgba(124,92,255,.10);
+}
+.phase1PulseCard--spendEdit .phase1PulseLabel label{ cursor:text; }
+
+/* ============================================================
+   Accompagnement de configuration et de charge
+   - une seule pastille suit la première étape obligatoire manquante ;
+   - la charge récente reste conseillée mais non bloquante ;
+   - Réglages dans Pilotage signale une configuration incomplète ou à actualiser.
+   ============================================================ */
+.quickNavNudgeWrap{
+  position:relative;
+  display:flex;
+  min-width:0;
+}
+.quickNavNudgeWrap > .phase2HeroQuickNav__btn{
+  flex:1 1 auto;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+}
+.phase2HeroQuickNav--settings .quickNavNudgeWrap[data-setup-target="1"] > .phase2HeroQuickNav__btn{
+  box-shadow:inset 0 0 0 1px rgba(255,184,77,.16);
+}
+.chargeNudgeDot{
+  position:absolute;
+  top:-9px;
+  right:-9px;
+  width:26px;
+  height:26px;
+  min-width:26px;
+  padding:0;
+  border-radius:50%;
+  background:transparent;
+  border:0;
+  color:transparent;
+  font-size:0;
+  cursor:pointer;
+  display:none;
+  z-index:3;
+  box-shadow:none;
+}
+.chargeNudgeDot::after{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border-radius:50%;
+  background:var(--accent);
+  border:2px solid var(--bg);
+  box-shadow:0 0 0 0 rgba(124,92,255,.55);
+  animation:chargeNudgePulse 2.4s ease-out infinite;
+}
+/* neutralise le style .info-dot réutilisé pour le handler de modale */
+.chargeNudgeDot::before{ content:none !important; }
+.chargeNudgeDot:hover,
+.chargeNudgeDot:focus-visible{
+  background:transparent;
+  outline:2px solid rgba(124,92,255,.6);
+  outline-offset:1px;
+}
+
+/* Réglages quicknav — réserve la hauteur réelle du titre et du statut.
+   Les wrappers d'accompagnement imposent une tuile de 68px : avec les
+   anciens padding/gap/margin, Flexbox comprimait le <strong> à ~12.8px. */
+.phase2Screen[data-tabsection="settings"]
+  .phase2HeroQuickNav--settings
+  .quickNavNudgeWrap > .phase2HeroQuickNav__btn--settings{
+  padding-block:8px 7px;
+  gap:3px;
+}
+.phase2Screen[data-tabsection="settings"]
+  .phase2HeroQuickNav--settings
+  .quickNavNudgeWrap > .phase2HeroQuickNav__btn--settings > strong{
+  flex:0 0 auto;
+  min-height:1.08em;
+  margin:0;
+}
+.phase2Screen[data-tabsection="settings"]
+  .phase2HeroQuickNav--settings
+  .quickNavNudgeWrap > .phase2HeroQuickNav__btn--settings > .phase2HeroQuickNav__state{
+  flex:0 0 auto;
+  margin-top:0;
+}
+/* Une seule étape d'accompagnement est visible à la fois. */
+.chargeNudgeDot[data-onboarding-visible="1"]{ display:block; }
+
+@keyframes chargeNudgePulse{
+  0%{   box-shadow:0 0 0 0 rgba(124,92,255,.55); }
+  70%{  box-shadow:0 0 0 9px rgba(124,92,255,0); }
+  100%{ box-shadow:0 0 0 0 rgba(124,92,255,0); }
+}
+@media (prefers-reduced-motion: reduce){
+  .chargeNudgeDot::after{ animation:none; }
+}
+
+/* ============================================================
+   A17 — Guide d'amorçage de la charge (Historique / Calendrier)
+   Toujours visible, sous le titre du panneau calendrier.
+   ============================================================ */
+.histChargeGuide{
+  margin:0 0 12px;
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  border-radius:var(--ux-radius-lg);
+  background:var(--panel2);
+}
+.histChargeGuide__title{
+  margin:0;
+  font-weight:800;
+  font-size:.95rem;
+  color:var(--text);
+}
+.histChargeGuide__lead{
+  margin:6px 0 4px;
+  color:var(--muted);
+  font-size:.86rem;
+}
+.histChargeGuide__list{
+  margin:0;
+  padding-left:1.1rem;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.histChargeGuide__list li{
+  color:var(--muted);
+  font-size:.86rem;
+  line-height:1.35;
+}
+.histChargeGuide__list strong{ color:var(--text); }
+.histChargeGuide__list em{ font-style:normal; color:var(--accent2, var(--accent)); font-weight:700; }
+.histChargeGuide__foot{
+  margin:8px 0 0;
+  color:var(--muted2);
+  font-size:.82rem;
 }

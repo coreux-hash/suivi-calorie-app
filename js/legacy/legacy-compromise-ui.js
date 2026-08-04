@@ -383,6 +383,30 @@
     return true;
   }
 
+  function compromiseMatchesCurrentExactly(key){
+    const cfg = getApplyMap()[String(key || '')];
+    if (!cfg) return false;
+    const cur = readCurrentCompromiseSignature();
+    const sameNumber = (a, b) => Number.isFinite(Number(a))
+      && Number.isFinite(Number(b))
+      && Math.abs(Number(a) - Number(b)) <= 0.001;
+
+    if (String(cfg.dietMode || '') !== String(cur.dietMode || '')) return false;
+    if (String(cfg.carbGoal || '') !== String(cur.carbGoal || '')) return false;
+    if (!sameNumber(cfg.fatFloorGPerKg, cur.fatFloorGPerKg)) return false;
+    if (typeof cfg.lowCarbEnabled !== 'boolean' || !!cfg.lowCarbEnabled !== !!cur.lowCarbEnabled) return false;
+    if (cfg.lowCarbEnabled && Object.prototype.hasOwnProperty.call(cfg, 'lowCarbLevel')
+        && String(cfg.lowCarbLevel || '') !== String(cur.lowCarbLevel || '')) return false;
+    if (Number.isFinite(Number(cfg.protPerKg)) && !sameNumber(cfg.protPerKg, cur.protPerKg)) return false;
+    return true;
+  }
+
+  function findUniqueExactCompromiseId(){
+    const allowed = new Set(getAllowedCompromiseIdsForMode(byId('useMode')?.value || 'simple'));
+    const matches = Object.keys(getApplyMap()).filter(key => allowed.has(key) && compromiseMatchesCurrentExactly(key));
+    return matches.length === 1 ? matches[0] : '';
+  }
+
   function revalidateCurrentSelection(options = {}){
     const sel = byId('compromiseSelect');
     if (!sel) return '';
@@ -844,7 +868,9 @@ function formatMacroBalance(macros){
       refresh,
       syncSelectionFromSettings,
       findMatchingCompromiseId,
+      findUniqueExactCompromiseId,
       compromiseMatchesCurrent,
+      compromiseMatchesCurrentExactly,
       readCurrentCompromiseSignature,
       applyModeFilter,
       getAllowedCompromiseIdsForMode,

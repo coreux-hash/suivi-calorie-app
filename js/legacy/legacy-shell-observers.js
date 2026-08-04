@@ -291,6 +291,7 @@ function phase6GetShellAvailabilityMap(){
       watch:true,
       goals:true,
       load:true,
+      compromise:true,
     },
     today:{
       meal:true,
@@ -310,6 +311,7 @@ function phase6GetShellAvailabilityMap(){
       calendar:true,
       trend:phase6MatchesMinimumMode('expert'),
       health:true,
+      activity:phase6MatchesMinimumMode('sport'),
       diab:diabEnabled,
     },
   };
@@ -354,6 +356,7 @@ function phase6SyncShellQuickNav(){
     watch:'watch',
     goals:'goals',
     load:'load',
+    compromise:'compromise',
   };
   document.querySelectorAll('[data-settings-jump]').forEach(btn => {
     const key = btn.getAttribute('data-settings-jump');
@@ -384,6 +387,7 @@ function phase6SyncShellQuickNav(){
     calendar: { section:'history', key:'calendar', target:'historyMainPanel' },
     trend: { section:'history', key:'trend', target:'historyTrendPanel' },
     health: { section:'history', key:'health', target:'historyHealthPanel' },
+    activity: { section:'history', key:'activity' },
     diab: { section:'history', key:'diab', target:'historyDiabPanel' },
   };
   document.querySelectorAll('[data-history-jump]').forEach(btn => {
@@ -1185,5 +1189,3 @@ function initPhase5Shell(){
   document.addEventListener('phase5:refresh-request', (e)=> schedulePhase5Refresh(e?.detail?.delay || 60));
   window.addEventListener('resize', ()=> { setTimeout(phase2SyncHistoryQuickNavState, 40); setTimeout(()=> phase5SyncGateDisclosureMode(false), 20); });
 }
-
-

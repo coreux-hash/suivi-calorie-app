@@ -76,6 +76,16 @@
       || (($('dayDate') && $('dayDate').value) || isoToday());
   }
 
+  /* Statut persistant affiché dans le bloc de transfert (aria-live).
+     Complète les boîtes de dialogue, qui disparaissent au clic. */
+  function setTransferStatus(message, tone) {
+    const el = $('daysTransferStatus');
+    if (!el) return;
+    el.textContent = String(message || '');
+    if (tone) el.setAttribute('data-tone', tone);
+    else el.removeAttribute('data-tone');
+  }
+
   /* Snapshot complet du profil actif : réglages + journées.
      On délègue à buildLocalSnapshot() (déjà utilisé par la synchro cloud) pour
      n'avoir qu'une seule définition de « ce qui constitue une sauvegarde ». */
@@ -105,6 +115,9 @@
     const box = $('daysJsonBox');
     if (!box) return;
     box.value = JSON.stringify(buildExportSnapshot(), null, 2);
+    const adv = $('daysJsonAdvanced');
+    if (adv) { try { adv.open = true; } catch (_) {} }
+    setTransferStatus('Sauvegarde affichée dans la zone JSON. Tu peux la copier manuellement.', null);
   }
 
   /* Import non destructif.
@@ -185,7 +198,10 @@
     lines.push('• Réglages : ' + (settingsIncoming ? 'remplacés par ceux du JSON, plus récents' : 'conservés (locaux)'));
     lines.push('', 'Aucune journée locale ne sera supprimée.', '', "Confirmer l'import ?");
 
-    if (!global.confirm(lines.join('\n'))) return false;
+    if (!global.confirm(lines.join('\n'))) {
+      setTransferStatus('Import annulé. Aucune donnée modifiée.', 'warn');
+      return false;
+    }
 
     let merged;
     try { merged = global.mergeSnapshots(localSnap, incomingSnap); }
@@ -215,16 +231,30 @@
       if (typeof global.refreshDaySelect === 'function') global.refreshDaySelect();
     }
 
+    const resume = added + ' ajoutée(s), ' + updated + ' mise(s) à jour, ' + kept + ' conservée(s)'
+      + (settingsIncoming ? ', réglages mis à jour' : '');
+
+    setTransferStatus('Import réussi — ' + resume + '. Tes données sont enregistrées : tu peux fermer cette fenêtre.', 'ok');
+
     global.alert(
-      'Import terminé.\n' +
-      added + ' ajoutée(s), ' + updated + ' mise(s) à jour, ' + kept + ' conservée(s).'
+      'Import réussi.\n' +
+      resume + '.\n\n' +
+      'Tes données sont enregistrées. Tu peux fermer cette fenêtre.'
     );
     return true;
   }
 
   function importDays() {
     const box = $('daysJsonBox');
-    return importDaysFromText(box ? box.value : '');
+    const text = box ? String(box.value || '').trim() : '';
+    if (!text) {
+      const adv = $('daysJsonAdvanced');
+      if (adv) { try { adv.open = true; } catch (_) {} }
+      if (box) { try { box.focus(); } catch (_) {} }
+      setTransferStatus("La zone JSON est vide. Colle d'abord le JSON reçu, puis relance l'import. Pour un fichier, utilise « Importer un fichier… ».", 'warn');
+      return false;
+    }
+    return importDaysFromText(text);
   }
 
   /* ---- Confort de transfert : presse-papier et fichier ---- */
@@ -244,7 +274,10 @@
       const clip = global.navigator && global.navigator.clipboard;
       if (clip && typeof clip.writeText === 'function') {
         clip.writeText(text)
-          .then(function () { global.alert('JSON copié dans le presse-papier.'); })
+          .then(function () {
+            setTransferStatus('Sauvegarde copiée dans le presse-papier. Colle-la sur l’autre appareil, dans la zone JSON.', 'ok');
+            global.alert('JSON copié dans le presse-papier.');
+          })
           .catch(fallback);
         return;
       }
@@ -268,7 +301,9 @@
       a.click();
       global.document.body.removeChild(a);
       global.setTimeout(function () { try { global.URL.revokeObjectURL(url); } catch (_) {} }, 0);
+      setTransferStatus('Fichier de sauvegarde téléchargé. Transfère-le sur l’autre appareil, puis utilise « Importer un fichier… ».', 'ok');
     } catch (_) {
+      setTransferStatus("Téléchargement bloqué par le navigateur. Utilise « Copier », puis colle le JSON sur l'autre appareil.", 'warn');
       global.alert("Téléchargement impossible sur ce navigateur.\nUtilise « Copier » puis colle le JSON sur l'autre appareil.");
     }
   }

@@ -5,7 +5,7 @@
     try { return (typeof getSelectedDate === 'function' ? getSelectedDate() : ($('dayDate')?.value || new Date().toISOString().slice(0,10))) || new Date().toISOString().slice(0,10); }
     catch(_) { return new Date().toISOString().slice(0,10); }
   }
-  function isoAddDays(dateStr, delta){ const d=new Date(String(dateStr||'').slice(0,10)+'T00:00:00'); if(!Number.isFinite(d.getTime())) return dateStr; d.setDate(d.getDate()+delta); return d.toISOString().slice(0,10); }
+  function isoAddDays(dateStr, delta){ const raw=String(dateStr||'').slice(0,10); const match=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/); if(!match) return dateStr; const d=new Date(Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]))); d.setUTCDate(d.getUTCDate()+Number(delta||0)); return d.toISOString().slice(0,10); }
   const LOAD_LEVELS={L0:{minHours:0,maxHours:3,label:'L0 · faible charge'},L1:{minHours:3,maxHours:5,label:'L1 · charge modérée'},L2:{minHours:5,maxHours:8,label:'L2 · charge sportive réelle'},L3:{minHours:8,maxHours:10,label:'L3 · charge élevée'},L4:{minHours:10,maxHours:999,label:'L4 · charge très élevée / bloc perf'}};
   const ENERGY_LOAD_LEVELS={D0:{minPal:0,maxPal:1.45,level:'L0',label:'D0 · dépense basse'},D1:{minPal:1.45,maxPal:1.70,level:'L1',label:'D1 · dépense standard'},D2:{minPal:1.70,maxPal:1.95,level:'L2',label:'D2 · dépense active'},D3:{minPal:1.95,maxPal:2.20,level:'L3',label:'D3 · dépense élevée'},D4:{minPal:2.20,maxPal:999,level:'L4',label:'D4 · dépense très élevée'}};
   const MATRIX={
@@ -30,17 +30,64 @@
   function getLoadLevel(hours){ const h=Math.max(0,Number(hours)||0); if(h<LOAD_LEVELS.L1.minHours) return 'L0'; if(h<LOAD_LEVELS.L2.minHours) return 'L1'; if(h<LOAD_LEVELS.L3.minHours) return 'L2'; if(h<LOAD_LEVELS.L4.minHours) return 'L3'; return 'L4'; }
   function getLoadIndex(level){ const m=String(level||'').match(/^L([0-4])$/); return m?Number(m[1]):0; }
   function levelFromIndex(index){ return `L${Math.max(0,Math.min(4,Math.round(Number(index)||0)))}`; }
-  function computeBmrFromDom(){ const sex=String($('sex')?.value||'M'); const w=toNum($('weight')?.value); const h=toNum($('height')?.value); const age=toNum($('age')?.value); if(!(w>0&&h>0&&age>0)) return 0; try{ if(typeof mifflinStJeor==='function') return Math.max(0,toNum(mifflinStJeor(sex,w,h,age))); }catch(_){} return Math.max(0,(10*w)+(6.25*h)-(5*age)+(sex==='M'?5:-161)); }
-  function getAdjustedSpendFromDom(){ const raw=toNum($('montre')?.value); if(!(raw>0)) return 0; const errPct=Math.max(0,toNum($('errPct')?.value)); const errMode=String($('errMode')?.value||'conservative'); const f=errPct/100; if(errMode==='conservative') return raw*(1-f); if(errMode==='optimistic') return raw*(1+f); return raw; }
-  function getDailyEnergyLoad(dateStr){ let day=null; try{ if(typeof getDay==='function') day=getDay(dateStr); }catch(_){ day=null; } const domSpend=getAdjustedSpendFromDom(); const savedSpend=toNum(day?.montreAdjusted ?? day?.montreRaw); const spend=Math.max(0,domSpend||savedSpend); const bmr=Math.max(0,computeBmrFromDom()||toNum(day?.bmr)); if(!(spend>0&&bmr>0)) return null; const pal=spend/bmr; let id='D4'; if(pal<ENERGY_LOAD_LEVELS.D0.maxPal) id='D0'; else if(pal<ENERGY_LOAD_LEVELS.D1.maxPal) id='D1'; else if(pal<ENERGY_LOAD_LEVELS.D2.maxPal) id='D2'; else if(pal<ENERGY_LOAD_LEVELS.D3.maxPal) id='D3'; const def=ENERGY_LOAD_LEVELS[id]; return {id,level:def.level,index:getLoadIndex(def.level),label:def.label,spend,bmr,pal,text:`${id} · ${Math.round(spend)} kcal/j · PAL ${pal.toFixed(2)}`}; }
-  function combineSportAndEnergyLoad(sportLevel,energyLoad){ const s=getLoadIndex(sportLevel); const d=energyLoad?getLoadIndex(energyLoad.level):0; let finalIndex=Math.max(s,d); const boosted=(s>=2&&d>=2); if(boosted) finalIndex+=1; finalIndex=Math.min(4,finalIndex); let source='sport'; if(boosted) source='mixed'; else if(energyLoad&&d>s) source='energy'; return {level:levelFromIndex(finalIndex),source,sportIndex:s,energyIndex:d,finalIndex,boosted}; }
-  function getLoadSourceText(state){ if(state?.combined?.source==='mixed') return `charge combinée plafonnée (${state.sportLevel} + ${state.energyLoad?.id||'D?'})`; if(state?.combined?.source==='energy') return `dépense journalière dominante (${state.energyLoad?.id||'D?'})`; return `charge sportive dominante (${state.sportLevel})`; }
+  function getWeeklyEnergyLoad(dateStr){
+    let days=[];
+    try{ days=Array.isArray(loadDays?.())?loadDays():[]; }catch(_){ days=[]; }
+    const end=String(dateStr||getSelectedDateSafe()).slice(0,10);
+    const start=isoAddDays(end,-6);
+    const byDate=new Map();
+    days.forEach((day)=>{
+      const d=String(day?.date||'').slice(0,10);
+      if(d>=start&&d<=end) byDate.set(d,day);
+    });
+    let validDays=0;
+    let totalSpend=0;
+    let totalBmr=0;
+    for(let offset=0;offset<7;offset+=1){
+      const day=byDate.get(isoAddDays(start,offset));
+      if(day?.energyExplicit===false) continue;
+      const spend=Math.max(0,toNum(day?.montreAdjusted ?? day?.montreRaw));
+      const bmr=Math.max(0,toNum(day?.bmr));
+      if(!(spend>0&&bmr>0)) continue;
+      validDays+=1;
+      totalSpend+=spend;
+      totalBmr+=bmr;
+    }
+    const complete=validDays===7;
+    if(!complete){
+      return {id:null,level:null,index:null,label:'D— · données incomplètes',spend:null,bmr:null,pal:null,validDays,requiredDays:7,complete:false,startDate:start,endDate:end,text:`D— · ${validDays}/7 jours`};
+    }
+    const spend=totalSpend/7;
+    const bmr=totalBmr/7;
+    const pal=totalSpend/totalBmr;
+    let id='D4';
+    if(pal<ENERGY_LOAD_LEVELS.D0.maxPal) id='D0';
+    else if(pal<ENERGY_LOAD_LEVELS.D1.maxPal) id='D1';
+    else if(pal<ENERGY_LOAD_LEVELS.D2.maxPal) id='D2';
+    else if(pal<ENERGY_LOAD_LEVELS.D3.maxPal) id='D3';
+    const def=ENERGY_LOAD_LEVELS[id];
+    return {id,level:def.level,index:getLoadIndex(def.level),label:def.label,spend,bmr,pal,validDays,requiredDays:7,complete:true,startDate:start,endDate:end,text:`${id} · ${Math.round(spend)} kcal/j en moyenne · PAL ${pal.toFixed(2)} · 7/7 j`};
+  }
+  function combineSportAndEnergyLoad(sportLevel,energyLoad){ const s=getLoadIndex(sportLevel); const hasEnergy=!!energyLoad?.complete; const d=hasEnergy?getLoadIndex(energyLoad.level):null; const finalIndex=hasEnergy?Math.max(s,d):s; let source='sport'; if(hasEnergy&&d>s) source='energy'; else if(hasEnergy&&d===s) source='equal'; return {level:levelFromIndex(finalIndex),source,sportIndex:s,energyIndex:d,finalIndex,boosted:false,rule:'max'}; }
+  function getLoadSourceText(state){ if(state?.combined?.source==='equal') return `niveau commun (${state.sportLevel} / ${state.energyLoad?.id||'D?'})`; if(state?.combined?.source==='energy') return `dépense moyenne dominante (${state.energyLoad?.id||'D?'})`; if(!state?.energyLoad?.complete) return `charge sportive retenue (${state.sportLevel}) · D incomplet`; return `charge sportive dominante (${state.sportLevel})`; }
   function getLoadDetailText(state){ const parts=[]; if(state?.hoursText) parts.push(state.hoursText); if(state?.energyLoad) parts.push(state.energyLoad.text); return parts.join(' · '); }
   function getCurrentCompromiseId(){ return String($('compromiseSelect')?.value||''); }
   function getEntry(compromiseId,level){ return MATRIX?.[compromiseId]?.[level]||null; }
   function ensureAdvisorBox(){ let box=$('compromiseLoadAdvisor'); if(box) return box; const anchor=$('compromiseSummary'); if(!anchor||!anchor.parentNode) return null; box=document.createElement('div'); box.id='compromiseLoadAdvisor'; box.className='muted mt-025'; box.style.padding='.6rem .75rem'; box.style.border='1px solid rgba(255,255,255,.14)'; box.style.borderRadius='12px'; box.style.background='rgba(255,255,255,.04)'; box.style.lineHeight='1.4'; anchor.insertAdjacentElement('afterend',box); return box; }
   function decorateOptions(level,currentId){ const sel=$('compromiseSelect'); if(!sel) return; Array.from(sel.options||[]).forEach((opt)=>{ const value=String(opt.value||''); if(!value||!MATRIX[value]) return; const entry=getEntry(value,level); const original=opt.dataset.originalText||opt.textContent; opt.dataset.originalText=original; if(!entry){ opt.textContent=original; opt.disabled=false; opt.title=''; return; } const prefix=entry.status==='warn'?'⚠ ':(entry.status==='blocked'?'⛔ ':''); opt.textContent=prefix+original; opt.title=`${STATUS_LABELS[entry.status]||''} · ratio ${RATIO_LABELS[entry.ratio]||entry.ratio} · ${CARB_GOAL_LABELS[entry.carbGoalRecommended]||entry.carbGoalRecommended}`; opt.disabled=(entry.status==='blocked' && value!==currentId); }); }
-  function updateQuickLoadButton(state){ const btn=$("settingsQuickLoadBtn"); const label=$("settingsQuickStatusLoad"); if(!btn||!label) return; const ready=(state.minutes>0)||!!state.energyLoad; btn.setAttribute('data-ready',ready?'ready':'missing'); if(!ready){ label.innerHTML='<em class="phase2HeroQuickNav__stateLine">Charge récente</em><em class="phase2HeroQuickNav__stateSub">à compléter</em>'; btn.title='Charge à confirmer sur 7 jours.'; return; } const shortLevel=String(state.levelLabel||state.level||'').replace(/\s*·\s*/,' - '); label.innerHTML=`<em class="phase2HeroQuickNav__stateLine">${escapeHtml(shortLevel)}</em><em class="phase2HeroQuickNav__stateSub">complété</em>`; btn.title=`${shortLevel} · Charge récente complétée`; }
+  function updateQuickLoadButton(state){ const btn=$("settingsQuickLoadBtn"); const label=$("settingsQuickStatusLoad"); if(!btn||!label) return; const dText=state.energyLoad?.complete?state.energyLoad.id:`D— (${state.energyLoad?.validDays||0}/7)`; const ready=(state.minutes>0)||!!state.energyLoad?.complete; btn.setAttribute('data-ready',ready?'ready':'missing'); label.innerHTML=`<em class="phase2HeroQuickNav__stateLine">${escapeHtml(`${state.sportLevel} · ${dText}`)}</em><em class="phase2HeroQuickNav__stateSub">Niveau ${escapeHtml(state.level)}</em>`; btn.title=`Sport ${state.sportLevel} · Dépense ${dText} · Niveau retenu ${state.level}`; }
+
+  function updateOnboarding(state){
+    const seed=$('loadSeedNudge');
+    const pilotageSeed=$('pilotageSettingsLoadNudge');
+    if(!seed&&!pilotageSeed) return;
+    const loadAvailable=(state.minutes>0)||!!state.energyLoad?.complete;
+    [seed,pilotageSeed].filter(Boolean).forEach((nudge)=>{
+      nudge.setAttribute('data-onboarding-visible',loadAvailable?'0':'1');
+      nudge.setAttribute('aria-label','Ouvrir Historique et le calendrier pour compléter les 7 derniers jours');
+      nudge.setAttribute('title','Compléter les 7 derniers jours dans Historique');
+    });
+  }
 
 function getLoadPublicLabel(state){
     const raw=String(state?.levelLabel||state?.level||'Charge actuelle');
@@ -56,9 +103,11 @@ function getLoadPublicLabel(state){
   }
   function buildExpertLoadDetails(state,entry){
     const rows=[
+      ['L · sport sur 7 j', `${state.sportLevelLabel || state.sportLevel || '—'} · ${state.hoursText}`],
+      ['D · dépense sur 7 j', state.energyLoad?.text || 'D— · 0/7 jours'],
       ['Niveau retenu', state.levelLabel || state.level || '—'],
       ['Source', state.loadSourceText || '—'],
-      ['Détail', state.loadDetailText || 'données incomplètes']
+      ['Règle', state.energyLoad?.complete ? 'maximum de L et D' : 'L seul tant que D est incomplet']
     ];
     if(entry){
       rows.push(['Statut interne', entry.status || '—']);
@@ -111,10 +160,10 @@ function getLoadPublicLabel(state){
 
   function reflectRatioModeInUi(entry){ const ratio=$('ratioCP'); const ratioText=$('ratioCPText'); const hint=$('carbGuardExplain'); const note=ensureRatioModeNote(); if(!ratio||!entry) return; ratio.dataset.trainingLoadRatioMode=entry.ratio; ratio.dataset.trainingLoadManaged='1'; if(ratioText) ratioText.dataset.trainingLoadRatioMode=entry.ratio; if(hint) hint.dataset.trainingLoadRatioMode=entry.ratio; setRatioVisualState(entry.ratio); if(entry.ratio==='off'){ ratio.disabled=true; ratio.readOnly=true; ratio.setAttribute('aria-disabled','true'); ratio.title='Ignoré pour ce compromis / cette charge'; if(note){ note.textContent='Ignoré pour ce compromis / cette charge.'; note.style.display=''; } return; } ratio.readOnly=false; ratio.removeAttribute('aria-disabled'); ratio.title=''; if(note){ if(entry.ratio==='soft'){ note.textContent='Ratio adapté à la charge récente.'; note.style.display=''; } else { note.textContent=''; note.style.display='none'; } } if(entry.ratio==='soft'){ ratio.disabled=true; ratio.setAttribute('aria-disabled','true'); ratio.title='Assoupli pour cette charge'; return; } if(!$('lowCarbEnabled')?.checked){ const carbGuard=!!$('carbGuardEnabled')?.checked; const mode=String($('dietMode')?.value||'none'); const rawGoal=String($('carbGoal')?.value||'none'); const noObjective=(mode==='none' || rawGoal==='none'); ratio.disabled=!!(carbGuard && !noObjective); } }
 
-  function buildState(){ const dateStr=getSelectedDateSafe(); const minutes=getWeeklySportMinutes(dateStr); const hours=minutes/60; const sportLevel=getLoadLevel(hours); const energyLoad=getDailyEnergyLoad(dateStr); const combined=combineSportAndEnergyLoad(sportLevel,energyLoad); const level=combined.level; const compromiseId=getCurrentCompromiseId(); const entry=getEntry(compromiseId,level); const state={dateStr,minutes,hours,hoursText:`${hours.toFixed(1).replace(/\.0$/,'')} h sport / 7 j`,sportLevel,sportLevelLabel:LOAD_LEVELS[sportLevel]?.label||sportLevel,energyLoad,combined,level,levelLabel:LOAD_LEVELS[level]?.label||level,compromiseId,entry}; state.loadSourceText=getLoadSourceText(state); state.loadDetailText=getLoadDetailText(state); return state; }
-  function sync(){ const state=buildState(); decorateOptions(state.level,state.compromiseId); updateAdvisor(state); updateQuickLoadButton(state); reflectRatioModeInUi(state.entry); window.__TrainingLoadMatrix.__state=state; return state; }
+  function buildState(){ const dateStr=getSelectedDateSafe(); const minutes=getWeeklySportMinutes(dateStr); const hours=minutes/60; const sportLevel=getLoadLevel(hours); const energyLoad=getWeeklyEnergyLoad(dateStr); const combined=combineSportAndEnergyLoad(sportLevel,energyLoad); const level=combined.level; const compromiseId=getCurrentCompromiseId(); const entry=getEntry(compromiseId,level); const state={dateStr,minutes,hours,hoursText:`${hours.toFixed(1).replace(/\.0$/,'')} h sport / 7 j`,sportLevel,sportLevelLabel:LOAD_LEVELS[sportLevel]?.label||sportLevel,energyLoad,combined,level,levelLabel:LOAD_LEVELS[level]?.label||level,compromiseId,entry}; state.loadSourceText=getLoadSourceText(state); state.loadDetailText=getLoadDetailText(state); return state; }
+  function sync(){ const state=buildState(); decorateOptions(state.level,state.compromiseId); updateAdvisor(state); updateQuickLoadButton(state); updateOnboarding(state); reflectRatioModeInUi(state.entry); window.__TrainingLoadMatrix.__state=state; return state; }
   function getRuntimeRatioPolicy(ctx={}){ const state=window.__TrainingLoadMatrix?.__state || sync(); const compromiseId=String(ctx.compromiseId||state.compromiseId||''); const entry=getEntry(compromiseId,state.level); if(!entry) return {mode:'on',effectiveRatio:Math.max(0,toNum(ctx.ratioCP))}; if(entry.ratio==='off') return {mode:'off',effectiveRatio:0}; if(entry.ratio==='soft'){ const current=Math.max(0,toNum(ctx.ratioCP)); return {mode:'soft',effectiveRatio:Math.max(current,2.2)}; } return {mode:'on',effectiveRatio:Math.max(0,toNum(ctx.ratioCP))}; }
-  function bind(){ const watchedIds=['compromiseSelect','dayDate','sportHh','sportMm','sportKcal','sportType','btnSportSave','calcSpendBtn','montre','errPct','errMode','sex','age','height','weight','carbGoal','dietMode','ratioCP','lowCarbEnabled','useMode']; watchedIds.forEach((id)=>{ const el=$(id); if(!el) return; const fn=()=>setTimeout(sync,0); el.addEventListener('change',fn); el.addEventListener('input',fn); el.addEventListener('click',fn); }); const sportList=$('sportSessionsList'); if(sportList && typeof MutationObserver!=='undefined'){ const mo=new MutationObserver(()=>setTimeout(sync,0)); mo.observe(sportList,{childList:true,subtree:true}); } document.addEventListener('click',(e)=>{ const btn=e.target?.closest?.('[data-sportdel], [data-date]'); if(btn) setTimeout(sync,0); }); window.addEventListener('storage',()=>setTimeout(sync,0)); setTimeout(sync,60); }
-  window.__TrainingLoadMatrix={LOAD_LEVELS,ENERGY_LOAD_LEVELS,MATRIX,sync,buildState,getRuntimeRatioPolicy,getLoadLevel,getWeeklySportMinutes,getDailyEnergyLoad,combineSportAndEnergyLoad,__state:null};
+  function bind(){ const watchedIds=['profileSelect','compromiseSelect','dayDate','sportHh','sportMm','sportKcal','sportType','btnSportSave','calcSpendBtn','todaySpendEdit','montre','errPct','errMode','sex','age','height','weight','carbGoal','dietMode','ratioCP','lowCarbEnabled','useMode']; watchedIds.forEach((id)=>{ const el=$(id); if(!el) return; const fn=()=>setTimeout(sync,0); el.addEventListener('change',fn); el.addEventListener('input',fn); el.addEventListener('click',fn); }); const sportList=$('sportSessionsList'); if(sportList && typeof MutationObserver!=='undefined'){ const mo=new MutationObserver(()=>setTimeout(sync,0)); mo.observe(sportList,{childList:true,subtree:true}); } document.addEventListener('click',(e)=>{ const btn=e.target?.closest?.('[data-sportdel], [data-date]'); if(btn) setTimeout(sync,0); }); window.addEventListener('storage',()=>setTimeout(sync,0)); setTimeout(sync,60); }
+  window.__TrainingLoadMatrix={LOAD_LEVELS,ENERGY_LOAD_LEVELS,MATRIX,sync,buildState,getRuntimeRatioPolicy,getLoadLevel,getWeeklySportMinutes,getWeeklyEnergyLoad,combineSportAndEnergyLoad,__state:null};
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind); else bind();
 })();

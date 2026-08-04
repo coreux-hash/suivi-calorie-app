@@ -42,7 +42,7 @@
 
         const nextDate = AppState.setActiveDate(isoToday());
         const journal = RenderCoordinator.renderJournalForDate(nextDate);
-        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: true });
+        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: false });
         const history = RenderCoordinator.renderHistoryForDate(nextDate);
         return { profileId: AppState.getActiveProfile(), date: nextDate, profile, journal, compute, history };
       },
@@ -50,7 +50,10 @@
       afterDateChange(dateStr){
         const date = AppState.setActiveDate(dateStr || AppState.getActiveDate());
         const journal = RenderCoordinator.renderJournalForDate(date);
-        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: true });
+        // Un changement de date est une navigation en lecture seule. Une journée
+        // absente peut être calculée pour rafraîchir l'interface, mais elle ne doit
+        // jamais être créée tant que l'utilisateur n'a rien saisi explicitement.
+        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: false });
         const historySelection = RenderCoordinator.renderHistorySelection(date);
         const diabetes = RenderCoordinator.renderDiabetes(date, { full: false });
         return { date, journal, compute, historySelection, diabetes };
@@ -72,20 +75,20 @@
         if (resolvedTab === 'journalEntry') {
           const journal = RenderCoordinator.renderJournalForDate(date);
           const syncMeals = RenderPorts.syncEatenFromMeals(date);
-          const compute = CalculationCoordinator.recompute({ saveToJournal: true });
+          const compute = CalculationCoordinator.recompute({ saveToJournal: false });
           return { resolvedTab, date, journal, syncMeals, compute };
         }
 
         if (resolvedTab === 'today') {
           const today = RenderCoordinator.renderTodayContext(date);
           const diabetes = RenderCoordinator.renderDiabetes(date, { full: false });
-          const compute = CalculationCoordinator.recompute({ saveToJournal: true });
+          const compute = CalculationCoordinator.recompute({ saveToJournal: false });
           return { resolvedTab, date, today, diabetes, compute };
         }
 
         if (resolvedTab === 'settings') {
           const diabetes = RenderCoordinator.renderDiabetes(date, { full: false });
-          const compute = CalculationCoordinator.recompute({ saveToJournal: true });
+          const compute = CalculationCoordinator.recompute({ saveToJournal: false });
           return { resolvedTab, date, diabetes, compute };
         }
 
@@ -103,7 +106,7 @@
         const profile = RenderCoordinator.renderProfileContext();
         const targetDate = AppState.setActiveDate(options.forceToday ? isoToday() : AppState.getActiveDate());
         const journal = RenderCoordinator.renderJournalForDate(targetDate);
-        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: true });
+        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: false });
         const history = RenderCoordinator.renderHistoryForDate(targetDate);
         return { date: targetDate, reason: options.reason || 'profile-mutation', profile, journal, compute, history };
       },
@@ -118,15 +121,13 @@
       afterDayDeletion(dateStr, options = {}){
         const date = AppState.setActiveDate(options.date || AppState.getActiveDate() || dateStr || isoToday());
         const journal = RenderCoordinator.renderJournalForDate(date);
-        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: true });
+        const compute = CalculationCoordinator.recomputeIfNeeded(journal, { saveToJournal: false });
         const history = RenderCoordinator.renderHistoryForDate(date, { month: AppState.getHistoryMonth(date) });
         return { deletedDate: dateStr || null, date, journal, compute, history };
       },
 
       afterAppBoot(options = {}){
         safeCall(initPhase0Shell);
-        safeCall(initTabs);
-        safeCall(initPinnedTips);
 
         safeCall(diab_initHistorySuivi);
         RenderPorts.refreshDiabetesHistory();
@@ -143,6 +144,11 @@
         const accepted = safeCall(isTermsAccepted);
         if ($('ackTerms')) $('ackTerms').checked = !!accepted;
         safeCall(setAppLocked, !accepted);
+
+        // Le premier espace n'est résolu qu'après hydratation et normalisation
+        // complètes du profil. initTabs() reste l'unique décision de routage au boot.
+        safeCall(initTabs);
+        safeCall(initPinnedTips);
 
         RenderPorts.renderMealsTable(date);
         RenderPorts.loadSportSleepIntoUI(date);
@@ -161,7 +167,7 @@
           })();
         }
 
-        const compute = LegacyBridges.recomputeFromInit(true);
+        const compute = LegacyBridges.recomputeFromInit(false);
         return { date, profile, history, compute, booted: true };
       }
     };

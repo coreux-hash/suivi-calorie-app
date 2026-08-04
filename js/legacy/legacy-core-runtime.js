@@ -463,7 +463,9 @@ function setActiveTab(tab){
 
 function initTabs(){
   const accepted = !!(typeof isTermsAccepted === 'function' && isTermsAccepted());
-  const initialTab = accepted ? "today" : "settings";
+  const initialTab = accepted
+    ? (typeof phase6GetInitialEntryTarget === 'function' ? phase6GetInitialEntryTarget() : "today")
+    : "settings";
   setActiveTab(initialTab);
 
   // Menu items
@@ -751,5 +753,3 @@ function makeDietBadge(...args){
 function applyDietPreset(...args){
   return window.__LegacyCompatUI?.applyDietPreset?.(...args);
 }
-
-

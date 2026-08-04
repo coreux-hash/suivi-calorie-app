@@ -108,6 +108,12 @@
         if (!profiles.length) {
           profiles = [{ id:'default', label:'default' }];
           this.saveProfiles(profiles);
+          writeJsonStorage('secheapp.default.loadOnboarding.v1', {
+            audience:'new',
+            stage:'seed',
+            updatedAt:new Date().toISOString()
+          });
+          try { sessionStorage.setItem('secheapp.default.loadOnboarding.v1.newSession', '1'); } catch(_) {}
         }
         const active = this.getActiveProfile() || profiles[0]?.id || 'default';
         this.setActiveProfile(active, { syncSelect:false });
