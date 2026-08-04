@@ -46,8 +46,8 @@
 <button class="menuItem" data-tab="settings" role="menuitem" type="button">Réglages</button>
 </div>
 <div class="menuGroup menuGroup--planAccess">
-<div class="menuGroupLabel">Plan d’accès</div>
-<button class="menuActionItem menuActionItem--planAccess" id="btnMenuOpenPilotagePlan" role="menuitem" type="button">Comprendre l’application</button>
+<div class="menuGroupLabel">Aide</div>
+<button class="menuActionItem menuActionItem--planAccess" id="btnMenuOpenPilotagePlan" role="menuitem" type="button">Comment ça marche ?</button>
 </div>
 <div class="menuGroup menuGroup--tools">
 <div class="menuGroupLabel">Accès transverses</div>
@@ -634,108 +634,87 @@
   <div aria-labelledby="pilotagePlanTitle" aria-describedby="pilotagePlanLead" aria-modal="true" class="modal__panel modal__panel--settings modal__panel--pilotagePlan" role="dialog" tabindex="-1">
     <div class="modal__head">
       <div>
-        <div class="modal__title" id="pilotagePlanTitle">Plan de pilotage</div>
-        <div class="pilotagePlan__kicker">Logique globale · lecture métier · repères d’usage</div>
+        <div class="modal__title" id="pilotagePlanTitle">Comment ça marche ?</div>
+        <div class="pilotagePlan__kicker">Un parcours simple · des repères à reconnaître · puis l’autonomie</div>
       </div>
       <button aria-label="Fermer" class="modal__close" id="pilotagePlanClose" type="button">✕</button>
     </div>
     <div class="modal__body modal__body--settings pilotagePlan">
       <p class="pilotagePlan__lead" id="pilotagePlanLead">
-        Cette couche explique comment lire l’application avant d’agir. Elle ne remplace ni les info-dots, ni le détail expert, ni les conditions d’accès : elle donne la carte globale du produit.
+        Tu n’as rien à mémoriser. Suis d’abord la marche à suivre, teste les deux repères visuels, puis utilise les aides uniquement quand tu en as besoin.
       </p>
 
-      <section class="pilotagePlan__section pilotagePlan__section--role" aria-labelledby="pilotagePlanRoleTitle">
-        <h3 id="pilotagePlanRoleTitle">Rôle du produit</h3>
-        <p>
-          L’application sert à transformer une journée réelle — alimentation, activité, sommeil, objectifs et signaux de santé — en repères de pilotage. Le but n’est pas de juger la journée, mais d’aider à décider quoi corriger, quoi surveiller et quoi conserver.
-        </p>
-      </section>
-
-      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanSpacesTitle">
-        <h3 id="pilotagePlanSpacesTitle">Les 4 espaces</h3>
-        <div class="pilotagePlanSpaces">
-          <article class="pilotagePlanCard">
-            <div class="pilotagePlanCard__eyebrow">Lire</div>
-            <h4>Pilotage</h4>
-            <p>État du jour, objectif, reste à consommer, signaux utiles et accès rapides.</p>
-          </article>
-          <article class="pilotagePlanCard">
-            <div class="pilotagePlanCard__eyebrow">Saisir</div>
-            <h4>Journal</h4>
-            <p>Repas, activité, sommeil, métriques et corrections de la journée active.</p>
-          </article>
-          <article class="pilotagePlanCard">
-            <div class="pilotagePlanCard__eyebrow">Comprendre</div>
-            <h4>Historique / Analyse</h4>
-            <p>Relecture par date, tendances, écarts et signaux qui demandent du recul.</p>
-          </article>
-          <article class="pilotagePlanCard">
-            <div class="pilotagePlanCard__eyebrow">Paramétrer</div>
-            <h4>Réglages</h4>
-            <p>Profil, montre, objectifs, compromis, accès, sauvegarde et cadre de calcul.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanFlowTitle">
-        <h3 id="pilotagePlanFlowTitle">Flux métier</h3>
-        <ol class="pilotagePlanFlow">
-          <li><span>1</span><div><strong>Cadre</strong><p>Conditions lues, profil exploitable, montre et objectif configurés.</p></div></li>
-          <li><span>2</span><div><strong>Saisie</strong><p>Journal de la journée active : repas, activité, sommeil et données utiles.</p></div></li>
-          <li><span>3</span><div><strong>Calcul</strong><p>Le moteur consolide les apports, la dépense, les objectifs et les compromis.</p></div></li>
-          <li><span>4</span><div><strong>Pilotage</strong><p>Lecture opérationnelle : reste, équilibre, alertes faibles et orientation.</p></div></li>
-          <li><span>5</span><div><strong>Recul</strong><p>L’historique sert à comprendre les écarts ; les corrections se font dans le Journal.</p></div></li>
+      <section class="pilotagePlan__section pilotagePlan__section--role" aria-labelledby="pilotagePlanStartTitle">
+        <h3 id="pilotagePlanStartTitle">Commence ici</h3>
+        <ol class="pilotageGuideSteps">
+          <li><span>1</span><div><strong>Configure ton cadre</strong><p>Complète le profil, la montre et l’objectif dans <b>Réglages</b>.</p></div></li>
+          <li><span>2</span><div><strong>Choisis une journée</strong><p>Ouvre <b>Historique → Calendrier</b>, puis sélectionne la date à renseigner.</p></div></li>
+          <li><span>3</span><div><strong>Renseigne ta charge</strong><p>Utilise <b>Activité *</b> pour une séance ou <b>Dépense *</b> pour la dépense énergétique totale de la journée active.</p></div></li>
+          <li><span>4</span><div><strong>Complète les jours précédents</strong><p>Reviens au Calendrier, change de date et répète l’opération sur les 7 derniers jours.</p></div></li>
+          <li><span>5</span><div><strong>Choisis ton compromis</strong><p>Retourne dans Réglages : la charge récente rend le choix plus solide.</p></div></li>
+          <li><span>6</span><div><strong>Lis et ajuste</strong><p>Consulte <b>Pilotage</b> pour décider ; utilise <b>Journal</b> pour saisir ou corriger.</p></div></li>
         </ol>
       </section>
 
-      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanIntentTitle">
-        <h3 id="pilotagePlanIntentTitle">Orientation par intention</h3>
-        <div class="pilotagePlanIntentGrid">
-          <div><strong>Je veux savoir où j’en suis</strong><span>Pilotage.</span></div>
-          <div><strong>Je veux ajouter ou corriger</strong><span>Journal.</span></div>
-          <div><strong>Je veux comprendre une variation</strong><span>Historique / Analyse.</span></div>
-          <div><strong>Je veux changer le cadre</strong><span>Réglages.</span></div>
+      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanCodesTitle">
+        <h3 id="pilotagePlanCodesTitle">Teste les repères visuels</h3>
+        <div class="pilotageGuideDemoGrid">
+          <article class="pilotageGuideDemoCard">
+            <div class="pilotageGuideDemoCard__visual">
+              <button aria-label="Essayer une info-dot" class="info-dot pilotageGuideDemoInfo" id="pilotageGuideDemoInfo" type="button" data-modaltext="Parfait. Une info-dot explique un terme ou une fonction sans alourdir l’écran. Elle ne modifie jamais tes données.">ℹ️</button>
+            </div>
+            <div>
+              <strong>Essaie l’info-dot</strong>
+              <p>Clique sur le <b>i</b>. Tu retrouveras ces aides près des notions qui méritent une explication.</p>
+            </div>
+          </article>
+          <article class="pilotageGuideDemoCard">
+            <div class="pilotageGuideDemoCard__visual">
+              <button aria-label="Essayer un point clignotant" class="info-dot pilotageGuideSignalDemo" id="pilotageGuideSignalDemo" type="button" data-modaltext="Bien vu. Dans l’application, un point clignotant propose la prochaine action utile. Lorsqu’aucune charge récente n’est exploitable, il ouvre directement Historique → Calendrier."></button>
+            </div>
+            <div>
+              <strong>Essaie le clignotant</strong>
+              <p>Ce point n’est pas une erreur. Clique dessus : dans l’application, il conduit directement à l’étape utile.</p>
+            </div>
+          </article>
         </div>
       </section>
 
-      <section class="pilotagePlan__section pilotagePlan__section--split" aria-labelledby="pilotagePlanDataTitle">
-        <div>
-          <h3 id="pilotagePlanDataTitle">Données qui alimentent le moteur</h3>
-          <ul class="pilotagePlanList">
-            <li>profil : sexe, âge, taille, poids ;</li>
-            <li>objectif et compromis nutritionnel ;</li>
-            <li>dépense estimée par montre ;</li>
-            <li>repas, activité, sommeil et métriques du jour ;</li>
-            <li>données santé/diabète quand le module est activé.</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Niveaux de lecture</h3>
-          <ul class="pilotagePlanList">
-            <li><strong>Lecture immédiate</strong> : décision rapide du jour.</li>
-            <li><strong>Détail expert</strong> : logique de calcul et arbitrages.</li>
-            <li><strong>Historique</strong> : recul multi-jours et tendances.</li>
-          </ul>
+      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanLegendTitle">
+        <h3 id="pilotagePlanLegendTitle">Ce que signifient les autres codes</h3>
+        <div class="pilotageGuideLegend">
+          <div><strong>*</strong><span>Le raccourci ouvre un autre espace.</span></div>
+          <div><strong>requis</strong><span>Une information manque, mais l’entrée reste accessible.</span></div>
+          <div><strong>prêt</strong><span>Cette partie de la configuration est complète.</span></div>
+          <div><strong>Point clignotant</strong><span>Une prochaine action utile est proposée.</span></div>
         </div>
       </section>
 
-      <section class="pilotagePlan__section pilotagePlan__section--warning" aria-labelledby="pilotagePlanHealthTitle">
-        <h3 id="pilotagePlanHealthTitle">Santé / diabète</h3>
+      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanLoadTitle">
+        <h3 id="pilotagePlanLoadTitle">Pourquoi compléter 7 jours ?</h3>
         <p>
-          Les données santé sont des repères de contexte. Elles peuvent aider à relier alimentation, activité, sommeil ou stress, mais elles ne constituent pas un avis médical, un diagnostic ou une prescription.
+          L’application peut estimer la charge récente de deux façons : <b>L</b> utilise les activités sportives des 7 derniers jours ; <b>D</b> utilise les dépenses énergétiques lorsque les 7 journées nécessaires sont complètes. Tu peux utiliser l’une des deux sources ou les deux. Si les deux existent, l’application retient la charge la plus élevée.
         </p>
       </section>
 
-      <section class="pilotagePlan__section" aria-labelledby="pilotagePlanHelpTitle">
-        <h3 id="pilotagePlanHelpTitle">Différence avec les aides existantes</h3>
-        <div class="pilotagePlanHelpGrid">
-          <div><strong>Plan de pilotage</strong><span>Logique globale.</span></div>
-          <div><strong>Info-dots</strong><span>Définition courte.</span></div>
-          <div><strong>Détail expert</strong><span>Calcul et arbitrage.</span></div>
-          <div><strong>Mini-tutos</strong><span>Aide contextuelle.</span></div>
-          <div><strong>Conditions</strong><span>Limites et responsabilité.</span></div>
+      <details class="pilotageGuideMore">
+        <summary>Pour aller plus loin</summary>
+        <div class="pilotageGuideMore__body">
+          <section aria-labelledby="pilotagePlanSpacesTitle">
+            <h3 id="pilotagePlanSpacesTitle">Les 4 espaces</h3>
+            <div class="pilotagePlanSpaces">
+              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Lire</div><h4>Pilotage</h4><p>État du jour, objectif, reste à consommer et signaux utiles.</p></article>
+              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Saisir</div><h4>Journal</h4><p>Repas, activité, sommeil et corrections de la journée active.</p></article>
+              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Comprendre</div><h4>Historique / Analyse</h4><p>Choix de la date, tendances, écarts et recul sur plusieurs jours.</p></article>
+              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Paramétrer</div><h4>Réglages</h4><p>Profil, montre, objectif, compromis, sauvegarde et cadre de calcul.</p></article>
+            </div>
+          </section>
+          <section class="pilotageGuideMore__note" aria-labelledby="pilotagePlanHealthTitle">
+            <h3 id="pilotagePlanHealthTitle">Santé / diabète</h3>
+            <p>Les données santé restent des repères de contexte. Elles ne constituent pas un avis médical, un diagnostic ou une prescription.</p>
+          </section>
         </div>
-      </section>
+      </details>
     </div>
     <div class="modal__foot">
       <button class="btn-ghost" id="pilotagePlanFootClose" type="button">Fermer</button>

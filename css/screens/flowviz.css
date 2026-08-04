@@ -7797,3 +7797,185 @@ body:not([data-usemode="expert"]) #mealPanelQuick{ display:none !important; }
     padding-right:3px;
   }
 }
+
+/* ============================================================
+   Comment ça marche ? — guide pédagogique et démonstrations
+   ============================================================ */
+.pilotageGuideSteps{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.pilotageGuideSteps li{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:9px;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.105);
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+}
+.pilotageGuideSteps li > span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;
+  height:26px;
+  border-radius:999px;
+  background:rgba(139,124,255,.22);
+  color:var(--text);
+  font-size:.78rem;
+  font-weight:900;
+}
+.pilotageGuideSteps strong,
+.pilotageGuideDemoCard strong{
+  display:block;
+  color:var(--text);
+  font-size:.91rem;
+  line-height:1.22;
+}
+.pilotageGuideSteps p,
+.pilotageGuideDemoCard p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:.86rem;
+  line-height:1.4;
+}
+.pilotageGuideDemoGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.pilotageGuideDemoCard{
+  min-width:0;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr);
+  gap:11px;
+  align-items:center;
+  padding:13px;
+  border:1px solid rgba(255,255,255,.105);
+  border-radius:14px;
+  background:rgba(7,13,27,.28);
+}
+.pilotageGuideDemoCard__visual{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+}
+.pilotageGuideDemoInfo{
+  transform:scale(1.12);
+  box-shadow:0 0 0 4px rgba(65,139,255,.10);
+}
+.pilotageGuideSignalDemo.info-dot{
+  position:relative;
+  display:block;
+  width:34px;
+  height:34px;
+  min-width:34px;
+  padding:0;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  box-shadow:none;
+  font-size:0;
+}
+.pilotageGuideSignalDemo.info-dot::before{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border-radius:999px;
+  background:var(--accent);
+  box-shadow:0 0 0 0 rgba(124,92,255,.55);
+  animation:chargeNudgePulse 2.4s ease-out infinite;
+}
+.pilotageGuideSignalDemo.info-dot:hover,
+.pilotageGuideSignalDemo.info-dot:focus-visible{
+  border-color:transparent;
+  background:transparent;
+  outline:2px solid rgba(124,92,255,.64);
+  outline-offset:1px;
+}
+.pilotageGuideLegend{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.pilotageGuideLegend > div{
+  min-width:0;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.105);
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+}
+.pilotageGuideLegend strong{
+  display:block;
+  color:var(--text);
+  font-size:.9rem;
+  line-height:1.2;
+}
+.pilotageGuideLegend span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:.84rem;
+  line-height:1.35;
+}
+.pilotageGuideMore{
+  border:1px solid rgba(255,255,255,.105);
+  border-radius:16px;
+  background:rgba(255,255,255,.032);
+  overflow:hidden;
+}
+.pilotageGuideMore > summary{
+  padding:13px 14px;
+  color:var(--text);
+  font-weight:850;
+  cursor:pointer;
+}
+.pilotageGuideMore > summary:focus-visible{
+  outline:2px solid rgba(139,124,255,.7);
+  outline-offset:-3px;
+}
+.pilotageGuideMore__body{
+  display:grid;
+  gap:12px;
+  padding:0 14px 14px;
+}
+.pilotageGuideMore__body h3{
+  margin:0 0 10px;
+  color:var(--text);
+  font-size:1rem;
+}
+.pilotageGuideMore__note{
+  padding:12px;
+  border:1px solid rgba(255,209,102,.20);
+  border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,209,102,.075), rgba(255,255,255,.032));
+}
+.pilotageGuideMore__note p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+@media (prefers-reduced-motion: reduce){
+  .pilotageGuideSignalDemo.info-dot::before{ animation:none; }
+}
+@media (max-width: 900px){
+  .pilotageGuideLegend{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 720px){
+  .pilotageGuideSteps,
+  .pilotageGuideDemoGrid,
+  .pilotageGuideLegend{
+    grid-template-columns:1fr;
+  }
+  .pilotageGuideDemoCard{
+    grid-template-columns:42px minmax(0,1fr);
+    padding:11px 12px;
+  }
+}

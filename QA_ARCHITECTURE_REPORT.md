@@ -115,7 +115,7 @@ Commande native, sans dépendance ajoutée :
 node --test tests/*.test.cjs
 ```
 
-Résultat final : **17 tests réussis, 0 échec**.
+Résultat final : **18 tests réussis, 0 échec**.
 
 Couverture fonctionnelle :
 
@@ -136,6 +136,7 @@ Couverture fonctionnelle :
 15. sélecteurs principaux du registre non orphelins ;
 16. dépendance distante historique bornée au client Supabase optionnel.
 17. accès `Dépense *` déclaré une seule fois, disponible et identique sur desktop/mobile vers Pilotage → Lecture du jour.
+18. guide `Comment ça marche ?` présent, pédagogique et doté de deux démonstrations interactives.
 
 QA navigateur :
 
@@ -151,7 +152,7 @@ FONTCONFIG_PATH=/tmp/fonts XDG_CACHE_HOME=/tmp/font-cache CHROMIUM_EXECUTABLE_PA
 
 Résultat final : **QA navigateur réussie, 0 erreur JavaScript, 0 assertion en échec**. Le script sert l’application locale et bloque volontairement le CDN Supabase : le parcours local reste opérationnel sans réseau.
 
-Assertions navigateur : routage initial, une seule section active, disponibilité réelle de Compromis, absence de débordement horizontal, titres non rognés, états sans charge/sport/`D 6/7`/`D 7/7`, synchronisation des pastilles, clic des deux pastilles vers Historique → Calendrier, absence de modale, parité desktop/mobile, accès transverse vers Réglages, accès `Dépense *` desktop/mobile vers Pilotage → Lecture du jour sans changement de date ni écriture, ouverture et contenu de l’info-dot, changement de profil sans état hérité ni sauvegarde, changement de date sans création de journée ni bascule de `energyExplicit`.
+Assertions navigateur : routage initial, une seule section active, disponibilité réelle de Compromis, absence de débordement horizontal, titres non rognés, états sans charge/sport/`D 6/7`/`D 7/7`, synchronisation des pastilles, clic des deux pastilles vers Historique → Calendrier, absence de modale, parité desktop/mobile, accès transverse vers Réglages, accès `Dépense *` desktop/mobile vers Pilotage → Lecture du jour sans changement de date ni écriture, ouverture et contenu de l’info-dot, guide `Comment ça marche ?` ouvert depuis le burger, clic de la démonstration info-dot, clic de la démonstration clignotante, accordéon expert et stockage inchangé, changement de profil sans état hérité ni sauvegarde, changement de date sans création de journée ni bascule de `energyExplicit`.
 
 ## QA visuelle responsive
 
@@ -165,7 +166,7 @@ Résolutions contrôlées sur Réglages, Pilotage et Historique :
 - 1366 × 768 ;
 - 1440 × 900.
 
-États dynamiques capturés et inspectés à 390 × 844 : profil incomplet, profil complet sans charge, activité récente, `D 6/7` et `D 7/7`. L’arrivée depuis chacune des deux pastilles a été vérifiée à 390 × 844 et 1366 × 768. L’accès `Dépense *` a été contrôlé sur mobile à 390 × 844 et sur ordinateur à 1366 × 768 ; l’info-dot a été ouverte et inspectée à 390 × 844.
+États dynamiques capturés et inspectés à 390 × 844 : profil incomplet, profil complet sans charge, activité récente, `D 6/7` et `D 7/7`. L’arrivée depuis chacune des deux pastilles a été vérifiée à 390 × 844 et 1366 × 768. L’accès `Dépense *` a été contrôlé sur mobile à 390 × 844 et sur ordinateur à 1366 × 768 ; l’info-dot a été ouverte et inspectée à 390 × 844. Le nouveau guide a été capturé et inspecté à 390 × 844 et 1366 × 768.
 
 Défauts démontrés et corrigés :
 
@@ -198,3 +199,9 @@ Aucun chevauchement, faux grisé, focus invisible, débordement horizontal, past
 La version refactorisée sert de référence à cette passe. La tuile `Dépense *` et sa variante mobile consomment l’entrée unique `history:spend`, toujours disponible, vers `today` → `#todayReadingPanel`. L’info-dot est permanente : elle distingue première utilisation et retours sans introduire de nouvel état de persistance.
 
 Différentiel de cette passe : **6 fichiers modifiés, 0 ajouté, 0 supprimé ; 120 lignes ajoutées, 10 supprimées, solde +110 lignes**.
+
+## Passe pédagogique — Comment ça marche ?
+
+L’accès burger `Plan d’accès → Comprendre l’application` devient `Aide → Comment ça marche ?`. La modale conserve son mécanisme d’ouverture et de fermeture, mais son contenu est réordonné autour de l’usage : six étapes concrètes, démonstration cliquable d’une info-dot, démonstration cliquable d’un point pulsant, légende des codes `*`, `requis` et `prêt`, explication synthétique de `L` et `D`, puis contenu conceptuel replié dans `Pour aller plus loin`.
+
+Les démonstrations réutilisent le gestionnaire d’info-dots existant. Elles n’ajoutent aucune clé de stockage, ne modifient aucune donnée et ne déclenchent aucune navigation. Les boutons de démonstration sont des contrôles natifs, utilisables au clavier. La QA Chromium confirme l’absence de débordement et la conservation du stockage à 390 × 844 et 1366 × 768.

@@ -349,6 +349,48 @@ async function assertHistoryChargeGuideInfo(browser, origin){
   await context.close();
 }
 
+async function assertHowItWorksGuide(browser, origin, viewport){
+  const label = `${viewport.width}x${viewport.height}`;
+  const { context, page, pageErrors } = await openFixture(browser, origin, fixture(), viewport);
+  const storageBefore = await page.evaluate(() => JSON.stringify(localStorage));
+
+  await page.locator('#menuBtn').click();
+  await page.locator('#btnMenuOpenPilotagePlan').click();
+  await page.waitForTimeout(100);
+  assert.equal(await page.getAttribute('#pilotagePlanModal', 'aria-hidden'), 'false', `${label}: guide ouvert`);
+  assert.equal(await page.textContent('#pilotagePlanTitle'), 'Comment ça marche ?');
+  const guideText = await page.textContent('#pilotagePlanModal');
+  assert.match(guideText, /Commence ici/);
+  assert.match(guideText, /Activité \*/);
+  assert.match(guideText, /Dépense \*/);
+  assert.match(guideText, /Point clignotant/);
+  await assertNoHorizontalOverflow(page, `guide-${label}`);
+  await page.screenshot({ path:path.join(outputRoot, `how-it-works-${label}.png`), fullPage:true });
+
+  await page.locator('#pilotageGuideDemoInfo').click();
+  await page.waitForTimeout(80);
+  assert.equal(await page.getAttribute('#watchInfoModal', 'aria-hidden'), 'false', `${label}: démonstration info-dot ouverte`);
+  assert.match(await page.textContent('#watchInfoBody'), /ne modifie jamais tes données/);
+  await page.locator('#watchInfoClose').click();
+  await page.waitForTimeout(50);
+  assert.equal(await page.getAttribute('#pilotagePlanModal', 'aria-hidden'), 'false', `${label}: guide conservé après la démo info-dot`);
+
+  await page.locator('#pilotageGuideSignalDemo').click();
+  await page.waitForTimeout(80);
+  assert.equal(await page.getAttribute('#watchInfoModal', 'aria-hidden'), 'false', `${label}: démonstration clignotant ouverte`);
+  assert.match(await page.textContent('#watchInfoBody'), /Historique → Calendrier/);
+  await page.locator('#watchInfoClose').click();
+  await page.waitForTimeout(50);
+
+  await page.locator('.pilotageGuideMore > summary').click();
+  await page.waitForTimeout(50);
+  assert.equal(await page.locator('.pilotageGuideMore').getAttribute('open'), '');
+  await assertNoHorizontalOverflow(page, `guide-details-${label}`);
+  assert.equal(await page.evaluate(() => JSON.stringify(localStorage)), storageBefore, `${label}: le guide ne modifie pas les données`);
+  assert.deepEqual(pageErrors, [], `${label}: erreurs JS`);
+  await context.close();
+}
+
 async function assertProfileAndDateDoNotSave(browser, origin){
   const profiles = [{ id:'alpha', label:'Alpha' }, { id:'beta', label:'Beta' }];
   const storage = fixture({ activeProfile:'alpha', profiles, days:energyDays(1) });
@@ -408,6 +450,8 @@ async function main(){
         mobile:true
       });
       await assertHistoryChargeGuideInfo(browser, origin);
+      await assertHowItWorksGuide(browser, origin, { width:390, height:844 });
+      await assertHowItWorksGuide(browser, origin, { width:1366, height:768 });
       await assertProfileAndDateDoNotSave(browser, origin);
     }
   } finally {

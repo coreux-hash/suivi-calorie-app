@@ -94,3 +94,16 @@ test('dépendance distante historique limitée au client Supabase optionnel', ()
     .filter(src => /^https?:/.test(src));
   assert.deepEqual(remoteScripts, ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2']);
 });
+
+test('guide Comment ça marche pédagogique et interactif', () => {
+  assert.match(html, /<div class="menuGroupLabel">Aide<\/div>/);
+  assert.match(html, /id="btnMenuOpenPilotagePlan"[^>]*>Comment ça marche \?<\/button>/);
+  assert.match(html, /id="pilotagePlanTitle">Comment ça marche \?<\/div>/);
+  assert.match(html, /id="pilotagePlanStartTitle">Commence ici<\/h3>/);
+  assert.match(html, /id="pilotageGuideDemoInfo"[^>]+data-modaltext=/);
+  assert.match(html, /id="pilotageGuideSignalDemo"[^>]+data-modaltext=/);
+  assert.match(html, /Activité \*/);
+  assert.match(html, /Dépense \*/);
+  assert.match(html, /<summary>Pour aller plus loin<\/summary>/);
+  assert.doesNotMatch(html, /id="pilotagePlanTitle">Plan de pilotage<\/div>/);
+});
