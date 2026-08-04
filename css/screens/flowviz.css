@@ -919,6 +919,7 @@
   .phase5TutoCard{ padding:10px 12px; }
   .phase5Banner{ flex-direction:column; }
 }
+
 @media (max-width: 560px){
   .phase5StatusBar{ grid-template-columns:1fr; }
 }
@@ -4451,7 +4452,7 @@
 @media (max-width: 860px){
   .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
     min-height:64px;
-    padding:8px 9px 7px;
+    padding:8px 6px 7px;
     gap:2px;
   }
   .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings .phase2HeroQuickNav__state{
@@ -7736,6 +7737,19 @@ body:not([data-usemode="expert"]) #mealPanelQuick{ display:none !important; }
   font-size:.95rem;
   color:var(--text);
 }
+.histChargeGuide__titleRow{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+}
+.histChargeGuide__titleRow .histChargeGuide__title{
+  flex:1 1 auto;
+  min-width:0;
+}
+.histChargeGuide__infoDot{
+  flex:0 0 auto;
+  margin-top:-2px;
+}
 .histChargeGuide__lead{
   margin:6px 0 4px;
   color:var(--muted);
@@ -7759,4 +7773,27 @@ body:not([data-usemode="expert"]) #mealPanelQuick{ display:none !important; }
   margin:8px 0 0;
   color:var(--muted2);
   font-size:.82rem;
+}
+
+/* QA 2026-08-04 — les titres des cinq tuiles Réglages restent lisibles
+   intégralement autour du seuil tablette/mobile, sans modifier la grille
+   ni les statuts. */
+@media (max-width: 980px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings strong{
+    font-size:.86rem;
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+  }
+}
+@media (max-width: 640px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings strong{
+    font-size:.8rem;
+  }
+}
+@media (max-width: 400px){
+  .phase2Screen[data-tabsection="settings"] .phase2HeroQuickNav__btn--settings{
+    padding-left:3px;
+    padding-right:3px;
+  }
 }

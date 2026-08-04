@@ -160,49 +160,6 @@ function initPhase1Shell(){
 
 
 
-function phase2GotoJournal(slotId){
-  return window.__Phase6.Contracts.require('CompositeEntryPoints', 'openJournal')(slotId, { delay:60, behavior:'smooth', block:'start' });
-}
-function phase2GotoHistory(slotId){
-  return window.__Phase6.Contracts.require('CompositeEntryPoints', 'openHistory')(slotId, { delay:60, behavior:'smooth', block:'start' });
-}
-function phase2ScrollToPanel(target){
-  if (!target) return;
-  if (typeof window.phase6ScrollToSettingsPanel === 'function') window.phase6ScrollToSettingsPanel(target);
-  else target.scrollIntoView({behavior:'smooth', block:'start'});
-}
-function phase2GotoJournalPanel(selector){
-  window.__Phase6.Contracts.require('CompositeEntryPoints', 'openTab')('journalEntry', { delay:0 });
-  setTimeout(() => {
-    const panel = document.querySelector(selector);
-    if (!panel) return;
-    phase2ScrollToPanel(panel);
-  }, 80);
-}
-function phase2GotoSettingsPanel(selector){
-  window.__Phase6.Contracts.require('CompositeEntryPoints', 'openTab')('settings', { delay:0 });
-  setTimeout(() => {
-    const panel = document.querySelector(selector);
-    if (!panel) return;
-    phase2ScrollToPanel(panel);
-  }, 80);
-}
-function phase2GotoTodayPanel(selector){
-  window.__Phase6.Contracts.require('CompositeEntryPoints', 'openTab')('today', { delay:0 });
-  setTimeout(() => {
-    const panel = document.querySelector(selector);
-    if (!panel) return;
-    phase2ScrollToPanel(panel);
-  }, 40);
-}
-function phase2HandleTodayJump(key){
-  if (key === 'reading') return phase2GotoTodayPanel('#todayReadingPanel');
-  if (key === 'summary') return phase2GotoTodayPanel('#out');
-  if (key === 'meals') return phase2GotoJournalPanel('.phase2JournalPanel--meals');
-  if (key === 'activity') return phase2GotoJournalPanel('.phase2JournalPanel--activity');
-  if (key === 'sleep') return phase2GotoJournalPanel('.phase2JournalPanel--sleep');
-  if (key === 'settings') return phase2GotoSettingsPanel('.settingsPanel--goals');
-}
 function phase2InjectMicroHead(cardId, title, desc){
   const card = $(cardId);
   if (!card || card.querySelector('.phase2MicroHead')) return;
@@ -250,74 +207,24 @@ function phase2WireActions(){
   if (window.__phase2ActionsBound) return;
   window.__phase2ActionsBound = true;
 
-  document.querySelectorAll('[data-today-jump]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      phase2HandleTodayJump(btn.getAttribute('data-today-jump'));
-      $('todayJumpFloatPanel') && ($('todayJumpFloatPanel').hidden = true);
-      $('todayJumpFloatToggle')?.setAttribute('aria-expanded', 'false');
-      document.querySelector('.phase2Screen[data-tabsection="today"] .phase2SettingsJumpFloat')?.classList.remove('is-open');
-    });
-  });
-
-  $('btnTodayGotoJournalMeals')?.addEventListener('click', ()=> phase2GotoJournal('journalMealsSlot'));
-  $('btnTodayGotoJournalActivity')?.addEventListener('click', ()=> phase2GotoJournal('journalActivitySlot'));
-  $('btnTodayGotoJournalSleep')?.addEventListener('click', ()=> phase2GotoJournal('journalSleepSlot'));
-  $('btnTodayGotoHistory')?.addEventListener('click', ()=> phase2GotoHistory('historyTrendSlot'));
+  $('btnTodayGotoJournalMeals')?.addEventListener('click', (event)=> window.phase6NavigateRegisteredEntry?.('today', 'meals', event));
+  $('btnTodayGotoJournalActivity')?.addEventListener('click', (event)=> window.phase6NavigateRegisteredEntry?.('today', 'activity', event));
+  $('btnTodayGotoJournalSleep')?.addEventListener('click', (event)=> window.phase6NavigateRegisteredEntry?.('today', 'sleep', event));
+  $('btnTodayGotoHistory')?.addEventListener('click', (event)=> window.phase6NavigateRegisteredEntry?.('today', 'history', event));
 
 }
-function phase6GetShellUseMode(){
-  return $('useMode')?.value || document.body?.dataset?.usemode || 'simple';
-}
-function phase6GetShellDiabEnabled(){
-  return !!$('diabEnabled')?.checked;
+function phase6GetShellNavigationContext(){
+  return {
+    useMode:$('useMode')?.value || document.body?.dataset?.usemode || 'simple',
+    diabEnabled:!!$('diabEnabled')?.checked
+  };
 }
 function phase6IsElementActuallyVisible(el){
   return !!(el && !el.classList.contains('hidden') && el.offsetParent !== null);
 }
-function phase6MatchesMinimumMode(required){
-  const mode = phase6GetShellUseMode();
-  if (!required || required === 'all') return true;
-  if (required === 'sport') return mode === 'sport' || mode === 'expert';
-  if (required === 'expert') return mode === 'expert';
-  return mode === required;
-}
-function phase6GetShellAvailabilityMap(){
-  const diabEnabled = phase6GetShellDiabEnabled();
-  return {
-    settings:{
-      profile:true,
-      watch:true,
-      goals:true,
-      load:true,
-      compromise:true,
-    },
-    today:{
-      meal:true,
-      sport:phase6MatchesMinimumMode('sport'),
-      sleep:phase6MatchesMinimumMode('sport'),
-      settings:true,
-      history:phase6MatchesMinimumMode('expert'),
-    },
-    journalEntry:{
-      meals:true,
-      activity:phase6MatchesMinimumMode('sport'),
-      sleep:phase6MatchesMinimumMode('sport'),
-      metrics:true,
-      diabetes:diabEnabled,
-    },
-    history:{
-      calendar:true,
-      trend:phase6MatchesMinimumMode('expert'),
-      health:true,
-      activity:phase6MatchesMinimumMode('sport'),
-      diab:diabEnabled,
-    },
-  };
-}
 function phase6IsAvailable(section, key){
-  return !!phase6GetShellAvailabilityMap()?.[section]?.[key];
+  const entry = window.__SCAStateNavigation?.getNavigationEntry(section, key);
+  return !!window.__SCAStateNavigation?.isNavigationEntryAvailable(entry, phase6GetShellNavigationContext());
 }
 function phase6ApplyControlAvailability(control, available){
   if (!control) return;
@@ -332,73 +239,32 @@ function phase6ApplyPanelAvailability(panel, available){
   panel.setAttribute('aria-hidden', available ? 'false' : 'true');
 }
 function phase6SyncShellPanels(){
-  phase6ApplyPanelAvailability(document.querySelector('.phase2JournalPanel--activity'), phase6IsAvailable('journalEntry', 'activity'));
-  phase6ApplyPanelAvailability(document.querySelector('.phase2JournalPanel--sleep'), phase6IsAvailable('journalEntry', 'sleep'));
-  phase6ApplyPanelAvailability(document.querySelector('.phase2JournalPanel--diabetes'), phase6IsAvailable('journalEntry', 'diabetes'));
-  phase6ApplyPanelAvailability(document.querySelector('.phase2HistoryPanel--trend'), phase6IsAvailable('history', 'trend'));
-  phase6ApplyPanelAvailability(document.querySelector('.phase2HistoryPanel--diab'), phase6IsAvailable('history', 'diab'));
+  const registry = window.__SCAStateNavigation;
+  const context = phase6GetShellNavigationContext();
+  registry?.getNavigationEntries().forEach(entry => {
+    if (!entry.hidePanelWhenUnavailable || !entry.panelSelector) return;
+    phase6ApplyPanelAvailability(
+      document.querySelector(entry.panelSelector),
+      registry.isNavigationEntryAvailable(entry, context)
+    );
+  });
 }
 function phase6SyncShellQuickNav(){
-  const journalMap = {
-    meals:'meals',
-    activity:'activity',
-    sleep:'sleep',
-    metrics:'metrics',
-    diabetes:'diabetes',
-  };
-  document.querySelectorAll('[data-journal-jump]').forEach(btn => {
-    const key = btn.getAttribute('data-journal-jump');
-    phase6ApplyControlAvailability(btn, phase6IsAvailable('journalEntry', journalMap[key] || key));
-  });
-
-  const settingsMap = {
-    profile:'profile',
-    watch:'watch',
-    goals:'goals',
-    load:'load',
-    compromise:'compromise',
-  };
-  document.querySelectorAll('[data-settings-jump]').forEach(btn => {
-    const key = btn.getAttribute('data-settings-jump');
-    phase6ApplyControlAvailability(btn, phase6IsAvailable('settings', settingsMap[key] || key));
-  });
-
-  [
-    ['btnTodayQuickMeal', 'today', 'meal'],
-    ['btnTodayQuickMealFloat', 'today', 'meal'],
-    ['btnTodayQuickSport', 'today', 'sport'],
-    ['btnTodayQuickSportFloat', 'today', 'sport'],
-    ['btnTodayQuickSleep', 'today', 'sleep'],
-    ['btnTodayQuickSleepFloat', 'today', 'sleep'],
-    ['btnTodayQuickSettings', 'today', 'settings'],
-    ['btnTodayQuickSettingsFloat', 'today', 'settings'],
-    ['btnTodayGotoJournalMeals', 'today', 'meal'],
-    ['btnTodayGotoJournalActivity', 'today', 'sport'],
-    ['btnTodayGotoJournalSleep', 'today', 'sleep'],
-    ['btnTodayGotoHistory', 'today', 'history'],
-    ['btnPhase5TodayToJournal', 'today', 'meal'],
-    ['btnPhase5TodayToHistory', 'today', 'history'],
-    ['btnHistoryGoCalendar', 'history', 'calendar'],
-  ].forEach(([id, section, key]) => {
-    phase6ApplyControlAvailability($(id), phase6IsAvailable(section, key));
-  });
-
-  const historyJumpMap = {
-    calendar: { section:'history', key:'calendar', target:'historyMainPanel' },
-    trend: { section:'history', key:'trend', target:'historyTrendPanel' },
-    health: { section:'history', key:'health', target:'historyHealthPanel' },
-    activity: { section:'history', key:'activity' },
-    diab: { section:'history', key:'diab', target:'historyDiabPanel' },
-  };
-  document.querySelectorAll('[data-history-jump]').forEach(btn => {
-    const jumpKey = btn.getAttribute('data-history-jump');
-    const config = historyJumpMap[jumpKey];
-    if (!config) return;
-    const target = config.target ? $(config.target) : null;
-    const available = config.target
-      ? phase6IsAvailable(config.section, config.key) && phase6IsElementActuallyVisible(target)
-      : phase6IsAvailable(config.section, config.key);
-    phase6ApplyControlAvailability(btn, available);
+  const registry = window.__SCAStateNavigation;
+  const context = phase6GetShellNavigationContext();
+  registry?.getNavigationEntries().forEach(entry => {
+    let available = registry.isNavigationEntryAvailable(entry, context);
+    if (available && entry.requiresVisibleTarget) {
+      const target = (entry.targetSelectors || [])
+        .map(selector => document.querySelector(selector))
+        .find(Boolean);
+      available = phase6IsElementActuallyVisible(target);
+    }
+    registry.getEntrySelectors(entry, { includeControls:true }).forEach(selector => {
+      document.querySelectorAll(selector).forEach(control => {
+        phase6ApplyControlAvailability(control, available);
+      });
+    });
   });
 }
 function phase6SyncShellAvailability(){
@@ -833,18 +699,18 @@ function phase5FlashTarget(id){
   void el.offsetWidth;
   el.classList.add('phase5TargetFlash');
 }
-function phase5GotoJournalAndFlash(slotId){
-  return window.__Phase6.Contracts.require('CompositeEntryPoints', 'openJournal')(slotId, { delay:40, behavior:'smooth', block:'start', flashPhase5:true });
-}
-function phase5GotoHistoryAndFlash(slotId){
-  return window.__Phase6.Contracts.require('CompositeEntryPoints', 'openHistory')(slotId, { delay:40, behavior:'smooth', block:'start', flashPhase5:true });
-}
 function phase5WireButtons(){
   if (window.__phase5ButtonsWired) return;
   window.__phase5ButtonsWired = true;
   document.addEventListener('click', (e)=>{
-    if (e.target?.id === 'btnPhase5TodayToJournal') phase5GotoJournalAndFlash('journalMealsSlot');
-    if (e.target?.id === 'btnPhase5TodayToHistory') phase5GotoHistoryAndFlash('historyTrendSlot');
+    if (e.target?.id === 'btnPhase5TodayToJournal') {
+      window.phase6NavigateRegisteredEntry?.('today', 'meals', e, { delay:40 });
+      setTimeout(()=>phase5FlashTarget('journalMealsSlot'), 80);
+    }
+    if (e.target?.id === 'btnPhase5TodayToHistory') {
+      window.phase6NavigateRegisteredEntry?.('today', 'history', e, { delay:40 });
+      setTimeout(()=>phase5FlashTarget('historyTrendSlot'), 80);
+    }
   });
   $('btnTodayQuickMeal')?.addEventListener('click', ()=> setTimeout(()=>phase5FlashTarget('journalMealsSlot'), 80));
   $('btnTodayQuickSport')?.addEventListener('click', ()=> setTimeout(()=>phase5FlashTarget('journalActivitySlot'), 80));

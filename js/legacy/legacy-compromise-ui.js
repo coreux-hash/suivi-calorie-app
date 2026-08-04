@@ -404,7 +404,10 @@
   function findUniqueExactCompromiseId(){
     const allowed = new Set(getAllowedCompromiseIdsForMode(byId('useMode')?.value || 'simple'));
     const matches = Object.keys(getApplyMap()).filter(key => allowed.has(key) && compromiseMatchesCurrentExactly(key));
-    return matches.length === 1 ? matches[0] : '';
+    return window.__SCAStateNavigation?.resolveUniqueExactCompromiseId?.({
+      legacySignatureComplete:true,
+      exactIds:matches
+    }) || '';
   }
 
   function revalidateCurrentSelection(options = {}){

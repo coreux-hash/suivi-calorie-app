@@ -169,9 +169,7 @@ const ACTIVE_PROFILE_KEY = "secheapp.activeProfile.v1";
         ensureCarbGoalDefaultOption?.();
         if ($("carbGoal")) { updateCarbGoalOptions(true, false); ensureCarbGoalDefaultOption?.(); updateCarbSteps(); lockCarbControls(); syncCarbGuardsFromUI(); }
         if (typeof window.syncCarbUiZone === 'function') window.syncCarbUiZone({ reason:'profile-load', refreshGoalOptions:false, keepGoalValue:true, closeHelp:true });
-        if (hadCompromiseId) {
-          window.__CompromiseUI?.syncSelectionFromSettings?.({ keepCurrentIfUnmatched:true, openOnChange:false });
-        } else {
+        if (!hadCompromiseId) {
           const legacySignatureComplete = ['dietMode','carbGoal','fatFloorGPerKg','lowCarbEnabled']
             .every(key => has(key));
           const migratedId = legacySignatureComplete
@@ -214,4 +212,3 @@ try{
 function refreshDietDerivedUI(...args){
   return window.__LegacyCompatUI?.refreshDietDerivedUI?.(...args);
 }
-

@@ -397,6 +397,10 @@
         <strong>Activité *</strong>
         <span>saisie de la journée active</span>
       </button>
+      <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history phase2HeroQuickNav__btn--cross" data-history-jump="spend" id="btnHistoryGoSpend" type="button">
+        <strong>Dépense *</strong>
+        <span>saisie de la journée active</span>
+      </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history" data-history-jump="diab" data-history-requires-diab="true" id="btnHistoryGoDiab" type="button">
         <strong>Historique diabète</strong>
         <span>Mesures, tableau et mini-courbe</span>
@@ -412,6 +416,7 @@
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="trend" type="button">Tendances</button>
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="health" type="button">Suivi santé</button>
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="activity" type="button">Activité *</button>
+      <button class="phase2SettingsJumpFloat__btn" data-history-jump="spend" type="button">Dépense *</button>
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="diab" type="button">Historique diabète</button>
       <div class="phase2SettingsJumpFloat__note">* ouvre un autre espace de l’application.</div>
     </div>
@@ -468,7 +473,10 @@
           </div>
         </div>
         <div class="histChargeGuide" role="note" aria-label="Comment amorcer ta charge">
-          <p class="histChargeGuide__title">Pour une charge fiable, complète tes 7 derniers jours.</p>
+          <div class="histChargeGuide__titleRow">
+            <p class="histChargeGuide__title">Pour une charge fiable, complète tes 7 derniers jours.</p>
+            <span aria-label="Aide — compléter les 7 derniers jours" class="info-dot histChargeGuide__infoDot" id="historyChargeGuideInfo" role="button" tabindex="0" data-modalhtml="<h3>Première utilisation</h3><ol><li>Choisis une date dans le calendrier.</li><li>Pour encoder une séance, ouvre <strong>Activité *</strong>. Tu arrives dans le Journal sur la saisie sportive de la journée active.</li><li>Pour renseigner la dépense énergétique totale, ouvre <strong>Dépense *</strong>. Tu arrives dans Pilotage, à la Lecture du jour.</li><li>Reviens ensuite au Calendrier, change de date et répète l’opération sur les 7 derniers jours.</li></ol><p>La charge sportive <strong>L</strong> utilise les séances des 7 derniers jours. La charge énergétique <strong>D</strong> devient exploitable lorsque les 7 journées sont complètes.</p><h3>Lors de tes retours</h3><p>Complète simplement les activités et/ou les dépenses manquantes des 7 derniers jours. Le Calendrier reste le point de départ pour choisir la journée active.</p>">ℹ️</span>
+          </div>
           <p class="histChargeGuide__lead">Sélectionne un jour dans le calendrier, puis :</p>
           <ul class="histChargeGuide__list">
             <li><strong>Sport</strong> — encode tes séances : ça construit la charge sportive <em>L</em> sur 7 jours.</li>
@@ -2844,6 +2852,7 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 <script src="./js/phase6/phase6-render.js"></script>
 <script src="./js/phase6/phase6-flows.js"></script>
 <script src="./js/phase6/phase6-features.js"></script>
+<script src="./js/legacy/legacy-app-state-navigation.js"></script>
 <script src="./js/legacy/legacy-storage-days.js"></script>
 <script src="./js/legacy/legacy-core-runtime.js"></script>
 <script src="./js/legacy/legacy-profiles-settings.js"></script>

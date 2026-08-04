@@ -135,123 +135,41 @@ function phase6ResolveFieldValue(key, options = {}){
   return domValue != null && String(domValue).trim() !== '' ? domValue : stored?.[key];
 }
 
-function phase6GetProfileReadiness(options = {}){
-  const fieldMap = [
-    { key:'sex', label:'Sexe', ok:(v) => v === 'M' || v === 'F' },
-    { key:'age', label:'Âge', ok:(v) => Number(v) > 0 },
-    { key:'height', label:'Taille', ok:(v) => Number(v) > 0 },
-    { key:'weight', label:'Poids', ok:(v) => Number(v) > 0 }
-  ];
+function phase6GetValidCompromiseIds(){
   try{
-    const fields = fieldMap.map(field => {
-      const value = phase6ResolveFieldValue(field.key, options);
-      return {
-        key: field.key,
-        label: field.label,
-        ready: !!field.ok(value),
-        value
-      };
-    });
-    const missing = fields.filter(field => !field.ready).map(field => field.label);
-    return {
-      key:'profile',
-      label:'Profils',
-      ready: missing.length === 0,
-      missing,
-      fields,
-      completeCount: fields.filter(field => field.ready).length,
-      totalCount: fields.length
-    };
-  }catch(e){
-    return {
-      key:'profile',
-      label:'Profils',
-      ready:false,
-      missing:['Sexe','Âge','Taille','Poids'],
-      fields: fieldMap.map(field => ({ key:field.key, label:field.label, ready:false, value:null })),
-      completeCount:0,
-      totalCount:fieldMap.length
-    };
-  }
+    const applyMap = window.__CompromiseUI?.getApplyMap?.();
+    if (applyMap && typeof applyMap === 'object') return Object.keys(applyMap);
+  }catch(e){}
+  return Array.from($('compromiseSelect')?.options || [])
+    .map(option => String(option.value || ''))
+    .filter(value => value && value !== '__create_custom__');
 }
 
-function phase6GetWatchReadiness(options = {}){
-  const fields = [
-    { key:'watchBrand', label:'Marque', ok:(v) => !!String(v || '').trim() },
-    { key:'montre', label:'Calories', ok:(v) => Number(v) > 0 }
-  ].map(field => {
-    const value = phase6ResolveFieldValue(field.key, options);
-    return { key:field.key, label:field.label, ready:!!field.ok(value), value };
-  });
-  const missing = fields.filter(field => !field.ready).map(field => field.label);
+function phase6CollectConfigurationInput(options = {}){
+  const storedCompromiseId = phase6ResolveFieldValue('compromiseId', { storedOnly:true });
+  const compromiseSelect = $('compromiseSelect');
+  const compromiseId = options.storedOnly
+    ? storedCompromiseId
+    : (compromiseSelect ? compromiseSelect.value : storedCompromiseId);
   return {
-    key:'watch',
-    label:'Montre',
-    ready: missing.length === 0,
-    missing,
-    fields,
-    completeCount: fields.filter(field => field.ready).length,
-    totalCount: fields.length
-  };
-}
-
-function phase6GetGoalPresetReadiness(options = {}){
-  const value = phase6ResolveFieldValue('dietMode', options);
-  const ready = !!String(value || '').trim() && value !== 'none';
-  return {
-    key:'goals',
-    label:'Objectifs',
-    ready,
-    missing: ready ? [] : ['Preset'],
-    fields:[{ key:'dietMode', label:'Preset', ready, value }],
-    completeCount: ready ? 1 : 0,
-    totalCount:1
-  };
-}
-
-function phase6GetCompromiseReadiness(options = {}){
-  const value = phase6ResolveFieldValue('compromiseId', options)
-    || (!options.storedOnly ? $('compromiseSelect')?.value : '');
-  const ready = !!String(value || '').trim();
-  return {
-    key:'compromise',
-    label:'Compromis',
-    ready,
-    missing: ready ? [] : ['Compromis'],
-    fields:[{ key:'compromiseId', label:'Compromis', ready, value }],
-    completeCount: ready ? 1 : 0,
-    totalCount:1
-  };
-}
-
-function phase6GetCalculationFrameReadiness(options = {}){
-  const profile = phase6GetProfileReadiness(options);
-  const watch = phase6GetWatchReadiness(options);
-  const goals = phase6GetGoalPresetReadiness(options);
-  const compromise = phase6GetCompromiseReadiness(options);
-  const sections = [profile, watch, goals, compromise];
-  return {
-    ready: sections.every(section => section.ready),
-    sections,
-    readyCount: sections.filter(section => section.ready).length,
-    totalCount: sections.length
+    sex:phase6ResolveFieldValue('sex', options),
+    age:phase6ResolveFieldValue('age', options),
+    height:phase6ResolveFieldValue('height', options),
+    weight:phase6ResolveFieldValue('weight', options),
+    watchBrand:phase6ResolveFieldValue('watchBrand', options),
+    montre:phase6ResolveFieldValue('montre', options),
+    dietMode:phase6ResolveFieldValue('dietMode', options),
+    compromiseId:compromiseId || '',
+    validCompromiseIds:phase6GetValidCompromiseIds()
   };
 }
 
 function phase6GetSetupState(options = {}){
-  const frame = phase6GetCalculationFrameReadiness(options);
-  const firstIncomplete = frame.sections.find(section => !section.ready) || null;
-  const complete = !firstIncomplete;
-  return {
-    key: complete ? 'complete' : `${firstIncomplete.key}_incomplete`,
-    complete,
-    ready:complete,
-    entryTarget:complete ? 'today' : 'settings',
-    firstIncomplete,
-    sections:frame.sections,
-    readyCount:frame.readyCount,
-    totalCount:frame.totalCount
-  };
+  const stateApi = window.__SCAStateNavigation;
+  if (!stateApi?.computeConfigurationState) {
+    throw new Error('[State] computeConfigurationState is unavailable.');
+  }
+  return stateApi.computeConfigurationState(phase6CollectConfigurationInput(options));
 }
 
 function phase6HasUsableProfile(options = {}){
@@ -259,11 +177,11 @@ function phase6HasUsableProfile(options = {}){
 }
 
 function phase6GetUnlockTarget(){
-  return phase6GetSetupState().entryTarget;
+  return phase6GetSetupState().initialDestination;
 }
 
 function phase6GetInitialEntryTarget(){
-  return phase6GetSetupState().entryTarget;
+  return phase6GetSetupState().initialDestination;
 }
 
 function phase6SyncSetupNudgeUi(options = {}){
@@ -276,11 +194,11 @@ function phase6SyncSetupNudgeUi(options = {}){
 function phase6SyncSettingsAccessUi(){
   const accepted = !!(typeof isTermsAccepted === 'function' && isTermsAccepted());
   const setup = phase6GetSetupState();
-  const frame = { ready:setup.complete, sections:setup.sections };
-  const profile = frame.sections.find(section => section.key === 'profile') || phase6GetProfileReadiness();
-  const watch = frame.sections.find(section => section.key === 'watch') || phase6GetWatchReadiness();
-  const goals = frame.sections.find(section => section.key === 'goals') || phase6GetGoalPresetReadiness();
-  const compromise = frame.sections.find(section => section.key === 'compromise') || phase6GetCompromiseReadiness();
+  const frame = { ready:setup.configurationComplete, sections:setup.sections };
+  const profile = frame.sections.find(section => section.key === 'profile');
+  const watch = frame.sections.find(section => section.key === 'watch');
+  const goals = frame.sections.find(section => section.key === 'goals');
+  const compromise = frame.sections.find(section => section.key === 'compromise');
   const state = $('settingsAccessState');
   const meta = $('settingsAccessMeta');
   const globalState = $('phase5GateAccessState');
@@ -357,6 +275,7 @@ function wireEvents(){
   const domainEntry = p6.DomainOrchestrator;
   const profileEntry = p6.ProfileEntryPoints;
   const sportSleepEntry = p6.SportSleepEntryPoints;
+  const navigationRegistry = window.__SCAStateNavigation;
 
   const requirePhase6 = (groupName, methodName) => {
     return p6.Contracts.require(groupName, methodName);
@@ -374,20 +293,68 @@ function wireEvents(){
     return requirePhase6('SportSleepEntryPoints', methodName)(...args);
   };
 
-  // Les pastilles de charge ouvrent directement le calendrier historique pour
-  // renseigner les activités ou dépenses des sept derniers jours.
-  const openLoadHistoryCalendar = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    openTab("history", { delay:0, source:"load-seed-nudge" });
-    window.setTimeout(() => {
-      const calendarButton = $("btnHistoryGoCalendar");
-      if (calendarButton && !calendarButton.disabled) calendarButton.click();
-    }, 40);
+  function phase6GetNavigationContext(){
+    return {
+      useMode:$('useMode')?.value || document.body?.dataset?.usemode || 'simple',
+      diabEnabled:!!$('diabEnabled')?.checked
+    };
+  }
+
+  function phase6ResolveRegisteredTarget(entry){
+    for (const selector of (entry?.targetSelectors || [])) {
+      const target = document.querySelector(selector);
+      if (target && !target.classList.contains('hidden')) return target;
+    }
+    return null;
+  }
+
+  function phase6NavigateRegisteredEntry(entry, event, options = {}){
+    if (!entry || !navigationRegistry?.isNavigationEntryAvailable(entry, phase6GetNavigationContext())) return false;
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    const finish = () => {
+      const target = phase6ResolveRegisteredTarget(entry);
+      if (target) phase6ScrollToSettingsPanel(target);
+      options.setActive?.(entry.key);
+      options.closeFloat?.(false);
+    };
+    if (entry.crossSpace || entry.destinationSpace !== entry.sourceSpace) {
+      openTab(entry.destinationSpace, { delay:0, source:`registry:${entry.sourceSpace}:${entry.key}` });
+      window.setTimeout(finish, Number.isFinite(options.delay) ? options.delay : 80);
+    } else {
+      finish();
+    }
+    return true;
+  }
+
+  function phase6BindRegisteredNavigation(sourceSpace, options = {}){
+    navigationRegistry?.getNavigationEntries(sourceSpace).forEach(entry => {
+      const includeControls = sourceSpace === 'shared';
+      navigationRegistry.getEntrySelectors(entry, { includeControls }).forEach(selector => {
+        document.querySelectorAll(selector).forEach(control => {
+          if (control.dataset.scaNavigationBound === '1') return;
+          control.dataset.scaNavigationBound = '1';
+          control.addEventListener('click', event => phase6NavigateRegisteredEntry(entry, event, options));
+        });
+      });
+    });
+  }
+
+  function phase6GetTrackedNavigationPanels(sourceSpace){
+    return navigationRegistry.getNavigationEntries(sourceSpace)
+      .filter(entry => entry.track && !entry.crossSpace)
+      .map(entry => ({ key:entry.key, el:phase6ResolveRegisteredTarget(entry) }))
+      .filter(item => item.el && !item.el.classList.contains('hidden'));
+  }
+
+  window.phase6NavigateRegisteredEntry = (sourceSpace, key, event, options = {}) => {
+    const entry = navigationRegistry?.getNavigationEntry(sourceSpace, key);
+    return phase6NavigateRegisteredEntry(entry, event, options);
   };
-  ["loadSeedNudge", "pilotageSettingsLoadNudge"].forEach((id) => {
-    $(id)?.addEventListener("click", openLoadHistoryCalendar);
-  });
+
+  // Les deux pastilles restent visuellement distinctes et partagent cette
+  // destination déclarée : Historique -> Calendrier.
+  phase6BindRegisteredNavigation('shared');
 
   // CGU
   $("ackTerms")?.addEventListener("change", () => {
@@ -422,23 +389,6 @@ $("btnMenuOpenHelpModal")?.addEventListener("click", () => { openSettingsHelpMod
   ['btnCreateProfile','btnDeleteProfile'].forEach(id => {
     $(id)?.addEventListener('click', () => setTimeout(phase6SyncSettingsAccessUi, 80));
   });
-
-function phase6GetSettingsJumpTarget(key){
-  const target = key === 'profile'
-    ? document.querySelector('.settingsPanel--profile')
-    : key === 'watch'
-      ? document.querySelector('.settingsPanel--watch')
-      : key === 'goals'
-        ? document.querySelector('.settingsPanel--goals')
-        : key === 'compromise'
-          ? document.querySelector('#settingsMacrosAnchor') || document.querySelector('#settingsCompromiseCard') || document.querySelector('.settingsPanel--goals')
-          : key === 'load'
-            ? document.querySelector('#settingsLoadAnchor') || document.querySelector('#compromiseSummary') || document.querySelector('.settingsPanel--goals')
-            : null;
-  if (!target || target.classList.contains('hidden')) return null;
-  return target;
-}
-
 
 function phase6SyncAppbarHeightVar(){
   const appbar = document.querySelector('.appbar');
@@ -508,17 +458,9 @@ function phase6SyncSettingsJumpFloatVisibility(){
 function phase6BindSettingsJumpNav(){
   phase6SyncAppbarHeightVar();
   phase6SetSettingsJumpFloatOpen(false);
-  document.querySelectorAll('[data-settings-jump]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const key = btn.getAttribute('data-settings-jump');
-      const target = phase6GetSettingsJumpTarget(key);
-      if (!target) return;
-      phase6SetSettingsJumpActive(key);
-      phase6SetSettingsJumpFloatOpen(false);
-      phase6ScrollToSettingsPanel(target);
-    });
+  phase6BindRegisteredNavigation('settings', {
+    setActive:phase6SetSettingsJumpActive,
+    closeFloat:phase6SetSettingsJumpFloatOpen
   });
 
   $('settingsJumpFloatToggle')?.addEventListener('click', (e) => {
@@ -533,12 +475,7 @@ function phase6BindSettingsJumpNav(){
     if (!wrap || !wrap.contains(e.target)) phase6SetSettingsJumpFloatOpen(false);
   });
 
-  const panels = [
-    { key:'profile', el: document.querySelector('.settingsPanel--profile') },
-    { key:'watch', el: document.querySelector('.settingsPanel--watch') },
-    { key:'goals', el: document.querySelector('.settingsPanel--goals') },
-    { key:'compromise', el: document.querySelector('#settingsMacrosAnchor') },
-  ].filter(item => item.el);
+  const panels = phase6GetTrackedNavigationPanels('settings');
 
   if (!panels.length) return;
 
@@ -603,26 +540,13 @@ function phase6SyncTodayJumpFloatVisibility(){
 function phase6BindTodayJumpNav(){
   phase6SyncAppbarHeightVar();
   phase6SetTodayJumpFloatOpen(false);
+  phase6BindRegisteredNavigation('today', { closeFloat:phase6SetTodayJumpFloatOpen });
 
   $('todayJumpFloatToggle')?.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
     const panel = $('todayJumpFloatPanel');
     phase6SetTodayJumpFloatOpen(panel?.hidden !== false);
-  });
-
-  [
-    ['btnTodayQuickMealFloat', 'btnTodayQuickMeal'],
-    ['btnTodayQuickSportFloat', 'btnTodayQuickSport'],
-    ['btnTodayQuickSleepFloat', 'btnTodayQuickSleep'],
-    ['btnTodayQuickSettingsFloat', 'btnTodayQuickSettings'],
-  ].forEach(([floatId, baseId]) => {
-    $(floatId)?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      phase6SetTodayJumpFloatOpen(false);
-      $(baseId)?.click();
-    });
   });
 
   document.addEventListener('click', (e) => {
@@ -646,22 +570,6 @@ function phase6BindTodayJumpNav(){
 
 phase6BindTodayJumpNav();
 
-
-function phase6GetJournalJumpTarget(key){
-  const target = key === 'meals'
-    ? document.querySelector('.phase2JournalPanel--meals')
-    : key === 'activity'
-      ? document.querySelector('.phase2JournalPanel--activity')
-      : key === 'sleep'
-        ? document.querySelector('.phase2JournalPanel--sleep')
-        : key === 'metrics'
-          ? document.querySelector('.phase2JournalPanel--metrics')
-          : key === 'diabetes'
-            ? document.querySelector('.phase2JournalPanel--diabetes')
-            : null;
-  if (!target || target.classList.contains('hidden')) return null;
-  return target;
-}
 
 function phase6SetJournalJumpActive(key){
   const activeKey = key || '';
@@ -703,18 +611,9 @@ function phase6SyncJournalJumpFloatVisibility(){
 function phase6BindJournalJumpNav(){
   phase6SyncAppbarHeightVar();
   phase6SetJournalJumpFloatOpen(false);
-
-  document.querySelectorAll('[data-journal-jump]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const key = btn.getAttribute('data-journal-jump');
-      const target = phase6GetJournalJumpTarget(key);
-      if (!target) return;
-      phase6SetJournalJumpActive(key);
-      phase6SetJournalJumpFloatOpen(false);
-      phase6ScrollToSettingsPanel(target);
-    });
+  phase6BindRegisteredNavigation('journalEntry', {
+    setActive:phase6SetJournalJumpActive,
+    closeFloat:phase6SetJournalJumpFloatOpen
   });
 
   $('journalJumpFloatToggle')?.addEventListener('click', (e) => {
@@ -729,13 +628,7 @@ function phase6BindJournalJumpNav(){
     if (!wrap || !wrap.contains(e.target)) phase6SetJournalJumpFloatOpen(false);
   });
 
-  const getPanels = () => [
-    { key:'meals', el: document.querySelector('.phase2JournalPanel--meals') },
-    { key:'activity', el: document.querySelector('.phase2JournalPanel--activity') },
-    { key:'sleep', el: document.querySelector('.phase2JournalPanel--sleep') },
-    { key:'metrics', el: document.querySelector('.phase2JournalPanel--metrics') },
-    { key:'diabetes', el: document.querySelector('.phase2JournalPanel--diabetes') },
-  ].filter(item => item.el && !item.el.classList.contains('hidden'));
+  const getPanels = () => phase6GetTrackedNavigationPanels('journalEntry');
 
   if (!getPanels().length) return;
 
@@ -783,20 +676,6 @@ function phase6BindJournalJumpNav(){
 phase6BindJournalJumpNav();
 
 
-function phase6GetHistoryJumpTarget(key){
-  const target = key === 'calendar'
-    ? document.querySelector('#historyMainPanel')
-    : key === 'trend'
-      ? document.querySelector('#historyTrendPanel')
-      : key === 'health'
-        ? document.querySelector('#historyHealthPanel')
-        : key === 'diab'
-          ? document.querySelector('#historyDiabPanel')
-          : null;
-  if (!target || target.classList.contains('hidden')) return null;
-  return target;
-}
-
 function phase6SetHistoryJumpActive(key){
   const activeKey = key || '';
   document.querySelectorAll('[data-history-jump]').forEach((btn) => {
@@ -834,40 +713,12 @@ function phase6SyncHistoryJumpFloatVisibility(){
   if (!shouldShow) phase6SetHistoryJumpFloatOpen(false);
 }
 
-function phase6GetHistoryJumpButton(key){
-  return key === 'calendar'
-    ? $('btnHistoryGoCalendar')
-    : key === 'trend'
-      ? $('btnHistoryGoTrend')
-      : key === 'health'
-        ? $('btnHistoryGoHealth')
-        : key === 'activity'
-          ? $('btnTodayQuickSport')
-        : key === 'diab'
-          ? $('btnHistoryGoDiab')
-          : null;
-}
-
 function phase6BindHistoryJumpNav(){
   phase6SyncAppbarHeightVar();
   phase6SetHistoryJumpFloatOpen(false);
-
-  document.querySelectorAll('[data-history-jump]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const key = btn.getAttribute('data-history-jump');
-      const delegate = phase6GetHistoryJumpButton(key);
-      if (!delegate || delegate.disabled) return;
-      const target = phase6GetHistoryJumpTarget(key);
-      phase6SetHistoryJumpActive(key);
-      phase6SetHistoryJumpFloatOpen(false);
-      if (target && typeof phase6ScrollToSettingsPanel === 'function') {
-        phase6ScrollToSettingsPanel(target);
-        return;
-      }
-      delegate.click();
-    });
+  phase6BindRegisteredNavigation('history', {
+    setActive:phase6SetHistoryJumpActive,
+    closeFloat:phase6SetHistoryJumpFloatOpen
   });
 
   $('historyJumpFloatToggle')?.addEventListener('click', (e) => {
@@ -882,12 +733,7 @@ function phase6BindHistoryJumpNav(){
     if (!wrap || !wrap.contains(e.target)) phase6SetHistoryJumpFloatOpen(false);
   });
 
-  const getPanels = () => [
-    { key:'calendar', el: document.querySelector('#historyMainPanel') },
-    { key:'trend', el: document.querySelector('#historyTrendPanel') },
-    { key:'health', el: document.querySelector('#historyHealthPanel') },
-    { key:'diab', el: document.querySelector('#historyDiabPanel') },
-  ].filter(item => item.el && !item.el.classList.contains('hidden'));
+  const getPanels = () => phase6GetTrackedNavigationPanels('history');
 
   const syncActive = () => {
     const panels = getPanels();
