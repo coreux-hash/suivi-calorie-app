@@ -95,15 +95,24 @@ test('dépendance distante historique limitée au client Supabase optionnel', ()
   assert.deepEqual(remoteScripts, ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2']);
 });
 
-test('guide Comment ça marche pédagogique et interactif', () => {
-  assert.match(html, /<div class="menuGroupLabel">Aide<\/div>/);
-  assert.match(html, /id="btnMenuOpenPilotagePlan"[^>]*>Comment ça marche \?<\/button>/);
+test('guide pratique et présentation conceptuelle sont autonomes', () => {
+  assert.match(html, /<button[^>]+id="btnHeaderOpenPilotageGuide"[^>]*>\?<\/button>/);
+  assert.match(html, /<button[^>]+aria-haspopup="dialog"[^>]+id="btnHeaderOpenPilotageGuide"/);
+  assert.match(html, /<div class="menuGroupLabel">Plan d’accès<\/div>/);
+  assert.match(html, /aria-controls="appUnderstandingModal"[^>]+id="btnMenuOpenPilotagePlan"[^>]*>Comprendre l’application<\/button>/);
   assert.match(html, /id="pilotagePlanTitle">Comment ça marche \?<\/div>/);
   assert.match(html, /id="pilotagePlanStartTitle">Commence ici<\/h3>/);
   assert.match(html, /id="pilotageGuideDemoInfo"[^>]+data-modaltext=/);
   assert.match(html, /id="pilotageGuideSignalDemo"[^>]+data-modaltext=/);
   assert.match(html, /Activité \*/);
   assert.match(html, /Dépense \*/);
-  assert.match(html, /<summary>Pour aller plus loin<\/summary>/);
-  assert.doesNotMatch(html, /id="pilotagePlanTitle">Plan de pilotage<\/div>/);
+  assert.match(html, /id="appUnderstandingModal"/);
+  assert.match(html, /id="appUnderstandingTitle">Comprendre l’application<\/div>/);
+  assert.match(html, /id="appUnderstandingRoleTitle">Rôle du produit<\/h3>/);
+  assert.match(html, /id="appUnderstandingFlowTitle">Flux métier<\/h3>/);
+  assert.match(html, /id="appUnderstandingIntentTitle">Orientation par intention<\/h3>/);
+  assert.match(html, /id="appUnderstandingDataTitle">Données qui alimentent le moteur<\/h3>/);
+  assert.match(html, /dépense automatique ou explicitement renseignée/);
+  assert.doesNotMatch(html, /id="pilotageGuideMore"/);
+  assert.doesNotMatch(html, /Pour aller plus loin/);
 });

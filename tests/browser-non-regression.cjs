@@ -10,7 +10,7 @@ const { chromium } = require('playwright');
 const appRoot = path.resolve(process.argv[2] || path.join(__dirname, '..'));
 const outputRoot = path.resolve(process.argv[3] || path.join(appRoot, 'tests/qa-screenshots/after'));
 const captureOnly = process.argv.includes('--capture-only');
-const selectedDate = '2026-08-04';
+const selectedDate = new Date().toISOString().slice(0, 10);
 
 const viewports = [
   { name:'360x800', width:360, height:800 },
@@ -130,7 +130,7 @@ async function launchBrowser(){
   browserProcess.stderr.on('data', chunk => { browserLog += String(chunk); });
   const endpoint = `http://127.0.0.1:${port}`;
   let ready = false;
-  for (let attempt = 0; attempt < 50; attempt += 1) {
+  for (let attempt = 0; attempt < 150; attempt += 1) {
     try {
       const response = await fetch(`${endpoint}/json/version`);
       if (response.ok) { ready = true; break; }
@@ -354,16 +354,24 @@ async function assertHowItWorksGuide(browser, origin, viewport){
   const { context, page, pageErrors } = await openFixture(browser, origin, fixture(), viewport);
   const storageBefore = await page.evaluate(() => JSON.stringify(localStorage));
 
-  await page.locator('#menuBtn').click();
-  await page.locator('#btnMenuOpenPilotagePlan').click();
+  const headerButtons = await page.locator('#menuBtn, #btnHeaderOpenPilotageGuide').evaluateAll(buttons => buttons.map(button => {
+    const rect = button.getBoundingClientRect();
+    return { width:rect.width, height:rect.height };
+  }));
+  assert.deepEqual(headerButtons[0], headerButtons[1], `${label}: boutons d’en-tête symétriques`);
+  assert.ok(headerButtons[0].width >= 44 && headerButtons[0].height >= 44, `${label}: cible tactile de 44 px`);
+
+  await page.locator('#btnHeaderOpenPilotageGuide').click();
   await page.waitForTimeout(100);
   assert.equal(await page.getAttribute('#pilotagePlanModal', 'aria-hidden'), 'false', `${label}: guide ouvert`);
   assert.equal(await page.textContent('#pilotagePlanTitle'), 'Comment ça marche ?');
+  assert.equal(await page.getAttribute('#appUnderstandingModal', 'aria-hidden'), 'true', `${label}: présentation conceptuelle distincte et fermée`);
   const guideText = await page.textContent('#pilotagePlanModal');
   assert.match(guideText, /Commence ici/);
   assert.match(guideText, /Activité \*/);
   assert.match(guideText, /Dépense \*/);
   assert.match(guideText, /Point clignotant/);
+  assert.doesNotMatch(guideText, /Flux métier/);
   await assertNoHorizontalOverflow(page, `guide-${label}`);
   await page.screenshot({ path:path.join(outputRoot, `how-it-works-${label}.png`), fullPage:true });
 
@@ -382,10 +390,24 @@ async function assertHowItWorksGuide(browser, origin, viewport){
   await page.locator('#watchInfoClose').click();
   await page.waitForTimeout(50);
 
-  await page.locator('.pilotageGuideMore > summary').click();
+  await page.locator('#pilotagePlanFootClose').click();
   await page.waitForTimeout(50);
-  assert.equal(await page.locator('.pilotageGuideMore').getAttribute('open'), '');
-  await assertNoHorizontalOverflow(page, `guide-details-${label}`);
+  await page.locator('#menuBtn').click();
+  await page.locator('#btnMenuOpenPilotagePlan').click();
+  await page.waitForTimeout(100);
+  assert.equal(await page.getAttribute('#pilotagePlanModal', 'aria-hidden'), 'true', `${label}: guide pratique reste fermé depuis le menu`);
+  assert.equal(await page.getAttribute('#appUnderstandingModal', 'aria-hidden'), 'false', `${label}: compréhension autonome ouverte depuis le menu`);
+  assert.equal(await page.textContent('#appUnderstandingTitle'), 'Comprendre l’application');
+  const understandingText = await page.textContent('#appUnderstandingModal');
+  assert.match(understandingText, /Rôle du produit/);
+  assert.match(understandingText, /Les 4 espaces/);
+  assert.match(understandingText, /Flux métier/);
+  assert.match(understandingText, /Orientation par intention/);
+  assert.match(understandingText, /Données qui alimentent le moteur/);
+  assert.match(understandingText, /dépense automatique ou explicitement renseignée/);
+  assert.doesNotMatch(understandingText, /Teste les repères visuels/);
+  await assertNoHorizontalOverflow(page, `understanding-${label}`);
+  await page.screenshot({ path:path.join(outputRoot, `understand-app-${label}.png`), fullPage:true });
   assert.equal(await page.evaluate(() => JSON.stringify(localStorage)), storageBefore, `${label}: le guide ne modifie pas les données`);
   assert.deepEqual(pageErrors, [], `${label}: erreurs JS`);
   await context.close();

@@ -136,7 +136,7 @@ Couverture fonctionnelle :
 15. sélecteurs principaux du registre non orphelins ;
 16. dépendance distante historique bornée au client Supabase optionnel.
 17. accès `Dépense *` déclaré une seule fois, disponible et identique sur desktop/mobile vers Pilotage → Lecture du jour.
-18. guide `Comment ça marche ?` présent, pédagogique et doté de deux démonstrations interactives.
+18. guide `Comment ça marche ?` pédagogique et présentation `Comprendre l’application` restaurée dans une modale autonome.
 
 QA navigateur :
 
@@ -152,7 +152,7 @@ FONTCONFIG_PATH=/tmp/fonts XDG_CACHE_HOME=/tmp/font-cache CHROMIUM_EXECUTABLE_PA
 
 Résultat final : **QA navigateur réussie, 0 erreur JavaScript, 0 assertion en échec**. Le script sert l’application locale et bloque volontairement le CDN Supabase : le parcours local reste opérationnel sans réseau.
 
-Assertions navigateur : routage initial, une seule section active, disponibilité réelle de Compromis, absence de débordement horizontal, titres non rognés, états sans charge/sport/`D 6/7`/`D 7/7`, synchronisation des pastilles, clic des deux pastilles vers Historique → Calendrier, absence de modale, parité desktop/mobile, accès transverse vers Réglages, accès `Dépense *` desktop/mobile vers Pilotage → Lecture du jour sans changement de date ni écriture, ouverture et contenu de l’info-dot, guide `Comment ça marche ?` ouvert depuis le burger, clic de la démonstration info-dot, clic de la démonstration clignotante, accordéon expert et stockage inchangé, changement de profil sans état hérité ni sauvegarde, changement de date sans création de journée ni bascule de `energyExplicit`.
+Assertions navigateur : routage initial, une seule section active, disponibilité réelle de Compromis, absence de débordement horizontal, titres non rognés, états sans charge/sport/`D 6/7`/`D 7/7`, synchronisation des pastilles, clic des deux pastilles vers Historique → Calendrier, absence de modale, parité desktop/mobile, accès transverse vers Réglages, accès `Dépense *` desktop/mobile vers Pilotage → Lecture du jour sans changement de date ni écriture, ouverture et contenu de l’info-dot, guide `Comment ça marche ?` ouvert depuis le bouton `?`, clic des deux démonstrations, présentation autonome `Comprendre l’application` ouverte depuis le burger, contenu conceptuel restauré, stockage inchangé, changement de profil sans état hérité ni sauvegarde et changement de date sans création de journée ni bascule de `energyExplicit`.
 
 ## QA visuelle responsive
 
@@ -166,7 +166,7 @@ Résolutions contrôlées sur Réglages, Pilotage et Historique :
 - 1366 × 768 ;
 - 1440 × 900.
 
-États dynamiques capturés et inspectés à 390 × 844 : profil incomplet, profil complet sans charge, activité récente, `D 6/7` et `D 7/7`. L’arrivée depuis chacune des deux pastilles a été vérifiée à 390 × 844 et 1366 × 768. L’accès `Dépense *` a été contrôlé sur mobile à 390 × 844 et sur ordinateur à 1366 × 768 ; l’info-dot a été ouverte et inspectée à 390 × 844. Le nouveau guide a été capturé et inspecté à 390 × 844 et 1366 × 768.
+États dynamiques capturés et inspectés à 390 × 844 : profil incomplet, profil complet sans charge, activité récente, `D 6/7` et `D 7/7`. L’arrivée depuis chacune des deux pastilles a été vérifiée à 390 × 844 et 1366 × 768. L’accès `Dépense *` a été contrôlé sur mobile à 390 × 844 et sur ordinateur à 1366 × 768 ; l’info-dot a été ouverte et inspectée à 390 × 844. Le guide pratique et la présentation conceptuelle autonome ont été capturés et inspectés à 390 × 844 et 1366 × 768.
 
 Défauts démontrés et corrigés :
 
@@ -205,3 +205,34 @@ Différentiel de cette passe : **6 fichiers modifiés, 0 ajouté, 0 supprimé ; 
 L’accès burger `Plan d’accès → Comprendre l’application` devient `Aide → Comment ça marche ?`. La modale conserve son mécanisme d’ouverture et de fermeture, mais son contenu est réordonné autour de l’usage : six étapes concrètes, démonstration cliquable d’une info-dot, démonstration cliquable d’un point pulsant, légende des codes `*`, `requis` et `prêt`, explication synthétique de `L` et `D`, puis contenu conceptuel replié dans `Pour aller plus loin`.
 
 Les démonstrations réutilisent le gestionnaire d’info-dots existant. Elles n’ajoutent aucune clé de stockage, ne modifient aucune donnée et ne déclenchent aucune navigation. Les boutons de démonstration sont des contrôles natifs, utilisables au clavier. La QA Chromium confirme l’absence de débordement et la conservation du stockage à 390 × 844 et 1366 × 768.
+
+## Passe d’accès global — aide pratique et compréhension (intermédiaire)
+
+Le guide pédagogique possède désormais deux accès permanents et non redondants :
+
+- le bouton `?` de l’en-tête ouvre `Comment ça marche ?` en haut du parcours pratique, avec `Pour aller plus loin` replié ;
+- le burger rétablit `Plan d’accès → Comprendre l’application` et ouvre la même modale directement sur `Pour aller plus loin`, déjà déployé et placé dans la fenêtre visible.
+
+Le burger et le bouton d’aide partagent le composant visuel `.logoDot.appbarAction`, les mêmes dimensions de 44 × 44 px, les mêmes états de survol et de focus, ainsi que des libellés accessibles distincts. Le bouton `?` est global et reste visible dans les quatre espaces. Aucune animation, pastille ou donnée persistée n’a été ajoutée.
+
+Le test navigateur vérifie séparément les deux modes d’ouverture, le titre adapté au contexte, l’état de l’accordéon, sa visibilité, l’égalité des dimensions des deux actions d’en-tête, la cible tactile minimale, l’absence de débordement et l’absence d’écriture dans `localStorage`. La date métier de la fixture navigateur est désormais calculée au jour d’exécution afin que le scénario `D 7/7` ne vieillisse pas ; les règles applicatives de `D` sont inchangées.
+
+QA visuelle réelle réussie à 360 × 800, 390 × 844, 768 × 1024, 859 × 900, 861 × 900, 1366 × 768 et 1440 × 900. Les deux modes du guide ont été contrôlés spécifiquement à 390 × 844 et 1366 × 768. Aucun défaut visuel supplémentaire n’a été observé.
+
+Cette organisation intermédiaire est remplacée par la passe finale ci-dessous : les deux accès n’ouvrent plus la même modale.
+
+## Passe finale — restauration autonome de Comprendre l’application
+
+Le doublon de présentation est supprimé :
+
+- le bouton `?` ouvre uniquement le guide pratique `Comment ça marche ?` ;
+- `Plan d’accès → Comprendre l’application` ouvre la modale autonome `#appUnderstandingModal` ;
+- l’accordéon `Pour aller plus loin`, le changement dynamique de titre et le défilement artificiel dans la modale pratique sont retirés.
+
+Le contenu conceptuel de l’archive `SuiviCalorieApp_points_valides_2026-08-04(1).zip` est restauré : rôle du produit, quatre espaces, flux métier, orientation par intention, données alimentant le moteur, niveaux de lecture, santé/diabète et niveaux d’aide. Les formulations sont harmonisées avec l’état actuel : `Activité *`, `Dépense *`, correction de la dépense dans `Pilotage → Lecture du jour` et dépense automatique ou explicitement renseignée.
+
+Les deux modales possèdent des identifiants, titres, descriptions, contrôles de fermeture et branchements indépendants. Elles partagent uniquement les composants visuels existants. Aucune clé de stockage, navigation métier, règle `L/D` ou persistance n’est modifiée.
+
+QA finale : 18/18 tests natifs réussis. Les deux fenêtres ont été exercées et capturées à 390 × 844 et 1366 × 768 ; leur autonomie, leur contenu, l’absence de débordement, l’absence d’erreur JavaScript et l’absence d’écriture dans `localStorage` sont contrôlés.
+
+Différentiel de cette passe : **6 fichiers modifiés, 0 ajouté, 0 supprimé ; 177 lignes ajoutées, 99 supprimées, solde +78 lignes**.

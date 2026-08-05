@@ -3,6 +3,7 @@
 let phase6LastFocusedBeforeModal = null;
 const phase6ManagedModalIds = [
   'pilotagePlanModal',
+  'appUnderstandingModal',
   'termsGateModal',
   'settingsCloudModal',
   'settingsHelpModal',
@@ -71,6 +72,7 @@ function phase6CloseTopModal(){
   const modal = phase6GetTopOpenModal();
   if (!modal) return false;
   if (modal.id === 'pilotagePlanModal') closePilotagePlanModal();
+  else if (modal.id === 'appUnderstandingModal') closeAppUnderstandingModal();
   else if (modal.id === 'termsGateModal') closeTermsGateModal();
   else if (modal.id === 'settingsCloudModal') closeSettingsCloudModal();
   else if (modal.id === 'settingsHelpModal') closeSettingsHelpModal();
@@ -106,8 +108,19 @@ function phase6TrapModalFocus(e){
   }
 }
 
-function openPilotagePlanModal(){ phase6ToggleModal('pilotagePlanModal', true); }
+function openPilotagePlanModal(){
+  const modal = $('pilotagePlanModal');
+  const panel = modal?.querySelector('[role="dialog"]');
+  if (panel) panel.scrollTop = 0;
+  phase6ToggleModal('pilotagePlanModal', true);
+}
 function closePilotagePlanModal(){ phase6ToggleModal('pilotagePlanModal', false); }
+function openAppUnderstandingModal(){
+  const panel = $('appUnderstandingModal')?.querySelector('[role="dialog"]');
+  if (panel) panel.scrollTop = 0;
+  phase6ToggleModal('appUnderstandingModal', true);
+}
+function closeAppUnderstandingModal(){ phase6ToggleModal('appUnderstandingModal', false); }
 function openTermsGateModal(){ phase6ToggleModal('termsGateModal', true); }
 function closeTermsGateModal(){ phase6ToggleModal('termsGateModal', false); }
 function openSettingsCloudModal(){ phase6ToggleModal('settingsCloudModal', true); }
@@ -376,7 +389,8 @@ $("btnOpenCloudModalInline")?.addEventListener("click", openSettingsCloudModal);
 $("btnGlobalOpenCloudModal")?.addEventListener("click", openSettingsCloudModal);
 $("btnGlobalOpenHelpModal")?.addEventListener("click", openSettingsHelpModal);
 $("btnGlobalOpenTutoModal")?.addEventListener("click", openSettingsTutoModal);
-$("btnMenuOpenPilotagePlan")?.addEventListener("click", () => { openPilotagePlanModal(); try{ closeMenu(); }catch(e){} });
+$("btnHeaderOpenPilotageGuide")?.addEventListener("click", () => { openPilotagePlanModal(); try{ closeMenu(); }catch(e){} });
+$("btnMenuOpenPilotagePlan")?.addEventListener("click", () => { openAppUnderstandingModal(); try{ closeMenu(); }catch(e){} });
 $("btnMenuOpenTermsGate")?.addEventListener("click", () => { openTermsGateModal(); try{ closeMenu(); }catch(e){} });
 $("btnMenuOpenCloudModal")?.addEventListener("click", () => { openSettingsCloudModal(); try{ closeMenu(); }catch(e){} });
 $("btnMenuOpenTutoModal")?.addEventListener("click", () => { openSettingsTutoModal(); try{ closeMenu(); }catch(e){} });
@@ -780,6 +794,8 @@ phase6BindHistoryJumpNav();
 
 $("pilotagePlanClose")?.addEventListener("click", closePilotagePlanModal);
 $("pilotagePlanFootClose")?.addEventListener("click", closePilotagePlanModal);
+$("appUnderstandingClose")?.addEventListener("click", closeAppUnderstandingModal);
+$("appUnderstandingFootClose")?.addEventListener("click", closeAppUnderstandingModal);
 $("termsGateClose")?.addEventListener("click", closeTermsGateModal);
 $("termsGateFootClose")?.addEventListener("click", closeTermsGateModal);
 $("settingsCloudClose")?.addEventListener("click", closeSettingsCloudModal);
@@ -789,6 +805,7 @@ $("settingsHelpFootClose")?.addEventListener("click", closeSettingsHelpModal);
 $("settingsTutoClose")?.addEventListener("click", closeSettingsTutoModal);
 $("settingsTutoFootClose")?.addEventListener("click", closeSettingsTutoModal);
 document.querySelector("#pilotagePlanModal .modal__backdrop")?.addEventListener("click", closePilotagePlanModal);
+document.querySelector("#appUnderstandingModal .modal__backdrop")?.addEventListener("click", closeAppUnderstandingModal);
 document.querySelector("#termsGateModal .modal__backdrop")?.addEventListener("click", closeTermsGateModal);
 document.querySelector("#settingsCloudModal .modal__backdrop")?.addEventListener("click", closeSettingsCloudModal);
 document.querySelector("#settingsHelpModal .modal__backdrop")?.addEventListener("click", closeSettingsHelpModal);

@@ -62,8 +62,14 @@
   align-items:center;
   gap:10px;
   position:relative;
+  flex:1 1 auto;
+  min-width:0;
 }
 .brandText{ min-width:0; }
+
+.appbarAction{
+  flex:0 0 auto;
+}
 
 .menuBtn--brand{
   width:34px;

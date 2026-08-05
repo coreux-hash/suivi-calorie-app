@@ -5956,8 +5956,8 @@ body{
 }
 
 .logoDot{
-  width:40px;
-  height:40px;
+  width:44px;
+  height:44px;
   border-radius:14px;
   border:1px solid rgba(255,255,255,.18);
   background:linear-gradient(135deg, rgba(139,124,255,.95), rgba(56,213,198,.80));
@@ -6557,8 +6557,8 @@ th{
   }
 
   .logoDot{
-    width:38px;
-    height:38px;
+    width:44px;
+    height:44px;
     border-radius:13px;
   }
 
@@ -7924,43 +7924,6 @@ body:not([data-usemode="expert"]) #mealPanelQuick{ display:none !important; }
   color:var(--muted);
   font-size:.84rem;
   line-height:1.35;
-}
-.pilotageGuideMore{
-  border:1px solid rgba(255,255,255,.105);
-  border-radius:16px;
-  background:rgba(255,255,255,.032);
-  overflow:hidden;
-}
-.pilotageGuideMore > summary{
-  padding:13px 14px;
-  color:var(--text);
-  font-weight:850;
-  cursor:pointer;
-}
-.pilotageGuideMore > summary:focus-visible{
-  outline:2px solid rgba(139,124,255,.7);
-  outline-offset:-3px;
-}
-.pilotageGuideMore__body{
-  display:grid;
-  gap:12px;
-  padding:0 14px 14px;
-}
-.pilotageGuideMore__body h3{
-  margin:0 0 10px;
-  color:var(--text);
-  font-size:1rem;
-}
-.pilotageGuideMore__note{
-  padding:12px;
-  border:1px solid rgba(255,209,102,.20);
-  border-radius:14px;
-  background:linear-gradient(180deg, rgba(255,209,102,.075), rgba(255,255,255,.032));
-}
-.pilotageGuideMore__note p{
-  margin:0;
-  color:var(--muted);
-  line-height:1.45;
 }
 @media (prefers-reduced-motion: reduce){
   .pilotageGuideSignalDemo.info-dot::before{ animation:none; }

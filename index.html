@@ -29,7 +29,7 @@
 <div class="appbar__inner">
 <!-- BRAND = bouton menu + texte -->
 <div class="brand brand--with-menu">
-<button aria-controls="menuPanel" aria-expanded="false" aria-haspopup="true" class="logoDot" id="menuBtn" type="button">
+<button aria-controls="menuPanel" aria-expanded="false" aria-haspopup="true" aria-label="Ouvrir le menu" class="logoDot appbarAction appbarAction--menu" id="menuBtn" type="button">
           ☰
         </button>
 <div class="brandText">
@@ -46,8 +46,8 @@
 <button class="menuItem" data-tab="settings" role="menuitem" type="button">Réglages</button>
 </div>
 <div class="menuGroup menuGroup--planAccess">
-<div class="menuGroupLabel">Aide</div>
-<button class="menuActionItem menuActionItem--planAccess" id="btnMenuOpenPilotagePlan" role="menuitem" type="button">Comment ça marche ?</button>
+<div class="menuGroupLabel">Plan d’accès</div>
+<button aria-controls="appUnderstandingModal" aria-haspopup="dialog" class="menuActionItem menuActionItem--planAccess" id="btnMenuOpenPilotagePlan" role="menuitem" type="button">Comprendre l’application</button>
 </div>
 <div class="menuGroup menuGroup--tools">
 <div class="menuGroupLabel">Accès transverses</div>
@@ -58,6 +58,7 @@
 </div>
 </div>
 </div><!-- /brand -->
+<button aria-controls="pilotagePlanModal" aria-haspopup="dialog" aria-label="Comment ça marche ?" class="logoDot appbarAction appbarAction--help" id="btnHeaderOpenPilotageGuide" title="Comment ça marche ?" type="button">?</button>
 </div><!-- /appbar__inner -->
 </div><!-- /appbar -->
 <div class="container">
@@ -697,27 +698,124 @@
         </p>
       </section>
 
-      <details class="pilotageGuideMore">
-        <summary>Pour aller plus loin</summary>
-        <div class="pilotageGuideMore__body">
-          <section aria-labelledby="pilotagePlanSpacesTitle">
-            <h3 id="pilotagePlanSpacesTitle">Les 4 espaces</h3>
-            <div class="pilotagePlanSpaces">
-              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Lire</div><h4>Pilotage</h4><p>État du jour, objectif, reste à consommer et signaux utiles.</p></article>
-              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Saisir</div><h4>Journal</h4><p>Repas, activité, sommeil et corrections de la journée active.</p></article>
-              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Comprendre</div><h4>Historique / Analyse</h4><p>Choix de la date, tendances, écarts et recul sur plusieurs jours.</p></article>
-              <article class="pilotagePlanCard"><div class="pilotagePlanCard__eyebrow">Paramétrer</div><h4>Réglages</h4><p>Profil, montre, objectif, compromis, sauvegarde et cadre de calcul.</p></article>
-            </div>
-          </section>
-          <section class="pilotageGuideMore__note" aria-labelledby="pilotagePlanHealthTitle">
-            <h3 id="pilotagePlanHealthTitle">Santé / diabète</h3>
-            <p>Les données santé restent des repères de contexte. Elles ne constituent pas un avis médical, un diagnostic ou une prescription.</p>
-          </section>
-        </div>
-      </details>
     </div>
     <div class="modal__foot">
       <button class="btn-ghost" id="pilotagePlanFootClose" type="button">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div aria-hidden="true" class="modal" id="appUnderstandingModal">
+  <div class="modal__backdrop" data-close="1"></div>
+  <div aria-labelledby="appUnderstandingTitle" aria-describedby="appUnderstandingLead" aria-modal="true" class="modal__panel modal__panel--settings modal__panel--pilotagePlan" role="dialog" tabindex="-1">
+    <div class="modal__head">
+      <div>
+        <div class="modal__title" id="appUnderstandingTitle">Comprendre l’application</div>
+        <div class="pilotagePlan__kicker">Logique globale · lecture métier · repères d’usage</div>
+      </div>
+      <button aria-label="Fermer" class="modal__close" id="appUnderstandingClose" type="button">✕</button>
+    </div>
+    <div class="modal__body modal__body--settings pilotagePlan">
+      <p class="pilotagePlan__lead" id="appUnderstandingLead">
+        Cette présentation explique la logique globale du produit. Pour apprendre les gestes et les codes visuels, utilise le bouton <b>?</b> de l’en-tête.
+      </p>
+
+      <section class="pilotagePlan__section pilotagePlan__section--role" aria-labelledby="appUnderstandingRoleTitle">
+        <h3 id="appUnderstandingRoleTitle">Rôle du produit</h3>
+        <p>
+          L’application transforme une journée réelle — alimentation, activité, sommeil, objectifs et signaux de santé — en repères de pilotage. Le but n’est pas de juger la journée, mais d’aider à décider quoi corriger, quoi surveiller et quoi conserver.
+        </p>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="appUnderstandingSpacesTitle">
+        <h3 id="appUnderstandingSpacesTitle">Les 4 espaces</h3>
+        <div class="pilotagePlanSpaces">
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Lire et ajuster</div>
+            <h4>Pilotage</h4>
+            <p>État du jour, objectif, reste à consommer, dépense énergétique totale, signaux utiles et accès rapides.</p>
+          </article>
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Saisir</div>
+            <h4>Journal</h4>
+            <p>Repas, activité, sommeil et métriques de la journée active.</p>
+          </article>
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Comprendre</div>
+            <h4>Historique</h4>
+            <p>Choix de la date, relecture des données, tendances, écarts et recul sur plusieurs jours.</p>
+          </article>
+          <article class="pilotagePlanCard">
+            <div class="pilotagePlanCard__eyebrow">Paramétrer</div>
+            <h4>Réglages</h4>
+            <p>Profil, montre, objectifs, compromis, accès, sauvegarde et cadre de calcul.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="appUnderstandingFlowTitle">
+        <h3 id="appUnderstandingFlowTitle">Flux métier</h3>
+        <ol class="pilotagePlanFlow">
+          <li><span>1</span><div><strong>Cadre</strong><p>Conditions lues, profil exploitable, montre et objectif configurés.</p></div></li>
+          <li><span>2</span><div><strong>Saisie</strong><p>Le Journal reçoit repas, activité, sommeil et métriques. Pilotage → Lecture du jour permet de renseigner la dépense énergétique totale.</p></div></li>
+          <li><span>3</span><div><strong>Calcul</strong><p>Le moteur consolide les apports, la dépense, les objectifs et le compromis.</p></div></li>
+          <li><span>4</span><div><strong>Pilotage</strong><p>Lecture opérationnelle : reste, équilibre, signaux et orientation.</p></div></li>
+          <li><span>5</span><div><strong>Recul</strong><p>L’Historique sert à choisir une date et comprendre les écarts. Activité * et Dépense * conduisent ensuite à la saisie adaptée.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="appUnderstandingIntentTitle">
+        <h3 id="appUnderstandingIntentTitle">Orientation par intention</h3>
+        <div class="pilotagePlanIntentGrid">
+          <div><strong>Je veux savoir où j’en suis</strong><span>Pilotage.</span></div>
+          <div><strong>Je veux ajouter ou corriger</strong><span>Journal ; pour la dépense totale, Pilotage → Lecture du jour.</span></div>
+          <div><strong>Je veux comprendre une variation</strong><span>Historique.</span></div>
+          <div><strong>Je veux changer le cadre</strong><span>Réglages.</span></div>
+        </div>
+      </section>
+
+      <section class="pilotagePlan__section pilotagePlan__section--split" aria-labelledby="appUnderstandingDataTitle">
+        <div>
+          <h3 id="appUnderstandingDataTitle">Données qui alimentent le moteur</h3>
+          <ul class="pilotagePlanList">
+            <li>profil : sexe, âge, taille et poids ;</li>
+            <li>objectif et compromis nutritionnel ;</li>
+            <li>dépense automatique ou explicitement renseignée ;</li>
+            <li>repas, activité, sommeil et métriques du jour ;</li>
+            <li>données santé/diabète lorsque le module est activé.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Niveaux de lecture</h3>
+          <ul class="pilotagePlanList">
+            <li><strong>Lecture immédiate</strong> : décision rapide du jour.</li>
+            <li><strong>Détail expert</strong> : logique de calcul et arbitrages.</li>
+            <li><strong>Historique</strong> : recul multi-jours et tendances.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="pilotagePlan__section pilotagePlan__section--warning" aria-labelledby="appUnderstandingHealthTitle">
+        <h3 id="appUnderstandingHealthTitle">Santé / diabète</h3>
+        <p>
+          Les données santé sont des repères de contexte. Elles peuvent aider à relier alimentation, activité, sommeil ou stress, mais elles ne constituent pas un avis médical, un diagnostic ou une prescription.
+        </p>
+      </section>
+
+      <section class="pilotagePlan__section" aria-labelledby="appUnderstandingHelpTitle">
+        <h3 id="appUnderstandingHelpTitle">Les différents niveaux d’aide</h3>
+        <div class="pilotagePlanHelpGrid">
+          <div><strong>Comprendre l’application</strong><span>Logique globale du produit.</span></div>
+          <div><strong>Comment ça marche ?</strong><span>Marche à suivre et codes visuels.</span></div>
+          <div><strong>Info-dots</strong><span>Définition courte et contextuelle.</span></div>
+          <div><strong>Détail expert</strong><span>Calcul et arbitrage.</span></div>
+          <div><strong>Mini-tutos</strong><span>Aide contextuelle à une saisie.</span></div>
+          <div><strong>Conditions</strong><span>Limites et responsabilité.</span></div>
+        </div>
+      </section>
+    </div>
+    <div class="modal__foot">
+      <button class="btn-ghost" id="appUnderstandingFootClose" type="button">Fermer</button>
     </div>
   </div>
 </div>
