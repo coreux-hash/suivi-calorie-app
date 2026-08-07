@@ -116,3 +116,16 @@ test('guide pratique et présentation conceptuelle sont autonomes', () => {
   assert.doesNotMatch(html, /id="pilotageGuideMore"/);
   assert.doesNotMatch(html, /Pour aller plus loin/);
 });
+
+test('statusbar fixe mobile sans duplication DOM', () => {
+  const shellObserverSource = fs.readFileSync(path.join(appRoot, 'js/legacy/legacy-shell-observers.js'), 'utf8');
+  const appInitSource = fs.readFileSync(path.join(appRoot, 'js/legacy/legacy-app-init.js'), 'utf8');
+  const flowvizCss = fs.readFileSync(path.join(appRoot, 'css/screens/flowviz.css'), 'utf8');
+  assert.equal((shellObserverSource.match(/id = 'phase5StatusBar'/g) || []).length, 1);
+  assert.match(appInitSource, /window\.phase6SyncAppbarHeightVar = phase6SyncAppbarHeightVar/);
+  assert.match(appInitSource, /--phase5-statusbar-h/);
+  assert.match(flowvizCss, /body\.phase5MobileStatusFixed \.phase5ShellLine\s*\{\s*display:block;/);
+  assert.match(flowvizCss, /body\.phase5MobileStatusFixed \.phase5StatusBar\s*\{/);
+  assert.match(flowvizCss, /grid-template-columns:repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(flowvizCss, /body\.phase5MobileStatusFixed \.phase5StatusMeta\s*\{\s*display:none;/);
+});

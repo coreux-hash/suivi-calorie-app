@@ -406,15 +406,27 @@ $("btnMenuOpenHelpModal")?.addEventListener("click", () => { openSettingsHelpMod
 
 function phase6SyncAppbarHeightVar(){
   const appbar = document.querySelector('.appbar');
+  const statusbar = $('phase5StatusBar');
   const h = Math.ceil(appbar?.getBoundingClientRect().height || 72);
+  const narrow = window.matchMedia ? window.matchMedia('(max-width: 860px)').matches : false;
+  const touch = window.matchMedia ? window.matchMedia('(hover: none), (pointer: coarse)').matches : false;
+  const dockStatusbar = !!statusbar && narrow && touch;
   document.documentElement.style.setProperty('--appbar-h', h + 'px');
+  document.body.classList.toggle('phase5MobileStatusFixed', dockStatusbar);
+  const statusH = dockStatusbar ? Math.ceil(statusbar.getBoundingClientRect().height || 0) : 0;
+  document.documentElement.style.setProperty('--phase5-statusbar-h', statusH + 'px');
 }
+window.phase6SyncAppbarHeightVar = phase6SyncAppbarHeightVar;
 
 function phase6GetSettingsShellOffset(){
   let offset = 12;
   const appbar = document.querySelector('.appbar');
   const nav = document.querySelector('.phase1PrimaryNav');
+  const statusbar = $('phase5StatusBar');
   if (appbar) offset += Math.ceil(appbar.getBoundingClientRect().height || 0);
+  if (document.body.classList.contains('phase5MobileStatusFixed') && statusbar) {
+    offset += Math.ceil(statusbar.getBoundingClientRect().height || 0) + 8;
+  }
   if (nav && window.getComputedStyle(nav).display !== 'none') {
     offset += Math.ceil(nav.getBoundingClientRect().height || 0) + 8;
   }

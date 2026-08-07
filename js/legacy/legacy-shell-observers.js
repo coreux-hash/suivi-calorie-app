@@ -757,6 +757,7 @@ function phase5Refresh(){
   phase5SyncGateDisclosureMode(false);
   phase5RenderEmptyStates();
   phase6SyncShellAvailability();
+  try{ window.phase6SyncAppbarHeightVar?.(); }catch(e){}
 }
 
 function phaseEllipsisTapGetSettingsCard(){

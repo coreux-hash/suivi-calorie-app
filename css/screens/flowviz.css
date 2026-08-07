@@ -1562,6 +1562,62 @@
   }
 }
 
+@media (max-width: 860px) and ((hover: none) or (pointer: coarse)){
+  body.phase5MobileStatusFixed .container{
+    padding-top:calc(var(--appbar-h, 72px) + var(--phase5-statusbar-h, 168px) + 14px);
+  }
+
+  body.phase5MobileStatusFixed .phase5ShellLine{
+    display:block;
+    margin:0;
+  }
+
+  body.phase5MobileStatusFixed .phase5StatusBar{
+    position:fixed;
+    top:var(--appbar-h, 72px);
+    left:max(10px, env(safe-area-inset-left));
+    right:max(10px, env(safe-area-inset-right));
+    z-index:990;
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:6px;
+    width:auto;
+    max-width:1180px;
+    margin:0 auto;
+    padding:7px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;
+    background:rgba(8,13,26,.92);
+    box-shadow:0 18px 42px rgba(0,0,0,.36);
+    backdrop-filter:blur(18px);
+  }
+
+  body.phase5MobileStatusFixed .phase5StatusCard{
+    padding:7px 8px;
+    border-radius:12px;
+    background:rgba(255,255,255,.052);
+    box-shadow:none;
+  }
+
+  body.phase5MobileStatusFixed .phase5StatusLabel{
+    font-size:.64rem;
+    line-height:1.1;
+    margin-bottom:2px;
+  }
+
+  body.phase5MobileStatusFixed .phase5StatusValue{
+    font-size:.82rem;
+    line-height:1.12;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  body.phase5MobileStatusFixed .phase5StatusMeta{
+    display:none;
+  }
+}
+
 
 
 /* ======================================================

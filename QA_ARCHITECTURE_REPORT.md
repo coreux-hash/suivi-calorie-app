@@ -236,3 +236,17 @@ Les deux modales possèdent des identifiants, titres, descriptions, contrôles d
 QA finale : 18/18 tests natifs réussis. Les deux fenêtres ont été exercées et capturées à 390 × 844 et 1366 × 768 ; leur autonomie, leur contenu, l’absence de débordement, l’absence d’erreur JavaScript et l’absence d’écriture dans `localStorage` sont contrôlés.
 
 Différentiel de cette passe : **6 fichiers modifiés, 0 ajouté, 0 supprimé ; 177 lignes ajoutées, 99 supprimées, solde +78 lignes**.
+
+## Passe mobile — statusbar fixe
+
+La barre `#phase5StatusBar` reste générée une seule fois par `phase5EnsureTopContext()`. Elle n’est ni dupliquée ni déplacée dans le DOM.
+
+Sur mobile tactile uniquement, la classe `phase5MobileStatusFixed` fixe cette barre sous l’appbar et conserve une grille à deux colonnes. La hauteur réelle de la barre est mesurée par `phase6SyncAppbarHeightVar()` et injectée dans `--phase5-statusbar-h` afin de compenser le `padding-top` du contenu et d’éviter le recouvrement visuel.
+
+Correctif visibilité 2026-08-07 : le parent `.phase5ShellLine` est explicitement réaffiché en mode `body.phase5MobileStatusFixed`. Cela neutralise la règle mobile historique qui masquait `.phase5ShellLine` sous 680 px et rendait `#phase5StatusBar` invisible malgré son positionnement fixe.
+
+Pour limiter l’emprise verticale du header mobile, les métas secondaires des cartes sont masquées dans cette variante fixe. Les valeurs principales restent visibles : espace actif, date pilotée, profil actif, mode/diabète, compromis choisi et objectif suivi.
+
+Contrôles exécutés dans cette session : 18/18 tests natifs réussis, syntaxe JavaScript validée, identifiants HTML uniques, CSS équilibré, règles `L/D` inchangées.
+
+Limite de QA : la QA Chromium n’a pas pu être exécutée dans cette session, car aucun binaire Chromium n’était disponible et le téléchargement temporaire Playwright depuis `cdn.playwright.dev` a retourné une archive vide. Le contrôle visuel réel mobile reste donc à refaire avant gel définitif de cette variante.
