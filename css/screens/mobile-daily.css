@@ -1,0 +1,295 @@
+/* Surface mobile distincte : aucun calcul, stockage ou champ dupliqué. */
+.mobileDaily{display:none}
+.mobileMenuGroup{display:none}
+.mobileDailyDrawerSettings{display:none}
+
+@media (max-width:860px){
+  .container{max-width:680px;padding:calc(var(--appbar-h, 56px) + 4px) 0 calc(86px + env(safe-area-inset-bottom));}
+  /* Neutralise the former fixed mobile statusbar reservation: the drawer is out of flow. */
+  body.phase5MobileStatusFixed .container{padding-top:calc(var(--appbar-h, 56px) + 4px)!important}
+  /* v23 : les modales globales (CGU, aide, cloud, guide…) sont enfants directs de .container
+     et doivent rester affichables sur mobile ; seules les surfaces desktop sont masquées. */
+  .container > :not(.mobileDaily):not(.modal){display:none !important;}
+  .appbar__inner{padding:10px 12px;gap:10px}.appbar .brandText{display:block}.appbar .brandSub{display:none}.appbar .brandTitle{font-size:1rem}.appbarAction--help{display:inline-flex;margin-left:auto}.appbarAction--menu{font-size:1rem}.menuPanel .menuGroup:not(.mobileMenuGroup){display:none}.menuPanel .mobileMenuGroup{display:block;margin:0;padding:0;border:0}
+  .mobileDaily{display:block;padding:0 12px}
+  .mobileDaily[hidden],.mobileDailyView[hidden]{display:none !important}
+  .mobileDaily__head{display:none}.mobileDailyIntro h2{margin:0;font-size:1.42rem;letter-spacing:-.025em}
+  .mobileDaily__eyebrow,.mobileDailyState__eyebrow{margin:0 0 3px;color:var(--muted);font-size:.76rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+  .mobileDailyState{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(75,156,118,.18),rgba(75,156,118,.05));margin-bottom:14px}
+  .mobileDailyState[data-tone="warn"]{background:linear-gradient(135deg,rgba(210,153,49,.20),rgba(210,153,49,.05))}
+  .mobileDailyState h2{margin:0 0 3px;font-size:1.15rem}.mobileDailyState p{margin:0;color:var(--muted);font-size:.9rem}
+  .mobileDailyState__count{width:58px;height:58px;display:grid;place-content:center;border-radius:50%;background:var(--card);font-size:1.35rem;font-weight:900;text-align:center}.mobileDailyState__count span{font-size:.72rem;color:var(--muted);font-weight:700}
+  .mobileDailyState.is-celebrating{animation:mobileDailyCelebrate .9s ease-out}.mobileDailyBadge{width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:11px 12px;margin:-4px 0 14px;border:1px solid rgba(120,115,255,.35);border-radius:15px;color:var(--text);background:linear-gradient(120deg,rgba(113,95,216,.20),rgba(56,196,184,.10));}.mobileDailyBadge__icon{font-size:1.35rem}.mobileDailyBadge__copy{display:grid;gap:1px;min-width:0;flex:1}.mobileDailyBadge__copy>span,.mobileDailyBadge small{color:var(--muted);font-size:.72rem}.mobileDailyBadge strong{font-size:.91rem}.mobileDailyBadge__progress{font-weight:900;font-size:.84rem;white-space:nowrap}
+  .mobileDailyActions{display:grid;gap:9px}.mobileDailyAction{border:1px solid var(--line);border-radius:17px;background:var(--card);overflow:hidden}.mobileDailyAction[data-complete="true"]{border-color:rgba(75,156,118,.55)}
+  .mobileDailyAction__head{display:flex;width:100%;gap:10px;padding:13px 14px;align-items:center;text-align:left;border:0;background:transparent;color:var(--text)}.mobileDailyAction__head>span:nth-child(2){display:grid;gap:2px;min-width:0;flex:1}.mobileDailyAction__head strong{font-size:1.06rem}.mobileDailyAction__head small{color:var(--muted);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mobileDailyAction__head b{font-size:1.1rem;transition:transform .18s ease}.mobileDailyAction[data-open="true"] .mobileDailyAction__head b{transform:rotate(180deg)}.mobileDailyAction__step{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08);font-size:.78rem;font-weight:900}.mobileDailyAction[data-complete="true"] .mobileDailyAction__step{background:rgba(75,156,118,.35)}
+  .mobileDailyAction__body{padding:0 12px 13px}.mobileDailyAction__body>.phase2Panel{border:0;background:transparent;padding:0;box-shadow:none}.mobileDailyAction__body .phase2Panel__head{display:none}.mobileDailyAction__body .phase2Slot{margin:0}
+  .mobileDailyAction__body .phase1PulseCard{padding:0;border:0;background:transparent}.mobileDailyAction__body .phase1PulseMeta{margin-top:7px}
+  /* v23 : décompte du jour (lecture de #rK/#eK) et bouton de confirmation de la dépense. */
+  .mobileDailyRemaining{margin-top:6px!important;color:var(--text)!important;font-size:.95rem!important}.mobileDailyRemaining strong{font-size:1.08rem}.mobileDailyRemaining span{color:var(--muted);font-size:.84rem}
+  .mobileDailySpendConfirm{display:block;width:100%;margin-top:10px;min-height:44px;border:1px solid rgba(124,92,255,.38);border-radius:12px;background:rgba(124,92,255,.17);color:var(--text);font-size:.92rem;font-weight:800}#mobileDailySpendCard[data-complete="true"] .mobileDailySpendConfirm{display:none}
+  /* v23 : visibility.css masque le marqueur natif via ::-webkit-details-marker, pseudo-élément que
+     Chromium ≥ 89 ne reconnaît plus ; le marqueur natif s'ajoutait au « ▸ » de ::before (double chevron). */
+  .mobile-daily-active details > summary{list-style:none}.mobile-daily-active details > summary::marker{content:""}
+  /* v23 : au premier lancement, « Mes informations » avant « Utilisateurs ». */
+  .mobile-daily-active #settingsProfileSlot{display:flex;flex-direction:column}.mobile-daily-active #settingsProfileSlot>.settingsCardUsers{order:10}
+  .mobileDailyMore{margin:14px 0 4px;border:1px solid var(--line);border-radius:15px;background:var(--card);overflow:hidden}.mobileDailyMore summary{display:flex;justify-content:space-between;gap:8px;padding:14px;font-weight:800;cursor:pointer}.mobileDailyMore summary span{font-size:.78rem;color:var(--muted);font-weight:600;text-align:right}.mobileDailyMore[open]>div{padding:0 12px 12px}.mobileDailyMore .phase2Panel{padding:12px 0;border:0;border-top:1px solid var(--line);background:transparent;box-shadow:none}
+  /* Optional cues: short, independently legible cards.  They reuse the real
+     Journal fields; no mirrored inputs, summary values or diabetes state. */
+  #mobileDailyMoreSlot .phase2JournalPanel--sleep .phase2Panel__head{display:none}
+  #mobileDailyMoreSlot .phase2JournalPanel--sleep #sleepCard{margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+  #mobileDailyMoreSlot .phase2JournalPanel--sleep .sleepCardHead{align-items:center!important}
+  #mobileDailyMoreSlot .phase2JournalPanel--sleep .sleepSummary,#mobileDailyMoreSlot .phase2JournalPanel--sleep .sleepEditor{margin-top:10px!important}
+  #mobileDailyMoreSlot .phase2JournalPanel--sleep #btnSleepEdit{width:100%;margin-top:10px!important}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase2MicroHead{margin:0 0 10px}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase2MicroHead h3{font-size:0;margin:0}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase2MicroHead h3::after{content:"Poids / composition";font-size:1rem}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase2MicroHead p{margin:.25rem 0 0;font-size:.82rem}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase3BodyCard{padding:0;border:0;background:transparent;box-shadow:none}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase3MiniGrid{grid-template-columns:1fr}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase3MiniGrid--3{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase3MiniGrid--3 .accTile{padding:8px 6px}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase3MiniGrid--3 label{font-size:.7rem}
+  #mobileDailyMoreSlot .phase2JournalPanel--metrics .phase3Hint{margin-bottom:8px;font-size:.78rem}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes[hidden]{display:none!important}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .phase2Panel__head{padding:0 0 10px}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .phase2Panel__head h2{font-size:1rem}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .phase2Panel__desc{margin:.25rem 0 0;font-size:.82rem}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .phase2Slot>details.notice{display:none!important}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .phase2Slot>.card{padding:0;border:0;background:transparent;box-shadow:none}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .phase2Slot>.card>.muted{margin:0 0 10px!important;font-size:.8rem}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .phase2Slot>.card>.grid{display:grid;gap:10px}
+  #mobileDailyMoreSlot .mobileDailyDiabetesContext,#mobileDailyMoreSlot .mobileDailyDiabetesGlucose{margin:0!important;padding:12px!important;border:1px solid var(--line)!important;border-radius:13px!important;background:rgba(255,255,255,.025)!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesContext h2,#mobileDailyMoreSlot .mobileDailyDiabetesGlucose h2{font-size:.98rem;margin:0 0 10px!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMain{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important;margin:0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMain>div:first-child{grid-column:1 / -1}
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMore{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important;margin:9px 0 0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMore>div:last-child{grid-column:1 / -1;min-width:0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucose>p{margin:.1rem 0 .6rem!important;font-size:.78rem}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important;margin:0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields .row{display:block!important;margin:0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields>div:nth-of-type(1){grid-area:value}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields>div:nth-of-type(2){grid-area:unit}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields>div:nth-of-type(3){grid-area:moment}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields>div:nth-of-type(4){grid-area:time}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields{grid-template-areas:"value unit" "moment time";align-items:end}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote{display:grid!important;grid-template-columns:1fr;gap:9px!important;margin:9px 0 0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote>div{min-width:0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote>div[style*="align-self"]{min-width:0!important}
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote button{width:100%}
+  /* Les .row legacy imposent 190 px par cellule : incompatible avec deux
+     colonnes dans la largeur mobile. Ces exceptions ne concernent que la
+     surface mobile déplacée, le rendu desktop conserve donc ses dimensions. */
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMain>div,
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMore>div,
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields>div,
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote>div{
+    min-width:0!important;
+    width:auto;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMain label,
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMore label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    min-width:0;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesLabelText{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMain .info-dot,
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMore .info-dot{flex:0 0 auto}
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMain input,
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMain select,
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMore input,
+  #mobileDailyMoreSlot .mobileDailyDiabetesContextMore select,
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields input,
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseFields select,
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote input,
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote select,
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote button{
+    box-sizing:border-box;
+    min-width:0;
+    width:100%;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote>div:nth-child(1),
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote>div:nth-child(2){
+    grid-column:1 / -1;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote>div:nth-child(3),
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote>div:nth-child(4){
+    grid-column:auto;
+    align-self:end!important;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote details.notice{
+    margin:0!important;
+    padding:8px 10px;
+    border-radius:12px;
+  }
+  #mobileDailyMoreSlot .mobileDailyDiabetesGlucoseNote details.notice>summary{
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    gap:8px;
+    min-height:22px;
+    margin:0;
+    line-height:22px;
+  }
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes #diab_glucoseTableWrap{overflow:auto;margin-top:10px}
+  #mobileDailyMoreSlot .phase2JournalPanel--diabetes .diabChartAcc{margin:10px 0 0}
+  .mobileDailyIntro{margin:0 0 14px}.mobileDailyIntro p:last-child{margin:.35rem 0 0;color:var(--muted);font-size:.91rem}
+  #mobileDailyHistoryMainSlot .histChargeGuide{display:none}#mobileDailyHistoryMainSlot .phase2Panel{padding:14px;background:var(--card);border:1px solid var(--line);border-radius:16px}#mobileDailyHistoryMainSlot .phase2Panel__head{padding:0 0 10px}#mobileDailyHistoryMainSlot .phase2Panel__desc{font-size:.85rem}
+  #mobileDailyHistoryPlayfulSlot{display:grid;gap:12px;margin-top:12px}#mobileDailyHistoryPlayfulSlot .phase2Panel{padding:14px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+  /* Analyses : les valeurs courtes gagnent une lecture en duo ; les contenus
+     explicatifs restent larges afin de ne pas transformer l'information en code. */
+  .phase2HistoryPanel--trend #accTrendExpert .accGrid,
+  .phase2HistoryPanel--health #accHistAdvanced>.accBody>.accGrid:not(.accGrid3){
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .phase2HistoryPanel--trend #accTrendExpert .accGrid>.accTile:nth-child(5),
+  .phase2HistoryPanel--trend #accTrendExpert .accGrid>.accTile:nth-child(6){
+    grid-column:1 / -1;
+  }
+  .phase2HistoryPanel--health #accHistAdvanced .accTile--bmiCat{
+    order:10;
+    grid-column:1 / -1;
+  }
+  .phase2HistoryPanel--trend #accTrendExpert .accTile label,
+  .phase2HistoryPanel--health #accHistAdvanced>.accBody>.accGrid:not(.accGrid3) .accTile label{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .phase2HistoryPanel--trend .accTile .muted.tiny,
+  .phase2HistoryPanel--health .accTile .muted.tiny{
+    display:-webkit-box;
+    overflow:hidden;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    line-height:1.35;
+  }
+  .phase2HistoryPanel--trend .mobileTruncationHint,
+  .phase2HistoryPanel--health .mobileTruncationHint,
+  .phase2HistoryPanel--diab .mobileTruncationHint{position:relative;cursor:help}
+  .phase2HistoryPanel--trend .mobileTruncationHint:hover::after,
+  .phase2HistoryPanel--trend .mobileTruncationHint:active::after,
+  .phase2HistoryPanel--trend .mobileTruncationHint:focus-visible::after,
+  .phase2HistoryPanel--health .mobileTruncationHint:hover::after,
+  .phase2HistoryPanel--health .mobileTruncationHint:active::after,
+  .phase2HistoryPanel--health .mobileTruncationHint:focus-visible::after,
+  .phase2HistoryPanel--diab .mobileTruncationHint:hover::after,
+  .phase2HistoryPanel--diab .mobileTruncationHint:active::after,
+  .phase2HistoryPanel--diab .mobileTruncationHint:focus-visible::after{
+    content:attr(data-mobile-fulltext);
+    position:absolute;
+    z-index:8;
+    left:0;
+    bottom:calc(100% + 6px);
+    width:max-content;
+    max-width:min(260px,calc(100vw - 40px));
+    padding:7px 9px;
+    border:1px solid rgba(255,255,255,.20);
+    border-radius:9px;
+    background:rgba(10,15,28,.98);
+    box-shadow:0 8px 22px rgba(0,0,0,.34);
+    color:var(--text);
+    font-size:.78rem;
+    font-weight:700;
+    line-height:1.3;
+    white-space:normal;
+    pointer-events:none;
+  }
+  /* Historique diabète : sélection et action restent côte à côte. */
+  .phase2HistoryPanel--diab .historyDiabToolbar{
+    grid-template-columns:minmax(0,1fr) minmax(104px,.72fr)!important;
+    align-items:end;
+  }
+  .phase2HistoryPanel--diab .historyDiabToolbarField input,
+  .phase2HistoryPanel--diab .historyDiabToolbarActions,
+  .phase2HistoryPanel--diab .historyDiabToolbarActions>button{
+    box-sizing:border-box;
+    min-width:0;
+    width:100%;
+  }
+  /* Les dix colonnes restent disponibles par défilement, avec une empreinte
+     adaptée au mobile et des en-têtes courts uniquement à ce breakpoint. */
+  .phase2HistoryPanel--diab .historyDiabTable{
+    width:660px;
+    min-width:660px!important;
+    table-layout:fixed;
+  }
+  .phase2HistoryPanel--diab .historyDiabTable th,
+  .phase2HistoryPanel--diab .historyDiabTable td{
+    padding:8px 6px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(1){width:88px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(2){width:60px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(3){width:65px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(4){width:56px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(5){width:56px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(6){width:48px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(7){width:58px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(8){width:58px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(9){width:120px}
+  .phase2HistoryPanel--diab .historyDiabTable th:nth-child(10){width:48px}
+  .phase2HistoryPanel--diab .historyDiabTable__label--short{display:inline}
+  .phase2HistoryPanel--diab .historyDiabTable__label--full{display:none}
+  .mobileDailyMealsHistory{margin-top:12px}.mobileDailyMealsHistory summary>span:first-child{display:flex;gap:4px;align-items:center;font:inherit;color:var(--text)}.mobileDailyMealsHistory summary b{font:inherit;color:var(--text)}#mobileDailyMealsHistorySlot .meals-wrap{margin-top:2px;padding-bottom:4px}#mobileDailyMealsHistorySlot .wide-table{font-size:.88rem}
+  /* Réglages mobile : parcours, pas réduction du bureau. Les champs restent les
+     composants historiques ; seule leur séquence de lecture devient mobile. */
+  .mobileSetupIntro{margin-bottom:12px}
+  .mobileSetupState{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 17px;margin:0 0 12px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,rgba(113,95,216,.20),rgba(56,196,184,.08))}
+  .mobileSetupState[data-complete="true"]{background:linear-gradient(135deg,rgba(75,156,118,.20),rgba(75,156,118,.05));border-color:rgba(75,156,118,.45)}
+  .mobileSetupState h3{margin:0 0 3px;font-size:1.08rem}.mobileSetupState p{margin:0;color:var(--muted);font-size:.86rem}.mobileSetupState__count{width:54px;height:54px;display:grid;place-content:center;border-radius:50%;background:var(--card);font-size:1.23rem;font-weight:900;text-align:center}.mobileSetupState__count span{font-size:.7rem;color:var(--muted);font-weight:700}
+  #mobileSetupModeSlot{margin:0 0 12px}.mobileSetupModeBlock{width:100%;min-width:0}.mobileSetupModeBlock>details{margin:0}.mobileSetupModeBlock .row{display:grid;grid-template-columns:1fr;gap:8px}.mobileSetupModeBlock .row>div{min-width:0}.mobileSetupModeBlock select{width:100%}
+  .mobileSetupSteps{display:grid;gap:8px;margin-bottom:12px}.mobileSetupStep{display:flex;width:100%;align-items:center;gap:10px;padding:12px 13px;text-align:left;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:15px}.mobileSetupStep>span:nth-child(2){display:grid;gap:2px;min-width:0;flex:1}.mobileSetupStep strong{font-size:.98rem}.mobileSetupStep small{color:var(--muted);font-size:.79rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mobileSetupStep>b{font-size:1.05rem;transition:transform .18s ease}.mobileSetupStep[aria-expanded="true"]{border-color:rgba(124,92,255,.56);background:linear-gradient(135deg,rgba(113,95,216,.18),rgba(255,255,255,.025))}.mobileSetupStep[aria-expanded="true"]>b{transform:rotate(180deg)}.mobileSetupStep[data-complete="true"] .mobileDailyAction__step{background:rgba(75,156,118,.35)}
+  #mobileDailySettingsSlot .phase2Grid--settings,#mobileDailySettingsSlot .phase2SettingsGrid{display:block}
+  #mobileDailySettingsSlot .settingsPanel{margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+  /* Accordéon : le slot est déplacé par le JS directement sous l'étape ouverte
+     (même modèle que .mobileDailyAction d'« Aujourd'hui »). Il se présente alors
+     comme la carte de cette étape, et disparaît (hidden) à la fermeture. */
+  .mobileSetupSteps > #mobileDailySettingsSlot{margin:-2px 0 2px;padding:13px 14px;border:1px solid rgba(124,92,255,.30);border-top:0;border-radius:0 0 15px 15px;background:linear-gradient(135deg,rgba(113,95,216,.08),rgba(255,255,255,.015))}
+  #mobileDailySettingsSlot[hidden]{display:none}
+  #mobileDailySettingsSlot .settingsPanel .phase2Panel__head{display:none}
+  #mobileDailySettingsSlot[data-mobile-settings-open="profile"] .settingsPanel:not(.settingsPanel--profile),#mobileDailySettingsSlot[data-mobile-settings-open="watch"] .settingsPanel:not(.settingsPanel--watch),#mobileDailySettingsSlot[data-mobile-settings-open="goals"] .settingsPanel:not(.settingsPanel--goals),#mobileDailySettingsSlot[data-mobile-settings-open="compromise"] .settingsPanel:not(.settingsPanel--goals){display:none}
+  #mobileDailySettingsSlot .phase2Slot{margin:0}
+  #mobileDailySettingsSlot .settingsRow--users,#mobileDailySettingsSlot .settingsRow--infos,#mobileDailySettingsSlot .settingsRow--macros,#mobileDailySettingsSlot .settingsRow--macrosSecondary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+  #mobileDailySettingsSlot .settingsRow--users>div,#mobileDailySettingsSlot .settingsRow--infos>div,#mobileDailySettingsSlot .settingsRow--macros>div,#mobileDailySettingsSlot .settingsRow--macrosSecondary>div{min-width:0}
+  #mobileDailySettingsSlot .settingsRow--users input,#mobileDailySettingsSlot .settingsRow--users select,#mobileDailySettingsSlot .settingsRow--users button,#mobileDailySettingsSlot .settingsRow--infos input,#mobileDailySettingsSlot .settingsRow--infos select,#mobileDailySettingsSlot .settingsRow--macros input,#mobileDailySettingsSlot .settingsRow--macros select,#mobileDailySettingsSlot .settingsRow--macrosSecondary input,#mobileDailySettingsSlot .settingsRow--macrosSecondary select{box-sizing:border-box;width:100%;min-width:0}
+  #mobileDailySettingsSlot .mobileWatchCard>.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mobileWatchCard>.row>div{min-width:0}.mobileWatchCard>.row>div:only-child{grid-column:1 / -1}.mobileWatchCard .mobileWatchEmptyRow{display:none}.mobileWatchCard .mobileWatchProfile{margin:0 0 12px;padding:0;border:0;background:transparent}.mobileWatchCard .mobileWatchErrMode{min-width:0}
+  /* Les cibles ellipsis gardent le même contrat après avoir quitté
+     .phase2Screen : texte de label sur une ligne, contenu descriptif sur deux. */
+  #mobileDailySettingsSlot .phaseEllipsisTapTarget{min-width:0;max-width:100%;cursor:help}
+  #mobileDailySettingsSlot label.phaseEllipsisTapTarget{display:flex;align-items:center;gap:.42rem;overflow:hidden}
+  #mobileDailySettingsSlot .phaseEllipsisTap__text{display:block;min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #mobileDailySettingsSlot .phaseEllipsisTap__content{display:-webkit-box;min-width:0;max-width:100%;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;line-height:1.35}
+  #mobileDailySettingsSlot label.phaseEllipsisTapTarget .info-dot{flex:0 0 auto}
+  #mobileDailySettingsSlot select.phaseEllipsisTapTarget{box-sizing:border-box;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* Les steppers sont construits avant le portage de la grille Réglages. Une
+     fois dans cette surface, ils ne sont plus descendants de .phase2Screen :
+     on réapplique ici, et ici seulement, leur contrat de positionnement. */
+  #mobileDailySettingsSlot .mobileDiscreteStepper{display:none}
+  @media (max-width:680px){
+    #mobileDailySettingsSlot .mobileStepperInputWrap{position:relative;width:100%}
+    #mobileDailySettingsSlot .mobileStepperInput{box-sizing:border-box;width:100%;padding-right:4.4rem}
+    #mobileDailySettingsSlot .mobileDiscreteStepper{position:absolute;top:50%;right:.38rem;transform:translateY(-50%);display:flex;align-items:center;gap:.22rem;z-index:2}
+    #mobileDailySettingsSlot .mobileDiscreteStepper__btn{width:1.7rem!important;min-width:1.7rem!important;max-width:1.7rem!important;height:1.7rem;min-height:1.7rem;max-height:1.7rem;flex:0 0 1.7rem;border-radius:999px;padding:0;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box}
+    #mobileDailySettingsSlot .mobileDiscreteStepper__btn:active{transform:scale(.97)}
+    #mobileDailySettingsSlot .mobileDiscreteStepper__btn[disabled]{opacity:.45;cursor:default}
+  }
+  #mobileDailyMealsSlot .phase2DietNoteDisclosure{display:none}#mobileDailyMealsSlot .phase2MealModeRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#mobileDailyMealsSlot .phase2MealModeRow .phase2MealModeBtn{width:100%;min-width:0}#mobileDailyMealsSlot #mealPanelManual>.row,#mobileDailyMealsSlot #mealPanelQuick>.row.mt-05{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#mobileDailyMealsSlot #mealPanelManual>.row>div,#mobileDailyMealsSlot #mealPanelQuick>.row.mt-05>div{min-width:0}#mobileDailyMealsSlot #mealPanelManual{padding:12px}#mobileDailyMealsSlot .mealActions{display:block}#mobileDailyMealsSlot .mealActions .self-end,#mobileDailyMealsSlot .mealActions button{width:100%}#mobileDailyMealsSlot #btnClearMeals{display:none}#mobileDailyMealsSlot #mealsTableDesktopSlot{display:none}
+  /* The button is an actual .info-dot; the legacy note only supplies its modal text. */
+  #mobileDailyActivitySlot .mobileDailyInfoHeader,#mobileDailyMoreSlot .mobileDailyInfoHeader{justify-content:flex-start!important;gap:8px!important}#mobileDailyActivitySlot .mobileDailyInfoHeader h2,#mobileDailyMoreSlot .mobileDailyInfoHeader h2{margin:0!important}#mobileDailyActivitySlot .phase1SplitNote.mobileDailyInfoSource,#mobileDailyMoreSlot .phase1SplitNote.mobileDailyInfoSource{display:none!important}#mobileDailyActivitySlot .mobileDailyInlineInfo,#mobileDailyMoreSlot .mobileDailyInlineInfo{flex:0 0 24px;margin:0!important}#mobileDailyActivitySlot .mobileDailyInfoHeader .pill,#mobileDailyMoreSlot .mobileDailyInfoHeader .pill{margin-left:auto}
+  .mobileDailyNav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:1fr 1fr;padding:8px 12px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(20,24,29,.96);backdrop-filter:blur(14px)}.mobileDailyNav button{border:0;background:transparent;color:var(--muted);font-size:.77rem;font-weight:800;padding:5px}.mobileDailyNav button span{display:block;font-size:1.05rem;margin-bottom:2px}.mobileDailyNav button.is-active{color:var(--accent,#7ddeb2)}
+  .mobileDailyContextTab{position:fixed;z-index:49;top:calc(var(--appbar-h, 56px) + 128px);right:0;left:auto;width:28px;height:54px;padding:0;border:0;background:transparent;color:transparent;font-size:0;cursor:pointer}.mobileDailyContextTab::after{content:"";position:absolute;top:5px;right:8px;width:4px;height:44px;border-radius:999px;background:linear-gradient(180deg,var(--accent,#7ddeb2),var(--purple,#7c5cff));box-shadow:0 0 0 1px rgba(255,255,255,.18),0 4px 14px rgba(0,0,0,.32)}.mobileDailyContextTab:focus-visible{outline:2px solid var(--accent,#7ddeb2);outline-offset:-3px;border-radius:999px}
+  #phase5ShellLine{display:block!important;margin:0!important}#phase5ShellLine>:not(#phase5StatusBar){display:none!important}.phase5StatusBar--drawer{position:fixed!important;top:calc(var(--appbar-h, 56px) + 8px)!important;right:8px!important;left:auto!important;z-index:50!important;width:auto!important;max-width:420px!important;max-height:calc(100vh - var(--appbar-h, 56px) - 110px);overflow:auto;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin:0!important;padding:8px!important;transform:translateX(calc(100% + 16px));transition:transform .22s ease;pointer-events:none}.phase5StatusBar--drawer.is-open{transform:translateX(0);pointer-events:auto}.phase5StatusBar--drawer::after{display:none}.phase5StatusBar--drawer .phase5StatusCard{min-width:0;padding:7px 6px!important;border-radius:10px!important}.phase5StatusBar--drawer .phase5StatusLabel{font-size:.58rem!important;line-height:1.1!important;margin-bottom:3px!important}.phase5StatusBar--drawer .phase5StatusValue{font-size:.72rem!important;line-height:1.18!important;white-space:normal!important;overflow-wrap:anywhere}.phase5StatusBar--drawer .phase5StatusMeta{display:none!important}.phase5StatusBar--drawer .mobileDailyDrawerSettings{display:block;grid-column:1 / -1;width:100%;margin-top:2px;min-height:36px;border:1px solid rgba(124,92,255,.38);border-radius:10px;background:rgba(124,92,255,.17);color:var(--text);font-size:.82rem;font-weight:800}
+}
+@keyframes mobileDailyCelebrate{0%{transform:scale(1)}35%{transform:scale(1.018);box-shadow:0 0 0 5px rgba(93,210,168,.16)}100%{transform:scale(1)}}

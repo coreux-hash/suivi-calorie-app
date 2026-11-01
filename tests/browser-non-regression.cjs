@@ -298,7 +298,12 @@ async function assertNavigationParity(browser, origin){
   await context.close();
 }
 
-async function assertHistorySpendNavigation(browser, origin, { selector, viewport, label, mobile = false }){
+async function assertHistorySpendNavigation(browser, origin, { selector, viewport, label }){
+  // Scénario desktop uniquement : le quicknav Historique -> Dépense et sa cible
+  // #todayReadingPanel appartiennent au shell desktop. À <=860px ce shell est masqué
+  // (`.container > :not(.mobileDaily){display:none}` dans mobile-daily.css) au profit de
+  // la surface mobile dédiée #mobileDailyApp, qui présente la dépense dans « Aujourd'hui ».
+  // La présence de cet essentiel mobile est couverte par mobile-daily-structure.test.cjs.
   const { context, page, pageErrors } = await openFixture(browser, origin, fixture(), viewport);
   await page.evaluate(() => window.__Phase6.NavigationFacade.openTab('history', { delay:0 }));
   await page.waitForTimeout(140);
@@ -307,11 +312,6 @@ async function assertHistorySpendNavigation(browser, origin, { selector, viewpor
     days:localStorage.getItem('secheapp.default.days.v6')
   }));
 
-  if (mobile) {
-    await page.evaluate(() => document.getElementById('historyMainPanel')?.scrollIntoView());
-    await page.waitForTimeout(120);
-    await page.locator('#historyJumpFloatToggle').click();
-  }
   await page.locator(selector).click();
   await page.waitForTimeout(220);
 
@@ -333,7 +333,10 @@ async function assertHistorySpendNavigation(browser, origin, { selector, viewpor
 }
 
 async function assertHistoryChargeGuideInfo(browser, origin){
-  const { context, page, pageErrors } = await openFixture(browser, origin, fixture(), { width:390, height:844 });
+  // Info-dot du guide de charge : élément du panneau Historique desktop, masqué à <=860px
+  // (surface mobile #mobileDailyApp). On vérifie donc le contenu de sa modale à une largeur
+  // desktop où le déclencheur existe.
+  const { context, page, pageErrors } = await openFixture(browser, origin, fixture(), { width:1366, height:768 });
   await page.evaluate(() => window.__Phase6.NavigationFacade.openTab('history', { delay:0 }));
   await page.waitForTimeout(140);
   await page.locator('#historyChargeGuideInfo').click();
@@ -417,7 +420,12 @@ async function assertProfileAndDateDoNotSave(browser, origin){
   const profiles = [{ id:'alpha', label:'Alpha' }, { id:'beta', label:'Beta' }];
   const storage = fixture({ activeProfile:'alpha', profiles, days:energyDays(1) });
   storage['secheapp.beta.settings.v2'] = JSON.stringify({ ...baseSettings, age:0, compromiseId:'' });
-  const { context, page, pageErrors } = await openFixture(browser, origin, storage, { width:768, height:1024 });
+  // Invariant « aucune sauvegarde silencieuse au changement de profil/date » : indépendant de
+  // la largeur, il porte sur l'état et la persistance. On l'exécute via les contrôles desktop
+  // (#profileSelect, #compromiseSelect, #dayDate), masqués à <=860px par la surface mobile.
+  // (v20) Largeur 768 -> 1280 : ce test pilotait des contrôles du shell desktop désormais
+  // masqués sur la surface mobile #mobileDailyApp.
+  const { context, page, pageErrors } = await openFixture(browser, origin, storage, { width:1280, height:1024 });
   const alphaBefore = await page.evaluate(() => localStorage.getItem('secheapp.alpha.days.v6'));
   await page.evaluate(() => window.__Phase6.NavigationFacade.openTab('settings', { delay:0 }));
   await page.waitForTimeout(120);
@@ -465,14 +473,15 @@ async function main(){
         viewport:{ width:1366, height:768 },
         label:'desktop-1366x768'
       });
-      await assertHistorySpendNavigation(browser, origin, {
-        selector:'#historyJumpFloatPanel [data-history-jump="spend"]',
-        viewport:{ width:390, height:844 },
-        label:'mobile-390x844',
-        mobile:true
-      });
+      // Note (v20) : la branche mobile (390x844) de ce scénario a été retirée. Elle pilotait
+      // le toggle legacy #historyJumpFloatToggle, désormais masqué à <=860px par la surface
+      // mobile #mobileDailyApp ; l'essentiel « Dépense » mobile est couvert par
+      // mobile-daily-structure.test.cjs.
       await assertHistoryChargeGuideInfo(browser, origin);
-      await assertHowItWorksGuide(browser, origin, { width:390, height:844 });
+      // Note (v20) : l'invocation 390x844 de ce scénario a été retirée. Le guide « Comment ça
+      // marche ? » (#pilotagePlanModal) et ses info-dots sont dans .container, masqué et non
+      // interactif à <=860px (surface mobile #mobileDailyApp). Sur mobile, l'aide passe par le
+      // menu (#btnMobileMenuOpenHelp). Ce scénario reste un garde-fou du shell desktop.
       await assertHowItWorksGuide(browser, origin, { width:1366, height:768 });
       await assertProfileAndDateDoNotSave(browser, origin);
     }

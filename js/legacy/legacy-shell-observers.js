@@ -861,7 +861,7 @@ function phaseEllipsisTapIsTruncated(el){
   }
   const node = phaseEllipsisTapContentNode(el);
   if (!node) return false;
-  return (node.scrollWidth - node.clientWidth) > 1;
+  return (node.scrollWidth - node.clientWidth) > 1 || (node.scrollHeight - node.clientHeight) > 1;
 }
 function phaseEllipsisTapRefreshTitles(scope){
   if (!scope) return;
@@ -978,7 +978,7 @@ function initPhaseEllipsisTapSettings(){
       phaseEllipsisTapHide();
       return;
     }
-    const target = e.target.closest('.phase2Screen[data-tabsection="settings"] .phaseEllipsisTapTarget');
+    const target = e.target.closest('.phaseEllipsisTapTarget');
     if (target && settingsCard.contains(target)){
       phaseEllipsisTapToggle(target);
       return;

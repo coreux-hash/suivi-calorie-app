@@ -839,15 +839,15 @@ function diab_renderDaysHistory(targetId){
         <thead>
           <tr>
             <th>Date</th>
-            <th>Glucides (g)</th>
-            <th>Total glycémies (${unit==="mmol"?"mmol/L":"mg/dL"})</th>
+            <th aria-label="Glucides (g)"><span class="historyDiabTable__label--full">Glucides (g)</span><span class="historyDiabTable__label--short" aria-hidden="true" title="Glucides (g)" data-mobile-fulltext="Glucides (g)">Gluc.</span></th>
+            <th aria-label="Total glycémies (${unit==="mmol"?"mmol/L":"mg/dL"})"><span class="historyDiabTable__label--full">Total glycémies (${unit==="mmol"?"mmol/L":"mg/dL"})</span><span class="historyDiabTable__label--short" aria-hidden="true" title="Total glycémies (${unit==="mmol"?"mmol/L":"mg/dL"})" data-mobile-fulltext="Total glycémies (${unit==="mmol"?"mmol/L":"mg/dL"})">Glyc.</span></th>
             <th>HbA1c</th>
-            <th>Maladie</th>
-            <th>Alcool</th>
+            <th aria-label="Maladie"><span class="historyDiabTable__label--full">Maladie</span><span class="historyDiabTable__label--short" aria-hidden="true" title="Maladie" data-mobile-fulltext="Maladie">Mal.</span></th>
+            <th aria-label="Alcool"><span class="historyDiabTable__label--full">Alcool</span><span class="historyDiabTable__label--short" aria-hidden="true" title="Alcool" data-mobile-fulltext="Alcool">Alc.</span></th>
             <th>Stress</th>
-            <th>Sommeil</th>
-            <th style="text-align:left">Activité</th>
-            <th>Actions</th>
+            <th aria-label="Sommeil"><span class="historyDiabTable__label--full">Sommeil</span><span class="historyDiabTable__label--short" aria-hidden="true" title="Sommeil" data-mobile-fulltext="Sommeil">Som.</span></th>
+            <th aria-label="Activité" style="text-align:left"><span class="historyDiabTable__label--full">Activité</span><span class="historyDiabTable__label--short" aria-hidden="true" title="Activité" data-mobile-fulltext="Activité">Act.</span></th>
+            <th aria-label="Actions"><span class="historyDiabTable__label--full">Actions</span><span class="historyDiabTable__label--short" aria-hidden="true" title="Actions" data-mobile-fulltext="Actions">Action</span></th>
           </tr>
         </thead>
         <tbody>
@@ -1050,4 +1050,3 @@ initDiabModule();
       
 
 /* createClient */ 
-

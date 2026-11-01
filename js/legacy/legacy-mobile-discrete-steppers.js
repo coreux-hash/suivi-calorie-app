@@ -148,9 +148,14 @@
   }
   function buildStepper(input){
     if (!input || input.dataset.mobileStepperInit === '1') return;
-    const host = input.parentElement;
-    if (!host) return;
-    host.classList.add('mobileStepperHost');
+    /* Le parent métier contient aussi label et aide. Le repère vertical du
+       stepper doit être l'input seul, sinon top:50% dépend de toute la cellule. */
+    const field = input.parentElement;
+    if (!field) return;
+    const host = doc.createElement('div');
+    host.className = 'mobileStepperInputWrap';
+    field.insertBefore(host, input);
+    host.appendChild(input);
     input.classList.add('mobileStepperInput');
 
     const wrap = doc.createElement('div');

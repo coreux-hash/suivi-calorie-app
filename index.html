@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="./css/components/overlays.css"/>
 <link rel="stylesheet" href="./css/screens/diabetes.css"/>
 <link rel="stylesheet" href="./css/screens/flowviz.css"/>
+<link rel="stylesheet" href="./css/screens/mobile-daily.css"/>
 <link rel="stylesheet" href="./css/utils/helpers.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
@@ -56,12 +57,100 @@
 <button class="menuActionItem" id="btnMenuOpenTutoModal" role="menuitem" type="button">Mini-tutos de l’espace</button>
 <button class="menuActionItem" id="btnMenuOpenHelpModal" role="menuitem" type="button">Aide et lexique</button>
 </div>
+<div class="menuGroup mobileMenuGroup" aria-label="Menu mobile">
+<div class="menuGroupLabel">Suivi</div>
+<button class="menuActionItem" data-mobile-menu-view="settings" role="menuitem" type="button">Réglages</button>
+<button class="menuActionItem" id="btnMobileMenuOpenHelp" role="menuitem" type="button">Aide et démarrage</button>
+<button class="menuActionItem" id="btnMobileMenuOpenCloud" role="menuitem" type="button">Sauvegarde / synchronisation</button>
+<button class="menuActionItem" id="btnMobileMenuOpenTerms" role="menuitem" type="button">Conditions d’accès</button>
+</div>
 </div>
 </div><!-- /brand -->
 <button aria-controls="pilotagePlanModal" aria-haspopup="dialog" aria-label="Comment ça marche ?" class="logoDot appbarAction appbarAction--help" id="btnHeaderOpenPilotageGuide" title="Comment ça marche ?" type="button">?</button>
 </div><!-- /appbar__inner -->
 </div><!-- /appbar -->
 <div class="container">
+<!-- Surface mobile : gabarit propre, mêmes données et mêmes composants métier. -->
+<main class="mobileDaily" id="mobileDailyApp" aria-label="Suivi quotidien mobile" hidden>
+  <header class="mobileDaily__head">
+    <p class="mobileDaily__eyebrow" id="mobileDailyDate">Aujourd’hui</p>
+  </header>
+
+  <section class="mobileDailyView is-active" id="mobileDailyToday" aria-label="Aujourd’hui">
+    <div class="mobileDailyState" id="mobileDailyState" data-tone="muted">
+      <div>
+        <p class="mobileDailyState__eyebrow">Journée du jour</p>
+        <h2 id="mobileDailyStateLabel">Journée lancée</h2>
+        <p id="mobileDailyProgress">0/3 essentiels renseignés</p>
+        <p class="mobileDailyRemaining" id="mobileDailyRemaining" aria-live="polite" hidden></p>
+      </div>
+      <div class="mobileDailyState__count" id="mobileDailyCount" aria-label="0 essentiels renseignés">0<span>/3</span></div>
+    </div>
+
+    <button class="mobileDailyBadge" id="mobileDailyNextBadge" type="button" aria-label="Voir la progression dans l’historique">
+      <span class="mobileDailyBadge__icon" id="mobileDailyNextBadgeIcon" aria-hidden="true">🏅</span>
+      <span class="mobileDailyBadge__copy"><span>Prochain badge</span><strong id="mobileDailyNextBadgeTitle">À découvrir</strong><small id="mobileDailyNextBadgeDesc">Complète un repère pour lancer le parcours.</small></span>
+      <span class="mobileDailyBadge__progress" id="mobileDailyNextBadgeProgress">0/1</span>
+    </button>
+
+    <section class="mobileDailyActions" aria-label="Essentiels du jour">
+      <article class="mobileDailyAction" id="mobileDailySpendCard" data-complete="false">
+        <button class="mobileDailyAction__head" data-mobile-action="spend" type="button" aria-expanded="true" aria-controls="mobileDailySpendSlot"><span class="mobileDailyAction__step">1</span><span><strong>Dépense</strong><small id="mobileDailySpendStatus">À confirmer</small></span><b aria-hidden="true">⌄</b></button>
+        <div class="mobileDailyAction__body" id="mobileDailySpendSlot"></div>
+      </article>
+      <article class="mobileDailyAction" id="mobileDailyMealsCard" data-complete="false">
+        <button class="mobileDailyAction__head" data-mobile-action="meals" type="button" aria-expanded="false" aria-controls="mobileDailyMealsSlot"><span class="mobileDailyAction__step">2</span><span><strong>Repas</strong><small id="mobileDailyMealsStatus">Ajouter le premier repas</small></span><b aria-hidden="true">⌄</b></button>
+        <div class="mobileDailyAction__body" id="mobileDailyMealsSlot" hidden></div>
+      </article>
+      <article class="mobileDailyAction" id="mobileDailyActivityCard" data-complete="false">
+        <button class="mobileDailyAction__head" data-mobile-action="activity" type="button" aria-expanded="false" aria-controls="mobileDailyActivitySlot"><span class="mobileDailyAction__step">3</span><span><strong>Activité</strong><small id="mobileDailyActivityStatus">Ajouter une séance si nécessaire</small></span><b aria-hidden="true">⌄</b></button>
+        <div class="mobileDailyAction__body" id="mobileDailyActivitySlot" hidden></div>
+      </article>
+    </section>
+
+    <details class="mobileDailyMore" id="mobileDailyMore">
+      <summary>Autres repères <span>Sommeil, poids, santé</span></summary>
+      <div id="mobileDailyMoreSlot"></div>
+    </details>
+  </section>
+
+  <section class="mobileDailyView" id="mobileDailyHistory" aria-label="Historique" hidden>
+    <div class="mobileDailyIntro"><p class="mobileDaily__eyebrow">Relire et comprendre</p><h2>Historique</h2><p>Choisis une date, puis consulte les repères utiles.</p></div>
+    <div id="mobileDailyHistoryMainSlot"></div>
+    <div id="mobileDailyHistoryPlayfulSlot"></div>
+    <details class="mobileDailyMore mobileDailyMealsHistory">
+      <summary><span>🍽 Repas <b id="mobileDailyHistoryMealsCount">· 0</b></span><span>voir et corriger</span></summary>
+      <div id="mobileDailyMealsHistorySlot"></div>
+    </details>
+    <details class="mobileDailyMore"><summary>Analyses et tendances <span>lecture détaillée</span></summary><div id="mobileDailyHistoryMoreSlot"></div></details>
+  </section>
+
+  <section class="mobileDailyView" id="mobileDailySettings" aria-label="Réglages" hidden>
+    <div class="mobileDailyIntro mobileSetupIntro">
+      <p class="mobileDaily__eyebrow">Cadre personnel</p>
+      <h2 id="mobileSetupTitle">Configurons votre suivi</h2>
+      <p id="mobileSetupLead">Quatre étapes courtes pour préparer les repères du quotidien.</p>
+    </div>
+    <section class="mobileSetupState" id="mobileSetupState" data-complete="false" aria-live="polite">
+      <div><p class="mobileDailyState__eyebrow">Configuration</p><h3 id="mobileSetupStateLabel">0 étape prête</h3><p id="mobileSetupProgress">0/4 étapes complétées</p></div>
+      <div class="mobileSetupState__count" id="mobileSetupCount" aria-label="0 étape complétée">0<span>/4</span></div>
+    </section>
+    <div id="mobileSetupModeSlot"></div>
+    <section class="mobileSetupSteps" aria-label="Étapes de configuration">
+      <button class="mobileSetupStep" data-mobile-setup="profile" type="button" aria-expanded="false"><span class="mobileDailyAction__step">1</span><span><strong>Profil et préférences</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
+      <button class="mobileSetupStep" data-mobile-setup="watch" type="button" aria-expanded="false"><span class="mobileDailyAction__step">2</span><span><strong>Montre et dépense</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
+      <button class="mobileSetupStep" data-mobile-setup="compromise" type="button" aria-expanded="false"><span class="mobileDailyAction__step">3</span><span><strong>Compromis nutritionnel</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
+      <button class="mobileSetupStep" data-mobile-setup="goals" type="button" aria-expanded="false"><span class="mobileDailyAction__step">4</span><span><strong>Objectif</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
+    </section>
+    <div id="mobileDailySettingsSlot" data-mobile-settings-open="profile"></div>
+  </section>
+
+  <nav class="mobileDailyNav" aria-label="Navigation principale mobile">
+    <button class="is-active" data-mobile-view="today" type="button"><span aria-hidden="true">●</span>Aujourd’hui</button>
+    <button data-mobile-view="history" type="button"><span aria-hidden="true">◷</span>Historique</button>
+  </nav>
+  <button class="mobileDailyContextTab" id="mobileDailyContextBtn" type="button" aria-expanded="false" aria-controls="phase5StatusBar">Contexte</button>
+</main>
 <!-- Visible sur toutes les pages -->
 <section class="notice notice--warn mt-06" id="globalQuickNotice" aria-labelledby="globalQuickNoticeTitle">
 <div class="noticeTitle" id="globalQuickNoticeTitle">Bon à savoir</div>
@@ -223,7 +312,7 @@
           <div class="phase1PulseCard phase1PulseCard--spendEdit">
             <div class="phase1PulseLabel"><label for="todaySpendEdit">Dépense du jour</label></div>
             <input class="phase1PulseValueInput" id="todaySpendEdit" type="number" min="0" step="1" inputmode="numeric" placeholder="ex: 2600" aria-label="Ajuster la dépense énergétique totale du jour"/>
-            <div class="phase1PulseMeta">Ajustée : <span id="p1TodaySpend">—</span> kcal · utilisée par le moteur · s’applique partout</div>
+            <div class="phase1PulseMeta">Ajustée : <span id="p1TodaySpend">—</span> · utilisée par le moteur · s’applique partout</div>
           </div>
           <div class="phase1PulseCard"><div class="phase1PulseLabel">Repas</div><div class="phase1PulseValue" id="p1TodayMeals">—</div><div class="phase1PulseMeta">Repas saisis pour la journée active.</div></div>
           <div class="phase1PulseCard"><div class="phase1PulseLabel">Activité</div><div class="phase1PulseValue" id="p1TodaySport">—</div><div class="phase1PulseMeta">Résumé des séances enregistrées.</div></div>
@@ -1164,7 +1253,7 @@
   </div>
 </details>
 
-<div class="card">
+<div class="card" id="settingsMacrosCard">
 <h2>Réglages des macros</h2>
 <p class="muted">
       Répartition protéines, lipides et glucides.
@@ -1571,12 +1660,12 @@
       </p>
 </div>
 <!-- Option /100g (expert) -->
-<div class="card panel-subtle hidden" id="mealPanelQuick" data-um="expert">
-<h3 data-um="expert">Rapide /100 g</h3>
-<p class="muted" data-um="expert">
+<div class="card panel-subtle hidden" id="mealPanelQuick">
+<h3>Rapide /100 g</h3>
+<p class="muted">
         Saisis l’étiquette (/100 g) + le poids. Puis “Calculer & ajouter”.
       </p>
-<div class="row mt-05" data-um="expert">
+<div class="row mt-05">
 <div>
 <label>kcal / 100 g</label>
 <input id="qKcal100" min="0" placeholder="ex: 420" step="1" type="number"/>
@@ -1598,14 +1687,14 @@
 <input id="qF100" min="0" placeholder="optionnel" step="0.1" type="number"/>
 </div>
 </div>
-<div class="row mt-03" data-um="expert">
+<div class="row mt-03">
 <div class="self-end">
 </div>
 <div class="self-end">
 <button id="btnQuickAddMeal" type="button">Calculer & ajouter</button>
 </div>
 </div>
-<p class="muted mt-02" data-um="expert">
+<p class="muted mt-02">
         Les valeurs du repas sont calculées automatiquement à partir du poids. Exemple : 35 g à 420 kcal/100 g → clique sur “Calculer & ajouter”.
       </p>
 </div>
@@ -1633,7 +1722,7 @@
     <button id="btnAddMeal" type="button">Ajouter ce repas</button>
   </div>
 </div>
-<div class="row mt-04" id="mealsTableWrap"></div>
+<div id="mealsTableDesktopSlot"><div class="row mt-04" id="mealsTableWrap"></div></div>
 <p class="muted mt-05">Modification directe possible. Les totaux se mettent à jour.</p>
 <div class="row" style="justify-content:flex-end; margin-top:.35rem">
   <button class="btn-danger btn-ghost" id="btnClearMeals" type="button">Vider la journée</button>
@@ -2052,13 +2141,13 @@
         <div class="accTile">
           <label title="Moyenne 7 jours">Moyenne 7 jours</label>
           <input disabled="" id="avg7Weight" placeholder="-" type="text"/>
-          <div class="muted tiny" title="Lisse les variations quotidiennes.">Lisse les variations quotidiennes.</div>
+          <div class="muted tiny" title="Lisse les variations quotidiennes.">Moyenne lissée.</div>
         </div>
 
         <div class="accTile">
           <label title="Variation hebdomadaire">Variation hebdomadaire</label>
           <input disabled="" id="wkVarPct" placeholder="-" type="text"/>
-          <div class="muted tiny" title="Évolution estimée vs semaine précédente.">Évolution estimée vs semaine précédente.</div>
+          <div class="muted tiny" title="Évolution estimée vs semaine précédente.">Vs semaine précédente.</div>
         </div>
 
         <div class="accTile">
@@ -2067,7 +2156,7 @@
           <div class="muted tiny">Indicateur, pas un diagnostic.</div>
         </div>
 
-        <div class="accTile">
+        <div class="accTile accTile--bmiCat">
           <label>Catégorie IMC</label>
           <input disabled="" id="bmiCat" placeholder="-" type="text"/>
           <div class="muted tiny">Lecture simplifiée.</div>
@@ -2195,7 +2284,7 @@ Un résumé suffit (pas besoin de précision)." role="button" tabindex="0">ℹ�
 </div>
 <div>
 <label>
-          Stress (0–10)
+          <span class="mobileDailyDiabetesLabelText">Stress (0–10)</span>
           <span aria-label="Pourquoi le stress compte ?" class="info-dot" data-modaltext="Le stress peut faire varier la glycémie, même sans changement alimentaire.
 Note ton ressenti global de la journée." role="button" tabindex="0">ℹ️</span>
 </label>
@@ -2203,7 +2292,7 @@ Note ton ressenti global de la journée." role="button" tabindex="0">ℹ️</spa
 </div>
 <div>
 <label>
-          Sommeil (heures)
+          <span class="mobileDailyDiabetesLabelText">Sommeil (heures)</span>
           <span aria-label="Pourquoi le sommeil ?" class="info-dot" data-modaltext="Un sommeil court ou perturbé peut influencer la glycémie le lendemain.
 Une estimation suffit." role="button" tabindex="0">ℹ️</span>
 </label>
@@ -2213,7 +2302,7 @@ Une estimation suffit." role="button" tabindex="0">ℹ️</span>
 <div class="row" style="margin-top:.35rem">
 <div>
 <label>
-          Infection / maladie ?
+          <span class="mobileDailyDiabetesLabelText">Infection / maladie ?</span>
           <span aria-label="À quoi ça sert ?" class="info-dot" data-modaltext="Une infection ou une maladie peut augmenter la glycémie temporairement." role="button" tabindex="0">ℹ️</span>
 </label>
 <select id="diab_daySick">
@@ -2224,7 +2313,7 @@ Une estimation suffit." role="button" tabindex="0">ℹ️</span>
 </div>
 <div>
 <label>
-          Alcool ?
+          <span class="mobileDailyDiabetesLabelText">Alcool ?</span>
           <span aria-label="Pourquoi le noter ?" class="info-dot" data-modaltext="L’alcool peut modifier la glycémie, parfois avec un décalage." role="button" tabindex="0">ℹ️</span>
 </label>
 <select id="diab_dayAlcohol">
@@ -2325,7 +2414,7 @@ Elle est enregistrée à titre informatif, sans interprétation médicale." role
 <button id="diab_btnAddGlucose" type="button">Ajouter mesure</button>
 </div>
 <div style="align-self:flex-end;min-width:180px">
-<button class="btn-danger" id="diab_btnClearGlucose" type="button">Vider glycémies du jour</button>
+<button class="btn-danger" id="diab_btnClearGlucose" type="button">Vider glycémies</button>
 </div>
 </div>
 <div id="diab_glucoseTableWrap"></div>
@@ -2950,6 +3039,7 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 <script src="./js/phase6/phase6-bootstrap.js"></script>
 <script src="./js/legacy/legacy-mobile-discrete-steppers.js"></script>
 <script src="./js/legacy/legacy-playful-tracking.js"></script>
+<script src="./js/phase6/phase6-mobile-daily.js"></script>
 <section class="card">
 <h2>Sources</h2>
 <p class="muted" style="margin-top:.4rem">

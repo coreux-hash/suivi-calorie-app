@@ -3471,6 +3471,9 @@
   width:100%;
   border-collapse:collapse;
 }
+.phase2Screen[data-tabsection="history"] .historyDiabTable__label--short{
+  display:none;
+}
 .phase2Screen[data-tabsection="history"] .historyDiabTable th,
 .phase2Screen[data-tabsection="history"] .historyDiabTable td{
   padding:10px 12px;
@@ -7631,7 +7634,7 @@ body:has(#mealModeQuick.is-active) .mealActions{ display:none !important; }
    hors mode expert. Garde CSS indépendant du JS et de l'état de data-um
    dans index.html : hors expert, il est forcé masqué. En expert, la règle
    ne s'applique pas et le JS/onglet le gère normalement. */
-body:not([data-usemode="expert"]) #mealPanelQuick{ display:none !important; }
+/* v23 (D3) : garde A11 levée — le panneau Rapide /100 g est accessible dans tous les modes. */
 
 /* (1) Sur mobile, garder le tableau des repas HORIZONTAL (comme desktop),
    avec défilement, au lieu de l'empilement en cartes verticales illisible.

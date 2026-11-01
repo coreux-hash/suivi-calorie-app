@@ -1040,7 +1040,6 @@ window.addEventListener("diab:carbs-pushed", (e) => {
   // Repas — UI: Manuel vs Rapide /100g (réduit le bruit)
   function mealUI_setMode(mode){
     const isQuick = mode === "quick";
-    const expert  = document.body.getAttribute("data-usemode") === "expert";
     const bM = $("mealModeManual");
     const bQ = $("mealModeQuick");
     const pM = $("mealPanelManual");
@@ -1052,10 +1051,11 @@ window.addEventListener("diab:carbs-pushed", (e) => {
     if (bQ){ bQ.classList.toggle("is-active", isQuick);  bQ.setAttribute("aria-selected", (isQuick).toString()); }
 
     if (pM) pM.classList.toggle("hidden", isQuick);
-    // Panneau réel : uniquement en mode Rapide ET en expert.
-    if (pQ) pQ.classList.toggle("hidden", !(isQuick && expert));
-    // Aperçu verrouillé : uniquement en mode Rapide ET hors expert.
-    if (pL) pL.classList.toggle("hidden", !(isQuick && !expert));
+    // v23 (décision D3, 2026-11-01) : la garde A11 est levée. Le panneau
+    // Rapide /100 g est disponible dans tous les modes d'affichage ; l'aperçu
+    // verrouillé n'est plus jamais affiché.
+    if (pQ) pQ.classList.toggle("hidden", !isQuick);
+    if (pL) pL.classList.add("hidden");
     // « Ajouter ce repas » (champs manuels) n'a pas de sens en mode Rapide :
     // le panneau Rapide ajoute déjà via « Calculer & ajouter », et l'aperçu
     // verrouillé n'ajoute rien. On masque donc l'action générique en Rapide.
