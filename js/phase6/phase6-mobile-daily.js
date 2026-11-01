@@ -169,6 +169,14 @@
   function installSpendConfirm(){
     const slot = $('mobileDailySpendSlot');
     if (!slot || $('mobileDailySpendConfirm')) return;
+    /* v23.4 (a) : chaîne lisible « Montre → retenue (prudence) », lue depuis
+       #todaySpendEdit (brut), #flow_spendKcal (retenue, calculée par le moteur),
+       #errPct/#errMode (réglage). Aucun calcul ici. */
+    const chain = doc.createElement('p');
+    chain.id = 'mobileDailySpendChain';
+    chain.className = 'mobileDailySpendChain';
+    chain.hidden = true;
+    slot.appendChild(chain);
     const button = doc.createElement('button');
     button.type = 'button';
     button.id = 'mobileDailySpendConfirm';
@@ -182,7 +190,112 @@
     });
     slot.appendChild(button);
   }
-  function removeSpendConfirm(){ $('mobileDailySpendConfirm')?.remove(); }
+  function removeSpendConfirm(){ $('mobileDailySpendConfirm')?.remove(); $('mobileDailySpendChain')?.remove(); }
+  function syncSpendChain(){
+    const el = $('mobileDailySpendChain');
+    if (!el) return;
+    const raw = Number($('todaySpendEdit')?.value);
+    /* #flow_spendKcal = dépense ajustée écrite par le moteur à chaque recalcul, journée
+       sauvegardée ou non (#p1TodaySpend retombe sur la valeur brute hors journée saisie). */
+    const retained = Number((text('flow_spendKcal').match(/\d+/) || [])[0]);
+    if (!(raw > 0) || !(retained > 0)) { el.hidden = true; return; }
+    el.hidden = false;
+    if (Math.round(retained) === Math.round(raw)) {
+      el.innerHTML = `Retenue par le moteur : <strong>${Math.round(raw)} kcal</strong>`;
+      return;
+    }
+    const pct = Number($('errPct')?.value) || 0;
+    const mode = $('errMode')?.value;
+    const sign = mode === 'optimistic' ? '+' : '−';
+    el.innerHTML = `Montre <strong>${Math.round(raw)}</strong> → retenue <strong>${Math.round(retained)} kcal</strong> <span>(prudence ${sign}${pct} %, réglable dans Réglages › Montre)</span>`;
+  }
+
+  /* v23.2 : repas récents — ajout en 1 tap. La liste est déduite des journées déjà
+     enregistrées (loadDays legacy) : aucune clé de stockage nouvelle. L'ajout remplit
+     les champs du formulaire puis rejoue le clic sur #btnAddMeal, donc exactement le
+     chemin existant (normalizeMeal, setMealsForDay, renderMealsTable, compute). */
+  const RECENT_MEALS_MAX = 8;
+  function recentMeals(){
+    let days = [];
+    try { days = global.loadDays?.() || []; } catch (_) { days = []; }
+    const seen = new Set();
+    const out = [];
+    const sorted = days.filter((day) => day && Array.isArray(day.meals)).sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    for (const day of sorted) {
+      for (const meal of [...day.meals].reverse()) {
+        const name = String(meal?.name || '').trim();
+        if (!name) continue;
+        const k = Number(meal.k) || 0, p = Number(meal.p) || 0, c = Number(meal.c) || 0, f = Number(meal.f) || 0;
+        /* Un repas nommé est identifié par son nom (la version la plus récente gagne) ;
+           le nom générique « Repas » n'identifie rien : on le distingue par ses valeurs. */
+        const key = name.toLowerCase() === 'repas' ? `repas|${k}|${p}|${c}|${f}` : name.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({ name, k, p, c, f });
+        if (out.length >= RECENT_MEALS_MAX) return out;
+      }
+    }
+    return out;
+  }
+  function addRecentMeal(meal){
+    if (!meal || !$('btnAddMeal')) return;
+    const fields = { mealName:meal.name, mealK:meal.k, mealP:meal.p, mealC:meal.c, mealF:meal.f };
+    Object.entries(fields).forEach(([id, value]) => { const el = $(id); if (el) el.value = String(value); });
+    $('btnAddMeal').click();
+    queueSync(140);
+  }
+  /* v23.4 : préremplissage par nom. Si le nom tapé correspond à un repas récent et
+     que les quatre champs de valeurs sont vides ou à 0, on les préremplit ; on n'ajoute
+     rien (l'utilisateur garde la main sur « Ajouter ce repas »). */
+  function prefillMealFromName(){
+    if (!media.matches) return;
+    const name = String($('mealName')?.value || '').trim().toLowerCase();
+    if (!name || name === 'repas') return;
+    const untouched = ['mealK', 'mealP', 'mealC', 'mealF'].every((id) => !(Number($(id)?.value) > 0));
+    if (!untouched) return;
+    const meal = ($('mobileDailyRecentMeals')?.__recentMeals || recentMeals()).find((item) => item.name.toLowerCase() === name);
+    if (!meal) return;
+    $('mealK').value = String(meal.k); $('mealP').value = String(meal.p); $('mealC').value = String(meal.c); $('mealF').value = String(meal.f);
+  }
+  function installRecentMeals(){
+    const slot = $('mobileDailyMealsSlot');
+    if (!slot || $('mobileDailyRecentMeals')) return;
+    const box = doc.createElement('section');
+    box.id = 'mobileDailyRecentMeals';
+    box.className = 'mobileDailyRecentMeals';
+    box.setAttribute('aria-label', 'Repas récents');
+    box.hidden = true;
+    box.innerHTML = '<p class="mobileDailyRecentMeals__label">Récents <span>· 1 tap pour ajouter</span></p><div class="mobileDailyRecentMeals__list"></div>';
+    box.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-recent-meal]');
+      if (!button) return;
+      const meal = box.__recentMeals?.[Number(button.dataset.recentMeal)];
+      addRecentMeal(meal);
+    });
+    slot.prepend(box);
+  }
+  function syncRecentMeals(){
+    const box = $('mobileDailyRecentMeals');
+    if (!box) return;
+    const meals = recentMeals();
+    box.__recentMeals = meals;
+    box.hidden = meals.length === 0;
+    const list = box.querySelector('.mobileDailyRecentMeals__list');
+    if (!list) return;
+    list.textContent = '';
+    meals.forEach((meal, index) => {
+      const button = doc.createElement('button');
+      button.type = 'button';
+      button.className = 'mobileDailyRecentMeal';
+      button.dataset.recentMeal = String(index);
+      button.setAttribute('aria-label', `Ajouter ${meal.name}, ${Math.round(meal.k)} kcal`);
+      const name = doc.createElement('strong'); name.textContent = meal.name;
+      const kcal = doc.createElement('small'); kcal.textContent = `${Math.round(meal.k)} kcal`;
+      button.append(name, kcal);
+      list.appendChild(button);
+    });
+  }
+  function removeRecentMeals(){ $('mobileDailyRecentMeals')?.remove(); }
 
   /* v23 : décompte du jour — lecture de #rK (reste à consommer, calculé par le
      moteur legacy) et #eK (déjà consommé). Aucun calcul ici. */
@@ -193,7 +306,8 @@
     const eaten = text('eK');
     if (!rest) { el.hidden = true; return; }
     el.hidden = false;
-    el.innerHTML = `Reste <strong>${rest} kcal</strong>${eaten ? ` <span>· ${eaten} kcal consommées</span>` : ''}`;
+    const target = text('tK');
+    el.innerHTML = `Reste <strong>${rest} kcal</strong><span>${eaten !== '' ? ` · ${eaten} consommées` : ''}${target ? ` · cible ${target}` : ''}</span>`;
   }
 
   function text(id){ return $(id)?.textContent?.trim() || ''; }
@@ -350,6 +464,8 @@
     const mealCount = Array.isArray(activeDay()?.meals) ? activeDay().meals.length : 0;
     if ($('mobileDailyHistoryMealsCount')) $('mobileDailyHistoryMealsCount').textContent = `· ${mealCount}`;
     syncRemaining();
+    syncSpendChain();
+    syncRecentMeals();
     syncNextBadge();
     syncMobileSetup();
     if (previousEssentialCount !== null && previousEssentialCount < 3 && count === 3) showCompletionFeedback();
@@ -475,6 +591,7 @@
     portMobileSetupContext(true);
     ungateMobileCards();
     installSpendConfirm();
+    installRecentMeals();
     installMobileInfoDots();
     applyMobileDiabetesHistoryToolbar();
     syncOptionalPanels();
@@ -492,6 +609,7 @@
     const diabetesPanel = doc.querySelector('.phase2JournalPanel--diabetes');
     if (diabetesPanel) diabetesPanel.hidden = false;
     removeSpendConfirm();
+    removeRecentMeals();
     regateMobileCards();
     portMobileSetupContext(false);
     portNodes(false);
@@ -556,9 +674,26 @@
       setView('settings');
     });
     bar.appendChild(settingsAction);
+    /* v23.3 : fermeture explicite (croix) et fermeture au tap en dehors du tiroir. */
+    const closeDrawer = () => {
+      bar.classList.remove('is-open');
+      button.setAttribute('aria-expanded', 'false');
+    };
+    const closeAction = doc.createElement('button');
+    closeAction.className = 'mobileDailyDrawerClose';
+    closeAction.type = 'button';
+    closeAction.setAttribute('aria-label', 'Fermer le contexte');
+    closeAction.textContent = '✕';
+    closeAction.addEventListener('click', closeDrawer);
+    bar.prepend(closeAction);
     button.addEventListener('click', () => {
       const open = bar.classList.toggle('is-open');
       button.setAttribute('aria-expanded', String(open));
+    });
+    doc.addEventListener('click', (event) => {
+      if (!bar.classList.contains('is-open')) return;
+      if (bar.contains(event.target) || button.contains(event.target)) return;
+      closeDrawer();
     });
     return true;
   }
@@ -581,7 +716,9 @@
     qa('[data-mobile-setup]').forEach((button) => button.addEventListener('click', () => toggleMobileSetupStep(button.dataset.mobileSetup)));
     qa('[data-mobile-menu-view]').forEach((button) => button.addEventListener('click', () => {
       setView(button.dataset.mobileMenuView);
-      $('menuBtn')?.click();
+      /* v23.3 : setActiveTab() (via setView) ferme déjà le menu ; un clic simulé sur
+         #menuBtn faisait un toggle et le rouvrait. On ferme explicitement. */
+      try { if (typeof global.closeMenu === 'function') global.closeMenu(); } catch (_) { }
     }));
     [['btnMobileMenuOpenHelp', 'btnMenuOpenHelpModal'], ['btnMobileMenuOpenCloud', 'btnMenuOpenCloudModal'], ['btnMobileMenuOpenTerms', 'btnMenuOpenTermsGate']].forEach(([mobileId, legacyId]) => {
       $(mobileId)?.addEventListener('click', () => $(legacyId)?.click());
@@ -590,12 +727,13 @@
     $('mobileDailySettingsSlot')?.addEventListener('input', () => queueSync(40));
     $('mobileDailySettingsSlot')?.addEventListener('change', () => queueSync(40));
     $('mobileDailyNextBadge')?.addEventListener('click', () => setView('history'));
+    ['input', 'change'].forEach((type) => $('mealName')?.addEventListener(type, prefillMealFromName));
     ['dayDate','todaySpendEdit','btnAddMeal','btnClearMeals','btnSportSave','diabEnabled'].forEach((id) => $(id)?.addEventListener('change', () => queueSync()));
     doc.addEventListener('click', (event) => {
       if (event.target.closest('#btnAddMeal, #btnClearMeals, #btnSportSave, [data-sportdel], .calDay')) queueSync(140);
     });
     const observer = new MutationObserver(() => queueSync());
-    ['p1TodayMeals','p1TodaySpend','p1TodaySport','rK','eK'].forEach((id) => { const el = $(id); if (el) observer.observe(el, { childList:true, characterData:true, subtree:true }); });
+    ['p1TodayMeals','p1TodaySpend','p1TodaySport','rK','eK','tK','flow_spendKcal'].forEach((id) => { const el = $(id); if (el) observer.observe(el, { childList:true, characterData:true, subtree:true }); });
     media.addEventListener?.('change', (event) => event.matches ? activate() : deactivate());
     media.matches ? activate() : deactivate();
   }
