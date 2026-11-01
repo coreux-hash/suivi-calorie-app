@@ -150,6 +150,94 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       await context.close();
     }
 
+    /* 3b. Repas récents (v23.2) : déduits des journées passées, ajout en 1 tap, dédoublonnés. */
+    {
+      const d1 = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const d2 = new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10);
+      const past = [
+        { date:d2, meals:[{ id:'a', name:'Petit-déj', k:400, p:20, c:50, f:12 }, { id:'b', name:'Pâtes', k:700, p:25, c:100, f:15 }] },
+        { date:d1, meals:[{ id:'c', name:'petit-déj', k:450, p:22, c:55, f:14 }, { id:'d', name:'Repas', k:300, p:10, c:30, f:10 }, { id:'e', name:'Repas', k:600, p:30, c:60, f:20 }] }
+      ];
+      const { context, page, pageErrors } = await open(browser, origin, fixture(simpleSettings, past), MOBILE);
+      assert.equal(await count(page), '0/3');
+      await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
+      assert.equal(await page.isVisible('#mobileDailyRecentMeals'), true, 'bloc Récents visible');
+      const chips = await page.$$eval('#mobileDailyRecentMeals [data-recent-meal]', (els) => els.map((e) => e.querySelector('strong').textContent + '|' + e.querySelector('small').textContent));
+      assert.deepEqual(chips, ['Repas|600 kcal', 'Repas|300 kcal', 'petit-déj|450 kcal', 'Pâtes|700 kcal'], `récents dédoublonnés, plus récents d'abord (${chips.join(', ')})`);
+      await page.click('#mobileDailyRecentMeals [data-recent-meal="2"]'); await page.waitForTimeout(500);
+      const d = await days(page);
+      const todayDay = d.find((x) => x.date === today);
+      assert.ok(todayDay, 'journée du jour créée par l\'ajout');
+      assert.equal(todayDay.meals.length, 1);
+      assert.deepEqual([todayDay.meals[0].name, todayDay.meals[0].k, todayDay.meals[0].p, todayDay.meals[0].c, todayDay.meals[0].f], ['petit-déj', 450, 22, 55, 14], 'repas ajouté tel quel');
+      assert.equal(await count(page), '1/3', 'ajout en 1 tap = 1/3');
+      assert.equal(await page.$eval('#mealName', (e) => e.value), '', 'formulaire vidé après ajout (chemin legacy)');
+      assert.equal(await overflowX(page), 0);
+      assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
+      ok('Repas récents : liste déduite, dédoublonnée, ajout en 1 tap');
+      /* Journée vide et aucun historique : bloc masqué. */
+      await context.close();
+      const empty = await open(browser, origin, fixture(simpleSettings), MOBILE);
+      await empty.page.click('[data-mobile-action="meals"]'); await empty.page.waitForTimeout(300);
+      assert.equal(await empty.page.$eval('#mobileDailyRecentMeals', (e) => e.hidden), true, 'bloc Récents masqué sans historique');
+      await empty.context.close();
+    }
+
+    /* 3d. v23.4 : chaîne Dépense lisible, cible dans l'en-tête, préremplissage par nom. */
+    {
+      const prudent = { ...simpleSettings, montre:4000, errPct:20, errMode:'conservative', goalPct:92 };
+      const d1 = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const past = [{ date:d1, meals:[{ id:'a', name:'Petit déj', k:420, p:21, c:52, f:13 }] }];
+      const { context, page, pageErrors } = await open(browser, origin, fixture(prudent, past), MOBILE);
+      const chain = await page.$eval('#mobileDailySpendChain', (e) => ({ hidden:e.hidden, text:e.textContent.replace(/\s+/g, ' ').trim() }));
+      assert.equal(chain.hidden, false, 'chaîne affichée');
+      assert.match(chain.text, /Montre 4000 → retenue 3200 kcal \(prudence −20 %/, `chaîne lisible (${chain.text})`);
+      assert.equal(await page.$eval('#mobileDailySpendSlot .phase1PulseMeta', (e) => getComputedStyle(e).display), 'none', 'ligne legacy masquée sur mobile');
+      const head = await page.$eval('#mobileDailyRemaining', (e) => e.textContent.replace(/\s+/g, ' ').trim());
+      assert.match(head, /Reste \d+ kcal · \d+ consommées · cible \d+/, `cible dans l'en-tête (${head})`);
+      const target = Number(head.match(/cible (\d+)/)[1]);
+      assert.equal(target, 2944, 'cible = 92 % de 3200');
+      /* Préremplissage par nom (casse ignorée), sans ajout. */
+      await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
+      await page.fill('#mealName', 'petit DÉJ'); await page.waitForTimeout(100);
+      assert.deepEqual(await page.$$eval('#mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['420', '21', '52', '13'], 'valeurs préremplies');
+      assert.equal(await count(page), '0/3', 'rien ajouté');
+      /* Valeurs déjà saisies : pas d'écrasement. */
+      await page.fill('#mealName', ''); await page.fill('#mealK', '999'); await page.fill('#mealName', 'petit déj'); await page.waitForTimeout(100);
+      assert.equal(await page.$eval('#mealK', (e) => e.value), '999', 'valeur saisie conservée');
+      /* Sans prudence : chaîne courte. */
+      await context.close();
+      const plain = await open(browser, origin, fixture({ ...simpleSettings, errPct:0 }), MOBILE);
+      assert.match(await plain.page.$eval('#mobileDailySpendChain', (e) => e.textContent), /Retenue par le moteur : 2600 kcal/, 'chaîne courte sans prudence');
+      await plain.context.close();
+      assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
+      ok('Dépense : chaîne lisible ; en-tête avec cible ; préremplissage par nom');
+    }
+
+    /* 3c. Menu burger → Réglages ferme le menu ; tiroir Contexte : croix et tap extérieur (v23.3). */
+    {
+      const { context, page, pageErrors } = await open(browser, origin, fixture(simpleSettings), MOBILE);
+      const menuOpen = () => page.$eval('#menuPanel', (e) => e.classList.contains('is-open'));
+      await page.tap('#menuBtn'); await page.waitForTimeout(200);
+      assert.equal(await menuOpen(), true);
+      await page.tap('[data-mobile-menu-view="settings"]'); await page.waitForTimeout(400);
+      assert.equal(await menuOpen(), false, 'menu fermé après Réglages');
+      assert.equal(await page.$eval('#mobileDailySettings', (e) => e.hidden), false, 'vue Réglages affichée');
+      const drawerOpen = () => page.$eval('#phase5StatusBar', (e) => e.classList.contains('is-open'));
+      await page.tap('#mobileDailyContextBtn'); await page.waitForTimeout(300);
+      assert.equal(await drawerOpen(), true, 'tiroir ouvert');
+      assert.equal(await page.isVisible('.mobileDailyDrawerClose'), true, 'croix visible');
+      await page.tap('.mobileDailyDrawerClose'); await page.waitForTimeout(300);
+      assert.equal(await drawerOpen(), false, 'tiroir fermé par la croix');
+      await page.tap('#mobileDailyContextBtn'); await page.waitForTimeout(300);
+      assert.equal(await drawerOpen(), true);
+      await page.touchscreen.tap(30, 700); await page.waitForTimeout(300); /* zone hors tiroir */
+      assert.equal(await drawerOpen(), false, 'tiroir fermé par un tap extérieur');
+      assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
+      ok('Menu → Réglages ferme le menu ; tiroir Contexte : croix et tap extérieur');
+      await context.close();
+    }
+
     /* 4. Cycle mobile → desktop → mobile : restauration de data-um et du bouton. */
     {
       const { context, page, pageErrors } = await open(browser, origin, fixture(simpleSettings), MOBILE);
@@ -159,6 +247,7 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await page.$eval('.phase2JournalPanel--activity', (e) => e.classList.contains('hidden')), true, 'desktop Simple : panneau Activité masqué par le registre, comme en v22');
       assert.equal(await page.$eval('.phase2JournalPanel--activity', (e) => e.getAttribute('aria-hidden')), 'true');
       assert.equal(await page.$('#mobileDailySpendConfirm'), null, 'bouton Confirmer retiré sur desktop');
+      assert.equal(await page.$('#mobileDailyRecentMeals'), null, 'bloc Récents retiré sur desktop');
       assert.equal(await page.$eval('#mobileDailyApp', (e) => e.hidden), true);
       await page.setViewportSize(MOBILE); await page.waitForTimeout(500);
       assert.equal(await page.$eval('#sportCard', (e) => e.getAttribute('data-um')), 'mobile', 'data-um neutralisé à nouveau');
