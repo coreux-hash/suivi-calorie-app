@@ -162,28 +162,37 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await count(page), '0/3');
       await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
       assert.equal(await page.isVisible('#mobileDailyRecentMeals'), true, 'bloc Récents visible');
-      /* v24.4 : liste déroulante + Ajouter + corbeille (oubli jusqu'à une future note). */
+      /* v24.5 : liste sous « Ce que tu as mangé » ; choisir remplit le formulaire ; corbeille (oubli jusqu'à une future note). */
+      assert.equal(await page.$eval('#mobileDailyRecentMeals', (e) => e.previousElementSibling?.id), 'mealName', 'liste placée sous le champ du nom');
       const options = () => page.$$eval('#mobileDailyRecentMealSelect option', (els) => els.map((e) => e.textContent));
-      assert.deepEqual(await options(), ['Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal', 'Pâtes · 700 kcal'], `récents dédoublonnés, plus récents d'abord (${(await options()).join(', ')})`);
-      await page.selectOption('#mobileDailyRecentMealSelect', '3'); await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
-      assert.deepEqual(await options(), ['Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal'], 'repas oublié retiré de la liste');
+      assert.deepEqual(await options(), ['Tes habitudes…', 'Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal', 'Pâtes · 700 kcal'], `récents dédoublonnés, plus récents d'abord (${(await options()).join(', ')})`);
+      assert.equal(await page.$eval('#mobileDailyRecentMealForget', (e) => e.disabled), true, 'corbeille inactive sans choix');
+      await page.selectOption('#mobileDailyRecentMealSelect', '3'); await page.waitForTimeout(100);
+      assert.equal(await page.$eval('#mobileDailyRecentMealForget', (e) => e.disabled), false, 'corbeille active après choix');
+      await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
+      assert.deepEqual(await options(), ['Tes habitudes…', 'Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal'], 'repas oublié retiré de la liste');
       assert.match(await page.textContent('#mobileDailyRecentMealNote'), /« Pâtes » : oublié jusqu’à une future note\./);
       assert.deepEqual(JSON.parse(await page.evaluate(() => localStorage.getItem('secheapp.default.forgottenMeals.v1'))), { 'pâtes':d2 }, 'oubli stocké par profil avec la date de la dernière note');
       assert.deepEqual(await days(page), past, 'oublier ne modifie pas l\'historique');
-      await page.selectOption('#mobileDailyRecentMealSelect', '2'); await page.click('#mobileDailyRecentMealAdd'); await page.waitForTimeout(500);
+      await page.selectOption('#mobileDailyRecentMealSelect', '2'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealName, #mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['petit-déj', '450', '22', '55', '14'], 'choisir remplit le formulaire');
+      assert.equal(await page.$eval('#mealModeManual', (e) => e.classList.contains('is-active')), true, 'onglet Les valeurs actif');
+      assert.equal(await count(page), '0/3', 'choisir n\'ajoute rien');
+      await page.click('#btnAddMeal'); await page.waitForTimeout(500);
       const d = await days(page);
       const todayDay = d.find((x) => x.date === today);
       assert.ok(todayDay, 'journée du jour créée par l\'ajout');
       assert.equal(todayDay.meals.length, 1);
       assert.deepEqual([todayDay.meals[0].name, todayDay.meals[0].k, todayDay.meals[0].p, todayDay.meals[0].c, todayDay.meals[0].f], ['petit-déj', 450, 22, 55, 14], 'repas ajouté tel quel');
-      assert.equal(await count(page), '1/3', 'ajout en 1 tap = 1/3');
+      assert.equal(await count(page), '1/3', 'ajout = 1/3');
       assert.equal(await page.$eval('#mealName', (e) => e.value), '', 'formulaire vidé après ajout (chemin legacy)');
+      assert.equal(await page.$eval('#mobileDailyRecentMealSelect', (e) => e.value), '', 'liste remise sur l\'invite après ajout');
       /* Une note ultérieure (aujourd'hui > d2) ramène le repas oublié. */
       await page.fill('#mealName', 'Pâtes'); await page.fill('#mealK', '700'); await page.click('#btnAddMeal'); await page.waitForTimeout(500);
-      assert.deepEqual(await options(), ['Pâtes · 700 kcal', 'petit-déj · 450 kcal', 'Repas · 600 kcal', 'Repas · 300 kcal'], 'repas oublié de retour après une nouvelle note');
+      assert.deepEqual(await options(), ['Tes habitudes…', 'Pâtes · 700 kcal', 'petit-déj · 450 kcal', 'Repas · 600 kcal', 'Repas · 300 kcal'], 'repas oublié de retour après une nouvelle note');
       assert.equal(await overflowX(page), 0);
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
-      ok('Repas habituels : liste déduite, dédoublonnée, Ajouter, corbeille réversible');
+      ok('Repas habituels : liste sous le nom, choisir remplit, Ajouter ce repas, corbeille réversible');
       /* Journée vide et aucun historique : bloc masqué. */
       await context.close();
       const empty = await open(browser, origin, fixture(simpleSettings), MOBILE);
