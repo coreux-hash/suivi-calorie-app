@@ -6,16 +6,16 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Suivi Calories &amp; Nutrition (local)</title>
-<link rel="stylesheet" href="./css/base/foundation.css?v=24.6"/>
-<link rel="stylesheet" href="./css/components/primitives.css?v=24.6"/>
-<link rel="stylesheet" href="./css/layout/shell.css?v=24.6"/>
-<link rel="stylesheet" href="./css/layout/visibility.css?v=24.6"/>
-<link rel="stylesheet" href="./css/components/data-surfaces.css?v=24.6"/>
-<link rel="stylesheet" href="./css/components/overlays.css?v=24.6"/>
-<link rel="stylesheet" href="./css/screens/diabetes.css?v=24.6"/>
-<link rel="stylesheet" href="./css/screens/flowviz.css?v=24.6"/>
-<link rel="stylesheet" href="./css/screens/mobile-daily.css?v=24.6"/>
-<link rel="stylesheet" href="./css/utils/helpers.css?v=24.6"/>
+<link rel="stylesheet" href="./css/base/foundation.css?v=25.0"/>
+<link rel="stylesheet" href="./css/components/primitives.css?v=25.0"/>
+<link rel="stylesheet" href="./css/layout/shell.css?v=25.0"/>
+<link rel="stylesheet" href="./css/layout/visibility.css?v=25.0"/>
+<link rel="stylesheet" href="./css/components/data-surfaces.css?v=25.0"/>
+<link rel="stylesheet" href="./css/components/overlays.css?v=25.0"/>
+<link rel="stylesheet" href="./css/screens/diabetes.css?v=25.0"/>
+<link rel="stylesheet" href="./css/screens/flowviz.css?v=25.0"/>
+<link rel="stylesheet" href="./css/screens/mobile-daily.css?v=25.0"/>
+<link rel="stylesheet" href="./css/utils/helpers.css?v=25.0"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
 <meta content="#ffffff" name="theme-color"/>
@@ -1645,6 +1645,11 @@
 <p class="muted">
         Recopie l’étiquette (pour 100 g), mets le poids, et c’est calculé.
       </p>
+<div class="nutriSearch" id="nutriSearchBox" hidden>
+<label for="nutriSearch">Chercher dans NutriApp</label>
+<input id="nutriSearch" type="search" autocomplete="off" placeholder="ex : flocons d’avoine" role="combobox" aria-autocomplete="list" aria-controls="nutriResults" aria-expanded="false"/>
+<ul class="nutriResults" id="nutriResults" role="listbox" aria-label="Ingrédients NutriApp" hidden></ul>
+</div>
 <div class="row mt-05">
 <div>
 <label>kcal / 100 g</label>
@@ -2993,33 +2998,34 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 
 
 <!-- Scripts -->
-<script src="./js/phase6/phase6-core.js?v=24.6"></script>
-<script src="./js/phase6/phase6-boundaries.js?v=24.6"></script>
-<script src="./js/phase6/phase6-render.js?v=24.6"></script>
-<script src="./js/phase6/phase6-flows.js?v=24.6"></script>
-<script src="./js/phase6/phase6-features.js?v=24.6"></script>
-<script src="./js/legacy/legacy-app-state-navigation.js?v=24.6"></script>
-<script src="./js/legacy/legacy-storage-days.js?v=24.6"></script>
-<script src="./js/legacy/legacy-core-runtime.js?v=24.6"></script>
-<script src="./js/legacy/legacy-profiles-settings.js?v=24.6"></script>
-<script src="./js/legacy/legacy-meals-body.js?v=24.6"></script>
-<script src="./js/legacy/legacy-history.js?v=24.6"></script>
-<script src="./js/legacy/legacy-sport-sleep.js?v=24.6"></script>
-<script src="./js/legacy/legacy-diabetes.js?v=24.6"></script>
-<script src="./js/legacy/legacy-watch-ui.js?v=24.6"></script>
-<script src="./js/legacy/legacy-engine-core.js?v=24.6"></script>
-<script src="./js/legacy/legacy-app-init.js?v=24.6"></script>
-<script src="./js/legacy/legacy-shell-observers.js?v=24.6"></script>
-<script src="./js/legacy/legacy-compat-ui.js?v=24.6"></script>
-<script src="./js/legacy/legacy-carb-patches.js?v=24.6"></script>
-<script src="./js/legacy/legacy-compromise-ui.js?v=24.6"></script>
-<script src="./js/legacy/legacy-training-load-matrix.js?v=24.6"></script>
-<script src="./js/legacy/legacy-cloud-refresh.js?v=24.6"></script>
-<script src="./js/legacy/legacy-cloud-sync.js?v=24.6"></script>
-<script src="./js/phase6/phase6-bootstrap.js?v=24.6"></script>
-<script src="./js/legacy/legacy-mobile-discrete-steppers.js?v=24.6"></script>
-<script src="./js/legacy/legacy-playful-tracking.js?v=24.6"></script>
-<script src="./js/phase6/phase6-mobile-daily.js?v=24.6"></script>
+<script src="./js/phase6/phase6-core.js?v=25.0"></script>
+<script src="./js/phase6/phase6-boundaries.js?v=25.0"></script>
+<script src="./js/phase6/phase6-render.js?v=25.0"></script>
+<script src="./js/phase6/phase6-flows.js?v=25.0"></script>
+<script src="./js/phase6/phase6-features.js?v=25.0"></script>
+<script src="./js/legacy/legacy-app-state-navigation.js?v=25.0"></script>
+<script src="./js/legacy/legacy-storage-days.js?v=25.0"></script>
+<script src="./js/legacy/legacy-core-runtime.js?v=25.0"></script>
+<script src="./js/legacy/legacy-profiles-settings.js?v=25.0"></script>
+<script src="./js/legacy/legacy-meals-body.js?v=25.0"></script>
+<script src="./js/legacy/legacy-history.js?v=25.0"></script>
+<script src="./js/legacy/legacy-sport-sleep.js?v=25.0"></script>
+<script src="./js/legacy/legacy-diabetes.js?v=25.0"></script>
+<script src="./js/legacy/legacy-watch-ui.js?v=25.0"></script>
+<script src="./js/legacy/legacy-engine-core.js?v=25.0"></script>
+<script src="./js/legacy/legacy-app-init.js?v=25.0"></script>
+<script src="./js/legacy/legacy-shell-observers.js?v=25.0"></script>
+<script src="./js/legacy/legacy-compat-ui.js?v=25.0"></script>
+<script src="./js/legacy/legacy-carb-patches.js?v=25.0"></script>
+<script src="./js/legacy/legacy-compromise-ui.js?v=25.0"></script>
+<script src="./js/legacy/legacy-training-load-matrix.js?v=25.0"></script>
+<script src="./js/legacy/legacy-cloud-refresh.js?v=25.0"></script>
+<script src="./js/legacy/legacy-cloud-sync.js?v=25.0"></script>
+<script src="./js/phase6/phase6-bootstrap.js?v=25.0"></script>
+<script src="./js/legacy/legacy-mobile-discrete-steppers.js?v=25.0"></script>
+<script src="./js/legacy/legacy-playful-tracking.js?v=25.0"></script>
+<script src="./js/phase6/phase6-nutriapp-bridge.js?v=25.0"></script>
+<script src="./js/phase6/phase6-mobile-daily.js?v=25.0"></script>
 <section class="card">
 <h2>Sources</h2>
 <p class="muted" style="margin-top:.4rem">
