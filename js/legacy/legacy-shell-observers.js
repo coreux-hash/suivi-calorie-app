@@ -286,7 +286,7 @@ function initPhase2Shell(){
 function phase3HideLegacyTutorials(){
   document.querySelectorAll('details.notice').forEach(el => {
     const summaryText = el.querySelector('summary')?.textContent?.trim() || '';
-    if (/^Mini-tuto/i.test(summaryText)) el.classList.add('legacy-host');
+    if (/^(Mini-tuto|Comment ça marche)/i.test(summaryText)) el.classList.add('legacy-host'); /* v24.4 : les deux préfixes (régression v24.0) */
   });
 }
 function phase3SplitSettingsWatch(){
@@ -477,9 +477,9 @@ function phase5SectionLabel(tab){
 function phase5NormalizeTutorialKey(title){
   const txt = String(title || '').trim();
   if (/Profil/i.test(txt)) return 'profile';
+  if (/Charge d’activité et compromis|Charge d'activit[eé] et compromis|Sport et objectif/i.test(txt)) return 'activity_load'; /* v24.4 : avant /Objectif/, sinon « Sport et objectif » écrase « Objectif » */
   if (/Objectif/i.test(txt)) return 'goal';
   if (/Dépense|Depense|Montre/i.test(txt)) return 'spend';
-  if (/Charge d’activité et compromis|Charge d'activit[eé] et compromis|Sport et objectif/i.test(txt)) return 'activity_load';
   if (/Repères glucides|Cadrage glucidique|Glucides/i.test(txt)) return 'carbs';
   if (/Repas/i.test(txt)) return 'meals';
   if (/Synthèse/i.test(txt)) return 'summary';
@@ -490,7 +490,18 @@ function phase5NormalizeTutorialKey(title){
   if (/Lexicon|Lexique/i.test(txt)) return 'lexicon';
   return txt.toLowerCase();
 }
+function phase5MobileDailyActive(){
+  return document.documentElement.classList.contains('mobile-daily-active');
+}
 function phase5TutorialSpaceMap(){
+  /* v24.4 : sur la surface mobile, la vue Aujourd'hui (onglet legacy journalEntry)
+     regroupe dépense, repas et synthèse ; on lui donne les tutos correspondants. */
+  if (phase5MobileDailyActive()) return {
+    today:['spend','meals','summary'],
+    journalEntry:['spend','meals','summary'],
+    history:['history','history_activity_load'],
+    settings:['profile','spend','goal','activity_load','carbs']
+  };
   return {
     today:['summary'],
     journalEntry:['meals','carbs'],
@@ -564,12 +575,12 @@ function phase5RenderTutorialGate(){
   const modalTitle = $('settingsTutoTitle');
   const modalIntro = $('phase5TutoModalIntro');
   const modalList = $('phase5TutoModalList');
-  const label = phase5SectionLabel(tab);
+  const label = (phase5MobileDailyActive() && (tab === 'journalEntry' || tab === 'today')) ? 'Aujourd’hui' : phase5SectionLabel(tab); /* v24.4 : vue mobile */
   if (card){
     card.dataset.space = tab || '';
     card.dataset.hasTutos = items.length ? '1' : '0';
   }
-  if (title) title.textContent = `Mini-tutos — ${label}`;
+  if (title) title.textContent = `Comment ça marche — ${label}`; /* v24.4 */
   if (meta) meta.textContent = phase5TutorialPreviewText(items);
   if (menuBtn) menuBtn.disabled = !items.length;
   if (btn) btn.disabled = !items.length;
@@ -580,10 +591,10 @@ function phase5RenderTutorialGate(){
   if (modalList){
     modalList.innerHTML = items.map((item) => `
       <article class="phase5TutoCard">
-        <h3 class="phase5TutoCard__title">${item.title.replace(/^Mini-tuto\s*[—-]\s*/i,'')}</h3>
+        <h3 class="phase5TutoCard__title">${item.title.replace(/^(Mini-tuto|Comment ça marche)\s*[—-]\s*/i,'')}</h3>
         <div class="phase5TutoCard__body muted">${item.bodyHtml}</div>
       </article>
-    `).join('') || '<div class="phase5EmptyState"><div class="phase5EmptyState__title">Aucun mini-tuto contextuel</div><div class="phase5EmptyState__text">Cet espace ne remonte actuellement aucun repère pédagogique dédié.</div></div>';
+    `).join('') || '<div class="phase5EmptyState"><div class="phase5EmptyState__title">Rien à expliquer ici</div><div class="phase5EmptyState__text">Cet écran se passe d’explications.</div></div>';
   }
 }
 function phase5EnsureTopContext(){
