@@ -65,7 +65,12 @@
       total.f += num(pick(m.f, m.fat, row.f, row.fat));
     });
     if (!(total.k || total.p || total.c || total.f)) return null;
-    return { name, parts, k: round(total.k / parts, 0), p: round(total.p / parts, 1), c: round(total.c / parts, 1), f: round(total.f / parts, 1) };
+    /* v25.1 : identifiant stable (id NutriApp, sinon le nom) et date de modification (ISO, posée
+       par l'éditeur de recettes NutriApp) pour pouvoir retirer une recette de la liste. */
+    const id = text(pick(raw.id, raw.uuid, raw._id));
+    const key = id ? `id:${id}` : `name:${name.toLowerCase()}`;
+    const updatedAt = text(raw.updatedAt);
+    return { key, updatedAt, name, parts, k: round(total.k / parts, 0), p: round(total.p / parts, 1), c: round(total.c / parts, 1), f: round(total.f / parts, 1) };
   }
 
   function byName(a, b) { return a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }); }
@@ -170,5 +175,11 @@
     });
   }
 
-  return { KEYS, toIngredient, toRecipe, listIngredients, listRecipes, search, syncIngredientSearch };
+  /* v25.1 : une recette retirée revient quand NutriApp la modifie après le retrait. Pure. */
+  function visibleRecipes(recipes, hidden) {
+    const map = hidden && typeof hidden === 'object' ? hidden : {};
+    return (recipes || []).filter((r) => !map[r.key] || (r.updatedAt && r.updatedAt > String(map[r.key])));
+  }
+
+  return { KEYS, toIngredient, toRecipe, listIngredients, listRecipes, visibleRecipes, search, syncIngredientSearch };
 });
