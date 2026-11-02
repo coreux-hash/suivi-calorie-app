@@ -270,6 +270,24 @@
     try { profile = global.localStorage.getItem('secheapp.activeProfile.v1') || $('profileSelect')?.value || 'default'; } catch (_) { }
     return `secheapp.${profile}.forgottenMeals.v1`;
   }
+  /* v25.1 : recettes NutriApp retirées de la liste, par profil. Clé SuiviCalorieApp dédiée,
+     NutriApp n'est jamais modifiée. { [cléRecette]: dateDuRetraitISO } */
+  function hiddenRecipesKey(){ return forgottenMealsKey().replace(/forgottenMeals\.v1$/, 'hiddenNutriRecipes.v1'); }
+  function loadHiddenRecipes(){
+    try { const parsed = JSON.parse(global.localStorage.getItem(hiddenRecipesKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {}; }
+    catch (_) { return {}; }
+  }
+  function hideRecipe(recipe){
+    if (!recipe?.key) return;
+    const map = loadHiddenRecipes();
+    map[recipe.key] = new Date().toISOString();
+    try { global.localStorage.setItem(hiddenRecipesKey(), JSON.stringify(map)); } catch (_) { }
+  }
+  function recipeInField(box){
+    const name = String($('mealName')?.value || '').trim().toLowerCase();
+    if (!name) return null;
+    return (box.__nutriRecipes || []).find((recipe) => recipe.name.toLowerCase() === name) || null;
+  }
   function loadForgottenMeals(){
     try { const parsed = JSON.parse(global.localStorage.getItem(forgottenMealsKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {}; }
     catch (_) { return {}; }
@@ -355,11 +373,11 @@
     const box = $('mobileDailyRecentMeals');
     const forget = box?.querySelector('#mobileDailyRecentMealForget');
     if (!forget) return;
-    const meal = mealInField(box);
+    const meal = mealInField(box) || recipeInField(box); /* v25.1 : habitude ou recette NutriApp */
     forget.hidden = !meal;
     forget.disabled = !meal;
     box.dataset.known = meal ? '1' : '0';
-    forget.setAttribute('aria-label', meal ? `Oublier « ${meal.name} »` : 'Oublier ce repas');
+    forget.setAttribute('aria-label', meal ? `Retirer « ${meal.name} » de la liste` : 'Oublier ce repas');
     forget.title = forget.getAttribute('aria-label');
   }
   function clearMealForm(){
@@ -403,11 +421,19 @@
     });
     nameInput.addEventListener('input', syncForgetButton);
     forget.addEventListener('click', () => {
+      /* v25.1 : la corbeille retire de la liste tout ce qui porte ce nom (habitude et/ou recette). */
       const meal = mealInField(box);
-      if (!meal) return;
-      forgetRecentMeal(meal);
+      const recipe = recipeInField(box);
+      if (!meal && !recipe) return;
+      if (meal) forgetRecentMeal(meal);
+      if (recipe) hideRecipe(recipe);
       clearMealForm(); /* v24.7 : le repas oublié quitte aussi le formulaire */
-      box.__recentMealNote = `« ${meal.name} » : oublié jusqu’à une future note.`;
+      const name = (meal || recipe).name;
+      box.__recentMealNote = meal && recipe
+        ? `« ${name} » : retiré de la liste (habitude et recette NutriApp).`
+        : meal
+          ? `« ${name} » : oublié jusqu’à une future note.`
+          : `« ${name} » : retirée de la liste jusqu’à sa prochaine modification dans NutriApp.`;
       syncRecentMeals();
     });
   }
@@ -432,7 +458,7 @@
     /* v25.0 : recettes NutriApp (lecture seule, même origine). Groupes nommés seulement
        quand il y a des recettes ; sinon la liste reste celle des habitudes. */
     let recipes = [];
-    try { recipes = global.SuiviNutriApp?.listRecipes(global.localStorage) || []; } catch (_) { recipes = []; }
+    try { recipes = global.SuiviNutriApp?.visibleRecipes(global.SuiviNutriApp.listRecipes(global.localStorage), loadHiddenRecipes()) || []; } catch (_) { recipes = []; }
     box.__nutriRecipes = recipes;
     const habitsHost = recipes.length ? doc.createElement('optgroup') : select;
     if (recipes.length) { habitsHost.label = 'Tes habitudes'; if (meals.length) select.appendChild(habitsHost); }
