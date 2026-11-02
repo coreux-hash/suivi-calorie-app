@@ -627,3 +627,15 @@ details.notice.notice--compact[open] .noticeCompactBody{
     padding-right:0;
   }
 }
+
+/* v25.0 — Recherche d'ingrédients NutriApp (onglet « L'étiquette », desktop et mobile). */
+.nutriSearch{position:relative;margin:.6rem 0 .2rem}
+.nutriSearch[hidden]{display:none}
+.nutriSearch input{width:100%}
+.nutriResults{list-style:none;margin:.35rem 0 0;padding:.25rem;border:1px solid var(--line);border-radius:12px;background:rgba(10,14,28,.96);max-height:16rem;overflow:auto}
+.nutriResults[hidden]{display:none}
+.nutriResult{display:flex;width:100%;justify-content:space-between;align-items:baseline;gap:.6rem;padding:.55rem .65rem;border:0;border-radius:10px;background:transparent;color:var(--text);text-align:left;font-weight:600}
+.nutriResult:hover,.nutriResult:focus-visible{background:rgba(124,92,255,.18)}
+.nutriResult strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nutriResult small{flex:0 0 auto;color:var(--muted);font-weight:500}
+.nutriResults__empty{padding:.55rem .65rem;font-size:.9rem}
