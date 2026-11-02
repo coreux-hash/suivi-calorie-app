@@ -132,6 +132,47 @@
     }
   }
 
+  /* v23.5 : libellés « Nom (unité) » des mesures de composition scindés en deux spans
+     (texte identique) pour que le nom se tronque en ellipse et que l'unité reste visible.
+     Fait une seule fois ; sans effet visuel hors mobile (spans inline). */
+  const UNIT_LABEL_INPUTS = ['fatPct', 'musclePct', 'boneKg'];
+  function splitUnitLabels(){
+    UNIT_LABEL_INPUTS.forEach((id) => {
+      const label = $(id)?.previousElementSibling;
+      if (!label || label.tagName !== 'LABEL' || label.dataset.mobileUnitSplit === '1') return;
+      const match = label.textContent.trim().match(/^(.*?)\s*(\([^)]*\))$/);
+      if (!match) return;
+      label.textContent = '';
+      const name = doc.createElement('span'); name.className = 'mobileLabelName'; name.textContent = match[1];
+      const unit = doc.createElement('span'); unit.className = 'mobileLabelUnit'; unit.textContent = match[2];
+      label.append(name, ' ', unit);
+      label.dataset.mobileUnitSplit = '1';
+    });
+  }
+
+  /* v23.5 : carte « Montre et dépense » — libellés courts et aides masquées sur mobile,
+     libellés d'origine restaurés au retour desktop. */
+  const MOBILE_SHORT_LABELS = { watchBrand:'Montre', errMode:'Prudence', montre:'Calories (kcal)', errPct:'Incertitude (%)' };
+  function shortenWatchLabels(isMobile){
+    Object.entries(MOBILE_SHORT_LABELS).forEach(([id, short]) => {
+      const control = $(id);
+      const label = control?.parentElement?.querySelector('label');
+      if (!label) return;
+      if (isMobile) {
+        if (label.dataset.mobileLabelOriginal == null) label.dataset.mobileLabelOriginal = label.textContent;
+        label.textContent = short;
+      } else if (label.dataset.mobileLabelOriginal != null) {
+        label.textContent = label.dataset.mobileLabelOriginal;
+        delete label.dataset.mobileLabelOriginal;
+      }
+    });
+    const card = doc.querySelector('.mobileWatchCard') || $('watchBrand')?.closest('.card');
+    card?.querySelectorAll('.muted').forEach((hint) => {
+      if (hint.querySelector('.info-dot')) return;
+      hint.classList.toggle('mobileWatchHint', isMobile);
+    });
+  }
+
   /* v23 (D1) : la surface mobile ignore le mode d'affichage Simple/Sportif/Expert
      pour ses cartes de saisie. #sportCard et #sleepCard portent data-um="sport"
      (masqués hors Sportif/Expert par visibility.css) ; on neutralise l'attribut
@@ -176,6 +217,11 @@
     chain.id = 'mobileDailySpendChain';
     chain.className = 'mobileDailySpendChain';
     chain.hidden = true;
+    chain.addEventListener('keydown', (event) => {
+      const dot = event.target.closest?.('.info-dot');
+      if (!dot || (event.key !== 'Enter' && event.key !== ' ')) return;
+      event.preventDefault(); dot.click();
+    });
     slot.appendChild(chain);
     const button = doc.createElement('button');
     button.type = 'button';
@@ -207,7 +253,8 @@
     const pct = Number($('errPct')?.value) || 0;
     const mode = $('errMode')?.value;
     const sign = mode === 'optimistic' ? '+' : '−';
-    el.innerHTML = `Montre <strong>${Math.round(raw)}</strong> → retenue <strong>${Math.round(retained)} kcal</strong> <span>(prudence ${sign}${pct} %, réglable dans Réglages › Montre)</span>`;
+    const modalText = `Montre : ${Math.round(raw)} kcal saisis.\nPrudence : ${sign}${pct} % (${mode === 'optimistic' ? 'mode « Large »' : 'mode « Prudent »'}).\nRetenue par le moteur : ${Math.round(retained)} kcal — c'est cette valeur qui fixe la cible du jour.\nRéglable dans Réglages › Montre et dépense (Incertitude, Prudence).`;
+    el.innerHTML = `Montre <strong>${Math.round(raw)}</strong> → retenue <strong>${Math.round(retained)} kcal</strong> <span class="info-dot mobileDailyInlineInfo mobileDailySpendInfo" role="button" tabindex="0" aria-label="Pourquoi ${Math.round(retained)} kcal retenus ?" data-modaltext="${modalText.replace(/"/g, '&quot;')}">ℹ️</span>`;
   }
 
   /* v23.2 : repas récents — ajout en 1 tap. La liste est déduite des journées déjà
@@ -303,11 +350,10 @@
     const el = $('mobileDailyRemaining');
     if (!el) return;
     const rest = text('rK');
-    const eaten = text('eK');
     if (!rest) { el.hidden = true; return; }
     el.hidden = false;
     const target = text('tK');
-    el.innerHTML = `Reste <strong>${rest} kcal</strong><span>${eaten !== '' ? ` · ${eaten} consommées` : ''}${target ? ` · cible ${target}` : ''}</span>`;
+    el.innerHTML = `Reste <strong>${rest} kcal</strong>${target ? ` <span>sur cible de ${target} kcal</span>` : ''}`;
   }
 
   function text(id){ return $(id)?.textContent?.trim() || ''; }
@@ -416,6 +462,17 @@
       if (button) button.setAttribute('aria-expanded', String(open));
     });
     if (options.focus) global.setTimeout(() => $(`mobileDaily${action[0].toUpperCase()}${action.slice(1)}Slot`)?.querySelector('input, button, select')?.focus(), 40);
+  }
+
+  function collapseActions(){
+    ['spend', 'meals', 'activity'].forEach((key) => {
+      const card = $(`mobileDaily${key[0].toUpperCase()}${key.slice(1)}Card`);
+      const slot = $(`mobileDaily${key[0].toUpperCase()}${key.slice(1)}Slot`);
+      const button = doc.querySelector(`[data-mobile-action="${key}"]`);
+      if (card) card.dataset.open = 'false';
+      if (slot) slot.hidden = true;
+      if (button) button.setAttribute('aria-expanded', 'false');
+    });
   }
 
   function syncNextBadge(){
@@ -590,6 +647,8 @@
     portNodes(true);
     portMobileSetupContext(true);
     ungateMobileCards();
+    shortenWatchLabels(true);
+    splitUnitLabels();
     installSpendConfirm();
     installRecentMeals();
     installMobileInfoDots();
@@ -610,6 +669,7 @@
     if (diabetesPanel) diabetesPanel.hidden = false;
     removeSpendConfirm();
     removeRecentMeals();
+    shortenWatchLabels(false);
     regateMobileCards();
     portMobileSetupContext(false);
     portNodes(false);
@@ -723,7 +783,12 @@
     [['btnMobileMenuOpenHelp', 'btnMenuOpenHelpModal'], ['btnMobileMenuOpenCloud', 'btnMenuOpenCloudModal'], ['btnMobileMenuOpenTerms', 'btnMenuOpenTermsGate']].forEach(([mobileId, legacyId]) => {
       $(mobileId)?.addEventListener('click', () => $(legacyId)?.click());
     });
-    qa('[data-mobile-action]').forEach((button) => button.addEventListener('click', () => setAction(button.dataset.mobileAction, { focus:true })));
+    /* v23.5 : re-tap sur le volet ouvert => il se referme (comme l'accordéon Réglages). */
+    qa('[data-mobile-action]').forEach((button) => button.addEventListener('click', () => {
+      const key = button.dataset.mobileAction;
+      if (button.getAttribute('aria-expanded') === 'true') collapseActions();
+      else setAction(key, { focus:true });
+    }));
     $('mobileDailySettingsSlot')?.addEventListener('input', () => queueSync(40));
     $('mobileDailySettingsSlot')?.addEventListener('change', () => queueSync(40));
     $('mobileDailyNextBadge')?.addEventListener('click', () => setView('history'));
