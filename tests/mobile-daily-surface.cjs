@@ -346,7 +346,7 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
        ingrédient cherchable dans « L'étiquette » ; rien n'est écrit dans nutriapp.*. */
     {
       const ing = [{ name:'Flocons d’avoine', kcal100:372, p100:13.5, g100:58.7, l100:7 }, { name:'Œuf', kcal:143, p:12.6, carbs:0.7, fat:9.5 }];
-      const rec = [{ name:'Porridge', parts:2, rows:[{ macrosResolved:{ kcal:372, p:13.5, c:58.7, f:7 } }, { macrosResolved:{ kcal:130, p:6.8, c:9.6, f:7.2 } }] }];
+      const rec = [{ name:'Porridge', parts:2, rows:[{ macrosResolved:{ kcal:372, p:13.5, c:58.7, f:7 } }, { macrosResolved:{ kcal:130, p:6.8, c:9.6, f:7.2 } }] }, { id:'soupe-1', name:'Soupe', parts:3, updatedAt:'2026-01-01T00:00:00.000Z', rows:[{ kcal:300, p:9, carbs:45, fat:6 }] }];
       const storage = { ...fixture(simpleSettings), 'nutriapp.ingredients.v2':JSON.stringify(ing), 'nutriapp.recipes.v2':JSON.stringify(rec) };
       const { context, page, pageErrors } = await open(browser, origin, storage, MOBILE);
       const nutri = () => page.evaluate(() => [localStorage.getItem('nutriapp.ingredients.v2'), localStorage.getItem('nutriapp.recipes.v2')]);
@@ -356,7 +356,21 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.deepEqual(await page.$$eval('#mobileDailyRecentMealSelect optgroup', (g) => g.map((x) => x.label)), ['Recettes NutriApp (1 portion)']);
       await page.selectOption('#mobileDailyRecentMealSelect', 'r:0'); await page.waitForTimeout(150);
       assert.deepEqual(await page.$$eval('#mealName, #mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['Porridge', '251', '10.2', '34.2', '7.1'], 'une portion de recette');
+      assert.equal(await page.isVisible('#mobileDailyRecentMealForget'), true, 'corbeille visible sur une recette');
       await page.click('#btnAddMeal'); await page.waitForTimeout(400);
+      /* v25.1 : « Soupe » (recette seule) retirée par la corbeille ; Porridge (habitude + recette) retiré des deux. */
+      await page.selectOption('#mobileDailyRecentMealSelect', 'r:1'); await page.waitForTimeout(150);
+      assert.equal(await page.$eval('#mealName', (e) => e.value), 'Soupe');
+      await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
+      assert.match(await page.textContent('#mobileDailyRecentMealNote'), /« Soupe » : retirée de la liste jusqu’à sa prochaine modification dans NutriApp\./);
+      assert.deepEqual(await page.$$eval('#mobileDailyRecentMealSelect option', (o) => o.map((x) => x.textContent)), ['✎ Écrire autre chose', 'Porridge · 251 kcal', 'Porridge · 251 kcal'], 'Soupe absente ; Porridge en habitude et en recette');
+      assert.equal(await page.$eval('#mealName', (e) => e.value), '', 'champ vidé');
+      assert.deepEqual(Object.keys(JSON.parse(await page.evaluate(() => localStorage.getItem('secheapp.default.hiddenNutriRecipes.v1')))), ['id:soupe-1']);
+      await page.selectOption('#mobileDailyRecentMealSelect', '0'); await page.waitForTimeout(150);
+      await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
+      assert.match(await page.textContent('#mobileDailyRecentMealNote'), /« Porridge » : retiré de la liste \(habitude et recette NutriApp\)\./);
+      assert.equal(await page.$eval('#mobileDailyRecentMeals', (e) => e.dataset.empty), '1', 'plus rien dans la liste : champ texte simple');
+      assert.equal((await days(page)).find((x) => x.date === today).meals.length, 1, 'le repas noté reste dans la journée');
       await page.click('#mealModeQuick'); await page.waitForTimeout(200);
       assert.equal(await page.isVisible('#nutriSearch'), true, 'champ NutriApp visible');
       await page.fill('#nutriSearch', 'oeu'); await page.waitForTimeout(150);

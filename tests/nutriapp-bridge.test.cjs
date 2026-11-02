@@ -29,10 +29,11 @@ test('recettes : une portion = somme des lignes / portions ; recette sans macros
     { name:'Ancienne', parts:4, rows:[{ qty:100 }] },
     { name:'Soupe', portions:3, rows:[{ kcal:300, p:9, carbs:45, fat:6 }] }
   ]) }));
-  assert.deepEqual(list, [
+  assert.deepEqual(list.map(({ key, updatedAt, ...rest }) => rest), [
     { name:'Porridge', parts:2, k:251, p:10.2, c:34.2, f:7.1 },
     { name:'Soupe', parts:3, k:100, p:3, c:15, f:2 }
   ]);
+  assert.deepEqual(list.map((r) => r.key), ['name:porridge', 'name:soupe'], 'sans id : clé = nom');
 });
 
 test('données absentes ou illisibles : listes vides, aucune exception', () => {
@@ -53,4 +54,14 @@ test('recherche : sans accents ni casse, ligatures, « commence par » avant « 
 test('lecture seule : aucune écriture dans le stockage depuis le module', () => {
   const src = fs.readFileSync(path.join(__dirname, '../js/phase6/phase6-nutriapp-bridge.js'), 'utf8');
   assert.doesNotMatch(src, /setItem|removeItem|\.clear\(/);
+});
+
+test('recette retirée : cachée, puis de retour si NutriApp la modifie après le retrait', () => {
+  const [r] = N.listRecipes(store({ 'nutriapp.recipes.v2': JSON.stringify([{ id:'r1', name:'Porridge', parts:1, updatedAt:'2026-11-01T10:00:00.000Z', rows:[{ kcal:300 }] }]) }));
+  assert.equal(r.key, 'id:r1');
+  assert.equal(r.updatedAt, '2026-11-01T10:00:00.000Z');
+  assert.deepEqual(N.visibleRecipes([r], {}), [r]);
+  assert.deepEqual(N.visibleRecipes([r], { 'id:r1':'2026-11-02T08:00:00.000Z' }), [], 'retirée après sa dernière modification : cachée');
+  assert.deepEqual(N.visibleRecipes([{ ...r, updatedAt:'2026-11-03T09:00:00.000Z' }], { 'id:r1':'2026-11-02T08:00:00.000Z' }).length, 1, 'modifiée ensuite : de retour');
+  assert.deepEqual(N.visibleRecipes([{ ...r, updatedAt:'' }], { 'id:r1':'2026-11-02T08:00:00.000Z' }), [], 'sans date de modification : reste cachée');
 });
