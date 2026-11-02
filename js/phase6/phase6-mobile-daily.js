@@ -349,15 +349,25 @@
     if (!name) return null;
     return (box.__recentMeals || []).find((meal) => meal.name.toLowerCase() === name) || null;
   }
+  /* v24.7 : la corbeille n'existe visuellement que si le nom du champ est un repas habituel
+     (data-known="1" sur la cellule) ; plus d'état grisé derrière le texte. */
   function syncForgetButton(){
     const box = $('mobileDailyRecentMeals');
     const forget = box?.querySelector('#mobileDailyRecentMealForget');
     if (!forget) return;
     const meal = mealInField(box);
+    forget.hidden = !meal;
     forget.disabled = !meal;
+    box.dataset.known = meal ? '1' : '0';
     forget.setAttribute('aria-label', meal ? `Oublier « ${meal.name} »` : 'Oublier ce repas');
     forget.title = forget.getAttribute('aria-label');
   }
+  function clearMealForm(){
+    const name = $('mealName');
+    if (name) name.value = '';
+    ['mealK', 'mealP', 'mealC', 'mealF'].forEach((id) => { const el = $(id); if (el) el.value = '0'; });
+  }
+  const MANUAL_MEAL = '__manual';
   function installRecentMeals(){
     const nameInput = $('mealName');
     if (!nameInput || $('mobileDailyRecentMeals')) return;
@@ -371,15 +381,24 @@
     field.appendChild(nameInput);
     nameInput.classList.add('mobileDailyRecentMeals__input');
     field.insertAdjacentHTML('beforeend',
-      '<button type="button" class="mobileDailyRecentMeals__forget" id="mobileDailyRecentMealForget" title="Oublier ce repas" aria-label="Oublier ce repas" disabled>🗑</button>'
+      '<button type="button" class="mobileDailyRecentMeals__forget" id="mobileDailyRecentMealForget" title="Oublier ce repas" aria-label="Oublier ce repas" hidden disabled>🗑</button>'
       + '<span class="mobileDailyRecentMeals__chevron" aria-hidden="true">▾</span>'
-      + '<select id="mobileDailyRecentMealSelect" class="mobileDailyRecentMeals__select" aria-label="Tes habitudes"><option value="">Tes habitudes…</option></select>');
+      + '<select id="mobileDailyRecentMealSelect" class="mobileDailyRecentMeals__select" aria-label="Tes habitudes"></select>');
     const select = field.querySelector('#mobileDailyRecentMealSelect');
     const forget = field.querySelector('#mobileDailyRecentMealForget');
+    /* Au repos, la liste n'a aucune option choisie (selectedIndex = -1) : n'importe quel choix,
+       y compris « Écrire autre chose », déclenche « change ». */
     select.addEventListener('change', () => {
-      const meal = select.value === '' ? null : box.__recentMeals?.[Number(select.value)];
-      fillMealForm(meal);
-      select.value = '';
+      if (select.value === MANUAL_MEAL) {
+        clearMealForm();
+        global.setTimeout(() => nameInput.focus(), 60);
+      } else if (select.value.startsWith('r:')) {
+        /* v25.0 : recette NutriApp = une portion (somme des lignes / nombre de portions). */
+        fillMealForm(box.__nutriRecipes?.[Number(select.value.slice(2))]);
+      } else {
+        fillMealForm(box.__recentMeals?.[Number(select.value)]);
+      }
+      select.selectedIndex = -1;
       syncForgetButton();
     });
     nameInput.addEventListener('input', syncForgetButton);
@@ -387,6 +406,7 @@
       const meal = mealInField(box);
       if (!meal) return;
       forgetRecentMeal(meal);
+      clearMealForm(); /* v24.7 : le repas oublié quitte aussi le formulaire */
       box.__recentMealNote = `« ${meal.name} » : oublié jusqu’à une future note.`;
       syncRecentMeals();
     });
@@ -404,20 +424,38 @@
     }
     const select = box.querySelector('#mobileDailyRecentMealSelect');
     if (!select) return;
-    /* Toujours remis sur l'invite : une sélection ne vaut que pour remplir le formulaire. */
+    /* v24.7 : première option = saisie libre ; la liste reste sans sélection au repos. */
     select.textContent = '';
-    const prompt = doc.createElement('option');
-    prompt.value = ''; prompt.textContent = 'Tes habitudes…';
-    select.appendChild(prompt);
+    const manual = doc.createElement('option');
+    manual.value = MANUAL_MEAL; manual.textContent = '✎ Écrire autre chose';
+    select.appendChild(manual);
+    /* v25.0 : recettes NutriApp (lecture seule, même origine). Groupes nommés seulement
+       quand il y a des recettes ; sinon la liste reste celle des habitudes. */
+    let recipes = [];
+    try { recipes = global.SuiviNutriApp?.listRecipes(global.localStorage) || []; } catch (_) { recipes = []; }
+    box.__nutriRecipes = recipes;
+    const habitsHost = recipes.length ? doc.createElement('optgroup') : select;
+    if (recipes.length) { habitsHost.label = 'Tes habitudes'; if (meals.length) select.appendChild(habitsHost); }
     meals.forEach((meal, index) => {
       const option = doc.createElement('option');
       option.value = String(index);
       option.textContent = `${meal.name} · ${Math.round(meal.k)} kcal`;
-      select.appendChild(option);
+      habitsHost.appendChild(option);
     });
-    select.value = '';
-    /* Sans habitude : le champ redevient un simple champ texte (pas de chevron ni corbeille). */
-    box.dataset.empty = meals.length === 0 ? '1' : '0';
+    if (recipes.length) {
+      const group = doc.createElement('optgroup');
+      group.label = 'Recettes NutriApp (1 portion)';
+      recipes.forEach((recipe, index) => {
+        const option = doc.createElement('option');
+        option.value = `r:${index}`;
+        option.textContent = `${recipe.name} · ${Math.round(recipe.k)} kcal`;
+        group.appendChild(option);
+      });
+      select.appendChild(group);
+    }
+    select.selectedIndex = -1;
+    /* Sans habitude ni recette : le champ redevient un simple champ texte (pas de chevron ni corbeille). */
+    box.dataset.empty = meals.length === 0 && recipes.length === 0 ? '1' : '0';
     syncForgetButton();
   }
   function removeRecentMeals(){
@@ -911,6 +949,7 @@
     $('mobileDailySettingsSlot')?.addEventListener('change', () => queueSync(40));
     $('mobileDailyNextBadge')?.addEventListener('click', () => setView('history'));
     ['input', 'change'].forEach((type) => $('mealName')?.addEventListener(type, prefillMealFromName));
+    global.addEventListener('storage', (event) => { if (!event.key || event.key.startsWith('nutriapp.')) queueSync(40); }); /* v25.0 */
     ['dayDate','todaySpendEdit','btnAddMeal','btnClearMeals','btnSportSave','diabEnabled'].forEach((id) => $(id)?.addEventListener('change', () => queueSync()));
     doc.addEventListener('click', (event) => {
       if (event.target.closest('#btnAddMeal, #btnClearMeals, #btnSportSave, [data-sportdel], .calDay')) queueSync(140);
