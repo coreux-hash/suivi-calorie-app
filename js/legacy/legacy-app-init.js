@@ -230,22 +230,22 @@ function phase6SyncSettingsAccessUi(){
 
   const missingSections = frame.sections.filter(section => !section.ready).map(section => section.label);
   const missingText = missingSections.length ? missingSections.join(', ') : '';
-  const lockedTitle = 'Application verrouillée';
-  const unlockedTitle = 'Application déverrouillée';
-  const lockedMeta = "Les espaces restent inactifs tant que les conditions d’accès ne sont pas lues et acceptées.";
-  const unlockedMeta = "Les conditions d’accès ont déjà été acceptées sur cet appareil.";
+  const lockedTitle = 'Fermée pour l’instant';
+  const unlockedTitle = 'Ouverte';
+  const lockedMeta = "Il faut d’abord lire et accepter « Avant de commencer ».";
+  const unlockedMeta = "Tu as déjà accepté « Avant de commencer » sur cet appareil.";
 
-  if (state) state.textContent = accepted ? 'Déverrouillée' : 'Verrouillée';
+  if (state) state.textContent = accepted ? 'Ouverte' : 'Fermée';
   if (meta) meta.textContent = accepted
     ? (frame.ready
-        ? 'Conditions acceptées. Configuration et compromis sont prêts : entrée sur Pilotage.'
-        : `Conditions acceptées mais cadre incomplet : complète ${missingText} dans Réglages avant l’usage normal.`)
-    : "La lecture et l’acceptation des conditions restent requises avant d’entrer dans l’application.";
+        ? 'C’est bon : ton cadre est prêt, tu arrives sur Aujourd’hui.'
+        : `Il manque encore ${missingText} dans Mon cadre avant de pouvoir t’en servir vraiment.`)
+    : "Lis et accepte « Avant de commencer » pour entrer.";
 
   if (globalState) globalState.textContent = accepted ? unlockedTitle : lockedTitle;
   if (globalMeta) globalMeta.textContent = accepted ? unlockedMeta : lockedMeta;
   if (globalBtn) globalBtn.textContent = accepted ? 'Relire les conditions' : 'Lire et accepter';
-  if (menuBtn) menuBtn.textContent = accepted ? 'Conditions d’accès (relire)' : 'Conditions d’accès';
+  if (menuBtn) menuBtn.textContent = accepted ? 'Avant de commencer (relire)' : 'Avant de commencer';
   if (globalCard) globalCard.setAttribute('data-state', accepted ? 'unlocked' : 'locked');
 
   if (quickProfile) quickProfile.setAttribute('data-ready', profile.ready ? 'ready' : 'missing');
@@ -253,17 +253,17 @@ function phase6SyncSettingsAccessUi(){
   if (quickGoals) quickGoals.setAttribute('data-ready', goals.ready ? 'ready' : 'missing');
   if (quickCompromise) quickCompromise.setAttribute('data-ready', compromise.ready ? 'ready' : 'missing');
   if (quickProfileLabel) quickProfileLabel.innerHTML = profile.ready
-    ? 'Base + préférences · <strong>prêt</strong>'
-    : `Base + préférences · ${profile.completeCount}/${profile.totalCount} requis`;
+    ? 'Toi · <strong>prêt</strong>'
+    : `Toi · ${profile.completeCount}/${profile.totalCount} requis`;
   if (quickWatchLabel) quickWatchLabel.innerHTML = watch.ready
-    ? 'Dépense + calories · <strong>prêt</strong>'
-    : `Dépense + calories · ${watch.completeCount}/${watch.totalCount} requis`;
+    ? 'Montre et kcal · <strong>prêt</strong>'
+    : `Montre et kcal · ${watch.completeCount}/${watch.totalCount} requis`;
   if (quickGoalsLabel) quickGoalsLabel.innerHTML = goals.ready
-    ? 'Preset + cible · <strong>prêt</strong>'
-    : 'Preset + cible · preset requis';
+    ? 'Façon de manger · <strong>prêt</strong>'
+    : 'Façon de manger · requis';
   if (quickCompromiseLabel) quickCompromiseLabel.innerHTML = compromise.ready
-    ? 'Choix nutritionnel · <strong>prêt</strong>'
-    : 'Choix nutritionnel · requis';
+    ? 'Ce que tu vises · <strong>prêt</strong>'
+    : 'Ce que tu vises · requis';
   phase6SyncSetupNudgeUi({ setup });
 }
 function phase6MaybeOpenTermsGateOnLockedApp(){

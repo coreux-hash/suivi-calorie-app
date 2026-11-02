@@ -6,7 +6,7 @@
     catch(_) { return new Date().toISOString().slice(0,10); }
   }
   function isoAddDays(dateStr, delta){ const raw=String(dateStr||'').slice(0,10); const match=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/); if(!match) return dateStr; const d=new Date(Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]))); d.setUTCDate(d.getUTCDate()+Number(delta||0)); return d.toISOString().slice(0,10); }
-  const LOAD_LEVELS={L0:{minHours:0,maxHours:3,label:'L0 · faible charge'},L1:{minHours:3,maxHours:5,label:'L1 · charge modérée'},L2:{minHours:5,maxHours:8,label:'L2 · charge sportive réelle'},L3:{minHours:8,maxHours:10,label:'L3 · charge élevée'},L4:{minHours:10,maxHours:999,label:'L4 · charge très élevée / bloc perf'}};
+  const LOAD_LEVELS={L0:{minHours:0,maxHours:3,label:'L0 · peu de sport'},L1:{minHours:3,maxHours:5,label:'L1 · un peu de sport'},L2:{minHours:5,maxHours:8,label:'L2 · du vrai sport'},L3:{minHours:8,maxHours:10,label:'L3 · beaucoup de sport'},L4:{minHours:10,maxHours:999,label:'L4 · énormément / bloc perf'}};
   const ENERGY_LOAD_LEVELS={D0:{minPal:0,maxPal:1.45,level:'L0',label:'D0 · dépense basse'},D1:{minPal:1.45,maxPal:1.70,level:'L1',label:'D1 · dépense standard'},D2:{minPal:1.70,maxPal:1.95,level:'L2',label:'D2 · dépense active'},D3:{minPal:1.95,maxPal:2.20,level:'L3',label:'D3 · dépense élevée'},D4:{minPal:2.20,maxPal:999,level:'L4',label:'D4 · dépense très élevée'}};
   const MATRIX={
     eq_global:{L0:{status:'allowed',ratio:'on',carbGoalRecommended:'maintain_active'},L1:{status:'allowed',ratio:'on',carbGoalRecommended:'maintain_active'},L2:{status:'allowed',ratio:'on',carbGoalRecommended:'maintain_active'},L3:{status:'allowed',ratio:'on',carbGoalRecommended:'maintain_active'},L4:{status:'warn',ratio:'on',carbGoalRecommended:'maintain_active'}},
@@ -22,9 +22,9 @@
     endurance_comp:{L0:{status:'blocked',ratio:'off',carbGoalRecommended:'carb_loading'},L1:{status:'blocked',ratio:'off',carbGoalRecommended:'carb_loading'},L2:{status:'warn',ratio:'off',carbGoalRecommended:'carb_loading'},L3:{status:'allowed',ratio:'off',carbGoalRecommended:'carb_loading'},L4:{status:'allowed',ratio:'off',carbGoalRecommended:'carb_loading'}}
   };
   const CARB_GOAL_LABELS={maintain_active:'Maintien actif (4–6 g/kg/j)',recomp:'Recomposition (4–5 g/kg/j)',dry_sport:'Sèche progressive (3–4 g/kg/j)',dry_strict:'Sèche stricte (2–3 g/kg/j)',endurance_volume:'Endurance / volume (6–8 g/kg/j)',carb_loading:'Carb-loading (8–12 g/kg/j)'};
-  const STATUS_LABELS={allowed:'Compatible avec ta charge actuelle.',warn:'Possible, mais moins cohérent avec ta charge actuelle.',blocked:'Non prioritaire pour ta charge actuelle.'};
+  const STATUS_LABELS={allowed:'Ça colle avec ce que ton corps encaisse.',warn:'Possible, mais pas idéal en ce moment.',blocked:'Pas le meilleur choix en ce moment.'};
   const RATIO_LABELS={on:'ON',soft:'SOFT',off:'OFF'};
-  const BLOCK_NOTE={simple_maintain:'Ce compromis peut trop limiter les glucides utiles à l’effort quand le volume grimpe.',gly_satiety:'Ce compromis reste possible, mais la stabilité glycémique n’est plus prioritaire face au glycogène.',cut_fast:'Le volume actuel rend ce compromis plus risqué pour la récupération.',endurance_volume:'Le compromis endurance n’est pas prioritaire à faible charge.',endurance_comp:'Le carb-loading est réservé à une fenêtre de charge ou à une préparation spécifique.'};
+  const BLOCK_NOTE={simple_maintain:'Quand le volume grimpe, ce choix peut te priver des glucides dont l’effort a besoin.',gly_satiety:'Possible, mais à ce niveau le glycogène passe avant la stabilité de la glycémie.',cut_fast:'Avec ce volume, ce choix complique la récupération.',endurance_volume:'Le choix endurance a peu de sens avec peu de sport.',endurance_comp:'Le carb-loading, c’est pour une courte fenêtre avant un gros effort.'};
   function sumSportMinutes(day){ if(!day||typeof day!=='object') return 0; const sessions=Array.isArray(day.sportSessions)?day.sportSessions:[]; if(sessions.length){ return sessions.reduce((sum,s)=>sum+Math.max(0,toNum(s?.minutes)),0);} return Math.max(0,toNum(day?.sport?.minutes)); }
   function getWeeklySportMinutes(dateStr){ let days=[]; try{ days=Array.isArray(loadDays?.())?loadDays():[]; }catch(_){ days=[]; } const end=String(dateStr||getSelectedDateSafe()).slice(0,10); const start=isoAddDays(end,-6); return days.reduce((sum,day)=>{ const d=String(day?.date||'').slice(0,10); if(!d||d<start||d>end) return sum; return sum+sumSportMinutes(day); },0); }
   function getLoadLevel(hours){ const h=Math.max(0,Number(hours)||0); if(h<LOAD_LEVELS.L1.minHours) return 'L0'; if(h<LOAD_LEVELS.L2.minHours) return 'L1'; if(h<LOAD_LEVELS.L3.minHours) return 'L2'; if(h<LOAD_LEVELS.L4.minHours) return 'L3'; return 'L4'; }
@@ -58,7 +58,7 @@
       energyRequiredDays:7
     });
     if(!complete){
-      return {id:null,level:null,index:null,label:'D— · données incomplètes',spend:null,bmr:null,pal:null,validDays,requiredDays:7,complete:false,startDate:start,endDate:end,text:`D— · ${validDays}/7 jours`};
+      return {id:null,level:null,index:null,label:'D— · il manque des jours',spend:null,bmr:null,pal:null,validDays,requiredDays:7,complete:false,startDate:start,endDate:end,text:`D— · ${validDays}/7 jours`};
     }
     const spend=totalSpend/7;
     const bmr=totalBmr/7;
@@ -72,7 +72,7 @@
     return {id,level:def.level,index:getLoadIndex(def.level),label:def.label,spend,bmr,pal,validDays,requiredDays:7,complete:true,startDate:start,endDate:end,text:`${id} · ${Math.round(spend)} kcal/j en moyenne · PAL ${pal.toFixed(2)} · 7/7 j`};
   }
   function combineSportAndEnergyLoad(sportLevel,energyLoad){ const s=getLoadIndex(sportLevel); const hasEnergy=!!energyLoad?.complete; const d=hasEnergy?getLoadIndex(energyLoad.level):null; const finalIndex=hasEnergy?Math.max(s,d):s; let source='sport'; if(hasEnergy&&d>s) source='energy'; else if(hasEnergy&&d===s) source='equal'; return {level:levelFromIndex(finalIndex),source,sportIndex:s,energyIndex:d,finalIndex,boosted:false,rule:'max'}; }
-  function getLoadSourceText(state){ if(state?.combined?.source==='equal') return `niveau commun (${state.sportLevel} / ${state.energyLoad?.id||'D?'})`; if(state?.combined?.source==='energy') return `dépense moyenne dominante (${state.energyLoad?.id||'D?'})`; if(!state?.energyLoad?.complete) return `charge sportive retenue (${state.sportLevel}) · D incomplet`; return `charge sportive dominante (${state.sportLevel})`; }
+  function getLoadSourceText(state){ if(state?.combined?.source==='equal') return `niveau commun (${state.sportLevel} / ${state.energyLoad?.id||'D?'})`; if(state?.combined?.source==='energy') return `c’est ce que tu brûles qui compte (${state.energyLoad?.id||'D?'})`; if(!state?.energyLoad?.complete) return `le sport compte (${state.sportLevel}) · D incomplet`; return `c’est le sport qui compte (${state.sportLevel})`; }
   function getLoadDetailText(state){ const parts=[]; if(state?.hoursText) parts.push(state.hoursText); if(state?.energyLoad) parts.push(state.energyLoad.text); return parts.join(' · '); }
   function getCurrentCompromiseId(){ return String($('compromiseSelect')?.value||''); }
   function getEntry(compromiseId,level){ return MATRIX?.[compromiseId]?.[level]||null; }
@@ -86,13 +86,13 @@
     if(!seed&&!pilotageSeed) return;
     [seed,pilotageSeed].filter(Boolean).forEach((nudge)=>{
       nudge.setAttribute('data-onboarding-visible',state.availability.showLoadNudge?'1':'0');
-      nudge.setAttribute('aria-label','Ouvrir Historique et le calendrier pour compléter les 7 derniers jours');
-      nudge.setAttribute('title','Compléter les 7 derniers jours dans Historique');
+      nudge.setAttribute('aria-label','Ouvrir Relire et le calendrier pour compléter les 7 derniers jours');
+      nudge.setAttribute('title','Compléter les 7 derniers jours dans Relire');
     });
   }
 
 function getLoadPublicLabel(state){
-    const raw=String(state?.levelLabel||state?.level||'Charge actuelle');
+    const raw=String(state?.levelLabel||state?.level||'Ce que ton corps encaisse');
     return raw.replace(/^L[0-4]\s*·\s*/,'').replace(/^./,(c)=>c.toUpperCase());
   }
   function getStatusPublicLabel(status){
@@ -101,12 +101,12 @@ function getLoadPublicLabel(state){
     return 'cohérent';
   }
   function getAdvisorNote(compromiseId,entry){
-    return BLOCK_NOTE[compromiseId] || (entry.status==='blocked' ? 'Ce compromis reste visible, mais il n’est pas prioritaire pour ta charge actuelle.' : entry.status==='warn' ? 'Compromis autorisé avec vigilance.' : 'Compromis cohérent avec la charge observée.');
+    return BLOCK_NOTE[compromiseId] || (entry.status==='blocked' ? 'Ce choix reste possible, mais ce n’est pas le plus adapté en ce moment.' : entry.status==='warn' ? 'Possible, mais garde un œil.' : 'Cohérent avec tes 7 derniers jours.');
   }
   function buildExpertLoadDetails(state,entry){
     const rows=[
       ['L · sport sur 7 j', `${state.sportLevelLabel || state.sportLevel || '—'} · ${state.hoursText}`],
-      ['D · dépense sur 7 j', state.energyLoad?.text || 'D— · 0/7 jours'],
+      ['D · ce que tu brûles sur 7 j', state.energyLoad?.text || 'D— · 0/7 jours'],
       ['Niveau retenu', state.levelLabel || state.level || '—'],
       ['Source', state.loadSourceText || '—'],
       ['Règle', state.energyLoad?.complete ? 'maximum de L et D' : 'L seul tant que D est incomplet']
@@ -114,7 +114,7 @@ function getLoadPublicLabel(state){
     if(entry){
       rows.push(['Statut interne', entry.status || '—']);
       rows.push(['Ratio', RATIO_LABELS[entry.ratio] || entry.ratio || '—']);
-      rows.push(['Repère conseillé', CARB_GOAL_LABELS[entry.carbGoalRecommended] || entry.carbGoalRecommended || '—']);
+      rows.push(['Glucides conseillés', CARB_GOAL_LABELS[entry.carbGoalRecommended] || entry.carbGoalRecommended || '—']);
     }
     return rows.map(([label,value])=>`<div><b>${escapeHtml(label)}</b> : ${escapeHtml(value)}</div>`).join('');
   }
@@ -124,7 +124,7 @@ function getLoadPublicLabel(state){
     const loadPublic=escapeHtml(getLoadPublicLabel(state));
     const expertDetails=buildExpertLoadDetails(state,state.entry);
     if(!state.compromiseId||!state.entry){
-      box.innerHTML=`<div class="uxAdvisorDecision"><b>Charge actuelle</b><span>${loadPublic}</span></div><div class="muted mt-025">Choisis un compromis pour vérifier la compatibilité.</div><details class="uxExpertDisclosure mt-025"><summary class="muted" style="cursor:pointer; user-select:none">Détail charge</summary><div class="muted mt-025">${expertDetails}</div></details>`;
+      box.innerHTML=`<div class="uxAdvisorDecision"><b>Ce que ton corps encaisse</b><span>${loadPublic}</span></div><div class="muted mt-025">Choisis ce que tu vises pour voir si ton corps peut suivre.</div><details class="uxExpertDisclosure mt-025"><summary class="muted" style="cursor:pointer; user-select:none">Détail charge</summary><div class="muted mt-025">${expertDetails}</div></details>`;
       return;
     }
     const entry=state.entry;
@@ -132,7 +132,7 @@ function getLoadPublicLabel(state){
     const tone=entry.status==='blocked'?'⛔':(entry.status==='warn'?'⚠':'✓');
     const statusPublic=escapeHtml(getStatusPublicLabel(entry.status));
     const carbGoal=escapeHtml(CARB_GOAL_LABELS[entry.carbGoalRecommended]||entry.carbGoalRecommended||'—');
-    box.innerHTML=`<div class="uxAdvisorDecision"><b>${tone} Compromis ${statusPublic}</b><span>${loadPublic}</span></div><div class="mt-025">Repère conseillé : <b>${carbGoal}</b>.</div><div class="muted mt-025">${escapeHtml(note)}</div><details class="uxExpertDisclosure mt-025"><summary class="muted" style="cursor:pointer; user-select:none">Détail expert</summary><div class="muted mt-025">${expertDetails}</div></details>`;
+    box.innerHTML=`<div class="uxAdvisorDecision"><b>${tone} Choix ${statusPublic}</b><span>${loadPublic}</span></div><div class="mt-025">Glucides conseillés : <b>${carbGoal}</b>.</div><div class="muted mt-025">${escapeHtml(note)}</div><details class="uxExpertDisclosure mt-025"><summary class="muted" style="cursor:pointer; user-select:none">Détail expert</summary><div class="muted mt-025">${expertDetails}</div></details>`;
   }
   function ensureRatioModeNote(){ let note=$('ratioCPModeNote'); if(note) return note; const ratio=$('ratioCP'); if(!ratio||!ratio.parentNode) return null; note=document.createElement('div'); note.id='ratioCPModeNote'; note.className='muted mt-025'; note.style.marginTop='.25rem'; note.style.fontSize='.92em'; note.style.display='none'; ratio.insertAdjacentElement('afterend',note); return note; }
   function setRatioVisualState(mode){
@@ -151,7 +151,7 @@ function getLoadPublicLabel(state){
       ratioExample.setAttribute('aria-hidden', (mode==='off' || mode==='soft') ? 'true' : 'false');
     }
     const tapContent = document.querySelector('#settingsCalcPanel .phaseEllipsisTap__content, #settingsCalcPanel .phaseEllipsisTap__text');
-    if (tapContent && tapContent.textContent && tapContent.textContent.includes('Exemple : 1.0')){
+    if (tapContent && tapContent.textContent && tapContent.textContent.includes('1.0 = autant') /* v24.2 : texte réécrit en v24.0 */){
       const tapTarget = tapContent.closest('.phaseEllipsisTapTarget');
       if (tapTarget){
         tapTarget.style.display = (mode==='off' || mode==='soft') ? 'none' : '';
@@ -160,7 +160,7 @@ function getLoadPublicLabel(state){
     }
   }
 
-  function reflectRatioModeInUi(entry){ const ratio=$('ratioCP'); const ratioText=$('ratioCPText'); const hint=$('carbGuardExplain'); const note=ensureRatioModeNote(); if(!ratio||!entry) return; ratio.dataset.trainingLoadRatioMode=entry.ratio; ratio.dataset.trainingLoadManaged='1'; if(ratioText) ratioText.dataset.trainingLoadRatioMode=entry.ratio; if(hint) hint.dataset.trainingLoadRatioMode=entry.ratio; setRatioVisualState(entry.ratio); if(entry.ratio==='off'){ ratio.disabled=true; ratio.readOnly=true; ratio.setAttribute('aria-disabled','true'); ratio.title='Ignoré pour ce compromis / cette charge'; if(note){ note.textContent='Ignoré pour ce compromis / cette charge.'; note.style.display=''; } return; } ratio.readOnly=false; ratio.removeAttribute('aria-disabled'); ratio.title=''; if(note){ if(entry.ratio==='soft'){ note.textContent='Ratio adapté à la charge récente.'; note.style.display=''; } else { note.textContent=''; note.style.display='none'; } } if(entry.ratio==='soft'){ ratio.disabled=true; ratio.setAttribute('aria-disabled','true'); ratio.title='Assoupli pour cette charge'; return; } if(!$('lowCarbEnabled')?.checked){ const carbGuard=!!$('carbGuardEnabled')?.checked; const mode=String($('dietMode')?.value||'none'); const rawGoal=String($('carbGoal')?.value||'none'); const noObjective=(mode==='none' || rawGoal==='none'); ratio.disabled=!!(carbGuard && !noObjective); } }
+  function reflectRatioModeInUi(entry){ const ratio=$('ratioCP'); const ratioText=$('ratioCPText'); const hint=$('carbGuardExplain'); const note=ensureRatioModeNote(); if(!ratio||!entry) return; ratio.dataset.trainingLoadRatioMode=entry.ratio; ratio.dataset.trainingLoadManaged='1'; if(ratioText) ratioText.dataset.trainingLoadRatioMode=entry.ratio; if(hint) hint.dataset.trainingLoadRatioMode=entry.ratio; setRatioVisualState(entry.ratio); if(entry.ratio==='off'){ ratio.disabled=true; ratio.readOnly=true; ratio.setAttribute('aria-disabled','true'); ratio.title='Sans effet pour ce choix'; if(note){ note.textContent='Sans effet pour ce choix.'; note.style.display=''; } return; } ratio.readOnly=false; ratio.removeAttribute('aria-disabled'); ratio.title=''; if(note){ if(entry.ratio==='soft'){ note.textContent='Ratio adapté à la charge récente.'; note.style.display=''; } else { note.textContent=''; note.style.display='none'; } } if(entry.ratio==='soft'){ ratio.disabled=true; ratio.setAttribute('aria-disabled','true'); ratio.title='Assoupli vu ton volume'; return; } if(!$('lowCarbEnabled')?.checked){ const carbGuard=!!$('carbGuardEnabled')?.checked; const mode=String($('dietMode')?.value||'none'); const rawGoal=String($('carbGoal')?.value||'none'); const noObjective=(mode==='none' || rawGoal==='none'); ratio.disabled=!!(carbGuard && !noObjective); } }
 
   function buildState(){ const dateStr=getSelectedDateSafe(); const minutes=getWeeklySportMinutes(dateStr); const hours=minutes/60; const sportLevel=getLoadLevel(hours); const energyLoad=getWeeklyEnergyLoad(dateStr); const availability=window.__SCAStateNavigation.computeLoadAvailability({sportMinutes:minutes,energyValidDays:energyLoad.validDays,energyRequiredDays:energyLoad.requiredDays}); const combined=combineSportAndEnergyLoad(sportLevel,energyLoad); const level=combined.level; const compromiseId=getCurrentCompromiseId(); const entry=getEntry(compromiseId,level); const state={dateStr,minutes,hours,hoursText:`${hours.toFixed(1).replace(/\.0$/,'')} h sport / 7 j`,sportLevel,sportLevelLabel:LOAD_LEVELS[sportLevel]?.label||sportLevel,energyLoad,availability,combined,level,levelLabel:LOAD_LEVELS[level]?.label||level,compromiseId,entry}; state.loadSourceText=getLoadSourceText(state); state.loadDetailText=getLoadDetailText(state); return state; }
   function sync(){ const state=buildState(); decorateOptions(state.level,state.compromiseId); updateAdvisor(state); updateQuickLoadButton(state); updateOnboarding(state); reflectRatioModeInUi(state.entry); window.__TrainingLoadMatrix.__state=state; return state; }

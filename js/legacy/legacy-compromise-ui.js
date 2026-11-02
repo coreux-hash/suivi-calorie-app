@@ -163,7 +163,7 @@
 
   function normalizeCustomEntry(entry){
     if (!entry || typeof entry !== 'object') return null;
-    const name = sanitizeCustomName(entry.name || entry.label || 'Compromis personnalisé');
+    const name = sanitizeCustomName(entry.name || entry.label || 'Mon propre réglage');
     const snapshot = entry.snapshot || entry.mapping || {};
     const id = String(entry.id || `custom__${slugifyCustomName(name)}`);
     return {
@@ -201,19 +201,19 @@
       const dietLbl = dietPresetLabel(s.dietMode || '');
       const lowCarbLbl = s.lowCarbEnabled ? `activée${s.lowCarbLevel ? ' (' + _esc(s.lowCarbLevel) + ')' : ''}` : 'désactivée';
       out[entry.id] = {
-        title: `Compromis personnalisé · ${entry.name}`,
+        title: `Mon réglage · ${entry.name}`,
         phase: 'Personnalisé (Expert)',
-        objectif: ['Rejouer exactement tes réglages actuels', 'Conserver un preset personnel réutilisable'],
+        objectif: ['Rejouer exactement tes réglages actuels', 'Garder un réglage à toi, réutilisable'],
         compromis: ['La cohérence dépend du snapshot sauvegardé', 'Aucune logique libre au-delà des champs autorisés'],
         macros: { c:'—', p:'—', f:'—' },
-        ajust: ['Basé sur les réglages présents au moment de l’enregistrement', 'À rééditer en créant un nouveau compromis si besoin'],
+        ajust: ['Basé sur les réglages présents au moment de l’enregistrement', 'Pour le modifier, crée un nouveau réglage'],
         appLines: [
           `Type de régime : ${dietLbl}`,
           `Repères glucides : ${carbLbl}`,
           `Plancher lipides : ${Number.isFinite(Number(s.fatFloorGPerKg)) ? Number(s.fatFloorGPerKg).toFixed(1) : '—'} g/kg`,
           `Option low-carb : ${lowCarbLbl}`
         ],
-        plus:['Disponible uniquement en mode Expert.', 'Ce compromis reste un mapping, pas une logique métier supplémentaire.'],
+        plus:['Disponible uniquement en mode Expert.', 'Ce choix règle les curseurs, rien de plus.'],
         isCustom: true,
         customId: entry.id,
         customName: entry.name
@@ -231,7 +231,7 @@
     let group = sel.querySelector('optgroup[data-compromise-custom-group="1"]');
     if (!group) {
       group = document.createElement('optgroup');
-      group.label = 'Compromis personnalisés';
+      group.label = 'Mes propres réglages';
       group.setAttribute('data-compromise-custom-group','1');
       sel.appendChild(group);
     }
@@ -254,7 +254,7 @@
     if (!createOpt) {
       createOpt = document.createElement('option');
       createOpt.value = CUSTOM_CREATE_OPTION_VALUE;
-      createOpt.textContent = '+ Créer un compromis personnalisé';
+      createOpt.textContent = '+ Créer mon propre réglage';
       sel.appendChild(createOpt);
     }
 
@@ -278,7 +278,7 @@
     const sel = byId('compromiseSelect');
     if (!sel) return '';
     if (useMode !== 'expert') return '';
-    const rawName = window.prompt('Nom du compromis personnalisé', 'Mon compromis');
+    const rawName = window.prompt('Un nom pour ce réglage', 'Mon réglage');
     if (rawName == null) return '';
     const name = sanitizeCustomName(rawName);
     if (!name) return '';
@@ -307,7 +307,7 @@
     const list = getCustomCompromises();
     const target = list.find(x => String(x.id || '') === id);
     if (!target) return false;
-    const ok = window.confirm(`Supprimer le compromis personnalisé « ${target.name} » ?`);
+    const ok = window.confirm(`Supprimer le réglage « ${target.name} » ?`);
     if (!ok) return false;
     const nextList = list.filter(x => String(x.id || '') !== id);
     writeStoredCustomCompromises(profileId, nextList);
@@ -671,8 +671,8 @@ function formatMacroBalance(macros){
       btn = document.createElement('button');
       btn.type = 'button';
       btn.setAttribute('data-compromise-select-delete', '1');
-      btn.setAttribute('title', 'Supprimer ce compromis personnalisé');
-      btn.setAttribute('aria-label', 'Supprimer ce compromis personnalisé');
+      btn.setAttribute('title', 'Supprimer ce réglage');
+      btn.setAttribute('aria-label', 'Supprimer ce réglage');
       btn.textContent = '🗑';
       btn.style.position = 'absolute';
       btn.style.right = '2.15rem';
@@ -719,7 +719,7 @@ function formatMacroBalance(macros){
       ? c.appLines.slice()
       : (() => {
           const out = [];
-          if (c.app?.preset) out.push(`Type de régime : ${dietPresetLabel(c.app.preset)}`);
+          if (c.app?.preset) out.push(`Façon de manger : ${dietPresetLabel(c.app.preset)}`);
           if (Array.isArray(c.app?.carbGoals)) out.push(`Repères glucides : ${c.app.carbGoals.map(carbGoalLabel).join(", ")}`);
           if (Array.isArray(c.app?.fatFloors)) out.push(`Plancher lipides : ${c.app.fatFloors.map(fatFloorLabel).join(", ")}`);
           if (c.app?.note) out.push(c.app.note);
@@ -769,24 +769,24 @@ function formatMacroBalance(macros){
     function buildNeutralCompromiseState(){
       const expert = normalizeUseMode(byId('useMode')?.value || 'simple') === 'expert';
       const c = {
-        title: expert ? 'Créer un compromis personnalisé' : 'Aucun compromis actif',
-        phase: expert ? 'Personnalisé (Expert)' : 'Compromis inactif',
+        title: expert ? 'Créer mon propre réglage' : 'Rien choisi pour l’instant',
+        phase: expert ? 'Personnalisé (Expert)' : 'Pas de choix actif',
         objectif: expert
-          ? ['Repartir de tes réglages actuels', 'Enregistrer un compromis réutilisable pour ce profil']
-          : ['Ajuster librement les réglages sans compromis actif', 'Conserver le preset courant si ses bornes sont respectées'],
+          ? ['Repartir de tes réglages actuels', 'Enregistrer ce réglage pour le réutiliser']
+          : ['Régler librement, sans choix prédéfini', 'Garder ta façon de manger si tu restes dans ses bornes'],
         compromis: expert
-          ? ['Le compromis précédent n’est plus respecté', 'Tu peux créer un compromis personnalisé à partir de l’état actuel']
-          : ['Le compromis précédent n’est plus respecté', 'Tu peux continuer sans compromis ou revenir dans sa plage recommandée'],
+          ? ['Tu es sorti du choix précédent', 'Tu peux enregistrer l’état actuel comme ton propre réglage']
+          : ['Tu es sorti du choix précédent', 'Tu peux continuer sans choix, ou revenir dans sa plage'],
         macros: { c:'—', p:'—', f:'—' },
         ajust: expert
-          ? ['Ajuste tes réglages actuels puis choisis + Créer un compromis personnalisé', 'Aucun changement moteur supplémentaire n’est créé']
-          : ['Le preset reste actif', 'Le compromis saute dès que tu sors de sa plage recommandée'],
+          ? ['Ajuste tes valeurs, puis choisis + Créer mon propre réglage', 'Aucun changement moteur supplémentaire n’est créé']
+          : ['Ta façon de manger reste active', 'Le choix saute dès que tu sors de sa plage'],
         appLines: expert
-          ? ['Compromis actif : aucun', 'Action disponible : + Créer un compromis personnalisé', 'Le preset actuel reste inchangé']
-          : ['Compromis actif : aucun', 'Le preset actuel reste inchangé', 'Tu peux poursuivre les réglages manuellement'],
+          ? ['Choix actuel : aucun', 'Tu peux : + Créer mon propre réglage', 'Ta façon de manger ne change pas']
+          : ['Choix actuel : aucun', 'Ta façon de manger ne change pas', 'Tu peux poursuivre les réglages manuellement'],
         plus: expert
-          ? ['Tu as quitté la plage recommandée du compromis précédent.', 'Si cet état te convient, enregistre-le comme compromis personnalisé.']
-          : ['Tu as quitté la plage recommandée du compromis précédent.', 'Le panneau reste ouvert pour éviter toute rupture visuelle pendant l’ajustement.']
+          ? ['Tu es sorti de la plage du choix précédent.', 'Si ça te va comme ça, enregistre-le comme ton propre réglage.']
+          : ['Tu es sorti de la plage du choix précédent.', 'Le panneau reste ouvert pour éviter toute rupture visuelle pendant l’ajustement.']
       };
       return c;
     }
@@ -798,7 +798,7 @@ function formatMacroBalance(macros){
 
       if (!c){
         const neutral = buildNeutralCompromiseState();
-        if (summary) summary.innerHTML = '<b>Aucun compromis actif</b>.';
+        if (summary) summary.innerHTML = '<b>Rien choisi pour l’instant</b>.';
         box.innerHTML = render(neutral);
         prevKey = key;
         return key;

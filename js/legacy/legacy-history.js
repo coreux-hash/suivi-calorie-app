@@ -18,7 +18,7 @@ function renderDaysHistory() {
   const side = $("histSideSummary");
   if (!cal || !monthInp || !side) {
     const box = $("daysHistory");
-    if (box) box.innerHTML = "<p class='muted'>Historique : UI calendrier non disponible.</p>";
+    if (box) box.innerHTML = "<p class='muted'>Relire : calendrier indisponible.</p>";
     return;
   }
 

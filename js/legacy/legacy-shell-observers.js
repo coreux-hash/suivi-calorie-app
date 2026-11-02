@@ -51,14 +51,14 @@ function phase1SettingsCompromiseState(){
     endurance_volume: { value:'Endurance optimisée', meta:'Volume / entraînement.' },
     endurance_comp: { value:'Performance compétition', meta:'Carb-loading / courte fenêtre.' }
   };
-  if (!value || !map[value]) return { value:'Personnalisé', meta:'Aucun compromis sélectionné.' };
+  if (!value || !map[value]) return { value:'À choisir', meta:'Rien choisi pour l’instant.' };
   return map[value];
 }
 function phase1SettingsProfileMetaLabel(){
-  return 'Profil local piloté par l’app.';
+  return 'Sur cet appareil.';
 }
 function phase1SettingsModeDiabLabel(){
-  return `${phase1ModeLabel()} · ${$('diabEnabled')?.checked ? 'Diabète activé' : 'Diabète inactif'}`;
+  return `${phase1ModeLabel()} · ${$('diabEnabled')?.checked ? 'glycémie suivie' : 'pas de glycémie'}`;
 }
 function phase1SetText(id, value){ const el = $(id); if (el) el.textContent = value; }
 function phase1RenderContext(){
@@ -84,23 +84,23 @@ function phase1RenderTodayPulse(){
   const diabMeals = Array.isArray(d?.diabMeals) ? d.diabMeals.length : 0;
   const diabGlucose = Array.isArray(d?.diabGlucose) ? d.diabGlucose.length : 0;
 
-  phase1SetText('p1TodayMeals', meals.length ? `${meals.length} repas` : 'Aucun repas');
+  phase1SetText('p1TodayMeals', meals.length ? `${meals.length} repas` : 'Rien noté');
   phase1SetText('p1TodaySpend', spend > 0 ? `${spend} kcal` : '—');
-  phase1SetText('p1TodaySport', sportMins > 0 ? `${fmtSportMinutes ? fmtSportMinutes(sportMins) : (sportMins + ' min')}` : 'Aucune séance');
-  phase1SetText('p1TodaySleep', sleepMinutes > 0 ? `${fmtHM ? fmtHM(sleepMinutes) : (sleepMinutes + ' min')}` : 'Aucune donnée');
-  if (!diabOn) phase1SetText('p1TodayDiab', 'Module off');
-  else phase1SetText('p1TodayDiab', (diabMeals || diabGlucose) ? `${diabMeals} repas · ${diabGlucose} mesures` : 'Aucune donnée');
+  phase1SetText('p1TodaySport', sportMins > 0 ? `${fmtSportMinutes ? fmtSportMinutes(sportMins) : (sportMins + ' min')}` : 'Pas de séance');
+  phase1SetText('p1TodaySleep', sleepMinutes > 0 ? `${fmtHM ? fmtHM(sleepMinutes) : (sleepMinutes + ' min')}` : 'Rien noté');
+  if (!diabOn) phase1SetText('p1TodayDiab', 'Pas suivi');
+  else phase1SetText('p1TodayDiab', (diabMeals || diabGlucose) ? `${diabMeals} repas · ${diabGlucose} mesures` : 'Rien noté');
 }
 function phase1DecorateCards(){
   const adv = $('accHistAdvanced');
   if (adv){
     const sum = adv.querySelector('summary');
-    if (sum) sum.textContent = 'Poids et composition du jour';
+    if (sum) sum.textContent = 'Ton poids du jour';
     const body = adv.querySelector('.accBody');
     if (body && !body.querySelector('.phase1SplitNote')){
       const note = document.createElement('div');
       note.className = 'phase1SplitNote';
-      note.innerHTML = '<b>À retenir :</b> poids et composition se saisissent dans le Journal.';
+      note.innerHTML = '<b>À retenir :</b> poids et composition se notent dans Noter.';
       body.prepend(note);
     }
     const weightLabel = adv.querySelector('label[for="morningWeight"], #morningWeight')?.closest?.('.accTile')?.querySelector('label');
@@ -109,13 +109,13 @@ function phase1DecorateCards(){
   const trend = $('accTrendExpert');
   if (trend){
     const sum = trend.querySelector('summary');
-    if (sum) sum.textContent = 'Tendances 7 jours — lecture avancée';
+    if (sum) sum.textContent = 'Sur 7 jours — pour aller plus loin';
   }
   const sport = $('sportCard');
   if (sport && !sport.querySelector('.phase1SplitNote')){
     const note = document.createElement('div');
     note.className = 'phase1SplitNote';
-    note.textContent = 'Saisie du jour. Analyse dans Historique.';
+    note.textContent = 'Noté aujourd’hui. L’analyse est dans Relire.';
     const anchor = sport.querySelector('#sportSessionsList') || sport.firstElementChild?.nextElementSibling;
     if (anchor) sport.insertBefore(note, anchor);
   }
@@ -123,7 +123,7 @@ function phase1DecorateCards(){
   if (sleep && !sleep.querySelector('.phase1SplitNote')){
     const note = document.createElement('div');
     note.className = 'phase1SplitNote';
-    note.textContent = 'Saisie du jour. Analyse dans Historique.';
+    note.textContent = 'Noté aujourd’hui. L’analyse est dans Relire.';
     const anchor = sleep.querySelector('#sleepSummary') || sleep.firstElementChild?.nextElementSibling;
     if (anchor) sleep.insertBefore(note, anchor);
   }
@@ -176,14 +176,14 @@ function phase2DecorateCards(){
   if (out && !out.querySelector('.phase2MicroHead')){
     const head = document.createElement('div');
     head.className = 'phase2MicroHead';
-    head.innerHTML = '<div><h3>Lecture consolidée</h3><p>Objectif, consommé et reste sur la journée active. C’est le cœur du cockpit Pilotage.</p></div><span class="phase2SectionTag">Central</span>';
+    head.innerHTML = '<div><h3>Le compte</h3><p>Ta cible, ce que tu as mangé, ce qu’il te reste.</p></div><span class="phase2SectionTag">Le cœur</span>';
     out.prepend(head);
   }
 
   const flow = $('calFlowCard');
   if (flow){
     const h2 = flow.querySelector('h2');
-    if (h2) h2.textContent = 'Répartition et logique de calcul';
+    if (h2) h2.textContent = 'Comment c’est calculé';
     const p = flow.querySelector('p.muted');
     if (p) p.textContent = 'Bloc analytique déplacé hors du cockpit quotidien : il explique le modèle, il ne doit plus polluer la lecture immédiate du jour.';
   }
@@ -293,9 +293,9 @@ function phase3SplitSettingsWatch(){
   const profileSlot = $('settingsProfileSlot');
   const watchSlot = $('settingsWatchSlot');
   if (!profileSlot || !watchSlot) return;
-  const watchCard = Array.from(profileSlot.querySelectorAll('.card')).find(card => {
-    return card.querySelector('h2')?.textContent?.trim() === 'Ma dépense du jour (montre)';
-  });
+  /* v24.0 : ancre structurelle (la carte qui contient #watchBrand) au lieu du titre visible, réécrit. */
+  const watchBrandCard = $('watchBrand')?.closest('.card');
+  const watchCard = (watchBrandCard && profileSlot.contains(watchBrandCard)) ? watchBrandCard : null;
   if (watchCard && watchCard.parentNode !== watchSlot){
     watchSlot.appendChild(watchCard);
   }
@@ -318,7 +318,7 @@ function phase3SplitBodyMetrics(){
     card.innerHTML = `
       <div class="phase3MiniGrid" id="phase3WeightGrid"></div>
       <div class="phase3Divider"></div>
-      <div class="phase3Hint">Mesures optionnelles. Elles restent attachées à la date active et au profil actif.</div>
+      <div class="phase3Hint">Optionnel. Attaché à la date active et au profil actif.</div>
       <div class="phase3MiniGrid phase3MiniGrid--3" id="phase3BodyCompGrid"></div>
     `;
     journalMetricsSlot.prepend(card);
@@ -345,7 +345,7 @@ function phase3SplitBodyMetrics(){
   }
 
   const summary = histAdvanced.querySelector('summary');
-  if (summary) summary.textContent = 'Poids / IMC / tendance';
+  if (summary) summary.textContent = 'Poids, IMC, tendance';
 
   histAdvanced.querySelector('.phase3LegacyNote')?.remove();
 }
@@ -431,7 +431,7 @@ function phase4StabilizePanels(){
   const tag = document.querySelector('.phase1BlockTag');
   if (tag) tag.textContent = 'Phase 4 — stabilisation finale';
   const settingsLead = $('phase2HeroInfoSettings');
-  if (settingsLead) settingsLead.dataset.modaltext = 'Les accès globaux gèrent les conditions d’accès.\nRéglages concerne uniquement le paramétrage.';
+  if (settingsLead) settingsLead.dataset.modaltext = 'Mon cadre, c’est toi, ta montre et ce que tu vises. Le reste est dans le menu.';
 }
 function phase4Refresh(){
   phase4NormalizeShellClasses();
@@ -472,19 +472,19 @@ function phase5GetDiabEnabled(){
   return !!$('diabEnabled')?.checked;
 }
 function phase5SectionLabel(tab){
-  return ({today:'Pilotage',journalEntry:'Journal',history:'Historique',settings:'Réglages'})[tab] || '—';
+  return ({today:'Aujourd’hui',journalEntry:'Noter',history:'Relire',settings:'Mon cadre'})[tab] || '—';
 }
 function phase5NormalizeTutorialKey(title){
   const txt = String(title || '').trim();
   if (/Profil/i.test(txt)) return 'profile';
   if (/Objectif/i.test(txt)) return 'goal';
   if (/Dépense|Depense|Montre/i.test(txt)) return 'spend';
-  if (/Charge d’activité et compromis|Charge d'activit[eé] et compromis/i.test(txt)) return 'activity_load';
+  if (/Charge d’activité et compromis|Charge d'activit[eé] et compromis|Sport et objectif/i.test(txt)) return 'activity_load';
   if (/Repères glucides|Cadrage glucidique|Glucides/i.test(txt)) return 'carbs';
   if (/Repas/i.test(txt)) return 'meals';
   if (/Synthèse/i.test(txt)) return 'summary';
-  if (/Charge récente et réglages|Charge recente et reglages/i.test(txt)) return 'history_activity_load';
-  if (/Lecture des tendances|Historique/i.test(txt)) return 'history';
+  if (/Charge récente et réglages|Charge recente et reglages|corps encaisse/i.test(txt)) return 'history_activity_load';
+  if (/Lecture des tendances|Historique|Tendances/i.test(txt)) return 'history';
   if (/Diabète|Diabete/i.test(txt)) return 'diabetes';
   if (/Cloud/i.test(txt)) return 'cloud';
   if (/Lexicon|Lexique/i.test(txt)) return 'lexicon';
@@ -502,7 +502,7 @@ function phase5CollectTutorialSources(){
   return Array.from(document.querySelectorAll('details.notice')).map((el) => {
     const summary = el.querySelector('summary');
     const title = (summary?.textContent || '').replace(/\s+/g,' ').trim();
-    if (!/^Mini-tuto/i.test(title)) return null;
+    if (!/^(Mini-tuto|Comment ça marche)/i.test(title)) return null; /* v24.0 : nouveau préfixe accepté */
     const key = phase5NormalizeTutorialKey(title);
     const clone = el.cloneNode(true);
     clone.querySelector('summary')?.remove();
@@ -518,9 +518,9 @@ function phase5GetTutorialsForSpace(tab){
   return wanted.map(key => byKey.get(key)).filter(Boolean);
 }
 function phase5TutorialPreviewText(items){
-  if (!items.length) return 'Aucun mini-tuto disponible pour cet espace.';
-  const countLabel = items.length > 1 ? 'mini-tutos disponibles' : 'mini-tuto disponible';
-  return `${items.length} ${countLabel} : ${items.map(item => item.title.replace(/^Mini-tuto\s*[—-]\s*/i,'')).join(' · ')}.`;
+  if (!items.length) return 'Rien de particulier à savoir ici.';
+  const countLabel = items.length > 1 ? 'choses à savoir' : 'chose à savoir';
+  return `${items.length} ${countLabel} : ${items.map(item => item.title.replace(/^(Mini-tuto|Comment ça marche)\s*[—-]\s*/i,'')).join(' · ')}.`;
 }
 function phase5GetTutorialByKey(key){
   return phase5CollectTutorialSources().find(item => item.key === key) || null;
@@ -573,10 +573,10 @@ function phase5RenderTutorialGate(){
   if (meta) meta.textContent = phase5TutorialPreviewText(items);
   if (menuBtn) menuBtn.disabled = !items.length;
   if (btn) btn.disabled = !items.length;
-  if (modalTitle) modalTitle.textContent = `Mini-tutos — ${label}`;
+  if (modalTitle) modalTitle.textContent = `Comment ça marche — ${label}`;
   if (modalIntro) modalIntro.textContent = items.length
-    ? `Repères contextuels disponibles pour l’espace ${label.toLowerCase()}.`
-    : `Aucun mini-tuto disponible pour l’espace ${label.toLowerCase()}.`;
+    ? `Ce qu’il faut savoir sur ${label}.`
+    : `Rien de particulier à savoir sur ${label}.`;
   if (modalList){
     modalList.innerHTML = items.map((item) => `
       <article class="phase5TutoCard">
@@ -595,12 +595,12 @@ function phase5EnsureTopContext(){
   status.className = 'phase5StatusBar';
   status.id = 'phase5StatusBar';
   status.innerHTML = `
-    <div class="phase5StatusCard"><div class="phase5StatusLabel">Espace actif</div><div class="phase5StatusValue" id="phase5ActiveSpace">—</div><div class="phase5StatusMeta">Lecture, saisie, analyse ou réglages.</div></div>
-    <div class="phase5StatusCard"><div class="phase5StatusLabel">Date pilotée</div><div class="phase5StatusValue" id="phase5ActiveDate">—</div><div class="phase5StatusMeta">Source commune aux blocs journaliers.</div></div>
-    <div class="phase5StatusCard"><div class="phase5StatusLabel">Profil actif</div><div class="phase5StatusValue" id="phase5ActiveProfile">—</div><div class="phase5StatusMeta">Toutes les données restent isolées par profil.</div></div>
-    <div class="phase5StatusCard"><div class="phase5StatusLabel">Mode / diabète</div><div class="phase5StatusValue" id="phase5ModeDiab">—</div><div class="phase5StatusMeta">Densité d’interface et module conditionnel.</div></div>
-    <div class="phase5StatusCard"><div class="phase5StatusLabel">Compromis choisi</div><div class="phase5StatusValue" id="phase5Compromise">Personnalisé</div><div class="phase5StatusMeta" id="phase5CompromiseMeta">Aucun compromis sélectionné.</div></div>
-    <div class="phase5StatusCard"><div class="phase5StatusLabel">Objectif suivi</div><div class="phase5StatusValue" id="phase5Goal">—</div><div class="phase5StatusMeta">Preset + cible énergétique actuellement appliqués.</div></div>
+    <div class="phase5StatusCard"><div class="phase5StatusLabel">Espace actif</div><div class="phase5StatusValue" id="phase5ActiveSpace">—</div><div class="phase5StatusMeta">Où tu es dans l’app.</div></div>
+    <div class="phase5StatusCard"><div class="phase5StatusLabel">Jour affiché</div><div class="phase5StatusValue" id="phase5ActiveDate">—</div><div class="phase5StatusMeta">Tout ce que tu vois concerne ce jour.</div></div>
+    <div class="phase5StatusCard"><div class="phase5StatusLabel">Qui</div><div class="phase5StatusValue" id="phase5ActiveProfile">—</div><div class="phase5StatusMeta">Chacun ses données.</div></div>
+    <div class="phase5StatusCard"><div class="phase5StatusLabel">Affichage · glycémie</div><div class="phase5StatusValue" id="phase5ModeDiab">—</div><div class="phase5StatusMeta">Ce que tu vois, et si tu suis ta glycémie.</div></div>
+    <div class="phase5StatusCard"><div class="phase5StatusLabel">Ce que tu vises</div><div class="phase5StatusValue" id="phase5Compromise">À choisir</div><div class="phase5StatusMeta" id="phase5CompromiseMeta">Rien choisi pour l’instant.</div></div>
+    <div class="phase5StatusCard"><div class="phase5StatusLabel">Ta façon de manger</div><div class="phase5StatusValue" id="phase5Goal">—</div><div class="phase5StatusMeta">Et la part de ce que tu brûles que tu manges.</div></div>
   `;
   const gateDisclosure = $('phase5GlobalGateDisclosure');
   if (shellLine){
@@ -622,7 +622,7 @@ function phase5EnsureTopContext(){
     banner.innerHTML = `
       <div>
         <div class="phase5Banner__title">Règle produit stabilisée</div>
-        <div class="phase5Banner__text">Pilotage sert à lire vite. Toute correction repart vers Journal. Toute tendance détaillée repart vers Historique.</div>
+        <div class="phase5Banner__text">Aujourd’hui, c’est pour lire vite. Pour corriger, Noter. Pour comprendre une tendance, Relire.</div>
       </div>
       <div class="phase5Banner__actions">
         <button id="btnPhase5TodayToJournal" type="button">Corriger la journée</button>
@@ -637,7 +637,7 @@ function phase5RenderTopContext(){
   $('phase5ActiveSpace') && ($('phase5ActiveSpace').textContent = phase5SectionLabel(phase5GetActiveSection()));
   $('phase5ActiveDate') && ($('phase5ActiveDate').textContent = phase5GetDateLabel());
   $('phase5ActiveProfile') && ($('phase5ActiveProfile').textContent = phase5GetProfileLabel());
-  $('phase5ModeDiab') && ($('phase5ModeDiab').textContent = `${phase5GetModeLabel()} · ${phase5GetDiabEnabled() ? 'Diabète activé' : 'Diabète inactif'}`);
+  $('phase5ModeDiab') && ($('phase5ModeDiab').textContent = `${phase5GetModeLabel()} · ${phase5GetDiabEnabled() ? 'glycémie suivie' : 'pas de glycémie'}`);
   $('phase5Compromise') && ($('phase5Compromise').textContent = compromise.value);
   $('phase5CompromiseMeta') && ($('phase5CompromiseMeta').textContent = compromise.meta);
   $('phase5Goal') && ($('phase5Goal').textContent = phase1SettingsGoalLabel());
@@ -674,7 +674,7 @@ function phase5RenderEmptyStates(){
     'journalDiabSlot',
     'phase5JournalDiabEmpty',
     'Module diabète inactif',
-    'Active le module dans Réglages si tu veux saisir glycémies, contexte et suivi glucidique.',
+    'Active le suivi glycémie dans Mon cadre si tu veux noter glycémies, glucides et contexte.',
     () => !phase5GetDiabEnabled() && !phase5SlotHasContent('journalDiabSlot', ['phase5JournalDiabEmpty'])
   );
   phase5EnsureEmptyState(
@@ -722,11 +722,11 @@ function phase5StabilizeCopy(){
   const tag = document.querySelector('.phase1BlockTag');
   if (tag) tag.textContent = 'Phase 5 — stabilisation UX / QA';
   const todayLead = $('phase2HeroInfoToday');
-  if (todayLead) todayLead.dataset.modaltext = 'Cockpit de lecture du jour stabilisé. Les corrections repartent dans Journal ; les comparaisons et tendances détaillées repartent dans Historique.';
+  if (todayLead) todayLead.dataset.modaltext = 'La lecture du jour. Pour corriger, passe par Noter ; pour comparer et voir les tendances, par Relire.';
   const historyLead = $('phase2HeroInfoHistory');
-  if (historyLead) historyLead.dataset.modaltext = 'Lecture et compréhension stabilisées. On choisit une date, on relit une journée, puis on repart vers Journal seulement pour corriger.';
+  if (historyLead) historyLead.dataset.modaltext = 'Tu choisis un jour, tu le relis, et tu repasses par Noter seulement s’il y a quelque chose à corriger.';
   const settingsLead = $('phase2HeroInfoSettings');
-  if (settingsLead) settingsLead.dataset.modaltext = 'Les accès globaux gèrent les conditions d’accès.\nRéglages concerne uniquement le paramétrage.';
+  if (settingsLead) settingsLead.dataset.modaltext = 'Mon cadre, c’est toi, ta montre et ce que tu vises. Le reste est dans le menu.';
 }
 function phase5ExposeQa(){
   window.phase5QA = function(){

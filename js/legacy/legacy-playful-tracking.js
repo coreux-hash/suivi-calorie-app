@@ -130,7 +130,7 @@
 
     if (!hasReadableInput(dayObj)){
       return {
-        key:'no_data', tone:'muted', label:'À renseigner',
+        key:'no_data', tone:'muted', label:'À noter',
         summary:'Aucune donnée enregistrée pour cette date.',
         signal:'Commence par renseigner un repas ou une activité.'
       };
@@ -172,7 +172,7 @@
     }
     if (pRatio != null && pRatio < PROTEIN_OK_MIN){
       return {
-        key:'protein_low', tone:'warn', label:'Protéines à compléter',
+        key:'protein_low', tone:'warn', label:'Pas assez de protéines',
         summary:'Les protéines sont sous le repère enregistré.',
         signal:'Les protéines sont le point principal à compléter.'
       };
@@ -213,23 +213,23 @@
     return [
       {
         key:'meals', label:'Repas', done:hasFoodEntry,
-        detail:hasFoodEntry ? 'Repas ajouté' : 'Ajoute au moins un repas'
+        detail:hasFoodEntry ? 'Repas ajouté' : 'Note au moins un repas'
       },
       {
         key:'proteins', label:'Protéines', done:proteinRatio != null && proteinRatio >= PROTEIN_OK_MIN,
-        detail:proteinRatio == null ? 'À vérifier après les repas' : (proteinRatio >= PROTEIN_OK_MIN ? 'Repère atteint' : 'À compléter')
+        detail:proteinRatio == null ? 'À vérifier après les repas' : (proteinRatio >= PROTEIN_OK_MIN ? 'Dans les clous' : 'À compléter')
       },
       {
         key:'activity', label:'Activité', done:d.hasActivity,
-        detail:d.hasActivity ? 'Activité ajoutée' : 'Ajoute une activité si besoin'
+        detail:d.hasActivity ? 'Activité ajoutée' : 'Si tu as bougé, note-le'
       },
       {
         key:'weight', label:'Poids', done:d.morningWeight > 0,
-        detail:d.morningWeight > 0 ? 'Poids indiqué' : 'Optionnel'
+        detail:d.morningWeight > 0 ? 'Poids noté' : 'Optionnel'
       },
       {
         key:'energy', label:'Apport', done:energyRatio != null && energyRatio >= ENERGY_OK_MIN && energyRatio <= ENERGY_OK_MAX,
-        detail:energyRatio == null ? 'À vérifier après les repas' : (energyRatio >= ENERGY_OK_MIN && energyRatio <= ENERGY_OK_MAX ? 'Proche du repère' : 'À ajuster selon ton objectif')
+        detail:energyRatio == null ? 'À vérifier après les repas' : (energyRatio >= ENERGY_OK_MIN && energyRatio <= ENERGY_OK_MAX ? 'Presque' : 'À ajuster selon ton objectif')
       }
     ];
   }
@@ -256,7 +256,7 @@
       if (filled) count += 1;
       segments.push({ date, filled });
     }
-    return { count, total:WEEK_DAYS, segments, label:`${count}/${WEEK_DAYS} jours renseignés` };
+    return { count, total:WEEK_DAYS, segments, label:`${count}/${WEEK_DAYS} jours notés` };
   }
   function trajectoireSemaine(days, selectedDate){
     const rhythm = rythmeSemaine(days, selectedDate);
@@ -337,25 +337,25 @@
     const stats = badgeStats(days, selectedDate);
     const t = stats.trajectory;
     return [
-      makeBadge('day_3_missions', 'Journée lancée', '3 repères du jour complétés.', '✓', 'jour', stats.activeDone, 3),
-      makeBadge('day_4_missions', 'Journée lisible', '4 repères du jour complétés.', '◎', 'jour', stats.activeDone, 4),
-      makeBadge('first_meal', 'Premier repas', 'Un repas a été ajouté.', '🍽', 'encodage', stats.mealDaysAll, 1),
-      makeBadge('first_activity', 'Première activité', 'Une activité a été prise en compte.', '↯', 'activité', stats.activityDaysAll, 1),
-      makeBadge('first_weight', 'Premier poids', 'Une mesure du jour est indiquée.', '⚖', 'suivi', stats.weightDaysAll, 1),
-      makeBadge('week_3_days', 'Semaine lancée', '3 jours renseignés cette semaine.', '3', 'rythme', t.rhythm.count, 3),
-      makeBadge('week_5_days', 'Semaine régulière', '5 jours renseignés cette semaine.', '5', 'rythme', t.rhythm.count, 5),
-      makeBadge('week_7_days', 'Semaine complète', '7 jours renseignés cette semaine.', '7', 'rythme', t.rhythm.count, 7),
-      makeBadge('protein_3_days', 'Repère protéines', '3 jours avec protéines cadrées.', 'P', 'nutrition', t.proteinDays, 3),
-      makeBadge('energy_3_days', 'Apport cadré', '3 jours proches de la cible.', 'kcal', 'nutrition', t.energyDays, 3),
-      makeBadge('activity_3_days', 'Activité suivie', '3 jours avec activité prise en compte.', '⚡', 'activité', t.activityDays, 3),
-      makeBadge('readable_3_days', 'Suivi complet', '3 journées lisibles cette semaine.', '◆', 'équilibre', stats.weekReadableDays, 3)
+      makeBadge('day_3_missions', 'Journée lancée', '3 choses notées dans la journée.', '✓', 'jour', stats.activeDone, 3),
+      makeBadge('day_4_missions', 'Journée complète', '4 choses notées dans la journée.', '◎', 'jour', stats.activeDone, 4),
+      makeBadge('first_meal', 'Premier repas', 'Tu as noté ton premier repas.', '🍽', 'encodage', stats.mealDaysAll, 1),
+      makeBadge('first_activity', 'Première séance', 'Tu as noté ta première séance.', '↯', 'activité', stats.activityDaysAll, 1),
+      makeBadge('first_weight', 'Premier poids', 'Tu as noté ton poids.', '⚖', 'suivi', stats.weightDaysAll, 1),
+      makeBadge('week_3_days', 'Semaine lancée', '3 jours notés cette semaine.', '3', 'rythme', t.rhythm.count, 3),
+      makeBadge('week_5_days', 'Semaine régulière', '5 jours notés cette semaine.', '5', 'rythme', t.rhythm.count, 5),
+      makeBadge('week_7_days', 'Semaine complète', '7 jours notés cette semaine.', '7', 'rythme', t.rhythm.count, 7),
+      makeBadge('protein_3_days', 'Protéines au rendez-vous', '3 jours avec les protéines dans les clous.', 'P', 'nutrition', t.proteinDays, 3),
+      makeBadge('energy_3_days', 'Dans la cible', '3 jours proches de ta cible.', 'kcal', 'nutrition', t.energyDays, 3),
+      makeBadge('activity_3_days', 'Ça bouge', '3 jours avec du sport.', '⚡', 'activité', t.activityDays, 3),
+      makeBadge('readable_3_days', 'Semaine solide', '3 journées complètes cette semaine.', '◆', 'équilibre', stats.weekReadableDays, 3)
     ];
   }
   function prochainBadge(days, selectedDate){
     const badges = badgesDuParcours(days, selectedDate);
     const locked = badges.filter(b => !b.unlocked);
     if (!locked.length) {
-      return makeBadge('all_basic', 'Parcours bien lancé', 'Tous les badges de base sont débloqués.', '★', 'parcours', 1, 1);
+      return makeBadge('all_basic', 'Bien lancé', 'Tous les badges de base sont là.', '★', 'parcours', 1, 1);
     }
     locked.sort((a,b) => {
       const pa = a.current / a.target;
@@ -439,7 +439,7 @@
     setTone(state.tone);
     if ($('playfulStateLabel')) $('playfulStateLabel').textContent = state.label;
     if ($('playfulRhythmLabel')) $('playfulRhythmLabel').textContent = rhythm.label;
-    if ($('playfulMissionsCount')) $('playfulMissionsCount').textContent = `${done}/${missions.length} complétées`;
+    if ($('playfulMissionsCount')) $('playfulMissionsCount').textContent = `${done}/${missions.length} faites`;
     renderSegments($('playfulRhythmSegments'), rhythm);
     renderMissionChips($('playfulMissionsList'), missions);
     renderNextBadgeMini(next);
