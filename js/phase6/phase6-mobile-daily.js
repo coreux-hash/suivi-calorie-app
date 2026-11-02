@@ -82,8 +82,8 @@
     const modeDetails = $('useMode')?.closest('details.notice');
     const modeBlock = modeDetails?.parentElement;
     const modeSlot = $('mobileSetupModeSlot');
-    const watchCard = Array.from(doc.querySelectorAll('.settingsPanel--watch .card')).find((card) => card.querySelector('h2')?.textContent?.trim() === 'Ma dépense du jour (montre)');
-    const watchProfile = Array.from(watchCard?.querySelectorAll('[data-um="sport"]') || []).find((node) => /Profil de la montre/.test(node.textContent || ''));
+    const watchCard = $('watchBrand')?.closest('.settingsPanel--watch .card') || null; /* v24.0 : ancre structurelle */
+    const watchProfile = $('watchProfileInfo')?.closest('[data-um="sport"]') || null; /* v24.0 : ancre structurelle */
     const watchBrandRow = $('watchBrand')?.closest('.row');
     const errModeField = $('errMode')?.parentElement;
     const errModeRow = $('errMode')?.closest('.row');
@@ -152,7 +152,7 @@
 
   /* v23.5 : carte « Montre et dépense » — libellés courts et aides masquées sur mobile,
      libellés d'origine restaurés au retour desktop. */
-  const MOBILE_SHORT_LABELS = { watchBrand:'Montre', errMode:'Prudence', montre:'Calories (kcal)', errPct:'Incertitude (%)' };
+  const MOBILE_SHORT_LABELS = { watchBrand:'Ta montre', errMode:'Marge', montre:'Kcal / jour', errPct:'Marge (%)' };
   function shortenWatchLabels(isMobile){
     Object.entries(MOBILE_SHORT_LABELS).forEach(([id, short]) => {
       const control = $(id);
@@ -227,7 +227,7 @@
     button.type = 'button';
     button.id = 'mobileDailySpendConfirm';
     button.className = 'mobileDailySpendConfirm';
-    button.textContent = 'Confirmer cette dépense';
+    button.textContent = 'Oui, c’est bien ça';
     button.addEventListener('click', () => {
       const edit = $('todaySpendEdit');
       if (!edit) return;
@@ -247,14 +247,14 @@
     if (!(raw > 0) || !(retained > 0)) { el.hidden = true; return; }
     el.hidden = false;
     if (Math.round(retained) === Math.round(raw)) {
-      el.innerHTML = `Retenue par le moteur : <strong>${Math.round(raw)} kcal</strong>`;
+      el.innerHTML = `L’app retient <strong>${Math.round(raw)} kcal</strong>`;
       return;
     }
     const pct = Number($('errPct')?.value) || 0;
     const mode = $('errMode')?.value;
     const sign = mode === 'optimistic' ? '+' : '−';
-    const modalText = `Montre : ${Math.round(raw)} kcal saisis.\nPrudence : ${sign}${pct} % (${mode === 'optimistic' ? 'mode « Large »' : 'mode « Prudent »'}).\nRetenue par le moteur : ${Math.round(retained)} kcal — c'est cette valeur qui fixe la cible du jour.\nRéglable dans Réglages › Montre et dépense (Incertitude, Prudence).`;
-    el.innerHTML = `Montre <strong>${Math.round(raw)}</strong> → retenue <strong>${Math.round(retained)} kcal</strong> <span class="info-dot mobileDailyInlineInfo mobileDailySpendInfo" role="button" tabindex="0" aria-label="Pourquoi ${Math.round(retained)} kcal retenus ?" data-modaltext="${modalText.replace(/"/g, '&quot;')}">ℹ️</span>`;
+    const modalText = `Ta montre dit ${Math.round(raw)} kcal.\nMarge de sécurité : ${sign}${pct} % (${mode === 'optimistic' ? 'ajoutée' : 'retirée'}).\nL’app retient ${Math.round(retained)} kcal, et c’est ce chiffre qui fixe ta cible du jour.\nTu peux changer la marge dans Mon cadre › Ce que tu brûles.`;
+    el.innerHTML = `Ta montre dit <strong>${Math.round(raw)}</strong>, l’app retient <strong>${Math.round(retained)} kcal</strong> <span class="info-dot mobileDailyInlineInfo mobileDailySpendInfo" role="button" tabindex="0" aria-label="Pourquoi ${Math.round(retained)} kcal ?" data-modaltext="${modalText.replace(/"/g, '&quot;')}">ℹ️</span>`;
   }
 
   /* v23.2 : repas récents — ajout en 1 tap. La liste est déduite des journées déjà
@@ -310,9 +310,9 @@
     const box = doc.createElement('section');
     box.id = 'mobileDailyRecentMeals';
     box.className = 'mobileDailyRecentMeals';
-    box.setAttribute('aria-label', 'Repas récents');
+    box.setAttribute('aria-label', 'Tes repas habituels');
     box.hidden = true;
-    box.innerHTML = '<p class="mobileDailyRecentMeals__label">Récents <span>· 1 tap pour ajouter</span></p><div class="mobileDailyRecentMeals__list"></div>';
+    box.innerHTML = '<p class="mobileDailyRecentMeals__label">Tes habitudes <span>· un tap et c’est ajouté</span></p><div class="mobileDailyRecentMeals__list"></div>';
     box.addEventListener('click', (event) => {
       const button = event.target.closest('[data-recent-meal]');
       if (!button) return;
@@ -511,13 +511,13 @@
     const date = $('dayDate')?.value;
     const dateText = date ? new Intl.DateTimeFormat('fr-BE', { weekday:'long', day:'numeric', month:'long' }).format(new Date(`${date}T12:00:00`)) : 'Aujourd’hui';
     if ($('mobileDailyDate')) $('mobileDailyDate').textContent = dateText;
-    if (countEl) { countEl.setAttribute('aria-label', `${count} essentiels renseignés sur 3`); countEl.innerHTML = `${count}<span>/3</span>`; }
-    if (progressEl) progressEl.textContent = `${count}/3 essentiels renseignés`;
-    if (label) label.textContent = count === 3 ? 'Les essentiels sont là' : count ? 'Journée en cours' : 'Journée lancée';
+    if (countEl) { countEl.setAttribute('aria-label', `${count} choses notées sur 3`); countEl.innerHTML = `${count}<span>/3</span>`; }
+    if (progressEl) progressEl.textContent = `${count}/3 choses notées`;
+    if (label) label.textContent = count === 3 ? 'Tout est noté' : count ? 'En cours' : 'C’est parti';
     if (state) state.dataset.tone = count === 3 ? 'ok' : (count ? 'warn' : 'muted');
-    setCard('mobileDailySpendCard', spend, spend ? `${text('p1TodaySpend') || 'Dépense confirmée'}` : 'Confirmer la dépense du jour');
-    setCard('mobileDailyMealsCard', meals, meals ? text('p1TodayMeals') : 'Ajouter le premier repas');
-    setCard('mobileDailyActivityCard', activity, activity ? text('p1TodaySport') : 'Ajouter une séance si nécessaire');
+    setCard('mobileDailySpendCard', spend, spend ? `${text('p1TodaySpend') || 'Confirmé'}` : 'À confirmer');
+    setCard('mobileDailyMealsCard', meals, meals ? text('p1TodayMeals') : 'Rien noté encore');
+    setCard('mobileDailyActivityCard', activity, activity ? text('p1TodaySport') : 'Si tu as bougé, note-le');
     const mealCount = Array.isArray(activeDay()?.meals) ? activeDay().meals.length : 0;
     if ($('mobileDailyHistoryMealsCount')) $('mobileDailyHistoryMealsCount').textContent = `· ${mealCount}`;
     syncRemaining();
@@ -534,10 +534,10 @@
   }
 
   function setupStatus(section){
-    if (!section) return 'À compléter';
+    if (!section) return 'À faire';
     if (section.ready) return 'Prêt';
     const remaining = Math.max(0, Number(section.totalCount || 0) - Number(section.completeCount || 0));
-    return remaining > 1 ? `${remaining} éléments à compléter` : '1 élément à compléter';
+    return remaining > 1 ? `encore ${remaining} choses` : 'encore 1 chose';
   }
 
   function syncMobileSetup(){
@@ -555,11 +555,11 @@
     const lead = $('mobileSetupLead');
     const today = $('mobileSetupToday');
     if (state) state.dataset.complete = String(complete);
-    if (stateLabel) stateLabel.textContent = complete ? 'Votre cadre est prêt' : `${readyCount} étape${readyCount > 1 ? 's' : ''} prête${readyCount > 1 ? 's' : ''}`;
-    if (progress) progress.textContent = complete ? 'Vous pouvez passer au suivi du jour.' : `${readyCount}/4 étapes complétées`;
-    if (count) { count.setAttribute('aria-label', `${readyCount} étapes complétées sur 4`); count.innerHTML = `${readyCount}<span>/4</span>`; }
-    if (title) title.textContent = complete ? 'Réglages' : 'Configurons votre suivi';
-    if (lead) lead.textContent = complete ? 'Modifiez uniquement le repère dont vous avez besoin.' : 'Quatre étapes courtes pour préparer les repères du quotidien.';
+    if (stateLabel) stateLabel.textContent = complete ? 'Ton cadre est prêt' : `${readyCount} étape${readyCount > 1 ? 's' : ''} faite${readyCount > 1 ? 's' : ''}`;
+    if (progress) progress.textContent = complete ? 'Tu peux passer à ta journée.' : `${readyCount}/4 étapes faites`;
+    if (count) { count.setAttribute('aria-label', `${readyCount} étapes faites sur 4`); count.innerHTML = `${readyCount}<span>/4</span>`; }
+    if (title) title.textContent = complete ? 'Mon cadre' : 'On règle ton suivi';
+    if (lead) lead.textContent = complete ? 'Change seulement ce dont tu as besoin.' : 'Quatre étapes, cinq minutes, et l’app sait de quoi elle parle.';
     if (today) today.hidden = !complete;
     qa('[data-mobile-setup]').forEach((button) => {
       const key = button.dataset.mobileSetup;
@@ -727,7 +727,7 @@
     const settingsAction = doc.createElement('button');
     settingsAction.className = 'mobileDailyDrawerSettings';
     settingsAction.type = 'button';
-    settingsAction.textContent = 'Modifier le cadre';
+    settingsAction.textContent = 'Changer mon cadre';
     settingsAction.addEventListener('click', () => {
       bar.classList.remove('is-open');
       button.setAttribute('aria-expanded', 'false');
