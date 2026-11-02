@@ -161,19 +161,25 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       const { context, page, pageErrors } = await open(browser, origin, fixture(simpleSettings, past), MOBILE);
       assert.equal(await count(page), '0/3');
       await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
-      assert.equal(await page.isVisible('#mobileDailyRecentMeals'), true, 'bloc Récents visible');
-      /* v24.5 : liste sous « Ce que tu as mangé » ; choisir remplit le formulaire ; corbeille (oubli jusqu'à une future note). */
-      assert.equal(await page.$eval('#mobileDailyRecentMeals', (e) => e.previousElementSibling?.id), 'mealName', 'liste placée sous le champ du nom');
+      /* v24.6 : liste combinée au champ « Ce que tu as mangé » (chevron = select invisible) ; choisir remplit le formulaire ; corbeille = repas dont le nom est dans le champ. */
+      assert.equal(await page.$eval('#mobileDailyRecentMeals .mobileDailyRecentMeals__field', (e) => e.contains(document.getElementById('mealName'))), true, 'le champ du nom est dans la cellule combinée');
+      assert.equal(await page.$eval('#mobileDailyRecentMeals', (e) => e.dataset.empty), '0');
+      assert.equal(await page.isVisible('#mobileDailyRecentMeals .mobileDailyRecentMeals__chevron'), true, 'chevron visible');
       const options = () => page.$$eval('#mobileDailyRecentMealSelect option', (els) => els.map((e) => e.textContent));
       assert.deepEqual(await options(), ['Tes habitudes…', 'Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal', 'Pâtes · 700 kcal'], `récents dédoublonnés, plus récents d'abord (${(await options()).join(', ')})`);
       assert.equal(await page.$eval('#mobileDailyRecentMealForget', (e) => e.disabled), true, 'corbeille inactive sans choix');
       await page.selectOption('#mobileDailyRecentMealSelect', '3'); await page.waitForTimeout(100);
-      assert.equal(await page.$eval('#mobileDailyRecentMealForget', (e) => e.disabled), false, 'corbeille active après choix');
+      assert.equal(await page.$eval('#mealName', (e) => e.value), 'Pâtes', 'choisir met le nom dans le champ');
+      assert.equal(await page.$eval('#mobileDailyRecentMealSelect', (e) => e.value), '', 'la liste revient sur l\'invite');
+      assert.equal(await page.$eval('#mobileDailyRecentMealForget', (e) => e.disabled), false, 'corbeille active : le champ contient un repas habituel');
       await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
       assert.deepEqual(await options(), ['Tes habitudes…', 'Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal'], 'repas oublié retiré de la liste');
       assert.match(await page.textContent('#mobileDailyRecentMealNote'), /« Pâtes » : oublié jusqu’à une future note\./);
       assert.deepEqual(JSON.parse(await page.evaluate(() => localStorage.getItem('secheapp.default.forgottenMeals.v1'))), { 'pâtes':d2 }, 'oubli stocké par profil avec la date de la dernière note');
       assert.deepEqual(await days(page), past, 'oublier ne modifie pas l\'historique');
+      assert.equal(await page.$eval('#mobileDailyRecentMealForget', (e) => e.disabled), true, 'corbeille inactive : « Pâtes » n\'est plus une habitude');
+      await page.fill('#mealName', 'petit-déj'); await page.waitForTimeout(100);
+      assert.equal(await page.$eval('#mobileDailyRecentMealForget', (e) => e.disabled), false, 'taper un nom connu active la corbeille');
       await page.selectOption('#mobileDailyRecentMealSelect', '2'); await page.waitForTimeout(150);
       assert.deepEqual(await page.$$eval('#mealName, #mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['petit-déj', '450', '22', '55', '14'], 'choisir remplit le formulaire');
       assert.equal(await page.$eval('#mealModeManual', (e) => e.classList.contains('is-active')), true, 'onglet Les valeurs actif');
@@ -192,12 +198,13 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.deepEqual(await options(), ['Tes habitudes…', 'Pâtes · 700 kcal', 'petit-déj · 450 kcal', 'Repas · 600 kcal', 'Repas · 300 kcal'], 'repas oublié de retour après une nouvelle note');
       assert.equal(await overflowX(page), 0);
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
-      ok('Repas habituels : liste sous le nom, choisir remplit, Ajouter ce repas, corbeille réversible');
+      ok('Repas habituels : cellule combinée, choisir remplit, Ajouter ce repas, corbeille réversible');
       /* Journée vide et aucun historique : bloc masqué. */
       await context.close();
       const empty = await open(browser, origin, fixture(simpleSettings), MOBILE);
       await empty.page.click('[data-mobile-action="meals"]'); await empty.page.waitForTimeout(300);
-      assert.equal(await empty.page.$eval('#mobileDailyRecentMeals', (e) => e.hidden), true, 'bloc Récents masqué sans historique');
+      assert.equal(await empty.page.$eval('#mobileDailyRecentMeals', (e) => e.dataset.empty), '1', 'sans historique : champ texte simple');
+      assert.equal(await empty.page.isVisible('#mobileDailyRecentMeals .mobileDailyRecentMeals__chevron'), false, 'pas de chevron sans historique');
       await empty.context.close();
     }
 
