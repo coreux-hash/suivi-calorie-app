@@ -331,32 +331,42 @@
     if (!meal) return;
     $('mealK').value = String(meal.k); $('mealP').value = String(meal.p); $('mealC').value = String(meal.c); $('mealF').value = String(meal.f);
   }
+  /* v24.5 : la liste vit sous le champ « Ce que tu as mangé ». Choisir un repas remplit le nom
+     et les quatre valeurs (onglet « Les valeurs ») ; on ajoute ensuite avec « Ajouter ce repas ».
+     La corbeille reste dans la liste. Le bloc est retiré à la désactivation mobile. */
+  function fillMealForm(meal){
+    if (!meal) return;
+    const fields = { mealName:meal.name, mealK:meal.k, mealP:meal.p, mealC:meal.c, mealF:meal.f };
+    Object.entries(fields).forEach(([id, value]) => { const el = $(id); if (el) el.value = String(value); });
+    $('mealModeManual')?.click();
+  }
   function installRecentMeals(){
-    const slot = $('mobileDailyMealsSlot');
-    if (!slot || $('mobileDailyRecentMeals')) return;
-    const box = doc.createElement('section');
+    const nameInput = $('mealName');
+    if (!nameInput || $('mobileDailyRecentMeals')) return;
+    const box = doc.createElement('div');
     box.id = 'mobileDailyRecentMeals';
     box.className = 'mobileDailyRecentMeals';
-    box.setAttribute('aria-label', 'Tes repas habituels');
     box.hidden = true;
-    /* v24.4 : liste déroulante + corbeille (même modèle que « Mon propre réglage ») + Ajouter. */
-    box.innerHTML = '<label class="mobileDailyRecentMeals__label" for="mobileDailyRecentMealSelect">Tes habitudes</label>'
-      + '<div class="mobileDailyRecentMeals__row">'
-      + '<div class="mobileDailyRecentMeals__selectWrap"><select id="mobileDailyRecentMealSelect" class="mobileDailyRecentMeals__select"></select>'
-      + '<button type="button" class="mobileDailyRecentMeals__forget" id="mobileDailyRecentMealForget" title="Oublier ce repas" aria-label="Oublier ce repas">🗑</button></div>'
-      + '<button type="button" class="mobileDailyRecentMeals__add" id="mobileDailyRecentMealAdd">Ajouter</button>'
-      + '</div>'
+    box.innerHTML = '<div class="mobileDailyRecentMeals__selectWrap">'
+      + '<select id="mobileDailyRecentMealSelect" class="mobileDailyRecentMeals__select" aria-label="Tes habitudes"><option value="">Tes habitudes…</option></select>'
+      + '<button type="button" class="mobileDailyRecentMeals__forget" id="mobileDailyRecentMealForget" title="Oublier ce repas" aria-label="Oublier ce repas" disabled>🗑</button></div>'
       + '<p class="mobileDailyRecentMeals__note muted" id="mobileDailyRecentMealNote" aria-live="polite" hidden></p>';
-    const selected = () => box.__recentMeals?.[Number($('mobileDailyRecentMealSelect')?.value)];
-    box.querySelector('#mobileDailyRecentMealAdd')?.addEventListener('click', () => addRecentMeal(selected()));
-    box.querySelector('#mobileDailyRecentMealForget')?.addEventListener('click', () => {
+    const select = box.querySelector('#mobileDailyRecentMealSelect');
+    const forget = box.querySelector('#mobileDailyRecentMealForget');
+    const selected = () => select.value === '' ? null : box.__recentMeals?.[Number(select.value)];
+    select.addEventListener('change', () => {
+      const meal = selected();
+      forget.disabled = !meal;
+      fillMealForm(meal);
+    });
+    forget.addEventListener('click', () => {
       const meal = selected();
       if (!meal) return;
       forgetRecentMeal(meal);
       box.__recentMealNote = `« ${meal.name} » : oublié jusqu’à une future note.`;
       syncRecentMeals();
     });
-    slot.prepend(box);
+    nameInput.insertAdjacentElement('afterend', box);
   }
   function syncRecentMeals(){
     const box = $('mobileDailyRecentMeals');
@@ -372,20 +382,22 @@
     box.hidden = meals.length === 0 && !(note && !note.hidden);
     const select = box.querySelector('#mobileDailyRecentMealSelect');
     if (!select) return;
-    const previous = select.value;
+    /* Toujours remis sur l'invite : une sélection ne vaut que pour remplir le formulaire. */
     select.textContent = '';
+    const prompt = doc.createElement('option');
+    prompt.value = ''; prompt.textContent = 'Tes habitudes…';
+    select.appendChild(prompt);
     meals.forEach((meal, index) => {
       const option = doc.createElement('option');
       option.value = String(index);
       option.textContent = `${meal.name} · ${Math.round(meal.k)} kcal`;
       select.appendChild(option);
     });
-    if (meals.some((_, index) => String(index) === previous)) select.value = previous;
+    select.value = '';
     const empty = meals.length === 0;
     select.disabled = empty;
-    box.querySelector('#mobileDailyRecentMealAdd').disabled = empty;
-    box.querySelector('#mobileDailyRecentMealForget').disabled = empty;
-    box.querySelector('.mobileDailyRecentMeals__row').hidden = empty;
+    box.querySelector('#mobileDailyRecentMealForget').disabled = true;
+    box.querySelector('.mobileDailyRecentMeals__selectWrap').hidden = empty;
   }
   function removeRecentMeals(){ $('mobileDailyRecentMeals')?.remove(); }
 
@@ -506,7 +518,8 @@
       if (slot) slot.hidden = !open;
       if (button) button.setAttribute('aria-expanded', String(open));
     });
-    if (options.focus) global.setTimeout(() => $(`mobileDaily${action[0].toUpperCase()}${action.slice(1)}Slot`)?.querySelector('input, button, select')?.focus(), 40);
+    if (options.scroll) scrollUnderAppbar(doc.querySelector(`[data-mobile-action="${action}"]`)); /* v24.5 : même geste que Mon cadre */
+    if (options.focus) global.setTimeout(() => $(`mobileDaily${action[0].toUpperCase()}${action.slice(1)}Slot`)?.querySelector('input, button, select')?.focus({ preventScroll:true }), 40);
   }
 
   function collapseActions(){
@@ -639,10 +652,14 @@
     if (stepBtn && stepBtn.nextElementSibling !== slot) stepBtn.after(slot);
     qa('[data-mobile-setup]').forEach((button) => button.setAttribute('aria-expanded', String(button.dataset.mobileSetup === key)));
     if (options.scroll === false) return;
+    scrollUnderAppbar(stepBtn || slot);
+  }
+
+  /* v24.5 : commun Mon cadre / Aujourd'hui. On amène l'onglet ouvert juste sous l'appbar
+     fixe (block:'start' l'alignerait sur y=0, sous l'appbar). */
+  function scrollUnderAppbar(anchor){
+    if (!anchor) return;
     global.setTimeout(() => {
-      /* On amène l'onglet ouvert juste sous l'appbar fixe (block:'start' l'alignerait
-         sur y=0, sous l'appbar). La carte reste ainsi visible directement en dessous. */
-      const anchor = stepBtn || slot;
       const appbar = doc.querySelector('.appbar__inner') || doc.querySelector('.appbar');
       const appbarH = appbar
         ? appbar.getBoundingClientRect().bottom
@@ -837,7 +854,7 @@
     qa('[data-mobile-action]').forEach((button) => button.addEventListener('click', () => {
       const key = button.dataset.mobileAction;
       if (button.getAttribute('aria-expanded') === 'true') collapseActions();
-      else setAction(key, { focus:true });
+      else setAction(key, { focus:true, scroll:true });
     }));
     $('mobileDailySettingsSlot')?.addEventListener('input', () => queueSync(40));
     $('mobileDailySettingsSlot')?.addEventListener('change', () => queueSync(40));
