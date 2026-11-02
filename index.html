@@ -41,28 +41,28 @@
 <div aria-label="Pages" class="menuPanel" id="menuPanel" role="menu">
 <div class="menuGroup">
 <div class="menuGroupLabel">Espaces</div>
-<button class="menuItem" data-tab="today" role="menuitem" type="button">Pilotage</button>
-<button class="menuItem" data-tab="journalEntry" role="menuitem" type="button">Journal</button>
-<button class="menuItem" data-tab="history" role="menuitem" type="button">Historique / Analyse</button>
-<button class="menuItem" data-tab="settings" role="menuitem" type="button">Réglages</button>
+<button class="menuItem" data-tab="today" role="menuitem" type="button">Aujourd’hui</button>
+<button class="menuItem" data-tab="journalEntry" role="menuitem" type="button">Noter</button>
+<button class="menuItem" data-tab="history" role="menuitem" type="button">Relire</button>
+<button class="menuItem" data-tab="settings" role="menuitem" type="button">Mon cadre</button>
 </div>
 <div class="menuGroup menuGroup--planAccess">
-<div class="menuGroupLabel">Plan d’accès</div>
+<div class="menuGroupLabel">Pour comprendre</div>
 <button aria-controls="appUnderstandingModal" aria-haspopup="dialog" class="menuActionItem menuActionItem--planAccess" id="btnMenuOpenPilotagePlan" role="menuitem" type="button">Comprendre l’application</button>
 </div>
 <div class="menuGroup menuGroup--tools">
-<div class="menuGroupLabel">Accès transverses</div>
-<button class="menuActionItem" id="btnMenuOpenTermsGate" role="menuitem" type="button">Conditions d’accès</button>
-<button class="menuActionItem" id="btnMenuOpenCloudModal" role="menuitem" type="button">Sauvegarde / synchronisation</button>
-<button class="menuActionItem" id="btnMenuOpenTutoModal" role="menuitem" type="button">Mini-tutos de l’espace</button>
-<button class="menuActionItem" id="btnMenuOpenHelpModal" role="menuitem" type="button">Aide et lexique</button>
+<div class="menuGroupLabel">Outils</div>
+<button class="menuActionItem" id="btnMenuOpenTermsGate" role="menuitem" type="button">Avant de commencer</button>
+<button class="menuActionItem" id="btnMenuOpenCloudModal" role="menuitem" type="button">Sauvegarder / synchroniser</button>
+<button class="menuActionItem" id="btnMenuOpenTutoModal" role="menuitem" type="button">Comment utiliser cet écran</button>
+<button class="menuActionItem" id="btnMenuOpenHelpModal" role="menuitem" type="button">Aide et mots-clés</button>
 </div>
 <div class="menuGroup mobileMenuGroup" aria-label="Menu mobile">
-<div class="menuGroupLabel">Suivi</div>
-<button class="menuActionItem" data-mobile-menu-view="settings" role="menuitem" type="button">Réglages</button>
-<button class="menuActionItem" id="btnMobileMenuOpenHelp" role="menuitem" type="button">Aide et démarrage</button>
-<button class="menuActionItem" id="btnMobileMenuOpenCloud" role="menuitem" type="button">Sauvegarde / synchronisation</button>
-<button class="menuActionItem" id="btnMobileMenuOpenTerms" role="menuitem" type="button">Conditions d’accès</button>
+<div class="menuGroupLabel">Mon suivi</div>
+<button class="menuActionItem" data-mobile-menu-view="settings" role="menuitem" type="button">Mon cadre</button>
+<button class="menuActionItem" id="btnMobileMenuOpenHelp" role="menuitem" type="button">Aide pour démarrer</button>
+<button class="menuActionItem" id="btnMobileMenuOpenCloud" role="menuitem" type="button">Sauvegarder / synchroniser</button>
+<button class="menuActionItem" id="btnMobileMenuOpenTerms" role="menuitem" type="button">Avant de commencer</button>
 </div>
 </div>
 </div><!-- /brand -->
@@ -79,111 +79,111 @@
   <section class="mobileDailyView is-active" id="mobileDailyToday" aria-label="Aujourd’hui">
     <div class="mobileDailyState" id="mobileDailyState" data-tone="muted">
       <div>
-        <p class="mobileDailyState__eyebrow">Journée du jour</p>
-        <h2 id="mobileDailyStateLabel">Journée lancée</h2>
-        <p id="mobileDailyProgress">0/3 essentiels renseignés</p>
+        <p class="mobileDailyState__eyebrow">Ta journée</p>
+        <h2 id="mobileDailyStateLabel">C’est parti</h2>
+        <p id="mobileDailyProgress">0/3 choses notées</p>
         <p class="mobileDailyRemaining" id="mobileDailyRemaining" aria-live="polite" hidden></p>
       </div>
-      <div class="mobileDailyState__count" id="mobileDailyCount" aria-label="0 essentiels renseignés">0<span>/3</span></div>
+      <div class="mobileDailyState__count" id="mobileDailyCount" aria-label="0 choses notées sur 3">0<span>/3</span></div>
     </div>
 
-    <button class="mobileDailyBadge" id="mobileDailyNextBadge" type="button" aria-label="Voir la progression dans l’historique">
+    <button class="mobileDailyBadge" id="mobileDailyNextBadge" type="button" aria-label="Voir ta progression dans Relire">
       <span class="mobileDailyBadge__icon" id="mobileDailyNextBadgeIcon" aria-hidden="true">🏅</span>
-      <span class="mobileDailyBadge__copy"><span>Prochain badge</span><strong id="mobileDailyNextBadgeTitle">À découvrir</strong><small id="mobileDailyNextBadgeDesc">Complète un repère pour lancer le parcours.</small></span>
+      <span class="mobileDailyBadge__copy"><span>Prochain badge</span><strong id="mobileDailyNextBadgeTitle">À découvrir</strong><small id="mobileDailyNextBadgeDesc">Note une chose et c’est parti.</small></span>
       <span class="mobileDailyBadge__progress" id="mobileDailyNextBadgeProgress">0/1</span>
     </button>
 
-    <section class="mobileDailyActions" aria-label="Essentiels du jour">
+    <section class="mobileDailyActions" aria-label="Les trois choses à noter">
       <article class="mobileDailyAction" id="mobileDailySpendCard" data-complete="false">
-        <button class="mobileDailyAction__head" data-mobile-action="spend" type="button" aria-expanded="true" aria-controls="mobileDailySpendSlot"><span class="mobileDailyAction__step">1</span><span><strong>Dépense</strong><small id="mobileDailySpendStatus">À confirmer</small></span><b aria-hidden="true">⌄</b></button>
+        <button class="mobileDailyAction__head" data-mobile-action="spend" type="button" aria-expanded="true" aria-controls="mobileDailySpendSlot"><span class="mobileDailyAction__step">1</span><span><strong>Ce que tu brûles</strong><small id="mobileDailySpendStatus">À confirmer</small></span><b aria-hidden="true">⌄</b></button>
         <div class="mobileDailyAction__body" id="mobileDailySpendSlot"></div>
       </article>
       <article class="mobileDailyAction" id="mobileDailyMealsCard" data-complete="false">
-        <button class="mobileDailyAction__head" data-mobile-action="meals" type="button" aria-expanded="false" aria-controls="mobileDailyMealsSlot"><span class="mobileDailyAction__step">2</span><span><strong>Repas</strong><small id="mobileDailyMealsStatus">Ajouter le premier repas</small></span><b aria-hidden="true">⌄</b></button>
+        <button class="mobileDailyAction__head" data-mobile-action="meals" type="button" aria-expanded="false" aria-controls="mobileDailyMealsSlot"><span class="mobileDailyAction__step">2</span><span><strong>Repas</strong><small id="mobileDailyMealsStatus">Rien noté encore</small></span><b aria-hidden="true">⌄</b></button>
         <div class="mobileDailyAction__body" id="mobileDailyMealsSlot" hidden></div>
       </article>
       <article class="mobileDailyAction" id="mobileDailyActivityCard" data-complete="false">
-        <button class="mobileDailyAction__head" data-mobile-action="activity" type="button" aria-expanded="false" aria-controls="mobileDailyActivitySlot"><span class="mobileDailyAction__step">3</span><span><strong>Activité</strong><small id="mobileDailyActivityStatus">Ajouter une séance si nécessaire</small></span><b aria-hidden="true">⌄</b></button>
+        <button class="mobileDailyAction__head" data-mobile-action="activity" type="button" aria-expanded="false" aria-controls="mobileDailyActivitySlot"><span class="mobileDailyAction__step">3</span><span><strong>Activité</strong><small id="mobileDailyActivityStatus">Si tu as bougé, note-le</small></span><b aria-hidden="true">⌄</b></button>
         <div class="mobileDailyAction__body" id="mobileDailyActivitySlot" hidden></div>
       </article>
     </section>
 
     <details class="mobileDailyMore" id="mobileDailyMore">
-      <summary>Autres repères <span>Sommeil, poids, santé</span></summary>
+      <summary>Et aussi <span>sommeil, poids, glycémie</span></summary>
       <div id="mobileDailyMoreSlot"></div>
     </details>
   </section>
 
-  <section class="mobileDailyView" id="mobileDailyHistory" aria-label="Historique" hidden>
-    <div class="mobileDailyIntro"><p class="mobileDaily__eyebrow">Relire et comprendre</p><h2>Historique</h2><p>Choisis une date, puis consulte les repères utiles.</p></div>
+  <section class="mobileDailyView" id="mobileDailyHistory" aria-label="Relire" hidden>
+    <div class="mobileDailyIntro"><p class="mobileDaily__eyebrow">Tes jours passés</p><h2>Relire</h2><p>Choisis un jour et regarde ce qui s’est passé.</p></div>
     <div id="mobileDailyHistoryMainSlot"></div>
     <div id="mobileDailyHistoryPlayfulSlot"></div>
     <details class="mobileDailyMore mobileDailyMealsHistory">
-      <summary><span>🍽 Repas <b id="mobileDailyHistoryMealsCount">· 0</b></span><span>voir et corriger</span></summary>
+      <summary><span>🍽 Repas <b id="mobileDailyHistoryMealsCount">· 0</b></span><span>voir, corriger</span></summary>
       <div id="mobileDailyMealsHistorySlot"></div>
     </details>
-    <details class="mobileDailyMore"><summary>Analyses et tendances <span>lecture détaillée</span></summary><div id="mobileDailyHistoryMoreSlot"></div></details>
+    <details class="mobileDailyMore"><summary>Tendances <span>le détail</span></summary><div id="mobileDailyHistoryMoreSlot"></div></details>
   </section>
 
-  <section class="mobileDailyView" id="mobileDailySettings" aria-label="Réglages" hidden>
+  <section class="mobileDailyView" id="mobileDailySettings" aria-label="Mon cadre" hidden>
     <div class="mobileDailyIntro mobileSetupIntro">
-      <p class="mobileDaily__eyebrow">Cadre personnel</p>
-      <h2 id="mobileSetupTitle">Configurons votre suivi</h2>
-      <p id="mobileSetupLead">Quatre étapes courtes pour préparer les repères du quotidien.</p>
+      <p class="mobileDaily__eyebrow">Mon cadre</p>
+      <h2 id="mobileSetupTitle">On règle ton suivi</h2>
+      <p id="mobileSetupLead">Quatre étapes, cinq minutes, et l’app sait de quoi elle parle.</p>
     </div>
     <section class="mobileSetupState" id="mobileSetupState" data-complete="false" aria-live="polite">
-      <div><p class="mobileDailyState__eyebrow">Configuration</p><h3 id="mobileSetupStateLabel">0 étape prête</h3><p id="mobileSetupProgress">0/4 étapes complétées</p></div>
+      <div><p class="mobileDailyState__eyebrow">Où tu en es</p><h3 id="mobileSetupStateLabel">0 étape faite</h3><p id="mobileSetupProgress">0/4 étapes faites</p></div>
       <div class="mobileSetupState__count" id="mobileSetupCount" aria-label="0 étape complétée">0<span>/4</span></div>
     </section>
     <div id="mobileSetupModeSlot"></div>
     <section class="mobileSetupSteps" aria-label="Étapes de configuration">
-      <button class="mobileSetupStep" data-mobile-setup="profile" type="button" aria-expanded="false"><span class="mobileDailyAction__step">1</span><span><strong>Profil et préférences</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
-      <button class="mobileSetupStep" data-mobile-setup="watch" type="button" aria-expanded="false"><span class="mobileDailyAction__step">2</span><span><strong>Montre et dépense</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
-      <button class="mobileSetupStep" data-mobile-setup="compromise" type="button" aria-expanded="false"><span class="mobileDailyAction__step">3</span><span><strong>Compromis nutritionnel</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
-      <button class="mobileSetupStep" data-mobile-setup="goals" type="button" aria-expanded="false"><span class="mobileDailyAction__step">4</span><span><strong>Objectif</strong><small>À compléter</small></span><b aria-hidden="true">⌄</b></button>
+      <button class="mobileSetupStep" data-mobile-setup="profile" type="button" aria-expanded="false"><span class="mobileDailyAction__step">1</span><span><strong>Toi</strong><small>À faire</small></span><b aria-hidden="true">⌄</b></button>
+      <button class="mobileSetupStep" data-mobile-setup="watch" type="button" aria-expanded="false"><span class="mobileDailyAction__step">2</span><span><strong>Ce que tu brûles</strong><small>À faire</small></span><b aria-hidden="true">⌄</b></button>
+      <button class="mobileSetupStep" data-mobile-setup="compromise" type="button" aria-expanded="false"><span class="mobileDailyAction__step">3</span><span><strong>Ce que tu vises</strong><small>À faire</small></span><b aria-hidden="true">⌄</b></button>
+      <button class="mobileSetupStep" data-mobile-setup="goals" type="button" aria-expanded="false"><span class="mobileDailyAction__step">4</span><span><strong>Façon de manger</strong><small>À faire</small></span><b aria-hidden="true">⌄</b></button>
     </section>
     <div id="mobileDailySettingsSlot" data-mobile-settings-open="profile"></div>
   </section>
 
   <nav class="mobileDailyNav" aria-label="Navigation principale mobile">
     <button class="is-active" data-mobile-view="today" type="button"><span aria-hidden="true">●</span>Aujourd’hui</button>
-    <button data-mobile-view="history" type="button"><span aria-hidden="true">◷</span>Historique</button>
+    <button data-mobile-view="history" type="button"><span aria-hidden="true">◷</span>Relire</button>
   </nav>
   <button class="mobileDailyContextTab" id="mobileDailyContextBtn" type="button" aria-expanded="false" aria-controls="phase5StatusBar">Contexte</button>
 </main>
 <!-- Visible sur toutes les pages -->
 <section class="notice notice--warn mt-06" id="globalQuickNotice" aria-labelledby="globalQuickNoticeTitle">
 <div class="noticeTitle" id="globalQuickNoticeTitle">Bon à savoir</div>
-<p>• Les valeurs sont des <b>repères</b>. <b>La montre reste une estimation</b>.</p>
-<p>• <b>Boire fait partie de l’équilibre alimentaire</b>.</p>
+<p>• Les chiffres t’aident à te situer, rien de plus. <b>La montre estime, elle ne mesure pas</b>.</p>
+<p>• <b>Boire, ça compte aussi</b>.</p>
 </section>
 
 <div class="card phase1PrimaryNav mt-06">
   <div class="phase1PrimaryNav__head">
     <div>
-      <div class="phase1PrimaryNav__title">Navigation</div>
-      <div class="phase1PrimaryNav__hint">Comprendre, saisir, relire, paramétrer.</div>
+      <div class="phase1PrimaryNav__title">Où aller</div>
+      <div class="phase1PrimaryNav__hint">Lire, noter, relire, régler.</div>
     </div>
     <span class="phase1BlockTag">Cockpit</span>
   </div>
   <div class="phase1PrimaryNav__tabs">
-    <button class="tabBtn" data-tab="today" type="button"><strong>Pilotage</strong><span>Lire l’état du jour</span></button>
-    <button class="tabBtn" data-tab="journalEntry" type="button"><strong>Journal</strong><span>Encoder et corriger</span></button>
-    <button class="tabBtn" data-tab="history" type="button"><strong>Historique</strong><span>Relire et comprendre</span></button>
-    <button class="tabBtn" data-tab="settings" type="button"><strong>Réglages</strong><span>Paramètres et maintenance</span></button>
+    <button class="tabBtn" data-tab="today" type="button"><strong>Aujourd’hui</strong><span>Où tu en es</span></button>
+    <button class="tabBtn" data-tab="journalEntry" type="button"><strong>Noter</strong><span>Ce que tu as mangé, fait, dormi</span></button>
+    <button class="tabBtn" data-tab="history" type="button"><strong>Relire</strong><span>Tes jours passés</span></button>
+    <button class="tabBtn" data-tab="settings" type="button"><strong>Mon cadre</strong><span>Toi, ta montre, ce que tu vises</span></button>
   </div>
 </div>
 
 <div class="phase5ShellLine" id="phase5ShellLine">
 <details class="phase5GateDisclosure" id="phase5GlobalGateDisclosure">
-  <summary class="noticeTitle phase5GateSummary">Accès transverses</summary>
+  <summary class="noticeTitle phase5GateSummary">Le reste</summary>
 <div class="phase5GateBar" id="phase5GlobalGateBar">
   <div class="phase5GateCard phase5GateCard--access" data-state="locked">
-    <div class="phase5GateCard__eyebrow">Accès à l’application</div>
+    <div class="phase5GateCard__eyebrow">L’accès</div>
     <div class="phase5GateCard__row">
       <div class="phase5GateCard__body">
-        <div class="phase5GateCard__title" id="phase5GateAccessState">Application verrouillée</div>
-        <div class="phase5GateCard__text" id="phase5GateAccessMeta">Les espaces restent inactifs tant que les conditions d’accès ne sont pas lues et acceptées.</div>
+        <div class="phase5GateCard__title" id="phase5GateAccessState">Fermée pour l’instant</div>
+        <div class="phase5GateCard__text" id="phase5GateAccessMeta">Il faut d’abord lire et accepter « Avant de commencer ».</div>
       </div>
       <div class="phase5GateCard__actions">
         <button class="btn-ghost" id="btnGlobalOpenTermsGate" type="button">Lire et accepter</button>
@@ -192,14 +192,14 @@
   </div>
 
   <div class="phase5GateCard phase5GateCard--cloud">
-    <div class="phase5GateCard__eyebrow">Maintenance transverse</div>
+    <div class="phase5GateCard__eyebrow">Tes données</div>
     <div class="phase5GateCard__row">
       <div class="phase5GateCard__body">
         <div class="phase5GateCard__titleRow">
           <div class="phase5GateCard__title">Sauvegarde / synchronisation</div>
-          <span aria-label="Informations — Sauvegarde / synchronisation" class="info-dot phase5GateCard__infoDot" id="phase5GateCloudInfo" role="button" tabindex="0" data-modaltext="">ℹ️</span>
+          <span aria-label="À propos de la sauvegarde" class="info-dot phase5GateCard__infoDot" id="phase5GateCloudInfo" role="button" tabindex="0" data-modaltext="">ℹ️</span>
         </div>
-        <div class="phase5GateCard__text">Sauvegarde et import/export des données.</div>
+        <div class="phase5GateCard__text">Sauvegarder, exporter, importer.</div>
       </div>
       <div class="phase5GateCard__actions">
         <button class="btn-ghost" id="btnGlobalOpenCloudModal" type="button">Ouvrir</button>
@@ -208,11 +208,11 @@
   </div>
 
   <div class="phase5GateCard phase5GateCard--tuto" id="phase5GateTutoCard" data-space="today" data-has-tutos="0">
-    <div class="phase5GateCard__eyebrow">Repères contextuels</div>
+    <div class="phase5GateCard__eyebrow">Pour cet écran</div>
     <div class="phase5GateCard__row">
       <div class="phase5GateCard__body">
-        <div class="phase5GateCard__title" id="phase5GateTutoTitle">Mini-tutos — Pilotage</div>
-        <div class="phase5GateCard__text" id="phase5GateTutoMeta">Aucun mini-tuto disponible pour cet espace.</div>
+        <div class="phase5GateCard__title" id="phase5GateTutoTitle">Comment ça marche — Aujourd’hui</div>
+        <div class="phase5GateCard__text" id="phase5GateTutoMeta">Rien de particulier à savoir ici.</div>
       </div>
       <div class="phase5GateCard__actions">
         <button class="btn-ghost" id="btnGlobalOpenTutoModal" type="button">Lire</button>
@@ -221,14 +221,14 @@
   </div>
 
   <div class="phase5GateCard phase5GateCard--help">
-    <div class="phase5GateCard__eyebrow">Références</div>
+    <div class="phase5GateCard__eyebrow">Les mots</div>
     <div class="phase5GateCard__row">
       <div class="phase5GateCard__body">
         <div class="phase5GateCard__titleRow">
-          <div class="phase5GateCard__title">Aide et lexique</div>
-          <span aria-label="Informations — Aide et lexique" class="info-dot phase5GateCard__infoDot" id="phase5GateLexiconInfo" role="button" tabindex="0" data-modaltext="">ℹ️</span>
+          <div class="phase5GateCard__title">Aide et mots-clés</div>
+          <span aria-label="À propos de l’aide" class="info-dot phase5GateCard__infoDot" id="phase5GateLexiconInfo" role="button" tabindex="0" data-modaltext="">ℹ️</span>
         </div>
-        <div class="phase5GateCard__text">Définitions et repères accessibles à tout moment.</div>
+        <div class="phase5GateCard__text">Les termes de l’app, expliqués simplement.</div>
       </div>
       <div class="phase5GateCard__actions">
         <button class="btn-ghost" id="btnGlobalOpenHelpModal" type="button">Afficher</button>
@@ -246,52 +246,52 @@
   <div class="phase2HeroCard phase2HeroCard--today mt-06">
     <div class="phase2HeroTop">
       <div>
-        <div class="phase2Eyebrow">Cockpit quotidien</div>
-        <div class="phase2TitleRow"><h1 class="phase2Title">Pilotage</h1><span aria-label="Informations — Pilotage" class="info-dot" id="phase2HeroInfoToday" role="button" tabindex="0" data-modaltext="Lecture immédiate du jour. La saisie reste dans Journal ; l’analyse dans Historique.">ℹ️</span></div>
+        <div class="phase2Eyebrow">Ta journée</div>
+        <div class="phase2TitleRow"><h1 class="phase2Title">Aujourd’hui</h1><span aria-label="À propos d’Aujourd’hui" class="info-dot" id="phase2HeroInfoToday" role="button" tabindex="0" data-modaltext="Lecture rapide du jour. Tu notes dans Noter, tu analyses dans Relire.">ℹ️</span></div>
       </div>
     </div>
     <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--today" aria-label="Accès rapide aux actions du jour">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today" data-today-jump="reading" id="btnTodayQuickReading" type="button">
         <strong>Jour</strong>
-        <span>état opérationnel</span>
+        <span>où tu en es</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today" data-today-jump="summary" id="btnTodayQuickSummary" type="button">
-        <strong>Consolidé</strong>
-        <span>objectif + reste</span>
+        <strong>Le compte</strong>
+        <span>cible et reste</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="meals" id="btnTodayQuickMeal" type="button">
         <strong>Repas *</strong>
-        <span>saisie</span>
+        <span>noter</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="activity" id="btnTodayQuickSport" type="button">
         <strong>Activité *</strong>
-        <span>saisie</span>
+        <span>noter</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="sleep" id="btnTodayQuickSleep" type="button">
         <strong>Sommeil *</strong>
-        <span>saisie</span>
+        <span>noter</span>
       </button>
       <div class="quickNavNudgeWrap" data-onboarding-step="pilotage-settings">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--today phase2HeroQuickNav__btn--cross" data-today-jump="settings" id="btnTodayQuickSettings" type="button">
-        <strong>Réglages *</strong>
-        <span>paramètres</span>
+        <strong>Mon cadre *</strong>
+        <span>régler</span>
       </button>
-      <button class="chargeNudgeDot" id="pilotageSettingsLoadNudge" type="button" aria-label="Ouvrir Historique et le calendrier pour compléter les 7 derniers jours" title="Compléter les 7 derniers jours dans Historique" data-onboarding-visible="0"></button>
+      <button class="chargeNudgeDot" id="pilotageSettingsLoadNudge" type="button" aria-label="Ouvrir Relire et le calendrier pour compléter les 7 derniers jours" title="Compléter les 7 derniers jours dans Relire" data-onboarding-visible="0"></button>
       </div>
     </div>
-    <div class="phase2HeroQuickNavNote">* ouvre un autre espace de l’application.</div>
+    <div class="phase2HeroQuickNavNote">* t’emmène ailleurs dans l’app.</div>
   </div>
 
-  <div class="phase2SettingsJumpFloat phase2SettingsJumpFloat--today" aria-label="Navigation rapide Pilotage mobile">
+  <div class="phase2SettingsJumpFloat phase2SettingsJumpFloat--today" aria-label="Navigation rapide d’Aujourd’hui (mobile)">
     <button class="phase2SettingsJumpFloat__toggle" id="todayJumpFloatToggle" type="button" aria-expanded="false" aria-controls="todayJumpFloatPanel">Sections</button>
     <div class="phase2SettingsJumpFloat__panel" id="todayJumpFloatPanel" hidden>
       <button class="phase2SettingsJumpFloat__btn" data-today-jump="reading" id="btnTodayQuickReadingFloat" type="button">Jour</button>
-      <button class="phase2SettingsJumpFloat__btn" data-today-jump="summary" id="btnTodayQuickSummaryFloat" type="button">Consolidé</button>
+      <button class="phase2SettingsJumpFloat__btn" data-today-jump="summary" id="btnTodayQuickSummaryFloat" type="button">Le compte</button>
       <button class="phase2SettingsJumpFloat__btn" data-today-jump="meals" id="btnTodayQuickMealFloat" type="button">Repas *</button>
       <button class="phase2SettingsJumpFloat__btn" data-today-jump="activity" id="btnTodayQuickSportFloat" type="button">Activité *</button>
       <button class="phase2SettingsJumpFloat__btn" data-today-jump="sleep" id="btnTodayQuickSleepFloat" type="button">Sommeil *</button>
-      <button class="phase2SettingsJumpFloat__btn" data-today-jump="settings" id="btnTodayQuickSettingsFloat" type="button" >Réglages *</button>
-      <div class="phase2SettingsJumpFloat__note">* ouvre un autre espace de l’application.</div>
+      <button class="phase2SettingsJumpFloat__btn" data-today-jump="settings" id="btnTodayQuickSettingsFloat" type="button" >Mon cadre *</button>
+      <div class="phase2SettingsJumpFloat__note">* t’emmène ailleurs dans l’app.</div>
     </div>
   </div>
 
@@ -300,23 +300,23 @@
       <div class="phase2Panel" id="todayReadingPanel">
         <div class="phase2Panel__head">
           <div>
-            <h2 class="phase2Panel__title">Lecture du jour</h2>
-            <p class="phase2Panel__desc">Décision du jour, puis détail si nécessaire.</p>
+            <h2 class="phase2Panel__title">Ta journée</h2>
+            <p class="phase2Panel__desc">L’essentiel d’abord, le détail si tu veux.</p>
           </div>
         </div>
         <div class="phase1PulseGrid">
           <div class="phase1PulseCard phase1PulseCard--goalSummary">
-            <div class="phase1PulseLabel">Reste à consommer</div>
+            <div class="phase1PulseLabel">Ce qu’il te reste</div>
             <div class="phase1PulseSummaryMount" id="todayGoalSummarySlot"></div>
           </div>
           <div class="phase1PulseCard phase1PulseCard--spendEdit">
-            <div class="phase1PulseLabel"><label for="todaySpendEdit">Dépense du jour</label></div>
-            <input class="phase1PulseValueInput" id="todaySpendEdit" type="number" min="0" step="1" inputmode="numeric" placeholder="ex: 2600" aria-label="Ajuster la dépense énergétique totale du jour"/>
-            <div class="phase1PulseMeta">Ajustée : <span id="p1TodaySpend">—</span> · utilisée par le moteur · s’applique partout</div>
+            <div class="phase1PulseLabel"><label for="todaySpendEdit">Ce que tu brûles aujourd’hui</label></div>
+            <input class="phase1PulseValueInput" id="todaySpendEdit" type="number" min="0" step="1" inputmode="numeric" placeholder="ex: 2600" aria-label="Ajuster ce que tu brûles aujourd’hui"/>
+            <div class="phase1PulseMeta">L’app retient : <span id="p1TodaySpend">—</span> · pour tous les calculs</div>
           </div>
-          <div class="phase1PulseCard"><div class="phase1PulseLabel">Repas</div><div class="phase1PulseValue" id="p1TodayMeals">—</div><div class="phase1PulseMeta">Repas saisis pour la journée active.</div></div>
-          <div class="phase1PulseCard"><div class="phase1PulseLabel">Activité</div><div class="phase1PulseValue" id="p1TodaySport">—</div><div class="phase1PulseMeta">Résumé des séances enregistrées.</div></div>
-          <div class="phase1PulseCard"><div class="phase1PulseLabel">Sommeil</div><div class="phase1PulseValue" id="p1TodaySleep">—</div><div class="phase1PulseMeta">Dernière nuit liée à la date active.</div></div>
+          <div class="phase1PulseCard"><div class="phase1PulseLabel">Repas</div><div class="phase1PulseValue" id="p1TodayMeals">—</div><div class="phase1PulseMeta">Ce que tu as noté aujourd’hui.</div></div>
+          <div class="phase1PulseCard"><div class="phase1PulseLabel">Activité</div><div class="phase1PulseValue" id="p1TodaySport">—</div><div class="phase1PulseMeta">Tes séances du jour.</div></div>
+          <div class="phase1PulseCard"><div class="phase1PulseLabel">Sommeil</div><div class="phase1PulseValue" id="p1TodaySleep">—</div><div class="phase1PulseMeta">Ta dernière nuit.</div></div>
         </div>
         <div class="phase2Slot phase4Slot mt-06" id="todayMainSlot"></div>
       </div>
@@ -324,23 +324,23 @@
       <div class="phase2Panel playfulCockpitPanel" id="playfulCockpitPanel" aria-labelledby="playfulCockpitTitle">
         <div class="phase2Panel__head playfulCockpitPanel__head">
           <div>
-            <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulCockpitTitle">Progression du jour</h2><span aria-label="Informations — Progression du jour" class="info-dot" id="playfulCockpitInfo" role="button" tabindex="0" data-modaltext="Résumé simple de ta journée avec les données déjà enregistrées. Rien n’est recalculé ni modifié.">ℹ️</span></div>
-            <p class="phase2Panel__desc">Repères rapides de la journée active.</p>
+            <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulCockpitTitle">Où tu en es</h2><span aria-label="À propos de Où tu en es" class="info-dot" id="playfulCockpitInfo" role="button" tabindex="0" data-modaltext="Un résumé de ce que tu as déjà noté. Rien n’est recalculé.">ℹ️</span></div>
+            <p class="phase2Panel__desc">En un coup d’œil.</p>
           </div>
-          <span class="playfulStatePill" id="playfulStatePill"><span class="playfulStateDot" id="playfulStateDot" aria-hidden="true"></span><span id="playfulStateLabel">À renseigner</span></span>
+          <span class="playfulStatePill" id="playfulStatePill"><span class="playfulStateDot" id="playfulStateDot" aria-hidden="true"></span><span id="playfulStateLabel">À noter</span></span>
         </div>
 
         <div class="playfulCockpitGrid">
           <div class="playfulInstrument playfulInstrument--missions">
-            <div class="playfulInstrument__label">Missions du jour</div>
+            <div class="playfulInstrument__label">Les petites choses du jour</div>
             <div class="playfulMissions" id="playfulMissionsList" aria-label="Missions du jour"></div>
-            <div class="playfulInstrument__meta" id="playfulMissionsCount">0/5 complétées</div>
+            <div class="playfulInstrument__meta" id="playfulMissionsCount">0/5 faites</div>
           </div>
 
           <div class="playfulInstrument playfulInstrument--rhythm">
             <div class="playfulInstrument__label">Rythme</div>
             <div class="playfulRhythm" id="playfulRhythmSegments" aria-label="Rythme hebdomadaire"></div>
-            <div class="playfulInstrument__meta" id="playfulRhythmLabel">0/7 jours renseignés</div>
+            <div class="playfulInstrument__meta" id="playfulRhythmLabel">0/7 jours notés</div>
           </div>
         </div>
 
@@ -349,7 +349,7 @@
           <span class="playfulNextBadgeMini__copy">
             <span>Prochain badge</span>
             <strong id="playfulNextBadgeTitleMini">À découvrir</strong>
-            <small id="playfulNextBadgeDescMini">Complète une mission pour lancer le parcours.</small>
+            <small id="playfulNextBadgeDescMini">Note une chose et c’est parti.</small>
           </span>
           <span class="playfulNextBadgeMini__progress" id="playfulNextBadgeProgressMini">0/1</span>
         </div>
@@ -362,50 +362,50 @@
   <div class="phase2HeroCard phase2HeroCard--journal mt-06">
     <div class="phase2HeroTop">
       <div>
-        <div class="phase2Eyebrow">Saisie / correction</div>
-        <div class="phase2TitleRow"><h1 class="phase2Title">Journal</h1><span aria-label="Informations — Journal" class="info-dot" id="phase2HeroInfoJournal" role="button" tabindex="0" data-modaltext="Saisie de la journée active. Les analyses restent dans Historique.">ℹ️</span></div>
+        <div class="phase2Eyebrow">Ce que tu notes</div>
+        <div class="phase2TitleRow"><h1 class="phase2Title">Noter</h1><span aria-label="À propos de Noter" class="info-dot" id="phase2HeroInfoJournal" role="button" tabindex="0" data-modaltext="Ce que tu notes aujourd’hui. Les analyses sont dans Relire.">ℹ️</span></div>
       </div>
     </div>
-    <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--journal" aria-label="Accès rapide aux panneaux du Journal">
+    <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--journal" aria-label="Accès rapide aux blocs de Noter">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--journal" data-journal-jump="meals" type="button">
         <strong>Repas</strong>
-        <span>ajouter + corriger</span>
+        <span>ajouter, corriger</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--journal" data-journal-jump="activity" type="button">
         <strong>Activité</strong>
-        <span>saisie du jour</span>
+        <span>ta séance</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--journal" data-journal-jump="sleep" type="button">
         <strong>Sommeil</strong>
-        <span>corriger la nuit</span>
+        <span>ta nuit</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--journal" data-journal-jump="metrics" type="button">
-        <strong>Poids / composition</strong>
-        <span>mesures du jour</span>
+        <strong>Poids</strong>
+        <span>ta mesure</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--journal" data-journal-jump="diabetes" type="button">
-        <strong>Diabète</strong>
-        <span>module conditionnel</span>
+        <strong>Glycémie</strong>
+        <span>si tu la suis</span>
       </button>
     </div>
   </div>
 
-  <div class="phase2SettingsJumpFloat" aria-label="Navigation rapide du Journal mobile">
+  <div class="phase2SettingsJumpFloat" aria-label="Navigation rapide de Noter (mobile)">
     <button class="phase2SettingsJumpFloat__toggle" id="journalJumpFloatToggle" type="button" aria-expanded="false" aria-controls="journalJumpFloatPanel">Sections</button>
     <div class="phase2SettingsJumpFloat__panel" id="journalJumpFloatPanel" hidden>
       <button class="phase2SettingsJumpFloat__btn" data-journal-jump="meals" type="button">Repas</button>
       <button class="phase2SettingsJumpFloat__btn" data-journal-jump="activity" type="button">Activité</button>
       <button class="phase2SettingsJumpFloat__btn" data-journal-jump="sleep" type="button">Sommeil</button>
-      <button class="phase2SettingsJumpFloat__btn" data-journal-jump="metrics" type="button">Poids / composition</button>
-      <button class="phase2SettingsJumpFloat__btn" data-journal-jump="diabetes" type="button">Diabète</button>
+      <button class="phase2SettingsJumpFloat__btn" data-journal-jump="metrics" type="button">Poids</button>
+      <button class="phase2SettingsJumpFloat__btn" data-journal-jump="diabetes" type="button">Glycémie</button>
     </div>
   </div>
 
   <div class="phase2Panel phase2Panel--subtle playfulJournalPanel" id="playfulJournalPanel" aria-labelledby="playfulJournalTitle">
     <div class="phase2MicroHead">
       <div>
-        <div class="phase2PanelTitleRow"><h3 id="playfulJournalTitle">Déjà renseigné</h3><span aria-label="Informations — Déjà renseigné" class="info-dot" id="playfulJournalInfo" role="button" tabindex="0" data-modaltext="Ces repères montrent ce qui est déjà complété : repas, protéines, activité, poids et apport. Rien n’est modifié ici.">ℹ️</span></div>
-        <p>Repères rapides de ce qui est déjà renseigné pour la date active.</p>
+        <div class="phase2PanelTitleRow"><h3 id="playfulJournalTitle">Déjà noté</h3><span aria-label="À propos de Déjà noté" class="info-dot" id="playfulJournalInfo" role="button" tabindex="0" data-modaltext="Ce que tu as déjà noté pour ce jour : repas, protéines, activité, poids, apport. Rien ne se modifie ici.">ℹ️</span></div>
+        <p>Ce que tu as déjà mis pour ce jour.</p>
       </div>
       <span class="phase2SectionTag" id="playfulJournalCount">0/5</span>
     </div>
@@ -416,7 +416,7 @@
     <div class="phase2Panel phase2JournalPanel phase2JournalPanel--meals">
       <div class="phase2Panel__head">
         <div>
-          <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title">Repas du jour</h2><span aria-label="Informations — Repas du jour" class="info-dot" id="journalMealsPanelInfo" role="button" tabindex="0" data-modaltext="Encodage nutritionnel et corrections de la journée active.">ℹ️</span></div>
+          <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title">Repas du jour</h2><span aria-label="À propos des repas du jour" class="info-dot" id="journalMealsPanelInfo" role="button" tabindex="0" data-modaltext="Tes repas du jour, à ajouter ou corriger.">ℹ️</span></div>
         </div>
       </div>
       <div class="phase2Slot phase4Slot" id="journalMealsSlot"></div>
@@ -443,8 +443,8 @@
     <div class="phase2Panel phase2Panel--subtle phase2JournalPanel phase2JournalPanel--metrics">
       <div class="phase2MicroHead">
         <div>
-          <h3>Mesures du jour</h3>
-          <p>Poids et composition saisis sur la date active. L’analyse 7 jours repart dans Historique.</p>
+          <h3>Ton poids</h3>
+          <p>Ton poids et ta composition du jour. L’analyse sur 7 jours est dans Relire.</p>
         </div>
       </div>
       <div class="phase2Slot phase4Slot" id="journalMetricsSlot"></div>
@@ -453,8 +453,8 @@
     <div class="phase2Panel phase2Panel--subtle phase2JournalPanel phase2JournalPanel--diabetes">
       <div class="phase2Panel__head">
         <div>
-          <h2 class="phase2Panel__title">Module diabète</h2>
-          <p class="phase2Panel__desc">Bloc transversal de saisie. L’analyse historique associée vit dans l’espace Historique.</p>
+          <h2 class="phase2Panel__title">Glycémie</h2>
+          <p class="phase2Panel__desc">Ce que tu notes aujourd’hui. L’analyse est dans Relire.</p>
         </div>
       </div>
       <div class="phase2Slot phase4Slot" id="journalDiabSlot"></div>
@@ -466,72 +466,72 @@
   <div class="phase2HeroCard phase2HeroCard--history mt-06">
     <div class="phase2HeroTop">
       <div>
-        <div class="phase2Eyebrow">Lecture / compréhension</div>
-        <div class="phase2TitleRow"><h1 class="phase2Title">Historique / Analyse</h1><span aria-label="Informations — Historique / Analyse" class="info-dot" id="phase2HeroInfoHistory" role="button" tabindex="0" data-modaltext="On choisit une date, on relit une journée, puis on repart vers le Journal uniquement pour corriger.">ℹ️</span></div>
+        <div class="phase2Eyebrow">Tes jours passés</div>
+        <div class="phase2TitleRow"><h1 class="phase2Title">Relire</h1><span aria-label="À propos de Relire" class="info-dot" id="phase2HeroInfoHistory" role="button" tabindex="0" data-modaltext="Tu choisis un jour, tu le relis, et tu repasses par Noter seulement s’il y a quelque chose à corriger.">ℹ️</span></div>
       </div>
     </div>
-    <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--history" aria-label="Accès rapide aux panneaux de l’historique">
+    <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--history" aria-label="Accès rapide aux blocs de Relire">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history" data-history-jump="calendar" id="btnHistoryGoCalendar" type="button">
         <strong>Calendrier</strong>
-        <span>sélectionner la journée active</span>
+        <span>choisir un jour</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history" data-history-jump="trend" id="btnHistoryGoTrend" type="button">
         <strong>Tendances</strong>
-        <span>7 jours, calcul et lecture multi-jours</span>
+        <span>sur 7 jours</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history" data-history-jump="health" id="btnHistoryGoHealth" type="button">
-        <strong>Suivi santé</strong>
-        <span>Poids, IMC et repères corporels</span>
+        <strong>Poids et corps</strong>
+        <span>poids, IMC, composition</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history phase2HeroQuickNav__btn--cross" data-history-jump="activity" id="btnHistoryGoActivity" type="button">
         <strong>Activité *</strong>
-        <span>saisie de la journée active</span>
+        <span>noter ce jour</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history phase2HeroQuickNav__btn--cross" data-history-jump="spend" id="btnHistoryGoSpend" type="button">
         <strong>Dépense *</strong>
-        <span>saisie de la journée active</span>
+        <span>noter ce jour</span>
       </button>
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--history" data-history-jump="diab" data-history-requires-diab="true" id="btnHistoryGoDiab" type="button">
-        <strong>Historique diabète</strong>
-        <span>Mesures, tableau et mini-courbe</span>
+        <strong>Glycémie, jours passés</strong>
+        <span>mesures et courbe</span>
       </button>
     </div>
-    <div class="phase2HeroQuickNavNote">* ouvre un autre espace de l’application.</div>
+    <div class="phase2HeroQuickNavNote">* t’emmène ailleurs dans l’app.</div>
   </div>
 
-  <div class="phase2SettingsJumpFloat" aria-label="Navigation rapide de l’historique mobile">
+  <div class="phase2SettingsJumpFloat" aria-label="Navigation rapide de Relire (mobile)">
     <button class="phase2SettingsJumpFloat__toggle" id="historyJumpFloatToggle" type="button" aria-expanded="false" aria-controls="historyJumpFloatPanel">Sections</button>
     <div class="phase2SettingsJumpFloat__panel" id="historyJumpFloatPanel" hidden>
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="calendar" type="button">Calendrier</button>
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="trend" type="button">Tendances</button>
-      <button class="phase2SettingsJumpFloat__btn" data-history-jump="health" type="button">Suivi santé</button>
+      <button class="phase2SettingsJumpFloat__btn" data-history-jump="health" type="button">Poids et corps</button>
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="activity" type="button">Activité *</button>
       <button class="phase2SettingsJumpFloat__btn" data-history-jump="spend" type="button">Dépense *</button>
-      <button class="phase2SettingsJumpFloat__btn" data-history-jump="diab" type="button">Historique diabète</button>
-      <div class="phase2SettingsJumpFloat__note">* ouvre un autre espace de l’application.</div>
+      <button class="phase2SettingsJumpFloat__btn" data-history-jump="diab" type="button">Glycémie, jours passés</button>
+      <div class="phase2SettingsJumpFloat__note">* t’emmène ailleurs dans l’app.</div>
     </div>
   </div>
 
   <div class="phase2Panel phase2HistoryPanel playfulTrajectoryPanel" id="playfulTrajectoryPanel" aria-labelledby="playfulTrajectoryTitle">
     <div class="phase2Panel__head">
       <div>
-        <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulTrajectoryTitle">Trajectoire — semaine</h2><span aria-label="Informations — Trajectoire semaine" class="info-dot" id="playfulTrajectoryInfo" role="button" tabindex="0" data-modaltext="Résumé de ta semaine avec les jours déjà enregistrés. Rater un jour ne remet rien à zéro.">ℹ️</span></div>
-        <p class="phase2Panel__desc">Résumé simple de la semaine enregistrée.</p>
+        <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulTrajectoryTitle">Ta semaine</h2><span aria-label="À propos de Ta semaine" class="info-dot" id="playfulTrajectoryInfo" role="button" tabindex="0" data-modaltext="Ta semaine, avec les jours que tu as notés. Rater un jour ne remet rien à zéro.">ℹ️</span></div>
+        <p class="phase2Panel__desc">En un coup d’œil.</p>
       </div>
     </div>
     <div class="playfulTrajectoryList" id="playfulTrajectoryList">
-      <div class="playfulTrajectoryRow"><span>Jours renseignés</span><strong id="playfulTrajectoryDays">0/7</strong></div>
-      <div class="playfulTrajectoryRow"><span>Protéines cadrées</span><strong id="playfulTrajectoryProteins">—</strong></div>
-      <div class="playfulTrajectoryRow"><span>Apport proche cible</span><strong id="playfulTrajectoryEnergy">—</strong></div>
-      <div class="playfulTrajectoryRow"><span>Activité prise en compte</span><strong id="playfulTrajectoryActivity">—</strong></div>
+      <div class="playfulTrajectoryRow"><span>Jours notés</span><strong id="playfulTrajectoryDays">0/7</strong></div>
+      <div class="playfulTrajectoryRow"><span>Protéines dans les clous</span><strong id="playfulTrajectoryProteins">—</strong></div>
+      <div class="playfulTrajectoryRow"><span>Proche de la cible</span><strong id="playfulTrajectoryEnergy">—</strong></div>
+      <div class="playfulTrajectoryRow"><span>Jours avec du sport</span><strong id="playfulTrajectoryActivity">—</strong></div>
     </div>
   </div>
 
   <div class="phase2Panel phase2HistoryPanel playfulBadgesPanel" id="playfulBadgesPanel" aria-labelledby="playfulBadgesTitle">
     <div class="phase2Panel__head playfulBadgesPanel__head">
       <div>
-        <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulBadgesTitle">Badges</h2><span aria-label="Informations — Badges" class="info-dot" id="playfulBadgesInfo" role="button" tabindex="0" data-modaltext="Les badges suivent ta progression avec les jours enregistrés. Ils récompensent le suivi, pas le fait de manger moins.">ℹ️</span></div>
-        <p class="phase2Panel__desc">Missions, rythme et repères transformés en progression ludique.</p>
+        <div class="phase2PanelTitleRow"><h2 class="phase2Panel__title" id="playfulBadgesTitle">Badges</h2><span aria-label="À propos des badges" class="info-dot" id="playfulBadgesInfo" role="button" tabindex="0" data-modaltext="Les badges récompensent le fait de noter, pas le fait de manger moins.">ℹ️</span></div>
+        <p class="phase2Panel__desc">Ce que tu notes, jour après jour, ça compte.</p>
       </div>
     </div>
 
@@ -540,16 +540,16 @@
       <div class="playfulBadgesHero__copy">
         <span class="playfulBadgesEyebrow">Prochain badge</span>
         <h3 id="playfulNextBadgeTitle">À découvrir</h3>
-        <p id="playfulNextBadgeDescription">Complète une mission pour lancer le parcours.</p>
+        <p id="playfulNextBadgeDescription">Note une chose et c’est parti.</p>
       </div>
     </div>
 
     <details class="playfulBadgesDisclosure" id="playfulBadgesDisclosure">
       <summary class="playfulBadgesDisclosure__summary">
         <span class="playfulBadgesDisclosure__title">Tous les badges</span>
-        <span class="playfulBadgesDisclosure__meta" id="playfulBadgesGridSummary">Voir la progression complète</span>
+        <span class="playfulBadgesDisclosure__meta" id="playfulBadgesGridSummary">tout voir</span>
       </summary>
-      <div class="playfulBadgesGrid" id="playfulBadgesGrid" aria-label="Badges du parcours"></div>
+      <div class="playfulBadgesGrid" id="playfulBadgesGrid" aria-label="Tous les badges"></div>
     </details>
   </div>
 
@@ -558,21 +558,21 @@
       <div class="phase2Panel phase2HistoryPanel phase2HistoryPanel--main" id="historyMainPanel">
         <div class="phase2Panel__head">
           <div>
-            <h2 class="phase2Panel__title">Calendrier et journée sélectionnée</h2>
-            <p class="phase2Panel__desc">Le calendrier choisit la date active. Le résumé latéral explique la journée sans rouvrir un éditeur complet.</p>
+            <h2 class="phase2Panel__title">Calendrier</h2>
+            <p class="phase2Panel__desc">Choisis un jour : son résumé s’affiche à côté.</p>
           </div>
         </div>
-        <div class="histChargeGuide" role="note" aria-label="Comment amorcer ta charge">
+        <div class="histChargeGuide" role="note" aria-label="Comment l’app mesure ce que ton corps encaisse">
           <div class="histChargeGuide__titleRow">
-            <p class="histChargeGuide__title">Pour une charge fiable, complète tes 7 derniers jours.</p>
-            <span aria-label="Aide — compléter les 7 derniers jours" class="info-dot histChargeGuide__infoDot" id="historyChargeGuideInfo" role="button" tabindex="0" data-modalhtml="<h3>Première utilisation</h3><ol><li>Choisis une date dans le calendrier.</li><li>Pour encoder une séance, ouvre <strong>Activité *</strong>. Tu arrives dans le Journal sur la saisie sportive de la journée active.</li><li>Pour renseigner la dépense énergétique totale, ouvre <strong>Dépense *</strong>. Tu arrives dans Pilotage, à la Lecture du jour.</li><li>Reviens ensuite au Calendrier, change de date et répète l’opération sur les 7 derniers jours.</li></ol><p>La charge sportive <strong>L</strong> utilise les séances des 7 derniers jours. La charge énergétique <strong>D</strong> devient exploitable lorsque les 7 journées sont complètes.</p><h3>Lors de tes retours</h3><p>Complète simplement les activités et/ou les dépenses manquantes des 7 derniers jours. Le Calendrier reste le point de départ pour choisir la journée active.</p>">ℹ️</span>
+            <p class="histChargeGuide__title">Pour que l’app sache ce que ton corps encaisse, complète tes 7 derniers jours.</p>
+            <span aria-label="Aide : compléter les 7 derniers jours" class="info-dot histChargeGuide__infoDot" id="historyChargeGuideInfo" role="button" tabindex="0" data-modalhtml="<h3>La première fois</h3><ol><li>Choisis un jour dans le calendrier.</li><li>Pour noter une séance, ouvre <strong>Activité *</strong> : tu arrives dans Noter.</li><li>Pour confirmer ce que tu as brûlé sur toute la journée (sport compris), ouvre <strong>Dépense *</strong> : tu arrives dans Aujourd’hui.</li><li>Reviens au calendrier, change de jour, et refais pareil sur les 7 derniers jours.</li></ol><p>Le sport des 7 derniers jours donne la charge <strong>L</strong>. Ce que tu brûles donne la charge <strong>D</strong>, mais seulement quand les 7 jours sont là.</p><h3>Ensuite</h3><p>Il suffit de combler les trous des 7 derniers jours. Le calendrier reste le point de départ.</p>">ℹ️</span>
           </div>
-          <p class="histChargeGuide__lead">Sélectionne un jour dans le calendrier, puis :</p>
+          <p class="histChargeGuide__lead">Choisis un jour, puis :</p>
           <ul class="histChargeGuide__list">
-            <li><strong>Sport</strong> — encode tes séances : ça construit la charge sportive <em>L</em> sur 7 jours.</li>
-            <li><strong>Dépense</strong> — renseigne ta dépense énergétique du jour : la charge énergétique <em>D</em> se calcule une fois les 7 jours complets (<em>D— · x/7</em> en attendant).</li>
+            <li><strong>Sport</strong> — note tes séances : sur 7 jours, ça donne la charge <em>L</em>.</li>
+            <li><strong>Dépense</strong> — confirme ce que tu as brûlé : la charge <em>D</em> existe quand les 7 jours sont là (<em>D— · x/7</em> en attendant).</li>
           </ul>
-          <p class="histChargeGuide__foot">La charge retenue est la plus élevée des deux (L ou D). Remonte jusqu'à 7 jours pour un compromis solide.</p>
+          <p class="histChargeGuide__foot">L’app garde la plus haute des deux (L ou D). Avec 7 jours, ton choix dans Mon cadre tient vraiment.</p>
         </div>
         <div class="phase2Slot phase4Slot" id="historyMainSlot"></div>
       </div>
@@ -583,8 +583,8 @@
         <div class="phase2Panel phase2HistoryPanel phase2HistoryPanel--trend" id="historyTrendPanel">
           <div class="phase2Panel__head">
             <div>
-              <h2 class="phase2Panel__title">Tendances et logique de calcul</h2>
-              <p class="phase2Panel__desc">Ce qui demande du recul multi-jours ou un niveau expert reste dans cette zone.</p>
+              <h2 class="phase2Panel__title">Tendances</h2>
+              <p class="phase2Panel__desc">Ce qui se lit sur plusieurs jours.</p>
             </div>
           </div>
           <div class="phase2Slot phase4Slot" id="historyTrendSlot"></div>
@@ -592,8 +592,8 @@
         <div class="phase2Panel phase2HistoryPanel phase2HistoryPanel--health" id="historyHealthPanel">
           <div class="phase2Panel__head">
             <div>
-              <h2 class="phase2Panel__title">Suivi santé</h2>
-              <p class="phase2Panel__desc">Poids, IMC et repères corporels associés à la journée sélectionnée.</p>
+              <h2 class="phase2Panel__title">Poids et corps</h2>
+              <p class="phase2Panel__desc">Poids, IMC et composition du jour choisi.</p>
             </div>
           </div>
           <div class="phase2Slot phase4Slot" id="historyHealthSlot"></div>
@@ -601,8 +601,8 @@
         <div class="phase2Panel phase2HistoryPanel phase2HistoryPanel--diab" id="historyDiabPanel">
           <div class="phase2Panel__head">
             <div>
-              <h2 class="phase2Panel__title">Historique diabète</h2>
-              <p class="phase2Panel__desc">Mesures, contexte de journée et lecture rapide de la courbe pour la date sélectionnée.</p>
+              <h2 class="phase2Panel__title">Glycémie, jours passés</h2>
+              <p class="phase2Panel__desc">Tes mesures du jour choisi, le contexte, et la courbe.</p>
             </div>
           </div>
           <div class="phase2Slot phase4Slot" id="historyDiabSlot"></div>
@@ -611,16 +611,16 @@
     </aside>
   </div>
   <details class="notice notice--ok mt-06">
-    <summary class="noticeTitle">Mini-tuto — Lecture des tendances</summary>
+    <summary class="noticeTitle">Comment ça marche — Tendances</summary>
     <div class="muted mt-025">
-      Comparer plusieurs journées pour repérer les tendances utiles.
+      Compare plusieurs jours : c’est là que les tendances apparaissent.
     </div>
   </details>
 
 <details class="notice notice--ok mt-06">
-  <summary class="noticeTitle">Mini-tuto — Charge récente et réglages</summary>
+  <summary class="noticeTitle">Comment ça marche — Ce que ton corps encaisse</summary>
   <div class="muted mt-025">
-    Charge à confirmer sur 7 jours. Les activités récentes ajustent certains compromis.
+    Sur 7 jours, l’app voit ce que ton corps encaisse, et certains choix de Mon cadre s’ajustent.
   </div>
 </details>
 
@@ -630,40 +630,40 @@
   <div class="phase2HeroCard phase2HeroCard--settings mt-06">
     <div class="phase2HeroTop">
       <div>
-        <div class="phase2Eyebrow">Cadre de calcul</div>
-        <div class="phase2TitleRow"><h1 class="phase2Title">Réglages</h1><span aria-label="Informations — Réglages" class="info-dot" id="phase2HeroInfoSettings" role="button" tabindex="0" data-modaltext="Les accès globaux gèrent les conditions d’accès.&#10;Réglages concerne uniquement le paramétrage.">ℹ️</span></div>
+        <div class="phase2Eyebrow">Ce qui sert aux calculs</div>
+        <div class="phase2TitleRow"><h1 class="phase2Title">Mon cadre</h1><span aria-label="À propos de Mon cadre" class="info-dot" id="phase2HeroInfoSettings" role="button" tabindex="0" data-modaltext="Mon cadre, c’est toi, ta montre et ce que tu vises. Le reste est dans le menu.">ℹ️</span></div>
       </div>
     </div>
     <div class="phase2InlineActions phase2HeroQuickNav phase2HeroQuickNav--settings" aria-label="Accès rapide aux panneaux de réglages">
       <div class="quickNavNudgeWrap" data-setup-section="profile">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="profile" data-ready="missing" type="button">
-        <strong>Profils</strong>
-        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusProfile">Base + préférences · à compléter</span>
+        <strong>Toi</strong>
+        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusProfile">Toi · à compléter</span>
       </button>
       </div>
       <div class="quickNavNudgeWrap" data-setup-section="watch">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="watch" data-ready="missing" type="button">
         <strong>Montre</strong>
-        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusWatch">Dépense + calories · à compléter</span>
+        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusWatch">Montre et kcal · à compléter</span>
       </button>
       </div>
       <div class="quickNavNudgeWrap" data-setup-section="goals">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="goals" data-ready="missing" type="button">
-        <strong>Objectifs</strong>
-        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusGoals">Preset + cible · à compléter</span>
+        <strong>Façon de manger</strong>
+        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusGoals">Façon de manger · à compléter</span>
       </button>
       </div>
       <div class="quickNavNudgeWrap" data-onboarding-step="load-seed">
 <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="load" data-ready="missing" type="button" id="settingsQuickLoadBtn">
         <strong>Sport</strong>
-        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusLoad">Charge récente · à compléter</span>
+        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusLoad">Tes 7 derniers jours · à compléter</span>
       </button>
-<button class="chargeNudgeDot" id="loadSeedNudge" type="button" aria-label="Ouvrir Historique et le calendrier pour compléter les 7 derniers jours" title="Compléter les 7 derniers jours dans Historique" data-onboarding-visible="0"></button>
+<button class="chargeNudgeDot" id="loadSeedNudge" type="button" aria-label="Ouvrir Relire et le calendrier pour compléter les 7 derniers jours" title="Compléter les 7 derniers jours dans Relire" data-onboarding-visible="0"></button>
 </div>
       <div class="quickNavNudgeWrap" data-setup-section="compromise">
       <button class="phase2HeroQuickNav__btn phase2HeroQuickNav__btn--settings" data-settings-jump="compromise" data-ready="missing" type="button" id="settingsQuickCompromiseBtn">
-        <strong>Compromis</strong>
-        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusCompromise">Choix nutritionnel · requis</span>
+        <strong>Ce que tu vises</strong>
+        <span class="phase2HeroQuickNav__state" id="settingsQuickStatusCompromise">Ce que tu vises · requis</span>
       </button>
       </div>
       </div>
@@ -673,11 +673,11 @@
   <div class="phase2SettingsJumpFloat" aria-label="Navigation rapide des réglages mobile">
     <button class="phase2SettingsJumpFloat__toggle" id="settingsJumpFloatToggle" type="button" aria-expanded="false" aria-controls="settingsJumpFloatPanel">Sections</button>
     <div class="phase2SettingsJumpFloat__panel" id="settingsJumpFloatPanel" hidden>
-      <button class="phase2SettingsJumpFloat__btn" data-settings-jump="profile" type="button">Profils</button>
+      <button class="phase2SettingsJumpFloat__btn" data-settings-jump="profile" type="button">Toi</button>
       <button class="phase2SettingsJumpFloat__btn" data-settings-jump="watch" type="button">Montre</button>
-      <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Objectifs</button>
+      <button class="phase2SettingsJumpFloat__btn" data-settings-jump="goals" type="button">Façon de manger</button>
     <button class="phase2SettingsJumpFloat__btn" data-settings-jump="load" type="button">Sport</button>
-    <button class="phase2SettingsJumpFloat__btn" data-settings-jump="compromise" type="button">Compromis</button>
+    <button class="phase2SettingsJumpFloat__btn" data-settings-jump="compromise" type="button">Ce que tu vises</button>
     </div>
   </div>
 
@@ -688,8 +688,8 @@
         <div class="phase2Panel settingsPanel settingsPanel--profile">
           <div class="phase2Panel__head">
             <div>
-              <h2 class="phase2Panel__title">Profils et préférences</h2>
-              <p class="phase2Panel__desc">Base utilisateur et mode d’affichage.</p>
+              <h2 class="phase2Panel__title">Toi</h2>
+              <p class="phase2Panel__desc">Qui tu es, et ce que tu veux voir.</p>
             </div>
           </div>
           <div class="phase2Slot phase4Slot" id="settingsProfileSlot"></div>
@@ -698,7 +698,7 @@
         <div class="phase2Panel settingsPanel settingsPanel--watch">
           <div class="phase2Panel__head">
             <div>
-              <h2 class="phase2Panel__title">Montre et dépense</h2>
+              <h2 class="phase2Panel__title">Ce que tu brûles</h2>
               <p class="phase2Panel__desc">Estimation de la dépense énergétique.</p>
             </div>
           </div>
@@ -725,29 +725,29 @@
     <div class="modal__head">
       <div>
         <div class="modal__title" id="pilotagePlanTitle">Comment ça marche ?</div>
-        <div class="pilotagePlan__kicker">Un parcours simple · des repères à reconnaître · puis l’autonomie</div>
+        <div class="pilotagePlan__kicker">Trois étapes, deux signes à reconnaître, et tu te débrouilles</div>
       </div>
       <button aria-label="Fermer" class="modal__close" id="pilotagePlanClose" type="button">✕</button>
     </div>
     <div class="modal__body modal__body--settings pilotagePlan">
       <p class="pilotagePlan__lead" id="pilotagePlanLead">
-        Tu n’as rien à mémoriser. Suis d’abord la marche à suivre, teste les deux repères visuels, puis utilise les aides uniquement quand tu en as besoin.
+        Rien à retenir. Suis la marche à suivre, essaie les deux signes ci-dessous, et ouvre les aides seulement si tu en as besoin.
       </p>
 
       <section class="pilotagePlan__section pilotagePlan__section--role" aria-labelledby="pilotagePlanStartTitle">
         <h3 id="pilotagePlanStartTitle">Commence ici</h3>
         <ol class="pilotageGuideSteps">
-          <li><span>1</span><div><strong>Configure ton cadre</strong><p>Complète le profil, la montre et l’objectif dans <b>Réglages</b>.</p></div></li>
-          <li><span>2</span><div><strong>Choisis une journée</strong><p>Ouvre <b>Historique → Calendrier</b>, puis sélectionne la date à renseigner.</p></div></li>
-          <li><span>3</span><div><strong>Renseigne ta charge</strong><p>Utilise <b>Activité *</b> pour une séance ou <b>Dépense *</b> pour la dépense énergétique totale de la journée active.</p></div></li>
-          <li><span>4</span><div><strong>Complète les jours précédents</strong><p>Reviens au Calendrier, change de date et répète l’opération sur les 7 derniers jours.</p></div></li>
-          <li><span>5</span><div><strong>Choisis ton compromis</strong><p>Retourne dans Réglages : la charge récente rend le choix plus solide.</p></div></li>
-          <li><span>6</span><div><strong>Lis et ajuste</strong><p>Consulte <b>Pilotage</b> pour décider ; utilise <b>Journal</b> pour saisir ou corriger.</p></div></li>
+          <li><span>1</span><div><strong>Configure ton cadre</strong><p>Complète ton profil, ta montre et ce que tu vises dans <b>Mon cadre</b>.</p></div></li>
+          <li><span>2</span><div><strong>Choisis une journée</strong><p>Ouvre <b>Relire → Calendrier</b>, puis sélectionne la date à renseigner.</p></div></li>
+          <li><span>3</span><div><strong>Note tes journées</strong><p><b>Activité *</b> pour une séance, <b>Dépense *</b> pour ce que tu as brûlé sur toute la journée.</p></div></li>
+          <li><span>4</span><div><strong>Remonte 7 jours</strong><p>Reviens au calendrier, change de jour, refais pareil.</p></div></li>
+          <li><span>5</span><div><strong>Choisis ce que tu vises</strong><p>Retourne dans Mon cadre : avec tes 7 derniers jours, le choix tient mieux.</p></div></li>
+          <li><span>6</span><div><strong>Lis, ajuste</strong><p><b>Aujourd’hui</b> pour savoir où tu en es ; <b>Noter</b> pour ajouter ou corriger.</p></div></li>
         </ol>
       </section>
 
       <section class="pilotagePlan__section" aria-labelledby="pilotagePlanCodesTitle">
-        <h3 id="pilotagePlanCodesTitle">Teste les repères visuels</h3>
+        <h3 id="pilotagePlanCodesTitle">Deux signes à reconnaître</h3>
         <div class="pilotageGuideDemoGrid">
           <article class="pilotageGuideDemoCard">
             <div class="pilotageGuideDemoCard__visual">
@@ -755,35 +755,35 @@
             </div>
             <div>
               <strong>Essaie l’info-dot</strong>
-              <p>Clique sur le <b>i</b>. Tu retrouveras ces aides près des notions qui méritent une explication.</p>
+              <p>Clique sur le <b>i</b>. Tu le retrouveras partout où un mot mérite une explication.</p>
             </div>
           </article>
           <article class="pilotageGuideDemoCard">
             <div class="pilotageGuideDemoCard__visual">
-              <button aria-label="Essayer un point clignotant" class="info-dot pilotageGuideSignalDemo" id="pilotageGuideSignalDemo" type="button" data-modaltext="Bien vu. Dans l’application, un point clignotant propose la prochaine action utile. Lorsqu’aucune charge récente n’est exploitable, il ouvre directement Historique → Calendrier."></button>
+              <button aria-label="Essayer un point clignotant" class="info-dot pilotageGuideSignalDemo" id="pilotageGuideSignalDemo" type="button" data-modaltext="Bien vu. Dans l’application, un point clignotant propose la prochaine action utile. Lorsqu’aucune charge récente n’est exploitable, il ouvre directement Relire → Calendrier."></button>
             </div>
             <div>
               <strong>Essaie le clignotant</strong>
-              <p>Ce point n’est pas une erreur. Clique dessus : dans l’application, il conduit directement à l’étape utile.</p>
+              <p>Ce n’est pas une erreur. Clique dessus : il t’emmène à la prochaine chose à faire.</p>
             </div>
           </article>
         </div>
       </section>
 
       <section class="pilotagePlan__section" aria-labelledby="pilotagePlanLegendTitle">
-        <h3 id="pilotagePlanLegendTitle">Ce que signifient les autres codes</h3>
+        <h3 id="pilotagePlanLegendTitle">Les autres petits signes</h3>
         <div class="pilotageGuideLegend">
-          <div><strong>*</strong><span>Le raccourci ouvre un autre espace.</span></div>
-          <div><strong>requis</strong><span>Une information manque, mais l’entrée reste accessible.</span></div>
-          <div><strong>prêt</strong><span>Cette partie de la configuration est complète.</span></div>
-          <div><strong>Point clignotant</strong><span>Une prochaine action utile est proposée.</span></div>
+          <div><strong>*</strong><span>Ce raccourci t’emmène ailleurs dans l’app.</span></div>
+          <div><strong>requis</strong><span>Il manque quelque chose, mais tu peux quand même entrer.</span></div>
+          <div><strong>prêt</strong><span>Cette partie est complète.</span></div>
+          <div><strong>Point clignotant</strong><span>Il y a une prochaine chose utile à faire.</span></div>
         </div>
       </section>
 
       <section class="pilotagePlan__section" aria-labelledby="pilotagePlanLoadTitle">
         <h3 id="pilotagePlanLoadTitle">Pourquoi compléter 7 jours ?</h3>
         <p>
-          L’application peut estimer la charge récente de deux façons : <b>L</b> utilise les activités sportives des 7 derniers jours ; <b>D</b> utilise les dépenses énergétiques lorsque les 7 journées nécessaires sont complètes. Tu peux utiliser l’une des deux sources ou les deux. Si les deux existent, l’application retient la charge la plus élevée.
+          L’app a deux façons de savoir ce que ton corps encaisse : <b>L</b>, ton sport des 7 derniers jours ; <b>D</b>, ce que tu as brûlé, mais seulement quand les 7 jours sont là. L’une, l’autre ou les deux. Si les deux existent, elle garde la plus haute.
         </p>
       </section>
 
@@ -800,7 +800,7 @@
     <div class="modal__head">
       <div>
         <div class="modal__title" id="appUnderstandingTitle">Comprendre l’application</div>
-        <div class="pilotagePlan__kicker">Logique globale · lecture métier · repères d’usage</div>
+        <div class="pilotagePlan__kicker">Comment l’app est faite, et pourquoi</div>
       </div>
       <button aria-label="Fermer" class="modal__close" id="appUnderstandingClose" type="button">✕</button>
     </div>
@@ -810,9 +810,9 @@
       </p>
 
       <section class="pilotagePlan__section pilotagePlan__section--role" aria-labelledby="appUnderstandingRoleTitle">
-        <h3 id="appUnderstandingRoleTitle">Rôle du produit</h3>
+        <h3 id="appUnderstandingRoleTitle">À quoi elle sert</h3>
         <p>
-          L’application transforme une journée réelle — alimentation, activité, sommeil, objectifs et signaux de santé — en repères de pilotage. Le but n’est pas de juger la journée, mais d’aider à décider quoi corriger, quoi surveiller et quoi conserver.
+          Tu lui donnes ta journée — ce que tu manges, ton sport, ton sommeil, ce que tu vises — et elle te dit où tu en es. Pas pour juger : pour t’aider à voir quoi corriger, quoi surveiller, quoi garder.
         </p>
       </section>
 
@@ -821,85 +821,85 @@
         <div class="pilotagePlanSpaces">
           <article class="pilotagePlanCard">
             <div class="pilotagePlanCard__eyebrow">Lire et ajuster</div>
-            <h4>Pilotage</h4>
-            <p>État du jour, objectif, reste à consommer, dépense énergétique totale, signaux utiles et accès rapides.</p>
+            <h4>Aujourd’hui</h4>
+            <p>Où tu en es, ta cible, ce qu’il te reste, ce que tu brûles, et les raccourcis utiles.</p>
           </article>
           <article class="pilotagePlanCard">
-            <div class="pilotagePlanCard__eyebrow">Saisir</div>
-            <h4>Journal</h4>
-            <p>Repas, activité, sommeil et métriques de la journée active.</p>
+            <div class="pilotagePlanCard__eyebrow">Noter</div>
+            <h4>Noter</h4>
+            <p>Repas, sport, sommeil et poids du jour.</p>
           </article>
           <article class="pilotagePlanCard">
             <div class="pilotagePlanCard__eyebrow">Comprendre</div>
-            <h4>Historique</h4>
-            <p>Choix de la date, relecture des données, tendances, écarts et recul sur plusieurs jours.</p>
+            <h4>Relire</h4>
+            <p>Choisir un jour, le relire, voir les tendances et les écarts sur plusieurs jours.</p>
           </article>
           <article class="pilotagePlanCard">
-            <div class="pilotagePlanCard__eyebrow">Paramétrer</div>
-            <h4>Réglages</h4>
-            <p>Profil, montre, objectifs, compromis, accès, sauvegarde et cadre de calcul.</p>
+            <div class="pilotagePlanCard__eyebrow">Régler</div>
+            <h4>Mon cadre</h4>
+            <p>Toi, ta montre, ce que tu vises, ta façon de manger, l’accès, la sauvegarde.</p>
           </article>
         </div>
       </section>
 
       <section class="pilotagePlan__section" aria-labelledby="appUnderstandingFlowTitle">
-        <h3 id="appUnderstandingFlowTitle">Flux métier</h3>
+        <h3 id="appUnderstandingFlowTitle">Comment ça s’enchaîne</h3>
         <ol class="pilotagePlanFlow">
-          <li><span>1</span><div><strong>Cadre</strong><p>Conditions lues, profil exploitable, montre et objectif configurés.</p></div></li>
-          <li><span>2</span><div><strong>Saisie</strong><p>Le Journal reçoit repas, activité, sommeil et métriques. Pilotage → Lecture du jour permet de renseigner la dépense énergétique totale.</p></div></li>
-          <li><span>3</span><div><strong>Calcul</strong><p>Le moteur consolide les apports, la dépense, les objectifs et le compromis.</p></div></li>
-          <li><span>4</span><div><strong>Pilotage</strong><p>Lecture opérationnelle : reste, équilibre, signaux et orientation.</p></div></li>
-          <li><span>5</span><div><strong>Recul</strong><p>L’Historique sert à choisir une date et comprendre les écarts. Activité * et Dépense * conduisent ensuite à la saisie adaptée.</p></div></li>
+          <li><span>1</span><div><strong>Ton cadre</strong><p>Tu as lu « Avant de commencer », rempli Toi, ta montre et ce que tu vises.</p></div></li>
+          <li><span>2</span><div><strong>Tu notes</strong><p>Dans Noter tu mets tes repas, ton sport, ton sommeil, ton poids. Ce que tu brûles se confirme dans Aujourd’hui.</p></div></li>
+          <li><span>3</span><div><strong>L’app calcule</strong><p>Elle met ensemble ce que tu as mangé, ce que tu brûles, ta façon de manger et ce que tu vises.</p></div></li>
+          <li><span>4</span><div><strong>Aujourd’hui</strong><p>Ce qu’il te reste, où tu en es, et quoi faire ensuite.</p></div></li>
+          <li><span>5</span><div><strong>Tu relis</strong><p>Relire sert à choisir un jour et comprendre les écarts. Activité * et Dépense * t’amènent ensuite au bon endroit pour noter.</p></div></li>
         </ol>
       </section>
 
       <section class="pilotagePlan__section" aria-labelledby="appUnderstandingIntentTitle">
-        <h3 id="appUnderstandingIntentTitle">Orientation par intention</h3>
+        <h3 id="appUnderstandingIntentTitle">Selon ce que tu veux faire</h3>
         <div class="pilotagePlanIntentGrid">
-          <div><strong>Je veux savoir où j’en suis</strong><span>Pilotage.</span></div>
-          <div><strong>Je veux ajouter ou corriger</strong><span>Journal ; pour la dépense totale, Pilotage → Lecture du jour.</span></div>
-          <div><strong>Je veux comprendre une variation</strong><span>Historique.</span></div>
-          <div><strong>Je veux changer le cadre</strong><span>Réglages.</span></div>
+          <div><strong>Je veux savoir où j’en suis</strong><span>Aujourd’hui.</span></div>
+          <div><strong>Je veux ajouter ou corriger</strong><span>Noter ; pour ce que tu brûles, Aujourd’hui.</span></div>
+          <div><strong>Je veux comprendre une variation</strong><span>Relire.</span></div>
+          <div><strong>Je veux changer le cadre</strong><span>Mon cadre.</span></div>
         </div>
       </section>
 
       <section class="pilotagePlan__section pilotagePlan__section--split" aria-labelledby="appUnderstandingDataTitle">
         <div>
-          <h3 id="appUnderstandingDataTitle">Données qui alimentent le moteur</h3>
+          <h3 id="appUnderstandingDataTitle">Ce que l’app utilise pour calculer</h3>
           <ul class="pilotagePlanList">
-            <li>profil : sexe, âge, taille et poids ;</li>
-            <li>objectif et compromis nutritionnel ;</li>
-            <li>dépense automatique ou explicitement renseignée ;</li>
-            <li>repas, activité, sommeil et métriques du jour ;</li>
-            <li>données santé/diabète lorsque le module est activé.</li>
+            <li>toi : sexe, âge, taille, poids ;</li>
+            <li>ta façon de manger et ce que tu vises ;</li>
+            <li>ce que tu brûles, estimé par la montre ou confirmé par toi ;</li>
+            <li>repas, sport, sommeil et poids du jour ;</li>
+            <li>ta glycémie, si tu la suis.</li>
           </ul>
         </div>
         <div>
-          <h3>Niveaux de lecture</h3>
+          <h3>Trois niveaux de lecture</h3>
           <ul class="pilotagePlanList">
-            <li><strong>Lecture immédiate</strong> : décision rapide du jour.</li>
-            <li><strong>Détail expert</strong> : logique de calcul et arbitrages.</li>
-            <li><strong>Historique</strong> : recul multi-jours et tendances.</li>
+            <li><strong>En un coup d’œil</strong> : Aujourd’hui.</li>
+            <li><strong>Le détail</strong> : comment c’est calculé, et pourquoi.</li>
+            <li><strong>Relire</strong> : sur plusieurs jours.</li>
           </ul>
         </div>
       </section>
 
       <section class="pilotagePlan__section pilotagePlan__section--warning" aria-labelledby="appUnderstandingHealthTitle">
-        <h3 id="appUnderstandingHealthTitle">Santé / diabète</h3>
+        <h3 id="appUnderstandingHealthTitle">Glycémie</h3>
         <p>
           Les données santé sont des repères de contexte. Elles peuvent aider à relier alimentation, activité, sommeil ou stress, mais elles ne constituent pas un avis médical, un diagnostic ou une prescription.
         </p>
       </section>
 
       <section class="pilotagePlan__section" aria-labelledby="appUnderstandingHelpTitle">
-        <h3 id="appUnderstandingHelpTitle">Les différents niveaux d’aide</h3>
+        <h3 id="appUnderstandingHelpTitle">Où trouver de l’aide</h3>
         <div class="pilotagePlanHelpGrid">
-          <div><strong>Comprendre l’application</strong><span>Logique globale du produit.</span></div>
-          <div><strong>Comment ça marche ?</strong><span>Marche à suivre et codes visuels.</span></div>
-          <div><strong>Info-dots</strong><span>Définition courte et contextuelle.</span></div>
-          <div><strong>Détail expert</strong><span>Calcul et arbitrage.</span></div>
-          <div><strong>Mini-tutos</strong><span>Aide contextuelle à une saisie.</span></div>
-          <div><strong>Conditions</strong><span>Limites et responsabilité.</span></div>
+          <div><strong>Comprendre l’application</strong><span>Comment l’app est faite.</span></div>
+          <div><strong>Comment ça marche ?</strong><span>Par où commencer, et les petits signes.</span></div>
+          <div><strong>Info-dots</strong><span>Un mot expliqué, là où il apparaît.</span></div>
+          <div><strong>Détail expert</strong><span>Le calcul, en détail.</span></div>
+          <div><strong>Comment ça marche</strong><span>Une phrase sur l’écran où tu es.</span></div>
+          <div><strong>Avant de commencer</strong><span>Ce que l’app fait, et ne fait pas.</span></div>
         </div>
       </section>
     </div>
@@ -913,7 +913,7 @@
   <div class="modal__backdrop" data-close="1"></div>
   <div aria-labelledby="termsGateTitle" aria-modal="true" class="modal__panel modal__panel--settings" role="dialog">
     <div class="modal__head">
-      <div class="modal__title" id="termsGateTitle">Conditions d’accès</div>
+      <div class="modal__title" id="termsGateTitle">Avant de commencer</div>
       <button aria-label="Fermer" class="modal__close" id="termsGateClose" type="button">✕</button>
     </div>
     <div class="modal__body modal__body--settings">
@@ -929,7 +929,7 @@
   <div class="modal__backdrop" data-close="1"></div>
   <div aria-labelledby="settingsCloudTitle" aria-modal="true" class="modal__panel modal__panel--settings modal__panel--settingsCloud" role="dialog">
     <div class="modal__head">
-      <div class="modal__title" id="settingsCloudTitle">Sauvegarde et synchronisation</div>
+      <div class="modal__title" id="settingsCloudTitle">Sauvegarder / synchroniser</div>
       <button aria-label="Fermer" class="modal__close" id="settingsCloudClose" type="button">✕</button>
     </div>
     <div class="modal__body modal__body--settings">
@@ -945,7 +945,7 @@
   <div class="modal__backdrop" data-close="1"></div>
   <div aria-labelledby="settingsHelpTitle" aria-modal="true" class="modal__panel modal__panel--settings modal__panel--settingsCloud" role="dialog">
     <div class="modal__head">
-      <div class="modal__title" id="settingsHelpTitle">Aide et lexique</div>
+      <div class="modal__title" id="settingsHelpTitle">Aide et mots-clés</div>
       <button aria-label="Fermer" class="modal__close" id="settingsHelpClose" type="button">✕</button>
     </div>
     <div class="modal__body modal__body--settings">
@@ -961,11 +961,11 @@
   <div class="modal__backdrop" data-close="1"></div>
   <div aria-labelledby="settingsTutoTitle" aria-modal="true" class="modal__panel modal__panel--settings modal__panel--settingsCloud" role="dialog">
     <div class="modal__head">
-      <div class="modal__title" id="settingsTutoTitle">Mini-tutos de l’espace</div>
+      <div class="modal__title" id="settingsTutoTitle">Comment utiliser cet écran</div>
       <button aria-label="Fermer" class="modal__close" id="settingsTutoClose" type="button">✕</button>
     </div>
     <div class="modal__body modal__body--settings">
-      <div class="phase5TutoModalIntro" id="phase5TutoModalIntro">Repères contextuels de l’espace actif.</div>
+      <div class="phase5TutoModalIntro" id="phase5TutoModalIntro">Ce qu’il faut savoir sur l’écran où tu es.</div>
       <div class="phase5TutoModalList" id="phase5TutoModalList"></div>
     </div>
     <div class="modal__foot">
@@ -979,79 +979,61 @@
          ========================= -->
 <section class="tabSection" data-tabsection="welcome">
 <div class="card">
-<h2>Conditions générales</h2>
+<h2>En deux mots</h2>
 <div class="notice notice--warn mt-06">
-<div class="noticeTitle">Conditions générales</div>
+<div class="noticeTitle">Ce que tu acceptes</div>
 <label style="display:flex; gap:.6rem; align-items:flex-start; cursor:pointer">
 <input id="ackTerms" style="width:auto; margin-top:.15rem" type="checkbox"/>
 <span class="muted">
-              J’ai lu et compris le rôle de l’application et ses limites d’utilisation.
-              (Ce n’est pas un outil médical. Les données affichées sont des repères.)
+              J’ai compris : cette app n’est pas un outil médical. Ce qu’elle affiche t’aide à te situer, rien de plus.
             </span>
 </label>
 <div class="muted mt-025">
-            Tant que ce n’est pas coché, l’accès aux autres pages est bloqué.
+            Tant que ce n’est pas coché, le reste reste fermé.
           </div>
 </div>
 <div class="notice notice--ok">
-<div class="noticeTitle">Rôle de l’application</div>
+<div class="noticeTitle">À quoi elle sert</div>
 <ul>
 <li>
-              Outil <b>local</b> de suivi personnel qui centralise ton profil,
-              ta dépense du jour (montre) et ton suivi quotidien
-              (repas, historique, journal).
+              Tout reste <b>sur ton appareil</b> : ton profil, ce que tu brûles, ce que tu manges, tes journées passées.
             </li>
 <li>
-              L’application t’aide à <b>te repérer</b> et à observer des tendances,
-              pas à décider à ta place.
+              Elle t’aide à <b>voir où tu en es</b> et comment ça évolue. Les décisions restent les tiennes.
             </li>
 </ul>
 </div>
 <div class="notice notice--ok">
-<div class="noticeTitle">Mode diabète — rôle spécifique</div>
+<div class="noticeTitle">Suivi glycémie</div>
 <ul>
 <li>
-              Le mode diabète propose un <b>journal de suivi personnel</b>
-              (glucides, glycémies, notes, contexte).
+              Un <b>carnet</b> : glucides, glycémies, notes, contexte.
             </li>
 <li>
-              Il permet d’observer des <b>tendances</b> et de faire tes propres liens
-              entre alimentation, glycémies et ressenti.
+              Tu y vois tes <b>tendances</b> et tu fais tes propres liens entre ce que tu manges, tes glycémies et comment tu te sens.
             </li>
 <li>
-              Les informations affichées sont des <b>repères de compréhension</b>,
-              pas des prescriptions.
+              Rien là-dedans n’est une <b>prescription</b>.
             </li>
 </ul>
 </div>
 <div class="notice notice--warn">
-<div class="noticeTitle">Limites d’utilisation</div>
+<div class="noticeTitle">Ce qu’elle ne fait pas</div>
 <ul>
 <li>
-              La dépense issue de la montre est une <b>estimation</b> :
-              vise la <b>tendance</b>, pas le chiffre parfait.
+              Ce que ta montre annonce est une <b>estimation</b>. Regarde la <b>tendance</b>, pas le chiffre au kcal près.
             </li>
 <li>
-              En cas de pathologie, traitement, TCA, grossesse ou doute :
-              fais valider tes choix par un <b>professionnel de santé</b>.
+              Maladie, traitement, trouble alimentaire, grossesse, ou simplement un doute : parle-en à un <b>professionnel de santé</b> avant de changer quoi que ce soit.
             </li>
 <li>
-              Si fatigue, sommeil ou performances se dégradent :
-              ajuste ton déficit, ta charge et ta récupération.
+              Si tu te sens fatigué, que tu dors mal ou que tes perfs baissent : mange un peu plus, entraîne-toi un peu moins, récupère.
             </li>
 <li>
-              Les <b>repères glucidiques (g/kg/j)</b> proposés s’appuient sur
-              des recommandations générales de nutrition du sport
-              (endurance / intensité) et restent des <b>fourchettes indicatives</b>,
-              pas des règles fixes.
+              Les quantités de <b>glucides</b> proposées viennent des recommandations générales de la nutrition du sport. Ce sont des <b>fourchettes</b>, pas des règles.
             </li>
 <li>
-<b>Limites</b> : l’application ne pose aucun diagnostic
-              et n’adapte aucun traitement.
-              Les calculs restent des approximations
-              (montre, équations, variabilité individuelle, adhérence, etc.).
-              Écoute ton corps et ajuste selon ton quotidien
-              (faim, performance, poids, glycémies si tu suis).
+<b>Aucun diagnostic, aucun traitement.</b> Les calculs sont des approximations : la montre se trompe, les formules sont des moyennes, chaque corps réagit à sa façon. Écoute le tien : faim, énergie, poids, glycémies si tu les suis.
             </li>
 </ul>
 </div>
@@ -1063,35 +1045,35 @@
 <section class="tabSection" data-tabsection="dash">
 
 <details class="notice notice--ok mt-06">
-  <summary class="noticeTitle">Mini-tuto — Profil</summary>
+  <summary class="noticeTitle">Comment ça marche — Profil</summary>
   <div class="muted mt-025">
-    Base des calculs : profil, poids de référence et préférences.
+    Ton profil et ton poids de référence servent à tous les calculs.
   </div>
 </details>
 
 <details class="notice notice--ok mt-06">
-  <summary class="noticeTitle">Mini-tuto — Dépense</summary>
+  <summary class="noticeTitle">Comment ça marche — Dépense</summary>
   <div class="muted mt-025">
-    Dépense retenue à partir de la montre et d’une marge de prudence.
+    Ta montre donne un chiffre ; l’app en retient un peu moins, par sécurité.
   </div>
 </details>
 
 
 <div style="flex:1 1 100%;min-width:100%">
   <details class="notice mt-06" open>
-    <summary class="noticeTitle">Mode d'affichage <span class="muted" style="font-weight:400">— déroule-moi pour choisir comment démarrer</span></summary>
+    <summary class="noticeTitle">Ce que tu veux voir <span class="muted" style="font-weight:400">— déroule pour choisir</span></summary>
 
 
 <div class="row mt-03">
 <div>
-<label>Choix d'utilisation</label>
+<label>Affichage</label>
 <select id="useMode">
-<option selected="" value="simple">Simple</option>
-<option value="sport">Sportif</option>
-<option value="expert">Expert</option>
+<option selected="" value="simple">L’essentiel</option>
+<option value="sport">+ sport et sommeil</option>
+<option value="expert">Tout</option>
 </select>
 <div class="muted mt-025">
-          Modifie l’affichage, pas les calculs. Pour commencer : <b>Simple</b> pour l’essentiel, <b>Sportif</b> pour ajouter l’activité et le sommeil, <b>Expert</b> pour tout piloter.
+          Ça change ce qui s’affiche, pas les calculs. <b>L’essentiel</b> pour commencer, <b>+ sport et sommeil</b> si tu t’entraînes, <b>Tout</b> si tu veux mettre les mains dedans.
         </div>
 </div>
 <div>
@@ -1104,31 +1086,31 @@
   </details>
 </div>
 <div class="card settingsCardUsers">
-<h2>Utilisateurs</h2>
+<h2>Qui utilise l’app</h2>
 <div class="row settingsRow settingsRow--users">
 <div>
-<label>Utilisateur actuel</label>
+<label>En ce moment</label>
 <select id="profileSelect"></select>
 </div>
 <div>
-<label>Créer un utilisateur</label>
+<label>Ajouter quelqu’un</label>
 <input id="profileName" placeholder="ex: Christophe…" type="text"/>
 </div>
 <div class="self-end">
-<button id="btnCreateProfile" type="button">Créer et Choisir</button>
+<button id="btnCreateProfile" type="button">Ajouter et basculer</button>
 </div>
 <div class="self-end">
-<button class="btn-danger" id="btnDeleteProfile" type="button">Supprimer cet utilisateur</button>
+<button class="btn-danger" id="btnDeleteProfile" type="button">Supprimer ce profil</button>
 </div>
 </div>
 <p class="muted">
-      Chaque utilisateur conserve ses données séparément sur ce navigateur.
+      Chacun a ses données, séparées, sur cet appareil.
     </p>
 </div>
 <div class="card settingsCardInfos">
-<h2>Mes informations</h2>
+<h2>Toi</h2>
 <p class="muted">
-        Utilisées pour calculer des repères (kcal et macros)
+        C’est avec ça que l’app calcule tes kcal et tes macros.
       </p>
 <div class="row settingsRow settingsRow--infos">
 <div>
@@ -1149,34 +1131,34 @@
 <input id="height" min="0" step="1" type="number" value="0"/>
 </div>
 <div>
-<label>Poids de référence</label>
+<label>Ton poids</label>
 <input id="weight" min="0" step="0.1" type="number" value="0"/>
 </div>
 </div>
 <p class="muted">
-        Le <b>poids de référence</b> sert aux calculs. Ton <b>poids du jour</b> se note dans le Journal pour suivre l’évolution.
+        Ce <b>poids</b> sert aux calculs. Celui <b>du jour</b>, tu le notes dans Noter, pour suivre l’évolution.
       </p>
 <div class="row mt-035">
   <div>
     <details class="miniAcc">
-      <summary>Diabète (optionnel)</summary>
+      <summary>Glycémie (si tu la suis)</summary>
       <label class="inline" style="margin-top:.5rem">
         <input id="diabEnabled" type="checkbox"/>
-        Activer le journal diabète (glucides + glycémies)
+        Je suis ma glycémie (glucides + mesures)
       </label>
       <div class="muted" style="margin-top:.35rem">
-        <b>Carnet de suivi personnel</b>. L’app ne calcule aucune dose et ne remplace pas un avis médical.
+        Un <b>carnet</b>, rien de plus : l’app ne calcule aucune dose et ne remplace pas ton médecin.
       </div>
     </details>
 </div>
 </div>
 <div class="card">
-<h2>Ma dépense du jour (montre)</h2>
+<h2>Ce que tu brûles</h2>
 <div class="row">
 <div>
-<label>Marque de la montre</label>
+<label>Ta montre</label>
 <select id="watchBrand">
-<option selected="" value="custom">Personnalisé</option>
+<option selected="" value="custom">Pas de montre / autre</option>
 <option value="apple">Apple</option>
 <option value="garmin">Garmin</option>
 <option value="polar">Polar</option>
@@ -1188,48 +1170,48 @@
 <option value="fitbit">Fitbit / Google</option>
 </select>
 <div class="muted mt-025">
-            Valeur estimée par la montre.
+            Le chiffre que ta montre t’annonce.
           </div>
 </div>
 <!-- Sport+Expert : référence preset (info) -->
 <div data-um="sport">
-<label>Profil de la montre</label>
+<label>Marge de sécurité</label>
 <div class="muted mt-015">
-            Pourquoi cette prudence ?
-            <span aria-label="Pourquoi cette prudence ?" class="info-dot" id="watchProfileInfo" role="button" tabindex="0">ℹ️</span>
+            Pourquoi retenir moins ?
+            <span aria-label="Pourquoi retenir moins ?" class="info-dot" id="watchProfileInfo" role="button" tabindex="0">ℹ️</span>
 </div>
 </div>
 </div>
 <div class="row">
 <div>
-<label>Calories brûlées (kcal)</label>
+<label>Kcal brûlées par jour</label>
 <input id="montre" min="0" placeholder="ex: 2600" step="1" type="number" value="2600"/>
 <div class="muted">
-            Estimation quotidienne — à adapter suivant ta journée dans Pilotage.
+            Une estimation. Tu l’ajustes chaque jour dans Aujourd’hui.
           </div>
 </div>
 <!-- Sport+Expert : marge d'erreur -->
 <div data-um="sport">
-<label>Incertitude (en %)</label>
+<label>Marge de sécurité (%)</label>
 <input id="errPct" min="0" step="1" type="number" value="10"/>
 <p class="muted m-015-0">
-            Marge de prudence appliquée à l’estimation.
+            Ce qu’on retire au chiffre de la montre, par sécurité.
           </p>
 </div>
 </div>
 <!-- Prudence : Expert uniquement -->
 <div class="row" data-um="expert">
 <div>
-<label>Mode de prudence</label>
+<label>Comment appliquer la marge</label>
 <select id="errMode">
-<option value="none">Ne pas corriger</option>
-<option selected="" value="conservative">Prudent (on retire X%)</option>
-<option value="optimistic">Large (on ajoute X%)</option>
+<option value="none">Garder le chiffre tel quel</option>
+<option selected="" value="conservative">Retirer la marge (prudent)</option>
+<option value="optimistic">Ajouter la marge (large)</option>
 </select>
 </div>
 </div>
 <p class="muted m-02-0">
-        Ajuste la dépense retenue.
+        C’est le chiffre retenu qui fixe ta cible du jour.
       </p>
 </div>
 </div>
@@ -1240,23 +1222,23 @@
 <section class="tabSection" data-tabsection="goal">
 
 <details class="notice notice--ok mt-06">
-  <summary class="noticeTitle">Mini-tuto — Objectif</summary>
+  <summary class="noticeTitle">Comment ça marche — Objectif</summary>
   <div class="muted mt-025">
-    Orientation nutritionnelle : régime, cible énergétique et compromis.
+    Ici tu dis ce que tu vises et comment tu manges ; l’app en déduit tes cibles.
   </div>
 </details>
 
 <details class="notice notice--ok mt-06" id="settingsLoadAnchor">
-  <summary class="noticeTitle">Mini-tuto — Charge d’activité et compromis</summary>
+  <summary class="noticeTitle">Comment ça marche — Sport et objectif</summary>
   <div class="muted mt-025">
-    Charge récente sur 7 jours. Données insuffisantes = réglage moins stable.
+    L’app regarde ce que ton corps a encaissé ces 7 jours. Moins de données, moins de certitude.
   </div>
 </details>
 
 <div class="card" id="settingsMacrosCard">
-<h2>Réglages des macros</h2>
+<h2>Ce que tu vises</h2>
 <p class="muted">
-      Répartition protéines, lipides et glucides.
+      Ton but, puis protéines, lipides et glucides.
     </p>
 
 <!-- =========================================================
@@ -1264,16 +1246,16 @@
      (sans boutons, sans modal)
      ========================================================= -->
 <div class="card panel-subtle uxDecisionCard" id="settingsCompromiseCard">
-  <h2>Compromis choisi <span aria-label="Informations — niveaux de charge" class="info-dot" role="button" tabindex="0" data-modaltext="Le niveau de charge adapte le compromis. Les seuils complets sont dans le détail expert.">ℹ️</span></h2>
+  <h2>Ton choix <span aria-label="Informations — niveaux de charge" class="info-dot" role="button" tabindex="0" data-modaltext="Le niveau de charge adapte le compromis. Les seuils complets sont dans le détail expert.">ℹ️</span></h2>
   <p class="muted">
-    Décision nutritionnelle, repère conseillé et compatibilité avec la charge.
+    Ce que tu cherches, et si ton corps peut suivre en ce moment.
   </p>
 
   <div class="row">
     <div>
-      <label for="compromiseSelect">Choisir un compromis <span aria-label="Informations — icônes compromis" class="info-dot" role="button" tabindex="0" data-modaltext="⚠ = possible avec vigilance. ⛔ = peu cohérent avec la charge actuelle.">ℹ️</span></label>
+      <label for="compromiseSelect">Je vise <span aria-label="Informations — icônes compromis" class="info-dot" role="button" tabindex="0" data-modaltext="⚠ = possible avec vigilance. ⛔ = peu cohérent avec la charge actuelle.">ℹ️</span></label>
       <select id="compromiseSelect">
-        <option value="">— Sélectionner —</option>
+        <option value="">— Choisis —</option>
         <option value="eq_global">Équilibre global (base santé / stabilité)</option>
         <option value="simple_maintain">Maintien simple (routine stable)</option>
         <option value="recomp">Recomposition équilibrée</option>
@@ -1292,12 +1274,12 @@
     </div>
   </div>
 
-  <div class="muted mt-025" id="compromiseSummary">Sélectionne un compromis pour voir le résumé.</div>
+  <div class="muted mt-025" id="compromiseSummary">Choisis ce que tu vises pour voir le résumé.</div>
 
   <details id="compromiseDetails" class="mt-025">
     <summary class="muted" style="cursor:pointer; user-select:none">Tableau du compromis</summary>
     <div id="compromiseBox" class="calcPanel mt-025" aria-live="polite">
-      <div class="muted">Sélectionne un compromis pour afficher la fiche.</div>
+      <div class="muted">Choisis ce que tu vises pour voir le détail.</div>
     </div>
   </details>
 </div>
@@ -1314,11 +1296,11 @@
 <div class="row settingsRow settingsRow--macros" id="settingsMacrosAnchor">
   <div>
     <label>
-      Type de régime
+      Ta façon de manger
       <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="Structure de base utilisée pour proposer les repères automatiques." role="button" tabindex="0">ℹ️</span>
     </label>
     <select id="dietMode">
-      <option selected="" value="none">— Choisir un régime —</option>
+      <option selected="" value="none">— Choisis —</option>
       <option value="cut_standard">Standard (sportif)</option>
       <option value="cut_aggressive">Agressif (court terme)</option>
       <option value="recomp">Recomposition (léger déficit)</option>
@@ -1330,12 +1312,12 @@
 
   <div>
     <label>
-      Cible énergétique (%)
+      Part de ce que tu brûles (%)
       <span aria-label="Informations sur l’objectif calorique" class="info-dot" data-modaltext="100% = équilibre. Moins = déficit. Plus = cas spécifique." role="button" tabindex="0">ℹ️</span>
     </label>
     <input id="goalPct" max="130" min="60" step="1" type="number" inputmode="numeric" value="0"/>
     <div class="muted mt-025">
-      Ajuste la <b>quantité totale</b> par rapport à ta dépense du jour.
+      La <b>part</b> de ce que tu brûles que tu veux manger. 100 % = tu manges ce que tu brûles.
     </div>
   </div>
 </div>
@@ -1377,7 +1359,7 @@
     <input id="ratioCP" max="2.0" min="0.0" step="0.1" type="number" inputmode="decimal" value="0"/>
     <input aria-hidden="true" class="hidden" disabled="" id="ratioCPText" type="text" value="--"/>
     <div id="ratioCPExample" class="muted 0-25" style="margin-top:.25rem">
-      Exemple : 1.0 = autant de glucides que de protéines.
+      1.0 = autant de glucides que de protéines.
     </div>
   </div>
 
@@ -1390,7 +1372,7 @@
       <input disabled="" id="carbAutoHint" value="Plafond glucidique : —"/>
 
       <div class="muted mt-025">
-        Calcul automatique selon protéines et lipides minimum.
+        Calculés tout seuls, une fois protéines et lipides posés.
       </div>
 
       <!-- ✅ Détails glucides en déroulant (ID carbCalcPanel conservé) -->
@@ -1573,7 +1555,7 @@
      Objectif UX : ne pas dupliquer le panneau complet “Résultats” sur plusieurs onglets.
      Ici : signal minimal + raccourci vers Synthèse. -->
 <div class="card panel-subtle" id="miniSummaryGoalCard">
-  <h3>Reste à consommer</h3>
+  <h3>Ce qu’il te reste</h3>
   <div class="row mt-03" style="align-items:flex-end">
     <div style="flex:1;min-width:140px">
       <label>Reste (kcal)</label>
@@ -1609,12 +1591,9 @@
 <section class="tabSection" data-tabsection="repas">
 
 <details class="notice notice--ok mt-06" open>
-  <summary class="noticeTitle">Mini-tuto — Repas</summary>
+  <summary class="noticeTitle">Comment ça marche — Repas</summary>
   <div class="muted mt-025">
-    <b>But :</b> enregistrer l’alimentation de la journée.<br/>
-    Ajouter un repas met à jour automatiquement les résultats.<br/>
-    Modifier un repas ajuste la synthèse.<br/>
-    Une estimation simple suffit.
+    Note ce que tu manges ; les totaux suivent tout seuls. Une estimation suffit.
   </div>
 </details>
 
@@ -1622,33 +1601,33 @@
 <div class="card">
 <div class="phase2MealCardTitleRow"><h2>Repas du jour</h2></div>
 <details class="phase2DietNoteDisclosure mt-02">
-<summary class="phase2DietNoteDisclosure__summary">Repères du jour</summary>
+<summary class="phase2DietNoteDisclosure__summary">D’où viennent tes cibles</summary>
 <div class="phase2DietNoteDisclosure__body"><p class="muted" id="dietNote">
       Type de régime = valeurs de départ. Si tu modifies la cible énergétique, les protéines ou les lipides, l’app bascule en “Personnalisé”.
     </p></div>
 </details>
 <div class="row">
 <div class="minw220-flex2">
-<label>Nom du repas</label>
+<label>Ce que tu as mangé</label>
 <input id="mealName" placeholder="ex: Petit-déj, Pancakes, Collation, Dîner…" type="text"/>
 <p class="muted">
-          Ajoute tes repas : les totaux se calculent automatiquement.
+          Les totaux se font tout seuls.
         </p>
 
 </div>
 </div>
 
 <!-- Mode d'encodage (Manuel / Rapide) -->
-<div class="row phase2MealModeRow" style="align-items:center; justify-content:space-between; gap:12px; margin-top:.2rem" role="tablist" aria-label="Mode d'encodage repas">
-  <button id="mealModeManual" class="is-active phase2MealModeBtn" type="button" role="tab" aria-selected="true">Manuel</button>
-  <button id="mealModeQuick" class="phase2MealModeBtn" type="button" role="tab" aria-selected="false">Rapide /100 g</button>
+<div class="row phase2MealModeRow" style="align-items:center; justify-content:space-between; gap:12px; margin-top:.2rem" role="tablist" aria-label="Façon de noter le repas">
+  <button id="mealModeManual" class="is-active phase2MealModeBtn" type="button" role="tab" aria-selected="true">Les valeurs</button>
+  <button id="mealModeQuick" class="phase2MealModeBtn" type="button" role="tab" aria-selected="false">L’étiquette /100 g</button>
 </div>
 
 <!-- Sous-dashboard MANUEL -->
 
 <div class="card panel-subtle" id="mealPanelManual">
-<h3>Apport du repas (manuel)</h3>
-<p class="muted">Entre directement les valeurs si tu les connais.</p>
+<h3>Les valeurs</h3>
+<p class="muted">Si tu les connais, tape-les.</p>
 <div class="row mt-04">
 <div><label>kcal</label><input id="mealK" min="0" step="1" type="number" value="0"/></div>
 <div><label>P (g)</label><input id="mealP" min="0" step="0.1" type="number" value="0"/></div>
@@ -1656,14 +1635,14 @@
 <div><label>L (g)</label><input id="mealF" min="0" step="0.1" type="number" value="0"/></div>
 </div>
 <p class="muted mt-02">
-        Astuce : l’option /100 g peut remplir ces champs automatiquement.
+        Sinon, l’onglet Étiquette les calcule pour toi.
       </p>
 </div>
 <!-- Option /100g (expert) -->
 <div class="card panel-subtle hidden" id="mealPanelQuick">
-<h3>Rapide /100 g</h3>
+<h3>L’étiquette /100 g</h3>
 <p class="muted">
-        Saisis l’étiquette (/100 g) + le poids. Puis “Calculer & ajouter”.
+        Recopie l’étiquette (pour 100 g), mets le poids, et c’est calculé.
       </p>
 <div class="row mt-05">
 <div>
@@ -1691,11 +1670,11 @@
 <div class="self-end">
 </div>
 <div class="self-end">
-<button id="btnQuickAddMeal" type="button">Calculer & ajouter</button>
+<button id="btnQuickAddMeal" type="button">Calculer et ajouter</button>
 </div>
 </div>
 <p class="muted mt-02">
-        Les valeurs du repas sont calculées automatiquement à partir du poids. Exemple : 35 g à 420 kcal/100 g → clique sur “Calculer & ajouter”.
+        Exemple : 35 g à 420 kcal/100 g, ça fait 147 kcal.
       </p>
 </div>
 <!-- Aperçu verrouillé du mode Rapide (affiché aux modes non-expert) -->
@@ -1715,7 +1694,7 @@
 <span class="mealLocked__chip">G / 100 g</span>
 <span class="mealLocked__chip">L / 100 g</span>
 </div>
-<p class="muted mealLocked__note">Disponible en mode expert. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+<p class="muted mealLocked__note">Visible avec l’affichage « Tout ». Tu le choisis dans Mon cadre › Toi.</p>
 </div>
 <div class="row mealActions">
   <div class="self-end">
@@ -1723,7 +1702,7 @@
   </div>
 </div>
 <div id="mealsTableDesktopSlot"><div class="row mt-04" id="mealsTableWrap"></div></div>
-<p class="muted mt-05">Modification directe possible. Les totaux se mettent à jour.</p>
+<p class="muted mt-05">Tu peux corriger directement dans le tableau.</p>
 <div class="row" style="justify-content:flex-end; margin-top:.35rem">
   <button class="btn-danger btn-ghost" id="btnClearMeals" type="button">Vider la journée</button>
 </div>
@@ -1732,7 +1711,7 @@
 <!-- ✅ Mini synthèse (lecture rapide) — Repas
      Objectif UX : garder l’encodage + feedback minimal, sans dupliquer la synthèse complète. -->
 <div class="card panel-subtle hidden" id="miniSummaryRepasCard" aria-hidden="true">
-  <h3>Synthèse du jour (rapide)</h3>
+  <h3>Ce qu’il te reste</h3>
   <div class="row mt-03" style="align-items:flex-end">
     <div style="flex:1;min-width:140px">
       <label>Reste (kcal)</label>
@@ -1816,7 +1795,7 @@
   <tbody>
   <tr><th>Objectif du jour</th><td id="tK" data-label="kcal"></td><td id="tP" data-label="Protéines"></td><td id="tC" data-label="Glucides"></td><td id="tF" data-label="Lipides"></td></tr>
   <tr><th>Déjà consommé</th><td id="eK" data-label="kcal"></td><td id="eP2" data-label="Protéines"></td><td id="eC2" data-label="Glucides"></td><td id="eF2" data-label="Lipides"></td></tr>
-  <tr><th>Reste à consommer</th><td id="rK" data-label="kcal"></td><td id="rP" data-label="Protéines"></td><td id="rC" data-label="Glucides"></td><td id="rF" data-label="Lipides"></td></tr>
+  <tr><th>Ce qu’il te reste</th><td id="rK" data-label="kcal"></td><td id="rP" data-label="Protéines"></td><td id="rC" data-label="Glucides"></td><td id="rF" data-label="Lipides"></td></tr>
   </tbody>
   </table>
   </div>
@@ -1894,10 +1873,10 @@
 <div class="modeTeaser__head">
 <span class="modeTeaser__icon" aria-hidden="true">🔒</span>
 <h3 class="modeTeaser__title">Où vont les calories ?</h3>
-<span class="modeTeaser__badge">Mode expert</span>
+<span class="modeTeaser__badge">Affichage Tout</span>
 </div>
 <p class="muted modeTeaser__desc">Visualise comment tes calories se répartissent entre protéines, lipides et glucides selon tes priorités.</p>
-<p class="muted modeTeaser__note">Disponible en mode expert. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+<p class="muted modeTeaser__note">Visible avec l’affichage « Tout ». Tu le choisis dans Mon cadre › Toi.</p>
 </div>
 </div><!-- /out -->
 
@@ -1946,7 +1925,7 @@
 <div class="mt-06">
   <details class="acc historyDiabAcc" id="accDiabHistoryFull" open>
     <summary>
-      <span>Historique diabète</span>
+      <span>Glycémie, jours passés</span>
       <span class="historyDiabAcc__meta">Lecture par journée sélectionnée</span>
     </summary>
     <div class="accBody historyDiabAccBody">
@@ -2047,10 +2026,10 @@
 <div class="modeTeaser__head">
 <span class="modeTeaser__icon" aria-hidden="true">🔒</span>
 <h3 class="modeTeaser__title">Sport</h3>
-<span class="modeTeaser__badge">Mode sportif</span>
+<span class="modeTeaser__badge">Affichage + sport et sommeil</span>
 </div>
-<p class="muted modeTeaser__desc">Enregistre tes séances et retrouve leur analyse dans l’Historique.</p>
-<p class="muted modeTeaser__note">Disponible en mode sportif. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+<p class="muted modeTeaser__desc">Note tes séances ; leur analyse t’attend dans Relire.</p>
+<p class="muted modeTeaser__note">Visible avec l’affichage « + sport et sommeil ». Tu le choisis dans Mon cadre › Toi.</p>
 </div>
 
 <div class="card mt-06" data-um="sport" id="sleepCard">
@@ -2069,12 +2048,12 @@
       </div>
     </div>
     <div id="sleepSummaryRange" class="sleepSummaryRange">—</div>
-    <div class="muted mt-03">Corrige plus tard si nécessaire.</div>
+    <div class="muted mt-03">Tu pourras corriger plus tard.</div>
   </div>
 
-  <div id="sleepEmptyNote" class="sleepEmptyNote muted mt-06">Aucun sommeil encodé ce jour.</div>
+  <div id="sleepEmptyNote" class="sleepEmptyNote muted mt-06">Rien noté pour cette nuit.</div>
 
-  <button id="btnSleepEdit" type="button" class="btn-wide mt-06">+ Ajouter une saisie directe</button>
+  <button id="btnSleepEdit" type="button" class="btn-wide mt-06">+ Noter ma nuit</button>
 
   <!-- Éditeur (caché par défaut) -->
   <div id="sleepEditor" class="sleepEditor mt-06 is-hidden">
@@ -2103,7 +2082,7 @@
     </div>
     <div class="row sleepScoreRow mt-05">
       <div>
-        <label>Score (optionnel)</label>
+        <label>Qualité (optionnel)</label>
         <input id="sleepScore" type="number" min="0" max="100" step="1" value="0"/>
       </div>
     </div>
@@ -2118,24 +2097,24 @@
 <div class="modeTeaser__head">
 <span class="modeTeaser__icon" aria-hidden="true">🔒</span>
 <h3 class="modeTeaser__title">Sommeil</h3>
-<span class="modeTeaser__badge">Mode sportif</span>
+<span class="modeTeaser__badge">Affichage + sport et sommeil</span>
 </div>
 <p class="muted modeTeaser__desc">Suis tes nuits et leur influence sur ta récupération.</p>
-<p class="muted modeTeaser__note">Disponible en mode sportif. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+<p class="muted modeTeaser__note">Visible avec l’affichage « + sport et sommeil ». Tu le choisis dans Mon cadre › Toi.</p>
 </div>
 
 <div class="card" id="historyNoiseCard">
-  <h2>Historique</h2>
+  <h2>Relire</h2>
 
   <details class="acc" id="accHistAdvanced">
-    <summary>Historique avancé — Dépense / poids / IMC sur 7 jours</summary>
+    <summary>Sur 7 jours — dépense, poids, IMC</summary>
     <div class="accBody">
 
       <div class="accGrid">
         <div class="accTile">
-          <label>Poids de référence</label>
+          <label>Ton poids</label>
           <input id="morningWeight" min="0" placeholder="ex: 83.6" step="0.1" type="number"/>
-          <div class="muted tiny">Mesure standardisée (heure, tenue, balance).</div>
+          <div class="muted tiny">Même heure, même tenue, même balance.</div>
         </div>
 
         <div class="accTile">
@@ -2238,10 +2217,10 @@
 <div class="modeTeaser__head">
 <span class="modeTeaser__icon" aria-hidden="true">🔒</span>
 <h3 class="modeTeaser__title">Tendance 7 jours</h3>
-<span class="modeTeaser__badge">Mode expert</span>
+<span class="modeTeaser__badge">Affichage Tout</span>
 </div>
 <p class="muted modeTeaser__desc">Analyse ta tendance sur 7 jours pour lire ton évolution au-delà du jour le jour.</p>
-<p class="muted modeTeaser__note">Disponible en mode expert. Pour l’activer, choisis le mode d’affichage depuis Pilotage.</p>
+<p class="muted modeTeaser__note">Visible avec l’affichage « Tout ». Tu le choisis dans Mon cadre › Toi.</p>
 </div>
 </div>
 
@@ -2602,7 +2581,7 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 <section class="tabSection" data-tabsection="lexicon">
 
 <details class="notice notice--ok mt-06" open>
-  <summary class="noticeTitle">Mini-tuto — Lexique</summary>
+  <summary class="noticeTitle">Comment ça marche — Lexique</summary>
   <div class="muted mt-025">
     <b>But :</b> éviter les contresens fréquents.<br/>
     Glucides ≠ sucre ≠ mauvais.<br/>
@@ -2613,9 +2592,9 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 </details>
 
   <div class="card">
-    <h2>Lexique</h2>
+    <h2>Les mots</h2>
     <p class="muted">
-      Ce lexique explique les termes utilisés dans l’application.
+      Les termes que tu croises dans l’app, expliqués simplement.
       Les définitions sont données à titre de <b>repères de compréhension</b>,
       pas de recommandations médicales.
     </p>
@@ -2754,7 +2733,7 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
         Elles servent uniquement au suivi personnel.
       </p>
 
-      <h4>Journal glycémique</h4>
+      <h4>Carnet glycémie</h4>
       <p class="muted">
         Regroupe les mesures et le contexte associé.
         Il ne permet aucune prédiction.
@@ -2967,7 +2946,7 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 <summary><b>6) Alternance jours ON / jours OFF</b></summary>
 <div class="muted mt-025">
 <b>Configuration typique</b><br/>
-          • Réglages ajustés selon la journée<br/>
+          • Cadre ajusté selon la journée<br/>
           • Repères glucidiques : variables<br/>
           • Objectif : variable<br/><br/>
 <b>Ce que fait l’app</b><br/>
