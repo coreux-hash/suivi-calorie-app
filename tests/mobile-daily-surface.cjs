@@ -162,9 +162,15 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await count(page), '0/3');
       await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
       assert.equal(await page.isVisible('#mobileDailyRecentMeals'), true, 'bloc Récents visible');
-      const chips = await page.$$eval('#mobileDailyRecentMeals [data-recent-meal]', (els) => els.map((e) => e.querySelector('strong').textContent + '|' + e.querySelector('small').textContent));
-      assert.deepEqual(chips, ['Repas|600 kcal', 'Repas|300 kcal', 'petit-déj|450 kcal', 'Pâtes|700 kcal'], `récents dédoublonnés, plus récents d'abord (${chips.join(', ')})`);
-      await page.click('#mobileDailyRecentMeals [data-recent-meal="2"]'); await page.waitForTimeout(500);
+      /* v24.4 : liste déroulante + Ajouter + corbeille (oubli jusqu'à une future note). */
+      const options = () => page.$$eval('#mobileDailyRecentMealSelect option', (els) => els.map((e) => e.textContent));
+      assert.deepEqual(await options(), ['Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal', 'Pâtes · 700 kcal'], `récents dédoublonnés, plus récents d'abord (${(await options()).join(', ')})`);
+      await page.selectOption('#mobileDailyRecentMealSelect', '3'); await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
+      assert.deepEqual(await options(), ['Repas · 600 kcal', 'Repas · 300 kcal', 'petit-déj · 450 kcal'], 'repas oublié retiré de la liste');
+      assert.match(await page.textContent('#mobileDailyRecentMealNote'), /« Pâtes » : oublié jusqu’à une future note\./);
+      assert.deepEqual(JSON.parse(await page.evaluate(() => localStorage.getItem('secheapp.default.forgottenMeals.v1'))), { 'pâtes':d2 }, 'oubli stocké par profil avec la date de la dernière note');
+      assert.deepEqual(await days(page), past, 'oublier ne modifie pas l\'historique');
+      await page.selectOption('#mobileDailyRecentMealSelect', '2'); await page.click('#mobileDailyRecentMealAdd'); await page.waitForTimeout(500);
       const d = await days(page);
       const todayDay = d.find((x) => x.date === today);
       assert.ok(todayDay, 'journée du jour créée par l\'ajout');
@@ -172,9 +178,12 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.deepEqual([todayDay.meals[0].name, todayDay.meals[0].k, todayDay.meals[0].p, todayDay.meals[0].c, todayDay.meals[0].f], ['petit-déj', 450, 22, 55, 14], 'repas ajouté tel quel');
       assert.equal(await count(page), '1/3', 'ajout en 1 tap = 1/3');
       assert.equal(await page.$eval('#mealName', (e) => e.value), '', 'formulaire vidé après ajout (chemin legacy)');
+      /* Une note ultérieure (aujourd'hui > d2) ramène le repas oublié. */
+      await page.fill('#mealName', 'Pâtes'); await page.fill('#mealK', '700'); await page.click('#btnAddMeal'); await page.waitForTimeout(500);
+      assert.deepEqual(await options(), ['Pâtes · 700 kcal', 'petit-déj · 450 kcal', 'Repas · 600 kcal', 'Repas · 300 kcal'], 'repas oublié de retour après une nouvelle note');
       assert.equal(await overflowX(page), 0);
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
-      ok('Repas récents : liste déduite, dédoublonnée, ajout en 1 tap');
+      ok('Repas habituels : liste déduite, dédoublonnée, Ajouter, corbeille réversible');
       /* Journée vide et aucun historique : bloc masqué. */
       await context.close();
       const empty = await open(browser, origin, fixture(simpleSettings), MOBILE);
@@ -278,6 +287,37 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await drawerOpen(), false, 'tiroir fermé par un tap extérieur');
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
       ok('Menu → Réglages ferme le menu ; tiroir Contexte : croix et tap extérieur');
+      await context.close();
+    }
+
+    /* 3f. v24.4 : « Comment ça marche » cachés dans les cartes, regroupés dans la fenêtre du menu ;
+       étapes « Ce que tu vises » et « Façon de manger » scindées. */
+    {
+      const { context, page, pageErrors } = await open(browser, origin, fixture(simpleSettings), MOBILE);
+      const visibleTutos = await page.$$eval('details.notice', (els) => els.filter((d) => /^(Mini-tuto|Comment ça marche)/.test(d.querySelector('summary')?.textContent.trim() || '') && d.getBoundingClientRect().height > 0).length);
+      assert.equal(visibleTutos, 0, 'aucun « Comment ça marche » visible dans les cartes');
+      await page.click('#menuBtn'); await page.waitForTimeout(200);
+      assert.equal(await page.isVisible('#btnMobileMenuOpenTuto'), true, 'entrée « Comment ça marche ici » dans le menu mobile');
+      await page.click('#btnMobileMenuOpenTuto'); await page.waitForTimeout(300);
+      assert.equal(await page.getAttribute('#settingsTutoModal', 'aria-hidden'), 'false', 'fenêtre ouverte');
+      assert.equal(await page.textContent('#settingsTutoTitle'), 'Comment ça marche — Aujourd’hui');
+      assert.deepEqual(await page.$$eval('.phase5TutoCard__title', (els) => els.map((e) => e.textContent)), ['Dépense', 'Repas', 'Synthèse'], 'tutos de la vue Aujourd’hui');
+      await page.evaluate(() => document.querySelector('#settingsTutoModal .modal__backdrop').click()); await page.waitForTimeout(200);
+      await page.click('#menuBtn'); await page.waitForTimeout(200); await page.click('[data-mobile-menu-view="settings"]'); await page.waitForTimeout(400);
+      const headsFor = async (key) => {
+        await page.evaluate((k) => { const slot = document.getElementById('mobileDailySettingsSlot'); if (slot.hidden || slot.dataset.mobileSettingsOpen !== k) document.querySelector(`[data-mobile-setup="${k}"]`).click(); }, key);
+        await page.waitForTimeout(250);
+        return page.$$eval('#mobileDailySettingsSlot h2, #mobileDailySettingsSlot label', (els) => els.filter((e) => e.getBoundingClientRect().height > 0).map((e) => e.textContent.replace(/\s+/g, ' ').trim().replace(/ ℹ️$/, '')));
+      };
+      const compromise = await headsFor('compromise');
+      assert.ok(compromise.includes('Je vise') && !compromise.includes('Ta façon de manger'), `étape Ce que tu vises = le choix seul (${compromise.join(' | ')})`);
+      const goals = await headsFor('goals');
+      assert.ok(goals.includes('Ta façon de manger') && !goals.includes('Je vise') && !goals.includes('Ce que tu vises'), `étape Façon de manger = sans le choix (${goals.join(' | ')})`);
+      await page.click('#menuBtn'); await page.waitForTimeout(200); await page.click('#btnMobileMenuOpenTuto'); await page.waitForTimeout(300);
+      assert.deepEqual(await page.$$eval('.phase5TutoCard__title', (els) => els.map((e) => e.textContent)), ['Profil', 'Dépense', 'Objectif', 'Sport et objectif', 'Cadrage glucidique'], 'tutos de Mon cadre (Objectif et Sport et objectif distincts)');
+      assert.equal(await overflowX(page), 0);
+      assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
+      ok('Comment ça marche : cachés des cartes, fenêtre menu par vue ; étapes 3/4 scindées');
       await context.close();
     }
 
