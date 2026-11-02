@@ -262,9 +262,28 @@
      les champs du formulaire puis rejoue le clic sur #btnAddMeal, donc exactement le
      chemin existant (normalizeMeal, setMealsForDay, renderMealsTable, compute). */
   const RECENT_MEALS_MAX = 8;
+  /* v24.4 : « oublier » un repas habituel. Clé dédiée par profil (nouvelle, aucune donnée
+     existante touchée) : { [cléRepas]: dateDeLaDernièreNote }. Le repas reste caché tant que
+     sa dernière note est antérieure ou égale à cette date ; une note un jour suivant le ramène. */
+  function forgottenMealsKey(){
+    let profile = 'default';
+    try { profile = global.localStorage.getItem('secheapp.activeProfile.v1') || $('profileSelect')?.value || 'default'; } catch (_) { }
+    return `secheapp.${profile}.forgottenMeals.v1`;
+  }
+  function loadForgottenMeals(){
+    try { const parsed = JSON.parse(global.localStorage.getItem(forgottenMealsKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {}; }
+    catch (_) { return {}; }
+  }
+  function saveForgottenMeals(map){
+    try { global.localStorage.setItem(forgottenMealsKey(), JSON.stringify(map || {})); } catch (_) { }
+  }
+  function recentMealKey(name, k, p, c, f){
+    return name.toLowerCase() === 'repas' ? `repas|${k}|${p}|${c}|${f}` : name.toLowerCase();
+  }
   function recentMeals(){
     let days = [];
     try { days = global.loadDays?.() || []; } catch (_) { days = []; }
+    const forgotten = loadForgottenMeals();
     const seen = new Set();
     const out = [];
     const sorted = days.filter((day) => day && Array.isArray(day.meals)).sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
@@ -275,14 +294,22 @@
         const k = Number(meal.k) || 0, p = Number(meal.p) || 0, c = Number(meal.c) || 0, f = Number(meal.f) || 0;
         /* Un repas nommé est identifié par son nom (la version la plus récente gagne) ;
            le nom générique « Repas » n'identifie rien : on le distingue par ses valeurs. */
-        const key = name.toLowerCase() === 'repas' ? `repas|${k}|${p}|${c}|${f}` : name.toLowerCase();
+        const key = recentMealKey(name, k, p, c, f);
         if (seen.has(key)) continue;
         seen.add(key);
-        out.push({ name, k, p, c, f });
+        const lastDate = String(day.date || '');
+        if (forgotten[key] && lastDate <= String(forgotten[key])) continue; /* oublié jusqu'à une future note */
+        out.push({ name, k, p, c, f, key, lastDate });
         if (out.length >= RECENT_MEALS_MAX) return out;
       }
     }
     return out;
+  }
+  function forgetRecentMeal(meal){
+    if (!meal?.key) return;
+    const map = loadForgottenMeals();
+    map[meal.key] = meal.lastDate || '';
+    saveForgottenMeals(map);
   }
   function addRecentMeal(meal){
     if (!meal || !$('btnAddMeal')) return;
@@ -312,12 +339,22 @@
     box.className = 'mobileDailyRecentMeals';
     box.setAttribute('aria-label', 'Tes repas habituels');
     box.hidden = true;
-    box.innerHTML = '<p class="mobileDailyRecentMeals__label">Tes habitudes <span>· un tap et c’est ajouté</span></p><div class="mobileDailyRecentMeals__list"></div>';
-    box.addEventListener('click', (event) => {
-      const button = event.target.closest('[data-recent-meal]');
-      if (!button) return;
-      const meal = box.__recentMeals?.[Number(button.dataset.recentMeal)];
-      addRecentMeal(meal);
+    /* v24.4 : liste déroulante + corbeille (même modèle que « Mon propre réglage ») + Ajouter. */
+    box.innerHTML = '<label class="mobileDailyRecentMeals__label" for="mobileDailyRecentMealSelect">Tes habitudes</label>'
+      + '<div class="mobileDailyRecentMeals__row">'
+      + '<div class="mobileDailyRecentMeals__selectWrap"><select id="mobileDailyRecentMealSelect" class="mobileDailyRecentMeals__select"></select>'
+      + '<button type="button" class="mobileDailyRecentMeals__forget" id="mobileDailyRecentMealForget" title="Oublier ce repas" aria-label="Oublier ce repas">🗑</button></div>'
+      + '<button type="button" class="mobileDailyRecentMeals__add" id="mobileDailyRecentMealAdd">Ajouter</button>'
+      + '</div>'
+      + '<p class="mobileDailyRecentMeals__note muted" id="mobileDailyRecentMealNote" aria-live="polite" hidden></p>';
+    const selected = () => box.__recentMeals?.[Number($('mobileDailyRecentMealSelect')?.value)];
+    box.querySelector('#mobileDailyRecentMealAdd')?.addEventListener('click', () => addRecentMeal(selected()));
+    box.querySelector('#mobileDailyRecentMealForget')?.addEventListener('click', () => {
+      const meal = selected();
+      if (!meal) return;
+      forgetRecentMeal(meal);
+      box.__recentMealNote = `« ${meal.name} » : oublié jusqu’à une future note.`;
+      syncRecentMeals();
     });
     slot.prepend(box);
   }
@@ -326,21 +363,29 @@
     if (!box) return;
     const meals = recentMeals();
     box.__recentMeals = meals;
-    box.hidden = meals.length === 0;
-    const list = box.querySelector('.mobileDailyRecentMeals__list');
-    if (!list) return;
-    list.textContent = '';
+    const note = box.querySelector('#mobileDailyRecentMealNote');
+    if (note) {
+      note.textContent = box.__recentMealNote || '';
+      note.hidden = !box.__recentMealNote;
+      box.__recentMealNote = '';
+    }
+    box.hidden = meals.length === 0 && !(note && !note.hidden);
+    const select = box.querySelector('#mobileDailyRecentMealSelect');
+    if (!select) return;
+    const previous = select.value;
+    select.textContent = '';
     meals.forEach((meal, index) => {
-      const button = doc.createElement('button');
-      button.type = 'button';
-      button.className = 'mobileDailyRecentMeal';
-      button.dataset.recentMeal = String(index);
-      button.setAttribute('aria-label', `Ajouter ${meal.name}, ${Math.round(meal.k)} kcal`);
-      const name = doc.createElement('strong'); name.textContent = meal.name;
-      const kcal = doc.createElement('small'); kcal.textContent = `${Math.round(meal.k)} kcal`;
-      button.append(name, kcal);
-      list.appendChild(button);
+      const option = doc.createElement('option');
+      option.value = String(index);
+      option.textContent = `${meal.name} · ${Math.round(meal.k)} kcal`;
+      select.appendChild(option);
     });
+    if (meals.some((_, index) => String(index) === previous)) select.value = previous;
+    const empty = meals.length === 0;
+    select.disabled = empty;
+    box.querySelector('#mobileDailyRecentMealAdd').disabled = empty;
+    box.querySelector('#mobileDailyRecentMealForget').disabled = empty;
+    box.querySelector('.mobileDailyRecentMeals__row').hidden = empty;
   }
   function removeRecentMeals(){ $('mobileDailyRecentMeals')?.remove(); }
 
@@ -780,8 +825,13 @@
          #menuBtn faisait un toggle et le rouvrait. On ferme explicitement. */
       try { if (typeof global.closeMenu === 'function') global.closeMenu(); } catch (_) { }
     }));
-    [['btnMobileMenuOpenHelp', 'btnMenuOpenHelpModal'], ['btnMobileMenuOpenCloud', 'btnMenuOpenCloudModal'], ['btnMobileMenuOpenTerms', 'btnMenuOpenTermsGate']].forEach(([mobileId, legacyId]) => {
-      $(mobileId)?.addEventListener('click', () => $(legacyId)?.click());
+    [['btnMobileMenuOpenTuto', 'btnMenuOpenTutoModal'], ['btnMobileMenuOpenHelp', 'btnMenuOpenHelpModal'], ['btnMobileMenuOpenCloud', 'btnMenuOpenCloudModal'], ['btnMobileMenuOpenTerms', 'btnMenuOpenTermsGate']].forEach(([mobileId, legacyId]) => {
+      $(mobileId)?.addEventListener('click', () => {
+        /* v24.4 : la fenêtre « Comment ça marche » est rendue au dernier refresh legacy, qui peut
+           précéder l'activation mobile ; on la re-rend pour la vue courante avant de l'ouvrir. */
+        if (mobileId === 'btnMobileMenuOpenTuto') { try { global.phase5RenderTutorialGate?.(); } catch (_) { } }
+        $(legacyId)?.click();
+      });
     });
     /* v23.5 : re-tap sur le volet ouvert => il se referme (comme l'accordéon Réglages). */
     qa('[data-mobile-action]').forEach((button) => button.addEventListener('click', () => {
