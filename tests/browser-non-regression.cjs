@@ -343,9 +343,9 @@ async function assertHistoryChargeGuideInfo(browser, origin){
   await page.waitForTimeout(80);
   assert.equal(await page.getAttribute('#watchInfoModal', 'aria-hidden'), 'false');
   const text = await page.textContent('#watchInfoBody');
-  assert.match(text, /Première utilisation/);
-  assert.match(text, /dépense énergétique totale/);
-  assert.match(text, /Lors de tes retours/);
+  assert.match(text, /La première fois/);
+  assert.match(text, /brûlé sur toute la journée/);
+  assert.match(text, /Ensuite/);
   assert.doesNotMatch(text, /calories brûlées/i);
   await page.screenshot({ path:path.join(outputRoot, 'history-charge-guide-info-390x844.png'), fullPage:true });
   assert.deepEqual(pageErrors, []);
@@ -374,7 +374,7 @@ async function assertHowItWorksGuide(browser, origin, viewport){
   assert.match(guideText, /Activité \*/);
   assert.match(guideText, /Dépense \*/);
   assert.match(guideText, /Point clignotant/);
-  assert.doesNotMatch(guideText, /Flux métier/);
+  assert.doesNotMatch(guideText, /Comment ça s’enchaîne/);
   await assertNoHorizontalOverflow(page, `guide-${label}`);
   await page.screenshot({ path:path.join(outputRoot, `how-it-works-${label}.png`), fullPage:true });
 
@@ -389,7 +389,7 @@ async function assertHowItWorksGuide(browser, origin, viewport){
   await page.locator('#pilotageGuideSignalDemo').click();
   await page.waitForTimeout(80);
   assert.equal(await page.getAttribute('#watchInfoModal', 'aria-hidden'), 'false', `${label}: démonstration clignotant ouverte`);
-  assert.match(await page.textContent('#watchInfoBody'), /Historique → Calendrier/);
+  assert.match(await page.textContent('#watchInfoBody'), /Relire → Calendrier/);
   await page.locator('#watchInfoClose').click();
   await page.waitForTimeout(50);
 
@@ -402,13 +402,13 @@ async function assertHowItWorksGuide(browser, origin, viewport){
   assert.equal(await page.getAttribute('#appUnderstandingModal', 'aria-hidden'), 'false', `${label}: compréhension autonome ouverte depuis le menu`);
   assert.equal(await page.textContent('#appUnderstandingTitle'), 'Comprendre l’application');
   const understandingText = await page.textContent('#appUnderstandingModal');
-  assert.match(understandingText, /Rôle du produit/);
+  assert.match(understandingText, /À quoi elle sert/);
   assert.match(understandingText, /Les 4 espaces/);
-  assert.match(understandingText, /Flux métier/);
-  assert.match(understandingText, /Orientation par intention/);
-  assert.match(understandingText, /Données qui alimentent le moteur/);
-  assert.match(understandingText, /dépense automatique ou explicitement renseignée/);
-  assert.doesNotMatch(understandingText, /Teste les repères visuels/);
+  assert.match(understandingText, /Comment ça s’enchaîne/);
+  assert.match(understandingText, /Selon ce que tu veux faire/);
+  assert.match(understandingText, /Ce que l’app utilise pour calculer/);
+  assert.match(understandingText, /estimé par la montre ou confirmé par toi/);
+  assert.doesNotMatch(understandingText, /Deux signes à reconnaître/);
   await assertNoHorizontalOverflow(page, `understanding-${label}`);
   await page.screenshot({ path:path.join(outputRoot, `understand-app-${label}.png`), fullPage:true });
   assert.equal(await page.evaluate(() => JSON.stringify(localStorage)), storageBefore, `${label}: le guide ne modifie pas les données`);

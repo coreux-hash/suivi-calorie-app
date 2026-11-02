@@ -98,7 +98,7 @@ test('dépendance distante historique limitée au client Supabase optionnel', ()
 test('guide pratique et présentation conceptuelle sont autonomes', () => {
   assert.match(html, /<button[^>]+id="btnHeaderOpenPilotageGuide"[^>]*>\?<\/button>/);
   assert.match(html, /<button[^>]+aria-haspopup="dialog"[^>]+id="btnHeaderOpenPilotageGuide"/);
-  assert.match(html, /<div class="menuGroupLabel">Plan d’accès<\/div>/);
+  assert.match(html, /<div class="menuGroupLabel">Pour comprendre<\/div>/);
   assert.match(html, /aria-controls="appUnderstandingModal"[^>]+id="btnMenuOpenPilotagePlan"[^>]*>Comprendre l’application<\/button>/);
   assert.match(html, /id="pilotagePlanTitle">Comment ça marche \?<\/div>/);
   assert.match(html, /id="pilotagePlanStartTitle">Commence ici<\/h3>/);
@@ -108,11 +108,11 @@ test('guide pratique et présentation conceptuelle sont autonomes', () => {
   assert.match(html, /Dépense \*/);
   assert.match(html, /id="appUnderstandingModal"/);
   assert.match(html, /id="appUnderstandingTitle">Comprendre l’application<\/div>/);
-  assert.match(html, /id="appUnderstandingRoleTitle">Rôle du produit<\/h3>/);
-  assert.match(html, /id="appUnderstandingFlowTitle">Flux métier<\/h3>/);
-  assert.match(html, /id="appUnderstandingIntentTitle">Orientation par intention<\/h3>/);
-  assert.match(html, /id="appUnderstandingDataTitle">Données qui alimentent le moteur<\/h3>/);
-  assert.match(html, /dépense automatique ou explicitement renseignée/);
+  assert.match(html, /id="appUnderstandingRoleTitle">À quoi elle sert<\/h3>/);
+  assert.match(html, /id="appUnderstandingFlowTitle">Comment ça s’enchaîne<\/h3>/);
+  assert.match(html, /id="appUnderstandingIntentTitle">Selon ce que tu veux faire<\/h3>/);
+  assert.match(html, /id="appUnderstandingDataTitle">Ce que l’app utilise pour calculer<\/h3>/);
+  assert.match(html, /estimé par la montre ou confirmé par toi/);
   assert.doesNotMatch(html, /id="pilotageGuideMore"/);
   assert.doesNotMatch(html, /Pour aller plus loin/);
 });

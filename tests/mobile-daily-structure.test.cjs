@@ -80,8 +80,8 @@ test('surface mobile : les trois essentiels sont portés sans champ dupliqué', 
 });
 
 test('surface mobile : le compteur 3\/3 décrit une saisie, pas une réussite nutritionnelle', () => {
-  assert.match(html, /essentiels renseignés/);
-  assert.match(js, /Les essentiels sont là/);
+  assert.match(html, /choses notées/);
+  assert.match(js, /Tout est noté/);
   assert.doesNotMatch(html + js, /journée réussie/i);
   assert.match(css, /mobileDailyNav/);
 });
@@ -101,7 +101,7 @@ test('surface mobile : la barre de statut devient un tiroir sans nouveau contenu
   assert.match(js, /function installContextDrawer/);
   assert.match(js, /function watchContextDrawer/);
   assert.match(css, /phase5StatusBar--drawer/);
-  assert.match(js, /Modifier le cadre/);
+  assert.match(js, /Changer mon cadre/);
   assert.match(js, /function installMobileInfoDots/);
   assert.match(css, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
   assert.match(css, /#phase5ShellLine\{display:block!important;margin:0!important\}/);
@@ -124,7 +124,7 @@ test('surface mobile : le résumé est collé sous l’appbar et le point Sport 
 test('surface mobile : menu réduit, repas condensés et tableau déplacé sans duplication', () => {
   assert.match(html, /class="menuGroup mobileMenuGroup"/);
   assert.match(css, /\.mobileMenuGroup\{display:none\}/);
-  assert.match(html, /Aide et démarrage/);
+  assert.match(html, /Aide pour démarrer/);
   assert.match(html, /id="mobileDailyMealsHistorySlot"/);
   assert.match(html, /id="mealsTableDesktopSlot"/);
   assert.match(js, /selector: '#mealsTableWrap', mobile: 'mobileDailyMealsHistorySlot'/);
