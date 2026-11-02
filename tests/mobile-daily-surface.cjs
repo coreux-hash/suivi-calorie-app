@@ -191,11 +191,17 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       const { context, page, pageErrors } = await open(browser, origin, fixture(prudent, past), MOBILE);
       const chain = await page.$eval('#mobileDailySpendChain', (e) => ({ hidden:e.hidden, text:e.textContent.replace(/\s+/g, ' ').trim() }));
       assert.equal(chain.hidden, false, 'chaîne affichée');
-      assert.match(chain.text, /Montre 4000 → retenue 3200 kcal \(prudence −20 %/, `chaîne lisible (${chain.text})`);
+      assert.match(chain.text, /^Montre 4000 → retenue 3200 kcal ℹ️$/, `chaîne lisible (${chain.text})`);
+      const dot = await page.$eval('#mobileDailySpendChain .info-dot', (e) => ({ role:e.getAttribute('role'), text:e.getAttribute('data-modaltext') }));
+      assert.equal(dot.role, 'button');
+      assert.match(dot.text, /Prudence : −20 %/, 'explication de la prudence dans l\'info-dot');
+      await page.click('#mobileDailySpendChain .info-dot'); await page.waitForTimeout(300);
+      assert.equal(await display(page, '#watchInfoModal'), 'block', 'info-dot ouvre la modale');
+      await page.evaluate(() => document.querySelector('#watchInfoModal').classList.remove('is-open'));
       assert.equal(await page.$eval('#mobileDailySpendSlot .phase1PulseMeta', (e) => getComputedStyle(e).display), 'none', 'ligne legacy masquée sur mobile');
       const head = await page.$eval('#mobileDailyRemaining', (e) => e.textContent.replace(/\s+/g, ' ').trim());
-      assert.match(head, /Reste \d+ kcal · \d+ consommées · cible \d+/, `cible dans l'en-tête (${head})`);
-      const target = Number(head.match(/cible (\d+)/)[1]);
+      assert.match(head, /^Reste \d+ kcal sur cible de \d+ kcal$/, `en-tête (${head})`);
+      const target = Number(head.match(/cible de (\d+)/)[1]);
       assert.equal(target, 2944, 'cible = 92 % de 3200');
       /* Préremplissage par nom (casse ignorée), sans ajout. */
       await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
@@ -209,9 +215,46 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       await context.close();
       const plain = await open(browser, origin, fixture({ ...simpleSettings, errPct:0 }), MOBILE);
       assert.match(await plain.page.$eval('#mobileDailySpendChain', (e) => e.textContent), /Retenue par le moteur : 2600 kcal/, 'chaîne courte sans prudence');
+      assert.equal(await plain.page.$('#mobileDailySpendChain .info-dot'), null, 'pas d\'info-dot sans prudence');
       await plain.context.close();
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
       ok('Dépense : chaîne lisible ; en-tête avec cible ; préremplissage par nom');
+    }
+
+    /* 3e. v23.5 : volets refermables ; libellés mesures scindés ; carte Montre raccourcie. */
+    {
+      const { context, page, pageErrors } = await open(browser, origin, fixture(simpleSettings), MOBILE);
+      assert.equal(await page.$eval('#mobileDailySpendSlot', (e) => e.hidden), false, 'Dépense ouverte au départ');
+      await page.tap('[data-mobile-action="spend"]'); await page.waitForTimeout(200);
+      assert.equal(await page.$eval('#mobileDailySpendSlot', (e) => e.hidden), true, 're-tap referme le volet');
+      assert.equal(await page.$eval('[data-mobile-action="spend"]', (e) => e.getAttribute('aria-expanded')), 'false');
+      await page.tap('[data-mobile-action="spend"]'); await page.waitForTimeout(200);
+      assert.equal(await page.$eval('#mobileDailySpendSlot', (e) => e.hidden), false, 'tap rouvre le volet');
+      await page.tap('[data-mobile-action="meals"]'); await page.waitForTimeout(200);
+      assert.equal(await page.$eval('#mobileDailySpendSlot', (e) => e.hidden), true, 'un seul volet ouvert');
+      /* Mesures : nom + unité, une ligne, cellules alignées. */
+      await page.click('#mobileDailyMore summary'); await page.waitForTimeout(300);
+      const labels = await page.$$eval('#phase3BodyCompGrid .accTile label', (els) => els.map((e) => ({ text:e.textContent.trim(), unit:e.querySelector('.mobileLabelUnit')?.textContent, h:Math.round(e.getBoundingClientRect().height) })));
+      assert.deepEqual(labels.map((l) => l.text), ['Masse grasse (%)', 'Masse musculaire (%)', 'Masse osseuse (kg)'], 'texte des libellés inchangé');
+      assert.deepEqual(labels.map((l) => l.unit), ['(%)', '(%)', '(kg)'], 'unités conservées');
+      assert.ok(labels.every((l) => l.h === labels[0].h && l.h < 30), `libellés sur une ligne, même hauteur (${labels.map((l) => l.h)})`);
+      const tops = await page.$$eval('#fatPct, #musclePct, #boneKg', (els) => els.map((e) => Math.round(e.getBoundingClientRect().top)));
+      assert.ok(tops.every((v) => v === tops[0]), `cellules alignées (${tops})`);
+      /* Carte Montre : libellés courts, aides masquées, info-dot conservé. */
+      await page.click('#menuBtn'); await page.waitForTimeout(200); await page.click('[data-mobile-menu-view="settings"]'); await page.waitForTimeout(300);
+      await page.click('[data-mobile-setup="watch"]'); await page.waitForTimeout(400);
+      const watchLabels = await page.$$eval('.mobileWatchCard label', (els) => els.filter((e) => e.getBoundingClientRect().width > 0).map((e) => e.textContent.trim()));
+      assert.deepEqual(watchLabels, ['Montre', 'Calories (kcal)'], `libellés courts en mode Simple (${watchLabels.join(' | ')})`);
+      assert.equal(await page.$eval('#errPct', (e) => e.parentElement.querySelector('label').textContent), 'Incertitude (%)', 'libellé court même hors affichage');
+      assert.equal(await page.$eval('#watchProfileInfo', (e) => e.closest('.muted').classList.contains('mobileWatchHint')), false, 'aide portant l\'info-dot non masquée');
+      assert.equal(await page.$$eval('.mobileWatchCard .mobileWatchHint', (els) => els.filter((e) => e.getBoundingClientRect().height > 0).length), 0, 'aides masquées');
+      /* Retour desktop : libellés d'origine. */
+      await page.setViewportSize(DESKTOP); await page.waitForTimeout(500);
+      assert.equal(await page.$eval('#watchBrand', (e) => e.parentElement.querySelector('label').textContent), 'Marque de la montre', 'libellé restauré sur desktop');
+      assert.equal(await page.$eval('#fatPct', (e) => e.previousElementSibling.textContent.trim()), 'Masse grasse (%)');
+      assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
+      ok('Volets refermables ; libellés mesures nom+unité ; carte Montre raccourcie');
+      await context.close();
     }
 
     /* 3c. Menu burger → Réglages ferme le menu ; tiroir Contexte : croix et tap extérieur (v23.3). */
