@@ -25,9 +25,9 @@
   .mobileDailyAction__body{padding:0 12px 13px}.mobileDailyAction__body>.phase2Panel{border:0;background:transparent;padding:0;box-shadow:none}.mobileDailyAction__body .phase2Panel__head{display:none}.mobileDailyAction__body .phase2Slot{margin:0}
   .mobileDailyAction__body .phase1PulseCard{padding:0;border:0;background:transparent}.mobileDailyAction__body .phase1PulseMeta{margin-top:7px}
   /* v23 : décompte du jour (lecture de #rK/#eK) et bouton de confirmation de la dépense. */
-  .mobileDailyRemaining{margin-top:6px!important;color:var(--text)!important;font-size:.95rem!important}.mobileDailyRemaining strong{font-size:1.08rem}.mobileDailyRemaining span{color:var(--muted);font-size:.84rem}
+  .mobileDailyRemaining{margin-top:6px!important;color:var(--text)!important;font-size:.95rem!important}.mobileDailyRemaining strong{font-size:1.08rem}.mobileDailyRemaining span{display:block;color:var(--muted);font-size:.84rem}
   /* v23.4 : la ligne legacy « Ajustée : … utilisée par le moteur » est remplacée sur mobile par la chaîne lisible. */
-  #mobileDailySpendSlot .phase1PulseMeta{display:none}.mobileDailySpendChain{margin:8px 0 0;font-size:.9rem;color:var(--text)}.mobileDailySpendChain[hidden]{display:none}.mobileDailySpendChain span{display:block;margin-top:2px;color:var(--muted);font-size:.82rem}
+  #mobileDailySpendSlot .phase1PulseMeta{display:none}.mobileDailySpendChain{margin:8px 0 0;font-size:.9rem;color:var(--text)}.mobileDailySpendChain[hidden]{display:none}.mobileDailySpendChain .info-dot{display:inline-grid;vertical-align:middle;margin-left:6px}
   .mobileDailySpendConfirm{display:block;width:100%;margin-top:10px;min-height:44px;border:1px solid rgba(124,92,255,.38);border-radius:12px;background:rgba(124,92,255,.17);color:var(--text);font-size:.92rem;font-weight:800}#mobileDailySpendCard[data-complete="true"] .mobileDailySpendConfirm{display:none}
   /* v23 : visibility.css masque le marqueur natif via ::-webkit-details-marker, pseudo-élément que
      Chromium ≥ 89 ne reconnaît plus ; le marqueur natif s'ajoutait au « ▸ » de ::before (double chevron). */
@@ -35,6 +35,10 @@
   /* v23.2 : repas récents (ajout en 1 tap), en tête de la carte Repas. */
   .mobileDailyRecentMeals{margin:0 0 12px}.mobileDailyRecentMeals[hidden]{display:none}.mobileDailyRecentMeals__label{margin:0 0 6px;font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.mobileDailyRecentMeals__label span{text-transform:none;letter-spacing:0;font-weight:600}
   .mobileDailyRecentMeals__list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mobileDailyRecentMeal{display:grid;gap:2px;min-width:0;min-height:48px;padding:8px 10px;text-align:left;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);color:var(--text)}.mobileDailyRecentMeal strong{font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mobileDailyRecentMeal small{color:var(--muted);font-size:.78rem}.mobileDailyRecentMeal:active{background:rgba(124,92,255,.22)}
+  /* v23.5 : mesures de composition — nom en ellipse, unité conservée, cellules alignées. */
+  #mobileDailyMoreSlot #phase3BodyCompGrid .accTile label{display:flex;align-items:baseline;gap:4px;min-width:0;white-space:nowrap}.mobileLabelName{min-width:0;overflow:hidden;text-overflow:ellipsis}.mobileLabelUnit{flex:none}
+  /* v23.5 : carte Montre — aides masquées (libellés raccourcis par JS). */
+  .mobileWatchCard .mobileWatchHint{display:none}
   /* v23 : au premier lancement, « Mes informations » avant « Utilisateurs ». */
   .mobile-daily-active #settingsProfileSlot{display:flex;flex-direction:column}.mobile-daily-active #settingsProfileSlot>.settingsCardUsers{order:10}
   .mobileDailyMore{margin:14px 0 4px;border:1px solid var(--line);border-radius:15px;background:var(--card);overflow:hidden}.mobileDailyMore summary{display:flex;justify-content:space-between;gap:8px;padding:14px;font-weight:800;cursor:pointer}.mobileDailyMore summary span{font-size:.78rem;color:var(--muted);font-weight:600;text-align:right}.mobileDailyMore[open]>div{padding:0 12px 12px}.mobileDailyMore .phase2Panel{padding:12px 0;border:0;border-top:1px solid var(--line);background:transparent;box-shadow:none}
