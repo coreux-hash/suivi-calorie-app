@@ -340,33 +340,56 @@
     Object.entries(fields).forEach(([id, value]) => { const el = $(id); if (el) el.value = String(value); });
     $('mealModeManual')?.click();
   }
+  /* v24.6 : la liste est combinée au champ « Ce que tu as mangé » : le champ reste un champ
+     texte ; à sa droite, une corbeille et un chevron. Le chevron est un <select> natif rendu
+     invisible par-dessus (opacity:0) : le tap ouvre la liste du système, le choix remplit le
+     formulaire. La corbeille vise le repas dont le nom est dans le champ. */
+  function mealInField(box){
+    const name = String($('mealName')?.value || '').trim().toLowerCase();
+    if (!name) return null;
+    return (box.__recentMeals || []).find((meal) => meal.name.toLowerCase() === name) || null;
+  }
+  function syncForgetButton(){
+    const box = $('mobileDailyRecentMeals');
+    const forget = box?.querySelector('#mobileDailyRecentMealForget');
+    if (!forget) return;
+    const meal = mealInField(box);
+    forget.disabled = !meal;
+    forget.setAttribute('aria-label', meal ? `Oublier « ${meal.name} »` : 'Oublier ce repas');
+    forget.title = forget.getAttribute('aria-label');
+  }
   function installRecentMeals(){
     const nameInput = $('mealName');
     if (!nameInput || $('mobileDailyRecentMeals')) return;
     const box = doc.createElement('div');
     box.id = 'mobileDailyRecentMeals';
     box.className = 'mobileDailyRecentMeals';
-    box.hidden = true;
-    box.innerHTML = '<div class="mobileDailyRecentMeals__selectWrap">'
-      + '<select id="mobileDailyRecentMealSelect" class="mobileDailyRecentMeals__select" aria-label="Tes habitudes"><option value="">Tes habitudes…</option></select>'
-      + '<button type="button" class="mobileDailyRecentMeals__forget" id="mobileDailyRecentMealForget" title="Oublier ce repas" aria-label="Oublier ce repas" disabled>🗑</button></div>'
+    box.innerHTML = '<div class="mobileDailyRecentMeals__field"></div>'
       + '<p class="mobileDailyRecentMeals__note muted" id="mobileDailyRecentMealNote" aria-live="polite" hidden></p>';
-    const select = box.querySelector('#mobileDailyRecentMealSelect');
-    const forget = box.querySelector('#mobileDailyRecentMealForget');
-    const selected = () => select.value === '' ? null : box.__recentMeals?.[Number(select.value)];
+    const field = box.querySelector('.mobileDailyRecentMeals__field');
+    nameInput.insertAdjacentElement('afterend', box);
+    field.appendChild(nameInput);
+    nameInput.classList.add('mobileDailyRecentMeals__input');
+    field.insertAdjacentHTML('beforeend',
+      '<button type="button" class="mobileDailyRecentMeals__forget" id="mobileDailyRecentMealForget" title="Oublier ce repas" aria-label="Oublier ce repas" disabled>🗑</button>'
+      + '<span class="mobileDailyRecentMeals__chevron" aria-hidden="true">▾</span>'
+      + '<select id="mobileDailyRecentMealSelect" class="mobileDailyRecentMeals__select" aria-label="Tes habitudes"><option value="">Tes habitudes…</option></select>');
+    const select = field.querySelector('#mobileDailyRecentMealSelect');
+    const forget = field.querySelector('#mobileDailyRecentMealForget');
     select.addEventListener('change', () => {
-      const meal = selected();
-      forget.disabled = !meal;
+      const meal = select.value === '' ? null : box.__recentMeals?.[Number(select.value)];
       fillMealForm(meal);
+      select.value = '';
+      syncForgetButton();
     });
+    nameInput.addEventListener('input', syncForgetButton);
     forget.addEventListener('click', () => {
-      const meal = selected();
+      const meal = mealInField(box);
       if (!meal) return;
       forgetRecentMeal(meal);
       box.__recentMealNote = `« ${meal.name} » : oublié jusqu’à une future note.`;
       syncRecentMeals();
     });
-    nameInput.insertAdjacentElement('afterend', box);
   }
   function syncRecentMeals(){
     const box = $('mobileDailyRecentMeals');
@@ -379,7 +402,6 @@
       note.hidden = !box.__recentMealNote;
       box.__recentMealNote = '';
     }
-    box.hidden = meals.length === 0 && !(note && !note.hidden);
     const select = box.querySelector('#mobileDailyRecentMealSelect');
     if (!select) return;
     /* Toujours remis sur l'invite : une sélection ne vaut que pour remplir le formulaire. */
@@ -394,12 +416,17 @@
       select.appendChild(option);
     });
     select.value = '';
-    const empty = meals.length === 0;
-    select.disabled = empty;
-    box.querySelector('#mobileDailyRecentMealForget').disabled = true;
-    box.querySelector('.mobileDailyRecentMeals__selectWrap').hidden = empty;
+    /* Sans habitude : le champ redevient un simple champ texte (pas de chevron ni corbeille). */
+    box.dataset.empty = meals.length === 0 ? '1' : '0';
+    syncForgetButton();
   }
-  function removeRecentMeals(){ $('mobileDailyRecentMeals')?.remove(); }
+  function removeRecentMeals(){
+    const box = $('mobileDailyRecentMeals');
+    if (!box) return;
+    const nameInput = $('mealName');
+    if (nameInput && box.contains(nameInput)) { nameInput.classList.remove('mobileDailyRecentMeals__input'); box.before(nameInput); }
+    box.remove();
+  }
 
   /* v23 : décompte du jour — lecture de #rK (reste à consommer, calculé par le
      moteur legacy) et #eK (déjà consommé). Aucun calcul ici. */
@@ -523,6 +550,7 @@
   }
 
   function collapseActions(){
+    resetScrollSpacer();
     ['spend', 'meals', 'activity'].forEach((key) => {
       const card = $(`mobileDaily${key[0].toUpperCase()}${key.slice(1)}Card`);
       const slot = $(`mobileDaily${key[0].toUpperCase()}${key.slice(1)}Slot`);
@@ -664,10 +692,32 @@
       const appbarH = appbar
         ? appbar.getBoundingClientRect().bottom
         : (parseInt(global.getComputedStyle(doc.documentElement).getPropertyValue('--appbar-h'), 10) || 56);
-      const y = anchor.getBoundingClientRect().top + global.scrollY - appbarH - 12;
-      global.scrollTo({ top: Math.max(0, y), behavior:'smooth' });
+      const y = Math.max(0, anchor.getBoundingClientRect().top + global.scrollY - appbarH - 12);
+      /* v24.6 : quand la page est trop courte (Dépense, Activité), le navigateur ne peut pas
+         défiler jusqu'à y. Une entretoise en fin de vue Aujourd'hui apporte la hauteur manquante ;
+         elle est remise à zéro à la fermeture du volet et au changement de vue. */
+      const spacer = ensureScrollSpacer();
+      if (spacer) {
+        spacer.style.height = '0px';
+        const missing = y + global.innerHeight - doc.documentElement.scrollHeight;
+        if (missing > 0) spacer.style.height = `${Math.ceil(missing)}px`;
+      }
+      global.scrollTo({ top: y, behavior:'smooth' });
     }, 20);
   }
+  function ensureScrollSpacer(){
+    const view = $('mobileDailyToday');
+    if (!view) return null;
+    let spacer = $('mobileDailyScrollSpacer');
+    if (!spacer) {
+      spacer = doc.createElement('div');
+      spacer.id = 'mobileDailyScrollSpacer';
+      spacer.setAttribute('aria-hidden', 'true');
+      view.appendChild(spacer);
+    }
+    return spacer;
+  }
+  function resetScrollSpacer(){ const spacer = $('mobileDailyScrollSpacer'); if (spacer) spacer.style.height = '0px'; }
 
   /* Clic utilisateur : re-clic sur l'étape ouverte => on referme (la carte disparaît). */
   function toggleMobileSetupStep(key){
@@ -687,6 +737,7 @@
   function setView(view, options = {}){
     if (!['today','history','settings'].includes(view)) view = 'today';
     activeView = view;
+    resetScrollSpacer();
     const map = { today:'mobileDailyToday', history:'mobileDailyHistory', settings:'mobileDailySettings' };
     Object.entries(map).forEach(([key, id]) => {
       const el = $(id); if (!el) return;
