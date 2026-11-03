@@ -224,7 +224,7 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.match(chain.text, /^Ta montre dit 4000, l’app retient 3200 kcal ℹ️$/, `chaîne lisible (${chain.text})`);
       const dot = await page.$eval('#mobileDailySpendChain .info-dot', (e) => ({ role:e.getAttribute('role'), text:e.getAttribute('data-modaltext') }));
       assert.equal(dot.role, 'button');
-      assert.match(dot.text, /Marge de sécurité : −20 %/, 'explication de la prudence dans l\'info-dot');
+      assert.match(dot.text, /Par prudence, l’app en retire 20 % : elle retient 3200 kcal/, 'explication de la prudence dans l\'info-dot');
       await page.click('#mobileDailySpendChain .info-dot'); await page.waitForTimeout(300);
       assert.equal(await display(page, '#watchInfoModal'), 'block', 'info-dot ouvre la modale');
       await page.evaluate(() => document.querySelector('#watchInfoModal').classList.remove('is-open'));
@@ -233,14 +233,20 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.match(head, /^Reste \d+ kcal sur cible de \d+ kcal$/, `en-tête (${head})`);
       const target = Number(head.match(/cible de (\d+)/)[1]);
       assert.equal(target, 2944, 'cible = 92 % de 3200');
-      /* Préremplissage par nom (casse ignorée), sans ajout. */
+      /* v25.5 : suggestions en tapant (remplacent le préremplissage par nom) ; rien n'est choisi tout seul. */
       await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
-      await page.fill('#mealName', 'petit DÉJ'); await page.waitForTimeout(100);
-      assert.deepEqual(await page.$$eval('#mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['420', '21', '52', '13'], 'valeurs préremplies');
+      await page.fill('#mealName', 'petit DÉ'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealSuggest .mealSuggest__item', (e) => e.map((x) => x.textContent)), ['NotéPetit déj420 kcal'], 'suggestion « Noté »');
+      assert.equal(await page.$eval('#mealK', (e) => e.value), '0', 'taper ne remplit rien');
+      await page.keyboard.press('Enter'); await page.waitForTimeout(100);
+      assert.equal(await page.$eval('#mealK', (e) => e.value), '0', 'Entrée sans sélection : rien de choisi');
+      await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealName, #mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['Petit déj', '420', '21', '52', '13'], 'flèche + Entrée : valeurs remplies');
+      assert.equal(await page.isVisible('#mealSuggest'), false, 'liste fermée après choix');
+      assert.equal(await page.isVisible('#mobileDailyRecentMealForget'), true, 'corbeille visible : repas noté');
       assert.equal(await count(page), '0/3', 'rien ajouté');
-      /* Valeurs déjà saisies : pas d'écrasement. */
-      await page.fill('#mealName', ''); await page.fill('#mealK', '999'); await page.fill('#mealName', 'petit déj'); await page.waitForTimeout(100);
-      assert.equal(await page.$eval('#mealK', (e) => e.value), '999', 'valeur saisie conservée');
+      await page.fill('#mealName', 'Mon goûter'); await page.waitForTimeout(150);
+      assert.equal(await page.isVisible('#mealSuggest'), false, 'nom nouveau : pas de liste, saisie libre');
       /* Sans prudence : chaîne courte. */
       await context.close();
       const plain = await open(browser, origin, fixture({ ...simpleSettings, errPct:0 }), MOBILE);
@@ -248,7 +254,7 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await plain.page.$('#mobileDailySpendChain .info-dot'), null, 'pas d\'info-dot sans prudence');
       await plain.context.close();
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
-      ok('Dépense : chaîne lisible ; en-tête avec cible ; préremplissage par nom');
+      ok('Dépense : chaîne lisible ; en-tête avec cible ; suggestions en tapant sans choix automatique');
     }
 
     /* 3e. v23.5 : volets refermables ; libellés mesures scindés ; carte Montre raccourcie. */
@@ -306,8 +312,15 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await drawerOpen(), true);
       await page.touchscreen.tap(30, 700); await page.waitForTimeout(300); /* zone hors tiroir */
       assert.equal(await drawerOpen(), false, 'tiroir fermé par un tap extérieur');
+      /* v25.3 : pas de bouton Mon cadre dans le tiroir ; ouvrir ☰ referme le tiroir. */
+      await page.tap('#mobileDailyContextBtn'); await page.waitForTimeout(300);
+      assert.equal(await page.$('#phase5StatusBar .mobileDailyDrawerSettings'), null, 'pas de bouton Changer mon cadre dans le tiroir');
+      await page.tap('#menuBtn'); await page.waitForTimeout(300);
+      assert.equal(await menuOpen(), true, 'menu ouvert');
+      assert.equal(await drawerOpen(), false, 'ouvrir le menu referme le tiroir');
+      await page.tap('#menuBtn'); await page.waitForTimeout(200);
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
-      ok('Menu → Réglages ferme le menu ; tiroir Contexte : croix et tap extérieur');
+      ok('Menu → Réglages ferme le menu ; tiroir Contexte : croix, tap extérieur, fermé à l’ouverture du menu');
       await context.close();
     }
 
@@ -342,37 +355,52 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       await context.close();
     }
 
-    /* 3g. v25.0 : pont NutriApp (lecture seule) — recette dans la liste du champ repas,
-       ingrédient cherchable dans « L'étiquette » ; rien n'est écrit dans nutriapp.*. */
+    /* 3g. Pont NutriApp (lecture seule) — v25.4 : recette cherchée dans « Les valeurs »,
+       ingrédient cherché dans « L'étiquette » ; rien n'est écrit dans nutriapp.*. */
     {
-      const ing = [{ name:'Flocons d’avoine', kcal100:372, p100:13.5, g100:58.7, l100:7 }, { name:'Œuf', kcal:143, p:12.6, carbs:0.7, fat:9.5 }];
-      const rec = [{ name:'Porridge', parts:2, rows:[{ macrosResolved:{ kcal:372, p:13.5, c:58.7, f:7 } }, { macrosResolved:{ kcal:130, p:6.8, c:9.6, f:7.2 } }] }, { id:'soupe-1', name:'Soupe', parts:3, updatedAt:'2026-01-01T00:00:00.000Z', rows:[{ kcal:300, p:9, carbs:45, fat:6 }] }];
+      /* v25.2 : recettes recalculées comme NutriApp (ingrédients × quantités, unités converties). */
+      const ing = [{ name:'Flocons d’avoine', kcal100:372, p100:13.5, g100:58.7, l100:7 }, { name:'Œuf', kcal:143, p:12.6, carbs:0.7, fat:9.5 }, { id:'lait', name:'Lait', profile:'liquid', allowedUnits:['g', 'ml'], conversions:{ mlWeightG:1.03 }, kcal:47, p:3.4, carbs:4.8, fat:1.6 }];
+      const rec = [{ name:'Porridge', parts:2, rows:[{ ingredientName:'Flocons d’avoine', qty:100, unit:'g' }, { ingredientId:'lait', qty:200, unit:'ml' }] }, { id:'soupe-1', name:'Soupe', parts:3, updatedAt:'2026-01-01T00:00:00.000Z', rows:[{ ingredientName:'Œuf', qty:300 }] }];
       const storage = { ...fixture(simpleSettings), 'nutriapp.ingredients.v2':JSON.stringify(ing), 'nutriapp.recipes.v2':JSON.stringify(rec) };
       const { context, page, pageErrors } = await open(browser, origin, storage, MOBILE);
       const nutri = () => page.evaluate(() => [localStorage.getItem('nutriapp.ingredients.v2'), localStorage.getItem('nutriapp.recipes.v2')]);
       const before = await nutri();
       await page.click('[data-mobile-action="meals"]'); await page.waitForTimeout(300);
-      assert.equal(await page.$eval('#mobileDailyRecentMeals', (e) => e.dataset.empty), '0', 'recettes seules : la liste existe');
-      assert.deepEqual(await page.$$eval('#mobileDailyRecentMealSelect optgroup', (g) => g.map((x) => x.label)), ['Recettes NutriApp (1 portion)']);
-      await page.selectOption('#mobileDailyRecentMealSelect', 'r:0'); await page.waitForTimeout(150);
-      assert.deepEqual(await page.$$eval('#mealName, #mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['Porridge', '251', '10.2', '34.2', '7.1'], 'une portion de recette');
-      assert.equal(await page.isVisible('#mobileDailyRecentMealForget'), true, 'corbeille visible sur une recette');
+      /* v25.5 : recettes proposées en tapant dans « Ce que tu as mangé » (étiquette NutriApp), plus de champ dans « Les valeurs ». */
+      assert.equal(await page.$('#nutriRecipeSearch'), null, 'plus de recherche de recettes dans « Les valeurs »');
+      assert.equal(await page.$eval('#mobileDailyRecentMeals', (e) => e.dataset.empty), '1', 'sans repas noté : pas de ▾');
+      await page.click('#mealNameInfo'); await page.waitForTimeout(300);
+      assert.match(await page.textContent('#watchInfoBody'), /repas que tu as déjà notés, et tes recettes de NutriApp[\s\S]*case « Suivi » est cochée/, 'ⓘ du champ : origine expliquée');
+      await page.evaluate(() => document.querySelector('#watchInfoModal').classList.remove('is-open'));
+      await page.fill('#mealName', 'por'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealSuggest .mealSuggest__item', (e) => e.map((x) => x.textContent)), ['NutriAppPorridge234 kcal / portion']);
+      await page.click('#mealSuggest [data-suggest-index="0"]'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealName, #mealK, #mealP, #mealC, #mealF', (els) => els.map((e) => e.value)), ['Porridge', '234', '10.3', '34.3', '5.1'], 'une portion de recette');
+      assert.equal(await page.evaluate(() => document.activeElement?.id), 'btnAddMeal', 'curseur sur « Ajouter ce repas »');
+      assert.equal(await page.isVisible('#mobileDailyRecentMealForget'), false, 'pas de corbeille pour une recette');
       await page.click('#btnAddMeal'); await page.waitForTimeout(400);
-      /* v25.1 : « Soupe » (recette seule) retirée par la corbeille ; Porridge (habitude + recette) retiré des deux. */
-      await page.selectOption('#mobileDailyRecentMealSelect', 'r:1'); await page.waitForTimeout(150);
-      assert.equal(await page.$eval('#mealName', (e) => e.value), 'Soupe');
-      await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
-      assert.match(await page.textContent('#mobileDailyRecentMealNote'), /« Soupe » : retirée de la liste jusqu’à sa prochaine modification dans NutriApp\./);
-      assert.deepEqual(await page.$$eval('#mobileDailyRecentMealSelect option', (o) => o.map((x) => x.textContent)), ['✎ Écrire autre chose', 'Porridge · 251 kcal', 'Porridge · 251 kcal'], 'Soupe absente ; Porridge en habitude et en recette');
-      assert.equal(await page.$eval('#mealName', (e) => e.value), '', 'champ vidé');
-      assert.deepEqual(Object.keys(JSON.parse(await page.evaluate(() => localStorage.getItem('secheapp.default.hiddenNutriRecipes.v1')))), ['id:soupe-1']);
-      await page.selectOption('#mobileDailyRecentMealSelect', '0'); await page.waitForTimeout(150);
-      await page.click('#mobileDailyRecentMealForget'); await page.waitForTimeout(300);
-      assert.match(await page.textContent('#mobileDailyRecentMealNote'), /« Porridge » : retiré de la liste \(habitude et recette NutriApp\)\./);
-      assert.equal(await page.$eval('#mobileDailyRecentMeals', (e) => e.dataset.empty), '1', 'plus rien dans la liste : champ texte simple');
+      /* Recette et repas noté du même nom : seule la recette est proposée. */
+      await page.fill('#mealName', 'por'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealSuggest .mealSuggest__tag', (e) => e.map((x) => x.textContent)), ['NutriApp'], 'doublon : la recette gagne');
+      await page.keyboard.press('Escape');
+      /* Recette retirée avant v25.4 (clé hiddenNutriRecipes) : reste absente. */
+      await page.evaluate(() => localStorage.setItem('secheapp.default.hiddenNutriRecipes.v1', JSON.stringify({ 'id:soupe-1':'2026-11-02T08:00:00.000Z' })));
+      await page.fill('#mealName', ''); await page.evaluate(() => document.activeElement?.blur()); await page.focus('#mealName'); await page.fill('#mealName', 'sou'); await page.waitForTimeout(150);
+      assert.equal(await page.isVisible('#mealSuggest'), false, 'recette retirée : pas proposée');
+      await page.fill('#mealName', '');
       assert.equal((await days(page)).find((x) => x.date === today).meals.length, 1, 'le repas noté reste dans la journée');
       await page.click('#mealModeQuick'); await page.waitForTimeout(200);
       assert.equal(await page.isVisible('#nutriSearch'), true, 'champ NutriApp visible');
+      /* v25.3 : intro sur une ligne, exemple dans le ⓘ, libellé explicite. */
+      const intro = await page.$eval('#mealPanelQuick > p.muted', (e) => ({ text:e.textContent.trim(), lines:Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)) }));
+      assert.deepEqual(intro, { text:'Recopie l’étiquette, mets le poids.', lines:1 }, `intro sur une ligne (${JSON.stringify(intro)})`);
+      assert.equal(await page.textContent('label[for="nutriSearch"]'), 'Chercher un ingrédient NutriApp');
+      await page.click('#mealQuickInfo'); await page.waitForTimeout(300);
+      assert.match(await page.textContent('#watchInfoBody'), /35 g d’un produit à 420 kcal pour 100 g, ça fait 147 kcal[\s\S]*ingrédient de NutriApp/, 'exemple et origine NutriApp dans le ⓘ');
+      assert.equal(await page.isVisible('#btnQuickAddMeal'), true, '« Calculer et ajouter » visible');
+      assert.equal(await page.$eval('#btnQuickAddMeal', (b) => !!b.closest('#mealPanelQuick')), false, 'bouton sorti de la carte');
+      assert.equal(await page.isVisible('#btnAddMeal'), false, '« Ajouter ce repas » caché dans L’étiquette');
+      await page.evaluate(() => document.querySelector('#watchInfoModal').classList.remove('is-open'));
       await page.fill('#nutriSearch', 'oeu'); await page.waitForTimeout(150);
       assert.deepEqual(await page.$$eval('#nutriResults strong', (e) => e.map((x) => x.textContent)), ['Œuf']);
       await page.click('#nutriResults [data-nutri-index="0"]'); await page.waitForTimeout(150);
@@ -380,7 +408,7 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await page.evaluate(() => document.activeElement?.id), 'qWeight', 'curseur sur le poids');
       await page.fill('#qWeight', '120'); await page.click('#btnQuickAddMeal'); await page.waitForTimeout(400);
       const todayDay = (await days(page)).find((x) => x.date === today);
-      assert.deepEqual(todayDay.meals.map((m) => [m.name, m.k, m.p, m.c, m.f]), [['Porridge', 251, 10.2, 34.2, 7.1], ['Œuf', 172, 15.1, 0.8, 11.4]], 'repas ajoutés en grammes');
+      assert.deepEqual(todayDay.meals.map((m) => [m.name, m.k, m.p, m.c, m.f]), [['Porridge', 234, 10.3, 34.3, 5.1], ['Œuf', 172, 15.1, 0.8, 11.4]], 'repas ajoutés en grammes');
       assert.deepEqual(await nutri(), before, 'nutriapp.* jamais modifié');
       assert.equal(await overflowX(page), 0);
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
@@ -389,8 +417,11 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       await none.page.click('[data-mobile-action="meals"]'); await none.page.waitForTimeout(300);
       await none.page.click('#mealModeQuick'); await none.page.waitForTimeout(200);
       assert.equal(await none.page.isVisible('#nutriSearch'), false, 'sans NutriApp : pas de champ');
+      await none.page.click('#mealModeManual'); await none.page.waitForTimeout(150);
+      assert.equal(await none.page.isVisible('#btnQuickAddMeal'), false, '« Calculer et ajouter » caché dans Les valeurs');
+      assert.equal(await none.page.isVisible('#btnAddMeal'), true);
       await none.context.close();
-      ok('NutriApp : recette (1 portion), ingrédient /100 g + poids, lecture seule');
+      ok('NutriApp : recettes proposées dans « Ce que tu as mangé », ingrédients dans « L’étiquette », bouton sous la carte, lecture seule');
     }
 
     /* 4. Cycle mobile → desktop → mobile : restauration de data-um et du bouton. */

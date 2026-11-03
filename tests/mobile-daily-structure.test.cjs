@@ -101,7 +101,8 @@ test('surface mobile : la barre de statut devient un tiroir sans nouveau contenu
   assert.match(js, /function installContextDrawer/);
   assert.match(js, /function watchContextDrawer/);
   assert.match(css, /phase5StatusBar--drawer/);
-  assert.match(js, /Changer mon cadre/);
+  assert.doesNotMatch(js, /textContent = 'Changer mon cadre'/, 'Mon cadre : accès unique par le menu ☰ (v25.3)');
+  assert.match(js, /\$\('menuBtn'\)\?\.addEventListener\('click', closeDrawer, true\)/);
   assert.match(js, /function installMobileInfoDots/);
   assert.match(css, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
   assert.match(css, /#phase5ShellLine\{display:block!important;margin:0!important\}/);
@@ -113,7 +114,8 @@ test('surface mobile : la barre de statut devient un tiroir sans nouveau contenu
 test('surface mobile : le résumé est collé sous l’appbar et le point Sport réutilise le contrat info-dot', () => {
   assert.match(css, /\.container\{max-width:680px;padding:calc\(var\(--appbar-h, 56px\) \+ 4px\)/);
   assert.match(css, /\.mobileDaily__head\{display:none\}/);
-  assert.match(js, /cardId:'sleepCard'/);
+  assert.doesNotMatch(js, /cardId:'sleepCard'/, 'v25.5 : plus de ⓘ Activité / Sommeil');
+  assert.match(css, /#mobileDailyActivitySlot #sportCard \.phase1SplitNote,#mobileDailyMoreSlot #sleepCard \.phase1SplitNote\{display:none\}/);
   assert.match(js, /dot\.className = `info-dot mobileDailyInlineInfo/);
   assert.match(js, /note\.classList\.add\('mobileDailyInfoSource'\)/);
   assert.match(css, /\.phase1SplitNote\.mobileDailyInfoSource\{display:none!important\}/);
