@@ -6,16 +6,16 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Suivi Calories &amp; Nutrition (local)</title>
-<link rel="stylesheet" href="./css/base/foundation.css?v=25.5"/>
-<link rel="stylesheet" href="./css/components/primitives.css?v=25.5"/>
-<link rel="stylesheet" href="./css/layout/shell.css?v=25.5"/>
-<link rel="stylesheet" href="./css/layout/visibility.css?v=25.5"/>
-<link rel="stylesheet" href="./css/components/data-surfaces.css?v=25.5"/>
-<link rel="stylesheet" href="./css/components/overlays.css?v=25.5"/>
-<link rel="stylesheet" href="./css/screens/diabetes.css?v=25.5"/>
-<link rel="stylesheet" href="./css/screens/flowviz.css?v=25.5"/>
-<link rel="stylesheet" href="./css/screens/mobile-daily.css?v=25.5"/>
-<link rel="stylesheet" href="./css/utils/helpers.css?v=25.5"/>
+<link rel="stylesheet" href="./css/base/foundation.css?v=25.6"/>
+<link rel="stylesheet" href="./css/components/primitives.css?v=25.6"/>
+<link rel="stylesheet" href="./css/layout/shell.css?v=25.6"/>
+<link rel="stylesheet" href="./css/layout/visibility.css?v=25.6"/>
+<link rel="stylesheet" href="./css/components/data-surfaces.css?v=25.6"/>
+<link rel="stylesheet" href="./css/components/overlays.css?v=25.6"/>
+<link rel="stylesheet" href="./css/screens/diabetes.css?v=25.6"/>
+<link rel="stylesheet" href="./css/screens/flowviz.css?v=25.6"/>
+<link rel="stylesheet" href="./css/screens/mobile-daily.css?v=25.6"/>
+<link rel="stylesheet" href="./css/utils/helpers.css?v=25.6"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
 <meta content="#ffffff" name="theme-color"/>
@@ -1607,16 +1607,6 @@
       Type de régime = valeurs de départ. Si tu modifies la cible énergétique, les protéines ou les lipides, l’app bascule en “Personnalisé”.
     </p></div>
 </details>
-<div class="row">
-<div class="minw220-flex2">
-<label for="mealName">Ce que tu as mangé <span aria-label="Ce qu’on te propose en tapant" class="info-dot" id="mealNameInfo" role="button" tabindex="0" data-modaltext="Tape quelques lettres : on te propose les repas que tu as déjà notés, et tes recettes de NutriApp. Une recette compte pour une portion. Choisis, et les valeurs se remplissent. Si rien ne colle, continue à taper ton nom à toi. Les recettes de NutriApp n’apparaissent que si tu l’utilises sur cet appareil, dans le même navigateur, et si leur case « Suivi » est cochée.">ℹ️</span></label>
-<input id="mealName" placeholder="ex: Petit-déj, Pancakes, Collation, Dîner…" type="text"/>
-<p class="muted">
-          Les totaux se font tout seuls.
-        </p>
-
-</div>
-</div>
 
 <!-- Mode d'encodage (Manuel / Rapide) -->
 <div class="row phase2MealModeRow" style="align-items:center; justify-content:space-between; gap:12px; margin-top:.2rem" role="tablist" aria-label="Façon de noter le repas">
@@ -1628,28 +1618,28 @@
 
 <div class="card panel-subtle" id="mealPanelManual">
 <h3>Les valeurs</h3>
-<p class="muted">Si tu les connais, tape-les.</p>
+<p class="muted">Si tu les connais, tape-les. Sinon, passe par l’étiquette.</p>
+<!-- v25.6 : un seul champ de nom, déplacé dans la carte de l’onglet ouvert (phase6-meal-suggest.js) -->
+<div class="mealNameSlot" id="mealNameSlotManual">
+<div class="mealNameBlock" id="mealNameBlock">
+<label for="mealName">Ce que tu as mangé <span aria-label="Ce qu’on te propose en tapant" class="info-dot" id="mealNameInfo" role="button" tabindex="0" data-modaltext="Tape quelques lettres : on te propose les repas que tu as déjà notés, et tes recettes de NutriApp. Une recette compte pour une portion. Choisis, et les valeurs se remplissent. Si rien ne colle, continue à taper ton nom à toi. Les recettes de NutriApp n’apparaissent que si tu l’utilises sur cet appareil, dans le même navigateur, et si leur case « Suivi » est cochée.">ℹ️</span></label>
+<input id="mealName" placeholder="ex: Petit-déj, Pancakes, Collation, Dîner…" type="text"/>
+</div>
+</div>
 <div class="row mt-04">
 <div><label>kcal</label><input id="mealK" min="0" step="1" type="number" value="0"/></div>
 <div><label>P (g)</label><input id="mealP" min="0" step="0.1" type="number" value="0"/></div>
 <div><label>G (g)</label><input id="mealC" min="0" step="0.1" type="number" value="0"/></div>
 <div><label>L (g)</label><input id="mealF" min="0" step="0.1" type="number" value="0"/></div>
 </div>
-<p class="muted mt-02">
-        Sinon, l’onglet Étiquette les calcule pour toi.
-      </p>
 </div>
 <!-- Option /100g (expert) -->
 <div class="card panel-subtle hidden" id="mealPanelQuick">
-<h3>L’étiquette /100 g <span aria-label="Exemple de calcul" class="info-dot" id="mealQuickInfo" role="button" tabindex="0" data-modaltext="Recopie les valeurs pour 100 g écrites sur l’emballage, puis mets le poids que tu as mangé : l’app fait le calcul. Par exemple, 35 g d’un produit à 420 kcal pour 100 g, ça fait 147 kcal. Tu peux aussi chercher un ingrédient de NutriApp (si tu l’utilises sur cet appareil, dans le même navigateur) : ses valeurs pour 100 g se remplissent toutes seules.">ℹ️</span></h3>
+<h3>L’étiquette /100 g <span aria-label="Comment remplir l’étiquette" class="info-dot" id="mealQuickInfo" role="button" tabindex="0" data-modaltext="Écris ce que tu as mangé : le repas portera ce nom. Si c’est un ingrédient de NutriApp, il t’est proposé pendant que tu tapes, et ses valeurs pour 100 g se remplissent toutes seules (si tu utilises NutriApp sur cet appareil, dans le même navigateur). Sinon, recopie les valeurs pour 100 g de l’emballage, puis mets le poids : l’app fait le calcul. Par exemple, 35 g d’un produit à 420 kcal pour 100 g, ça fait 147 kcal.">ℹ️</span></h3>
 <p class="muted">
         Recopie l’étiquette, mets le poids.
       </p>
-<div class="nutriSearch" id="nutriSearchBox" hidden>
-<label for="nutriSearch">Chercher un ingrédient NutriApp</label>
-<input id="nutriSearch" type="search" autocomplete="off" placeholder="ex : flocons d’avoine" role="combobox" aria-autocomplete="list" aria-controls="nutriResults" aria-expanded="false"/>
-<ul class="nutriResults" id="nutriResults" role="listbox" aria-label="Ingrédients NutriApp" hidden></ul>
-</div>
+<div class="mealNameSlot" id="mealNameSlotQuick"></div>
 <div class="row mt-05">
 <div>
 <label>kcal / 100 g</label>
@@ -2993,35 +2983,35 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 
 
 <!-- Scripts -->
-<script src="./js/phase6/phase6-core.js?v=25.5"></script>
-<script src="./js/phase6/phase6-boundaries.js?v=25.5"></script>
-<script src="./js/phase6/phase6-render.js?v=25.5"></script>
-<script src="./js/phase6/phase6-flows.js?v=25.5"></script>
-<script src="./js/phase6/phase6-features.js?v=25.5"></script>
-<script src="./js/legacy/legacy-app-state-navigation.js?v=25.5"></script>
-<script src="./js/legacy/legacy-storage-days.js?v=25.5"></script>
-<script src="./js/legacy/legacy-core-runtime.js?v=25.5"></script>
-<script src="./js/legacy/legacy-profiles-settings.js?v=25.5"></script>
-<script src="./js/legacy/legacy-meals-body.js?v=25.5"></script>
-<script src="./js/legacy/legacy-history.js?v=25.5"></script>
-<script src="./js/legacy/legacy-sport-sleep.js?v=25.5"></script>
-<script src="./js/legacy/legacy-diabetes.js?v=25.5"></script>
-<script src="./js/legacy/legacy-watch-ui.js?v=25.5"></script>
-<script src="./js/legacy/legacy-engine-core.js?v=25.5"></script>
-<script src="./js/legacy/legacy-app-init.js?v=25.5"></script>
-<script src="./js/legacy/legacy-shell-observers.js?v=25.5"></script>
-<script src="./js/legacy/legacy-compat-ui.js?v=25.5"></script>
-<script src="./js/legacy/legacy-carb-patches.js?v=25.5"></script>
-<script src="./js/legacy/legacy-compromise-ui.js?v=25.5"></script>
-<script src="./js/legacy/legacy-training-load-matrix.js?v=25.5"></script>
-<script src="./js/legacy/legacy-cloud-refresh.js?v=25.5"></script>
-<script src="./js/legacy/legacy-cloud-sync.js?v=25.5"></script>
-<script src="./js/phase6/phase6-bootstrap.js?v=25.5"></script>
-<script src="./js/legacy/legacy-mobile-discrete-steppers.js?v=25.5"></script>
-<script src="./js/legacy/legacy-playful-tracking.js?v=25.5"></script>
-<script src="./js/phase6/phase6-nutriapp-bridge.js?v=25.5"></script>
-<script src="./js/phase6/phase6-mobile-daily.js?v=25.5"></script>
-<script src="./js/phase6/phase6-meal-suggest.js?v=25.5"></script>
+<script src="./js/phase6/phase6-core.js?v=25.6"></script>
+<script src="./js/phase6/phase6-boundaries.js?v=25.6"></script>
+<script src="./js/phase6/phase6-render.js?v=25.6"></script>
+<script src="./js/phase6/phase6-flows.js?v=25.6"></script>
+<script src="./js/phase6/phase6-features.js?v=25.6"></script>
+<script src="./js/legacy/legacy-app-state-navigation.js?v=25.6"></script>
+<script src="./js/legacy/legacy-storage-days.js?v=25.6"></script>
+<script src="./js/legacy/legacy-core-runtime.js?v=25.6"></script>
+<script src="./js/legacy/legacy-profiles-settings.js?v=25.6"></script>
+<script src="./js/legacy/legacy-meals-body.js?v=25.6"></script>
+<script src="./js/legacy/legacy-history.js?v=25.6"></script>
+<script src="./js/legacy/legacy-sport-sleep.js?v=25.6"></script>
+<script src="./js/legacy/legacy-diabetes.js?v=25.6"></script>
+<script src="./js/legacy/legacy-watch-ui.js?v=25.6"></script>
+<script src="./js/legacy/legacy-engine-core.js?v=25.6"></script>
+<script src="./js/legacy/legacy-app-init.js?v=25.6"></script>
+<script src="./js/legacy/legacy-shell-observers.js?v=25.6"></script>
+<script src="./js/legacy/legacy-compat-ui.js?v=25.6"></script>
+<script src="./js/legacy/legacy-carb-patches.js?v=25.6"></script>
+<script src="./js/legacy/legacy-compromise-ui.js?v=25.6"></script>
+<script src="./js/legacy/legacy-training-load-matrix.js?v=25.6"></script>
+<script src="./js/legacy/legacy-cloud-refresh.js?v=25.6"></script>
+<script src="./js/legacy/legacy-cloud-sync.js?v=25.6"></script>
+<script src="./js/phase6/phase6-bootstrap.js?v=25.6"></script>
+<script src="./js/legacy/legacy-mobile-discrete-steppers.js?v=25.6"></script>
+<script src="./js/legacy/legacy-playful-tracking.js?v=25.6"></script>
+<script src="./js/phase6/phase6-nutriapp-bridge.js?v=25.6"></script>
+<script src="./js/phase6/phase6-mobile-daily.js?v=25.6"></script>
+<script src="./js/phase6/phase6-meal-suggest.js?v=25.6"></script>
 <section class="card">
 <h2>Sources</h2>
 <p class="muted" style="margin-top:.4rem">
