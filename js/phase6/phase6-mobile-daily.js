@@ -252,8 +252,9 @@
     }
     const pct = Number($('errPct')?.value) || 0;
     const mode = $('errMode')?.value;
-    const sign = mode === 'optimistic' ? '+' : '−';
-    const modalText = `Ta montre dit ${Math.round(raw)} kcal.\nMarge de sécurité : ${sign}${pct} % (${mode === 'optimistic' ? 'ajoutée' : 'retirée'}).\nL’app retient ${Math.round(retained)} kcal, et c’est ce chiffre qui fixe ta cible du jour.\nTu peux changer la marge dans Mon cadre › Ce que tu brûles.`;
+    const modalText = mode === 'optimistic'
+      ? `Ta montre dit ${Math.round(raw)} kcal. Tu as choisi d’en ajouter ${pct} % : l’app retient ${Math.round(retained)} kcal, et c’est ce chiffre qui fixe ta cible du jour.\nTu changes cette marge dans Mon cadre › Ce que tu brûles.`
+      : `Ta montre dit ${Math.round(raw)} kcal. Par prudence, l’app en retire ${pct} % : elle retient ${Math.round(retained)} kcal, et c’est ce chiffre qui fixe ta cible du jour.\nTu changes cette marge dans Mon cadre › Ce que tu brûles.`;
     el.innerHTML = `Ta montre dit <strong>${Math.round(raw)}</strong>, l’app retient <strong>${Math.round(retained)} kcal</strong> <span class="info-dot mobileDailyInlineInfo mobileDailySpendInfo" role="button" tabindex="0" aria-label="Pourquoi ${Math.round(retained)} kcal ?" data-modaltext="${modalText.replace(/"/g, '&quot;')}">ℹ️</span>`;
   }
 
@@ -270,24 +271,8 @@
     try { profile = global.localStorage.getItem('secheapp.activeProfile.v1') || $('profileSelect')?.value || 'default'; } catch (_) { }
     return `secheapp.${profile}.forgottenMeals.v1`;
   }
-  /* v25.1 : recettes NutriApp retirées de la liste, par profil. Clé SuiviCalorieApp dédiée,
-     NutriApp n'est jamais modifiée. { [cléRecette]: dateDuRetraitISO } */
-  function hiddenRecipesKey(){ return forgottenMealsKey().replace(/forgottenMeals\.v1$/, 'hiddenNutriRecipes.v1'); }
-  function loadHiddenRecipes(){
-    try { const parsed = JSON.parse(global.localStorage.getItem(hiddenRecipesKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {}; }
-    catch (_) { return {}; }
-  }
-  function hideRecipe(recipe){
-    if (!recipe?.key) return;
-    const map = loadHiddenRecipes();
-    map[recipe.key] = new Date().toISOString();
-    try { global.localStorage.setItem(hiddenRecipesKey(), JSON.stringify(map)); } catch (_) { }
-  }
-  function recipeInField(box){
-    const name = String($('mealName')?.value || '').trim().toLowerCase();
-    if (!name) return null;
-    return (box.__nutriRecipes || []).find((recipe) => recipe.name.toLowerCase() === name) || null;
-  }
+  /* v25.4 : la corbeille ne retire plus de recettes (elles se choisissent par la recherche de « Les valeurs »).
+     Les retraits déjà faits (clé secheapp.<profil>.hiddenNutriRecipes.v1) restent lus par le pont NutriApp. */
   function loadForgottenMeals(){
     try { const parsed = JSON.parse(global.localStorage.getItem(forgottenMealsKey()) || '{}'); return parsed && typeof parsed === 'object' ? parsed : {}; }
     catch (_) { return {}; }
@@ -298,7 +283,7 @@
   function recentMealKey(name, k, p, c, f){
     return name.toLowerCase() === 'repas' ? `repas|${k}|${p}|${c}|${f}` : name.toLowerCase();
   }
-  function recentMeals(){
+  function recentMeals(limit = RECENT_MEALS_MAX){
     let days = [];
     try { days = global.loadDays?.() || []; } catch (_) { days = []; }
     const forgotten = loadForgottenMeals();
@@ -318,11 +303,13 @@
         const lastDate = String(day.date || '');
         if (forgotten[key] && lastDate <= String(forgotten[key])) continue; /* oublié jusqu'à une future note */
         out.push({ name, k, p, c, f, key, lastDate });
-        if (out.length >= RECENT_MEALS_MAX) return out;
+        if (out.length >= limit) return out;
       }
     }
     return out;
   }
+  /* v25.5 : historique complet exposé pour les suggestions de « Ce que tu as mangé » (ordinateur et téléphone). */
+  global.SuiviHabits = { list: (limit) => recentMeals(limit) };
   function forgetRecentMeal(meal){
     if (!meal?.key) return;
     const map = loadForgottenMeals();
@@ -336,19 +323,7 @@
     $('btnAddMeal').click();
     queueSync(140);
   }
-  /* v23.4 : préremplissage par nom. Si le nom tapé correspond à un repas récent et
-     que les quatre champs de valeurs sont vides ou à 0, on les préremplit ; on n'ajoute
-     rien (l'utilisateur garde la main sur « Ajouter ce repas »). */
-  function prefillMealFromName(){
-    if (!media.matches) return;
-    const name = String($('mealName')?.value || '').trim().toLowerCase();
-    if (!name || name === 'repas') return;
-    const untouched = ['mealK', 'mealP', 'mealC', 'mealF'].every((id) => !(Number($(id)?.value) > 0));
-    if (!untouched) return;
-    const meal = ($('mobileDailyRecentMeals')?.__recentMeals || recentMeals()).find((item) => item.name.toLowerCase() === name);
-    if (!meal) return;
-    $('mealK').value = String(meal.k); $('mealP').value = String(meal.p); $('mealC').value = String(meal.c); $('mealF').value = String(meal.f);
-  }
+  /* v25.5 : préremplissage par nom (v23.4) retiré : remplacé par les suggestions de phase6-meal-suggest.js. */
   /* v24.5 : la liste vit sous le champ « Ce que tu as mangé ». Choisir un repas remplit le nom
      et les quatre valeurs (onglet « Les valeurs ») ; on ajoute ensuite avec « Ajouter ce repas ».
      La corbeille reste dans la liste. Le bloc est retiré à la désactivation mobile. */
@@ -365,7 +340,7 @@
   function mealInField(box){
     const name = String($('mealName')?.value || '').trim().toLowerCase();
     if (!name) return null;
-    return (box.__recentMeals || []).find((meal) => meal.name.toLowerCase() === name) || null;
+    return recentMeals(Infinity).find((meal) => meal.name.toLowerCase() === name) || null; /* v25.5 : tout l'historique */
   }
   /* v24.7 : la corbeille n'existe visuellement que si le nom du champ est un repas habituel
      (data-known="1" sur la cellule) ; plus d'état grisé derrière le texte. */
@@ -373,7 +348,7 @@
     const box = $('mobileDailyRecentMeals');
     const forget = box?.querySelector('#mobileDailyRecentMealForget');
     if (!forget) return;
-    const meal = mealInField(box) || recipeInField(box); /* v25.1 : habitude ou recette NutriApp */
+    const meal = mealInField(box); /* v25.4 : la corbeille ne concerne plus que les habitudes */
     forget.hidden = !meal;
     forget.disabled = !meal;
     box.dataset.known = meal ? '1' : '0';
@@ -410,30 +385,19 @@
       if (select.value === MANUAL_MEAL) {
         clearMealForm();
         global.setTimeout(() => nameInput.focus(), 60);
-      } else if (select.value.startsWith('r:')) {
-        /* v25.0 : recette NutriApp = une portion (somme des lignes / nombre de portions). */
-        fillMealForm(box.__nutriRecipes?.[Number(select.value.slice(2))]);
       } else {
         fillMealForm(box.__recentMeals?.[Number(select.value)]);
       }
       select.selectedIndex = -1;
       syncForgetButton();
     });
-    nameInput.addEventListener('input', syncForgetButton);
+    ['input', 'change'].forEach((type) => nameInput.addEventListener(type, syncForgetButton));
     forget.addEventListener('click', () => {
-      /* v25.1 : la corbeille retire de la liste tout ce qui porte ce nom (habitude et/ou recette). */
       const meal = mealInField(box);
-      const recipe = recipeInField(box);
-      if (!meal && !recipe) return;
-      if (meal) forgetRecentMeal(meal);
-      if (recipe) hideRecipe(recipe);
+      if (!meal) return;
+      forgetRecentMeal(meal);
       clearMealForm(); /* v24.7 : le repas oublié quitte aussi le formulaire */
-      const name = (meal || recipe).name;
-      box.__recentMealNote = meal && recipe
-        ? `« ${name} » : retiré de la liste (habitude et recette NutriApp).`
-        : meal
-          ? `« ${name} » : oublié jusqu’à une future note.`
-          : `« ${name} » : retirée de la liste jusqu’à sa prochaine modification dans NutriApp.`;
+      box.__recentMealNote = `« ${meal.name} » : oublié jusqu’à une future note.`;
       syncRecentMeals();
     });
   }
@@ -455,33 +419,17 @@
     const manual = doc.createElement('option');
     manual.value = MANUAL_MEAL; manual.textContent = '✎ Écrire autre chose';
     select.appendChild(manual);
-    /* v25.0 : recettes NutriApp (lecture seule, même origine). Groupes nommés seulement
-       quand il y a des recettes ; sinon la liste reste celle des habitudes. */
-    let recipes = [];
-    try { recipes = global.SuiviNutriApp?.visibleRecipes(global.SuiviNutriApp.listRecipes(global.localStorage), loadHiddenRecipes()) || []; } catch (_) { recipes = []; }
-    box.__nutriRecipes = recipes;
-    const habitsHost = recipes.length ? doc.createElement('optgroup') : select;
-    if (recipes.length) { habitsHost.label = 'Tes habitudes'; if (meals.length) select.appendChild(habitsHost); }
+    /* v25.4 : la liste ne contient que tes repas déjà notés ; les recettes NutriApp se cherchent
+       dans l'onglet « Les valeurs » (champ « Chercher une recette NutriApp »). */
     meals.forEach((meal, index) => {
       const option = doc.createElement('option');
       option.value = String(index);
       option.textContent = `${meal.name} · ${Math.round(meal.k)} kcal`;
-      habitsHost.appendChild(option);
+      select.appendChild(option);
     });
-    if (recipes.length) {
-      const group = doc.createElement('optgroup');
-      group.label = 'Recettes NutriApp (1 portion)';
-      recipes.forEach((recipe, index) => {
-        const option = doc.createElement('option');
-        option.value = `r:${index}`;
-        option.textContent = `${recipe.name} · ${Math.round(recipe.k)} kcal`;
-        group.appendChild(option);
-      });
-      select.appendChild(group);
-    }
     select.selectedIndex = -1;
-    /* Sans habitude ni recette : le champ redevient un simple champ texte (pas de chevron ni corbeille). */
-    box.dataset.empty = meals.length === 0 && recipes.length === 0 ? '1' : '0';
+    /* Sans habitude : le champ redevient un simple champ texte (pas de chevron ni corbeille). */
+    box.dataset.empty = meals.length === 0 ? '1' : '0';
     syncForgetButton();
   }
   function removeRecentMeals(){
@@ -879,10 +827,9 @@
     }
   }
 
-  function installMobileInfoDots(){
-    installMobileInfoDot({ cardId:'sportCard', label:'Activité', className:'mobileDailyActivityInfo' });
-    installMobileInfoDot({ cardId:'sleepCard', label:'Sommeil', className:'mobileDailySleepInfo' });
-  }
+  /* v25.5 : plus de ⓘ sur Activité et Sommeil : leur texte (« Noté aujourd’hui. L’analyse est dans Relire. »)
+     n'aidait pas à remplir. Le mécanisme reste disponible pour une explication utile. */
+  function installMobileInfoDots(){ }
 
   function restoreMobileInfoDots(){
     ['sportCard', 'sleepCard'].forEach((cardId) => {
@@ -901,16 +848,8 @@
     if (bar.dataset.mobileDrawerReady === 'true') return true;
     bar.dataset.mobileDrawerReady = 'true';
     bar.classList.add('phase5StatusBar--drawer');
-    const settingsAction = doc.createElement('button');
-    settingsAction.className = 'mobileDailyDrawerSettings';
-    settingsAction.type = 'button';
-    settingsAction.textContent = 'Changer mon cadre';
-    settingsAction.addEventListener('click', () => {
-      bar.classList.remove('is-open');
-      button.setAttribute('aria-expanded', 'false');
-      setView('settings');
-    });
-    bar.appendChild(settingsAction);
+    /* v25.3 : plus de bouton « Changer mon cadre » ici : Mon cadre s'ouvre par le menu ☰ (accès unique).
+       Le tiroir ne sert qu'à lire le contexte du jour. */
     /* v23.3 : fermeture explicite (croix) et fermeture au tap en dehors du tiroir. */
     const closeDrawer = () => {
       bar.classList.remove('is-open');
@@ -932,6 +871,9 @@
       if (bar.contains(event.target) || button.contains(event.target)) return;
       closeDrawer();
     });
+    /* v25.3 : le bouton ☰ bloque la propagation du clic (legacy-core-runtime.js, e.stopPropagation()) :
+       le tap extérieur ci-dessus ne le voit pas. On écoute donc ☰ directement, en phase de capture. */
+    $('menuBtn')?.addEventListener('click', closeDrawer, true);
     return true;
   }
 
@@ -974,7 +916,6 @@
     $('mobileDailySettingsSlot')?.addEventListener('input', () => queueSync(40));
     $('mobileDailySettingsSlot')?.addEventListener('change', () => queueSync(40));
     $('mobileDailyNextBadge')?.addEventListener('click', () => setView('history'));
-    ['input', 'change'].forEach((type) => $('mealName')?.addEventListener(type, prefillMealFromName));
     global.addEventListener('storage', (event) => { if (!event.key || event.key.startsWith('nutriapp.')) queueSync(40); }); /* v25.0 */
     ['dayDate','todaySpendEdit','btnAddMeal','btnClearMeals','btnSportSave','diabEnabled'].forEach((id) => $(id)?.addEventListener('change', () => queueSync()));
     doc.addEventListener('click', (event) => {
