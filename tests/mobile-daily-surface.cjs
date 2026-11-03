@@ -391,6 +391,9 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal((await days(page)).find((x) => x.date === today).meals.length, 1, 'le repas noté reste dans la journée');
       /* v25.6 : le champ du nom est en tête de « Les valeurs », puis suit l'onglet « L'étiquette ». */
       assert.equal(await page.$eval('#mealName', (e) => !!e.closest('#mealPanelManual')), true, 'nom dans « Les valeurs »');
+      /* v25.7 : intro de « Les valeurs » sur une ligne aussi. */
+      const introV = await page.$eval('#mealPanelManual > p.muted', (e) => ({ text:e.textContent.trim(), lines:Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)) }));
+      assert.deepEqual(introV, { text:'Tape-les, ou passe par l’étiquette.', lines:1 }, `intro des valeurs sur une ligne (${JSON.stringify(introV)})`);
       assert.equal(await page.$('#nutriSearch'), null, 'plus de champ de recherche séparé');
       await page.click('#mealModeQuick'); await page.waitForTimeout(200);
       assert.equal(await page.$eval('#mealName', (e) => !!e.closest('#mealPanelQuick')), true, 'nom dans « L’étiquette »');
