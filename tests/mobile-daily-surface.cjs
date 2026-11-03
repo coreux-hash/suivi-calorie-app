@@ -389,26 +389,43 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       assert.equal(await page.isVisible('#mealSuggest'), false, 'recette retirée : pas proposée');
       await page.fill('#mealName', '');
       assert.equal((await days(page)).find((x) => x.date === today).meals.length, 1, 'le repas noté reste dans la journée');
+      /* v25.6 : le champ du nom est en tête de « Les valeurs », puis suit l'onglet « L'étiquette ». */
+      assert.equal(await page.$eval('#mealName', (e) => !!e.closest('#mealPanelManual')), true, 'nom dans « Les valeurs »');
+      assert.equal(await page.$('#nutriSearch'), null, 'plus de champ de recherche séparé');
       await page.click('#mealModeQuick'); await page.waitForTimeout(200);
-      assert.equal(await page.isVisible('#nutriSearch'), true, 'champ NutriApp visible');
+      assert.equal(await page.$eval('#mealName', (e) => !!e.closest('#mealPanelQuick')), true, 'nom dans « L’étiquette »');
+      assert.equal(await page.isVisible('#mealName'), true, 'champ du nom visible dans l’étiquette');
+      assert.equal(await page.isVisible('#mobileDailyRecentMealSelect') || await page.isVisible('.mobileDailyRecentMeals__chevron'), false, 'pas de ▾ dans l’étiquette');
+      assert.equal(await page.isVisible('#mealNameInfo'), false, 'ⓘ du champ caché (celui du titre suffit)');
+      assert.match(await page.getAttribute('#mealName', 'placeholder'), /barre de céréales/);
       /* v25.3 : intro sur une ligne, exemple dans le ⓘ, libellé explicite. */
       const intro = await page.$eval('#mealPanelQuick > p.muted', (e) => ({ text:e.textContent.trim(), lines:Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)) }));
       assert.deepEqual(intro, { text:'Recopie l’étiquette, mets le poids.', lines:1 }, `intro sur une ligne (${JSON.stringify(intro)})`);
-      assert.equal(await page.textContent('label[for="nutriSearch"]'), 'Chercher un ingrédient NutriApp');
       await page.click('#mealQuickInfo'); await page.waitForTimeout(300);
-      assert.match(await page.textContent('#watchInfoBody'), /35 g d’un produit à 420 kcal pour 100 g, ça fait 147 kcal[\s\S]*ingrédient de NutriApp/, 'exemple et origine NutriApp dans le ⓘ');
+      assert.match(await page.textContent('#watchInfoBody'), /le repas portera ce nom[\s\S]*ingrédient de NutriApp[\s\S]*35 g d’un produit à 420 kcal pour 100 g, ça fait 147 kcal/, 'nom, NutriApp et exemple dans le ⓘ');
       assert.equal(await page.isVisible('#btnQuickAddMeal'), true, '« Calculer et ajouter » visible');
       assert.equal(await page.$eval('#btnQuickAddMeal', (b) => !!b.closest('#mealPanelQuick')), false, 'bouton sorti de la carte');
       assert.equal(await page.isVisible('#btnAddMeal'), false, '« Ajouter ce repas » caché dans L’étiquette');
       await page.evaluate(() => document.querySelector('#watchInfoModal').classList.remove('is-open'));
-      await page.fill('#nutriSearch', 'oeu'); await page.waitForTimeout(150);
-      assert.deepEqual(await page.$$eval('#nutriResults strong', (e) => e.map((x) => x.textContent)), ['Œuf']);
-      await page.click('#nutriResults [data-nutri-index="0"]'); await page.waitForTimeout(150);
+      await page.fill('#mealName', 'oeu'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealSuggest .mealSuggest__item', (e) => e.map((x) => x.textContent)), ['NutriAppŒuf143 kcal / 100 g'], 'ingrédients seulement');
+      await page.click('#mealSuggest [data-suggest-index="0"]'); await page.waitForTimeout(150);
       assert.deepEqual(await page.$$eval('#mealName, #qKcal100, #qP100, #qC100, #qF100', (els) => els.map((e) => e.value)), ['Œuf', '143', '12.6', '0.7', '9.5']);
       assert.equal(await page.evaluate(() => document.activeElement?.id), 'qWeight', 'curseur sur le poids');
       await page.fill('#qWeight', '120'); await page.click('#btnQuickAddMeal'); await page.waitForTimeout(400);
+      /* v25.6 : étiquette recopiée à la main, nom libre → le repas porte ce nom. */
+      await page.fill('#mealName', 'Barre de céréales'); await page.waitForTimeout(150);
+      assert.equal(await page.isVisible('#mealSuggest'), false, 'nom libre : pas de proposition');
+      await page.fill('#qKcal100', '420'); await page.fill('#qWeight', '35'); await page.click('#btnQuickAddMeal'); await page.waitForTimeout(400);
       const todayDay = (await days(page)).find((x) => x.date === today);
-      assert.deepEqual(todayDay.meals.map((m) => [m.name, m.k, m.p, m.c, m.f]), [['Porridge', 234, 10.3, 34.3, 5.1], ['Œuf', 172, 15.1, 0.8, 11.4]], 'repas ajoutés en grammes');
+      assert.deepEqual(todayDay.meals.map((m) => [m.name, m.k, m.p, m.c, m.f]), [['Porridge', 234, 10.3, 34.3, 5.1], ['Œuf', 172, 15.1, 0.8, 11.4], ['Barre de céréales', 147, 0, 0, 0]], 'repas ajoutés en grammes, avec leur nom');
+      /* Retour dans « Les valeurs » : le champ y revient, et la barre est proposée comme repas noté. */
+      await page.click('#mealModeManual'); await page.waitForTimeout(200);
+      assert.equal(await page.$eval('#mealName', (e) => !!e.closest('#mealPanelManual')), true, 'nom revenu dans « Les valeurs »');
+      await page.evaluate(() => document.activeElement?.blur()); await page.focus('#mealName');
+      await page.fill('#mealName', 'bar'); await page.waitForTimeout(150);
+      assert.deepEqual(await page.$$eval('#mealSuggest .mealSuggest__item', (e) => e.map((x) => x.textContent)), ['NotéBarre de céréales147 kcal'], 'la barre devient un repas noté');
+      await page.keyboard.press('Escape'); await page.fill('#mealName', '');
       assert.deepEqual(await nutri(), before, 'nutriapp.* jamais modifié');
       assert.equal(await overflowX(page), 0);
       assert.equal(pageErrors.length, 0, `erreurs JS: ${pageErrors.join(' | ')}`);
@@ -416,12 +433,14 @@ function ok(name){ results.push(`✔ ${name}`); console.log(`✔ ${name}`); }
       const none = await open(browser, origin, fixture(simpleSettings), MOBILE);
       await none.page.click('[data-mobile-action="meals"]'); await none.page.waitForTimeout(300);
       await none.page.click('#mealModeQuick'); await none.page.waitForTimeout(200);
-      assert.equal(await none.page.isVisible('#nutriSearch'), false, 'sans NutriApp : pas de champ');
+      assert.equal(await none.page.isVisible('#mealName'), true, 'sans NutriApp : le champ du nom reste (nom libre)');
+      await none.page.fill('#mealName', 'oeu'); await none.page.waitForTimeout(150);
+      assert.equal(await none.page.isVisible('#mealSuggest'), false, 'sans NutriApp : aucune proposition');
       await none.page.click('#mealModeManual'); await none.page.waitForTimeout(150);
       assert.equal(await none.page.isVisible('#btnQuickAddMeal'), false, '« Calculer et ajouter » caché dans Les valeurs');
       assert.equal(await none.page.isVisible('#btnAddMeal'), true);
       await none.context.close();
-      ok('NutriApp : recettes proposées dans « Ce que tu as mangé », ingrédients dans « L’étiquette », bouton sous la carte, lecture seule');
+      ok('NutriApp : un seul champ du nom qui suit l’onglet ; recettes et repas notés dans « Les valeurs », ingrédients et nom libre dans « L’étiquette » ; lecture seule');
     }
 
     /* 4. Cycle mobile → desktop → mobile : restauration de data-um et du bouton. */
