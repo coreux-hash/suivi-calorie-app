@@ -6,16 +6,16 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Suivi Calories &amp; Nutrition (local)</title>
-<link rel="stylesheet" href="./css/base/foundation.css?v=25.1"/>
-<link rel="stylesheet" href="./css/components/primitives.css?v=25.1"/>
-<link rel="stylesheet" href="./css/layout/shell.css?v=25.1"/>
-<link rel="stylesheet" href="./css/layout/visibility.css?v=25.1"/>
-<link rel="stylesheet" href="./css/components/data-surfaces.css?v=25.1"/>
-<link rel="stylesheet" href="./css/components/overlays.css?v=25.1"/>
-<link rel="stylesheet" href="./css/screens/diabetes.css?v=25.1"/>
-<link rel="stylesheet" href="./css/screens/flowviz.css?v=25.1"/>
-<link rel="stylesheet" href="./css/screens/mobile-daily.css?v=25.1"/>
-<link rel="stylesheet" href="./css/utils/helpers.css?v=25.1"/>
+<link rel="stylesheet" href="./css/base/foundation.css?v=25.5"/>
+<link rel="stylesheet" href="./css/components/primitives.css?v=25.5"/>
+<link rel="stylesheet" href="./css/layout/shell.css?v=25.5"/>
+<link rel="stylesheet" href="./css/layout/visibility.css?v=25.5"/>
+<link rel="stylesheet" href="./css/components/data-surfaces.css?v=25.5"/>
+<link rel="stylesheet" href="./css/components/overlays.css?v=25.5"/>
+<link rel="stylesheet" href="./css/screens/diabetes.css?v=25.5"/>
+<link rel="stylesheet" href="./css/screens/flowviz.css?v=25.5"/>
+<link rel="stylesheet" href="./css/screens/mobile-daily.css?v=25.5"/>
+<link rel="stylesheet" href="./css/utils/helpers.css?v=25.5"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
 <meta content="#ffffff" name="theme-color"/>
@@ -1609,7 +1609,7 @@
 </details>
 <div class="row">
 <div class="minw220-flex2">
-<label>Ce que tu as mangé</label>
+<label for="mealName">Ce que tu as mangé <span aria-label="Ce qu’on te propose en tapant" class="info-dot" id="mealNameInfo" role="button" tabindex="0" data-modaltext="Tape quelques lettres : on te propose les repas que tu as déjà notés, et tes recettes de NutriApp. Une recette compte pour une portion. Choisis, et les valeurs se remplissent. Si rien ne colle, continue à taper ton nom à toi. Les recettes de NutriApp n’apparaissent que si tu l’utilises sur cet appareil, dans le même navigateur, et si leur case « Suivi » est cochée.">ℹ️</span></label>
 <input id="mealName" placeholder="ex: Petit-déj, Pancakes, Collation, Dîner…" type="text"/>
 <p class="muted">
           Les totaux se font tout seuls.
@@ -1641,12 +1641,12 @@
 </div>
 <!-- Option /100g (expert) -->
 <div class="card panel-subtle hidden" id="mealPanelQuick">
-<h3>L’étiquette /100 g</h3>
+<h3>L’étiquette /100 g <span aria-label="Exemple de calcul" class="info-dot" id="mealQuickInfo" role="button" tabindex="0" data-modaltext="Recopie les valeurs pour 100 g écrites sur l’emballage, puis mets le poids que tu as mangé : l’app fait le calcul. Par exemple, 35 g d’un produit à 420 kcal pour 100 g, ça fait 147 kcal. Tu peux aussi chercher un ingrédient de NutriApp (si tu l’utilises sur cet appareil, dans le même navigateur) : ses valeurs pour 100 g se remplissent toutes seules.">ℹ️</span></h3>
 <p class="muted">
-        Recopie l’étiquette (pour 100 g), mets le poids, et c’est calculé.
+        Recopie l’étiquette, mets le poids.
       </p>
 <div class="nutriSearch" id="nutriSearchBox" hidden>
-<label for="nutriSearch">Chercher dans NutriApp</label>
+<label for="nutriSearch">Chercher un ingrédient NutriApp</label>
 <input id="nutriSearch" type="search" autocomplete="off" placeholder="ex : flocons d’avoine" role="combobox" aria-autocomplete="list" aria-controls="nutriResults" aria-expanded="false"/>
 <ul class="nutriResults" id="nutriResults" role="listbox" aria-label="Ingrédients NutriApp" hidden></ul>
 </div>
@@ -1672,16 +1672,6 @@
 <input id="qF100" min="0" placeholder="optionnel" step="0.1" type="number"/>
 </div>
 </div>
-<div class="row mt-03">
-<div class="self-end">
-</div>
-<div class="self-end">
-<button id="btnQuickAddMeal" type="button">Calculer et ajouter</button>
-</div>
-</div>
-<p class="muted mt-02">
-        Exemple : 35 g à 420 kcal/100 g, ça fait 147 kcal.
-      </p>
 </div>
 <!-- Aperçu verrouillé du mode Rapide (affiché aux modes non-expert) -->
 <div class="card panel-subtle hidden mealLocked" id="mealPanelQuickLocked" role="group" aria-label="Rapide /100 g — aperçu verrouillé">
@@ -1701,6 +1691,11 @@
 <span class="mealLocked__chip">L / 100 g</span>
 </div>
 <p class="muted mealLocked__note">Visible avec l’affichage « Tout ». Tu le choisis dans Mon cadre › Toi.</p>
+</div>
+<div class="row mealQuickActions">
+  <div class="self-end">
+    <button id="btnQuickAddMeal" type="button">Calculer et ajouter</button>
+  </div>
 </div>
 <div class="row mealActions">
   <div class="self-end">
@@ -2998,34 +2993,35 @@ Aucune journée locale n’est effacée. Si une même date existe des deux côt�
 
 
 <!-- Scripts -->
-<script src="./js/phase6/phase6-core.js?v=25.1"></script>
-<script src="./js/phase6/phase6-boundaries.js?v=25.1"></script>
-<script src="./js/phase6/phase6-render.js?v=25.1"></script>
-<script src="./js/phase6/phase6-flows.js?v=25.1"></script>
-<script src="./js/phase6/phase6-features.js?v=25.1"></script>
-<script src="./js/legacy/legacy-app-state-navigation.js?v=25.1"></script>
-<script src="./js/legacy/legacy-storage-days.js?v=25.1"></script>
-<script src="./js/legacy/legacy-core-runtime.js?v=25.1"></script>
-<script src="./js/legacy/legacy-profiles-settings.js?v=25.1"></script>
-<script src="./js/legacy/legacy-meals-body.js?v=25.1"></script>
-<script src="./js/legacy/legacy-history.js?v=25.1"></script>
-<script src="./js/legacy/legacy-sport-sleep.js?v=25.1"></script>
-<script src="./js/legacy/legacy-diabetes.js?v=25.1"></script>
-<script src="./js/legacy/legacy-watch-ui.js?v=25.1"></script>
-<script src="./js/legacy/legacy-engine-core.js?v=25.1"></script>
-<script src="./js/legacy/legacy-app-init.js?v=25.1"></script>
-<script src="./js/legacy/legacy-shell-observers.js?v=25.1"></script>
-<script src="./js/legacy/legacy-compat-ui.js?v=25.1"></script>
-<script src="./js/legacy/legacy-carb-patches.js?v=25.1"></script>
-<script src="./js/legacy/legacy-compromise-ui.js?v=25.1"></script>
-<script src="./js/legacy/legacy-training-load-matrix.js?v=25.1"></script>
-<script src="./js/legacy/legacy-cloud-refresh.js?v=25.1"></script>
-<script src="./js/legacy/legacy-cloud-sync.js?v=25.1"></script>
-<script src="./js/phase6/phase6-bootstrap.js?v=25.1"></script>
-<script src="./js/legacy/legacy-mobile-discrete-steppers.js?v=25.1"></script>
-<script src="./js/legacy/legacy-playful-tracking.js?v=25.1"></script>
-<script src="./js/phase6/phase6-nutriapp-bridge.js?v=25.1"></script>
-<script src="./js/phase6/phase6-mobile-daily.js?v=25.1"></script>
+<script src="./js/phase6/phase6-core.js?v=25.5"></script>
+<script src="./js/phase6/phase6-boundaries.js?v=25.5"></script>
+<script src="./js/phase6/phase6-render.js?v=25.5"></script>
+<script src="./js/phase6/phase6-flows.js?v=25.5"></script>
+<script src="./js/phase6/phase6-features.js?v=25.5"></script>
+<script src="./js/legacy/legacy-app-state-navigation.js?v=25.5"></script>
+<script src="./js/legacy/legacy-storage-days.js?v=25.5"></script>
+<script src="./js/legacy/legacy-core-runtime.js?v=25.5"></script>
+<script src="./js/legacy/legacy-profiles-settings.js?v=25.5"></script>
+<script src="./js/legacy/legacy-meals-body.js?v=25.5"></script>
+<script src="./js/legacy/legacy-history.js?v=25.5"></script>
+<script src="./js/legacy/legacy-sport-sleep.js?v=25.5"></script>
+<script src="./js/legacy/legacy-diabetes.js?v=25.5"></script>
+<script src="./js/legacy/legacy-watch-ui.js?v=25.5"></script>
+<script src="./js/legacy/legacy-engine-core.js?v=25.5"></script>
+<script src="./js/legacy/legacy-app-init.js?v=25.5"></script>
+<script src="./js/legacy/legacy-shell-observers.js?v=25.5"></script>
+<script src="./js/legacy/legacy-compat-ui.js?v=25.5"></script>
+<script src="./js/legacy/legacy-carb-patches.js?v=25.5"></script>
+<script src="./js/legacy/legacy-compromise-ui.js?v=25.5"></script>
+<script src="./js/legacy/legacy-training-load-matrix.js?v=25.5"></script>
+<script src="./js/legacy/legacy-cloud-refresh.js?v=25.5"></script>
+<script src="./js/legacy/legacy-cloud-sync.js?v=25.5"></script>
+<script src="./js/phase6/phase6-bootstrap.js?v=25.5"></script>
+<script src="./js/legacy/legacy-mobile-discrete-steppers.js?v=25.5"></script>
+<script src="./js/legacy/legacy-playful-tracking.js?v=25.5"></script>
+<script src="./js/phase6/phase6-nutriapp-bridge.js?v=25.5"></script>
+<script src="./js/phase6/phase6-mobile-daily.js?v=25.5"></script>
+<script src="./js/phase6/phase6-meal-suggest.js?v=25.5"></script>
 <section class="card">
 <h2>Sources</h2>
 <p class="muted" style="margin-top:.4rem">
