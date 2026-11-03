@@ -7625,6 +7625,8 @@ body:not([data-usemode="expert"]) .modeTeaser[data-teaser="expert"]{ display:blo
    générique. Fonctionne même si legacy-app-init.js n'est pas à jour.
    ============================================================ */
 body:has(#mealModeQuick.is-active) .mealActions{ display:none !important; }
+/* v25.5 : « Calculer et ajouter » sous la carte de l’étiquette, visible seulement dans cet onglet. */
+body:has(#mealModeManual.is-active) .mealQuickActions{ display:none !important; }
 
 /* ============================================================
    A11 — Repas : deux corrections
