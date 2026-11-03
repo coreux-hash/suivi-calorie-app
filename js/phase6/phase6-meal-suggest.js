@@ -5,6 +5,9 @@
    Tout ce qui est proposé remplit l'onglet « Les valeurs ». Les ingrédients restent dans « L'étiquette ».
    Rien n'est choisi tout seul : ce que tu tapes reste tel quel si tu ignores la liste.
    Si une recette et un repas noté portent le même nom, seule la recette est proposée (décision 2026-11-03).
+   v25.6 — Le champ vit dans la carte de l'onglet ouvert (un seul champ, déplacé) :
+   - « Les valeurs » : repas notés + recettes NutriApp, comme ci-dessus ;
+   - « L'étiquette » : ingrédients NutriApp (valeurs pour 100 g) ; ce que tu tapes reste le nom du repas.
    Lecture seule : aucune écriture dans le stockage. */
 (function (root, factory) {
   const api = factory();
@@ -20,12 +23,19 @@
   /* Pure : fusionne habitudes et recettes, dédoublonne par nom (la recette gagne), classe :
      début du nom, puis début d'un mot, puis ailleurs dans le nom ; à égalité, ordre d'origine. */
   function suggest(habits, recipes, query, limit) {
-    const q = fold(query);
-    if (q.length < 2) return [];
     const recipeNames = new Set((recipes || []).map((r) => fold(r.name)));
     const pool = []
       .concat((habits || []).filter((h) => !recipeNames.has(fold(h.name))).map((x) => ({ kind: 'noted', x })))
       .concat((recipes || []).map((x) => ({ kind: 'recipe', x })));
+    return rank(pool, query, limit);
+  }
+  /* v25.6 — Pure : ingrédients NutriApp pour « L'étiquette », même classement. */
+  function suggestIngredients(ingredients, query, limit) {
+    return rank((ingredients || []).map((x) => ({ kind: 'ingredient', x })), query, limit);
+  }
+  function rank(pool, query, limit) {
+    const q = fold(query);
+    if (q.length < 2) return [];
     const scored = [];
     pool.forEach((item, order) => {
       const n = fold(item.x.name);
@@ -43,7 +53,9 @@
     let recipes = [];
     try { habits = global.SuiviHabits?.list(Infinity) || []; } catch (_) { habits = []; }
     try { recipes = global.SuiviNutriApp?.listSuiviRecipes(global.localStorage) || []; } catch (_) { recipes = []; }
-    return { habits, recipes };
+    let ingredients = [];
+    try { ingredients = global.SuiviNutriApp?.listIngredients(global.localStorage) || []; } catch (_) { ingredients = []; }
+    return { habits, recipes, ingredients };
   }
 
   function install(global, doc) {
@@ -64,6 +76,7 @@
     let cache = null;
     let current = [];
     let active = -1;
+    const isLabel = () => doc.getElementById('mealModeQuick')?.classList.contains('is-active') === true;
 
     /* La liste suit le champ : sur téléphone, il vit dans la cellule combinée (corbeille + ▾). */
     const place = () => {
@@ -75,6 +88,12 @@
       if (!item) return;
       const v = item.x;
       const set = (id, value) => { const el = doc.getElementById(id); if (el) el.value = String(value); };
+      if (item.kind === 'ingredient') { /* v25.6 : étiquette → nom + valeurs /100 g, curseur sur le poids */
+        set('mealName', v.name); set('qKcal100', v.k100); set('qP100', v.p100); set('qC100', v.c100); set('qF100', v.f100);
+        close();
+        doc.getElementById('qWeight')?.focus({ preventScroll: true });
+        return;
+      }
       set('mealName', v.name); set('mealK', v.k); set('mealP', v.p); set('mealC', v.c); set('mealF', v.f);
       doc.getElementById('mealModeManual')?.click();
       close();
@@ -91,7 +110,9 @@
     };
     const render = () => {
       if (!cache) cache = sources(global);
-      current = suggest(cache.habits, cache.recipes, input.value, MAX);
+      current = isLabel()
+        ? suggestIngredients(cache.ingredients, input.value, MAX)
+        : suggest(cache.habits, cache.recipes, input.value, MAX);
       active = -1;
       list.textContent = '';
       if (!current.length) { close(); return; }
@@ -106,10 +127,11 @@
         btn.dataset.suggestIndex = String(i);
         const tag = doc.createElement('span');
         tag.className = `mealSuggest__tag mealSuggest__tag--${item.kind}`;
-        tag.textContent = item.kind === 'recipe' ? 'NutriApp' : 'Noté';
+        tag.textContent = item.kind === 'noted' ? 'Noté' : 'NutriApp';
         const name = doc.createElement('strong'); name.textContent = item.x.name;
         const kcal = doc.createElement('small');
-        kcal.textContent = item.kind === 'recipe' ? `${Math.round(item.x.k)} kcal / portion` : `${Math.round(item.x.k)} kcal`;
+        kcal.textContent = item.kind === 'ingredient' ? `${Math.round(item.x.k100)} kcal / 100 g`
+          : item.kind === 'recipe' ? `${Math.round(item.x.k)} kcal / portion` : `${Math.round(item.x.k)} kcal`;
         btn.append(tag, name, kcal);
         li.appendChild(btn);
         list.appendChild(li);
@@ -136,6 +158,31 @@
     doc.addEventListener('click', (e) => { if (e.target !== input && !list.contains(e.target)) close(); });
     /* Une note ajoutée, un profil changé, NutriApp modifiée ailleurs : on relira les sources. */
     global.addEventListener('storage', () => { cache = null; });
+
+    /* v25.6 : le bloc du nom (libellé + champ, et sur téléphone la cellule ▾/🗑) suit l'onglet ouvert.
+       On observe la classe de l'onglet « L'étiquette » (posée par mealUI_setMode, legacy). */
+    const PLACEHOLDER = {
+      manual: input.getAttribute('placeholder') || '',
+      label: 'ex : barre de céréales, flocons d’avoine'
+    };
+    const follow = () => {
+      const label = isLabel();
+      const block = doc.getElementById('mealNameBlock');
+      const slot = doc.getElementById(label ? 'mealNameSlotQuick' : 'mealNameSlotManual');
+      if (block && slot && block.parentElement !== slot) {
+        const hadFocus = doc.activeElement === input;
+        slot.appendChild(block);
+        if (hadFocus) input.focus({ preventScroll: true });
+      }
+      input.setAttribute('placeholder', label ? PLACEHOLDER.label : PLACEHOLDER.manual);
+      list.setAttribute('aria-label', label ? 'Ingrédients NutriApp' : 'Repas proposés');
+      close();
+    };
+    const tab = doc.getElementById('mealModeQuick');
+    if (tab && typeof global.MutationObserver === 'function') {
+      new global.MutationObserver(follow).observe(tab, { attributes: true, attributeFilter: ['class'] });
+    }
+    follow();
   }
 
   if (typeof window !== 'undefined' && typeof document !== 'undefined') {
@@ -144,5 +191,5 @@
     else start();
   }
 
-  return { suggest, fold };
+  return { suggest, suggestIngredients, fold };
 });
